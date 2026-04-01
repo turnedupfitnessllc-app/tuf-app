@@ -3,6 +3,9 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* TUF Design System — LOCKED v2 */
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;500;600;700&display=swap');
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -43,6 +46,45 @@
 }
 
 :root {
+  /* TUF Color System */
+  --tuf-bg: #080808;
+  --tuf-bg2: #0e0e0e;
+  --tuf-bg3: #141414;
+  --tuf-bg4: #1c1c1c;
+  --tuf-bg5: #242424;
+  --tuf-border: #1e1e1e;
+  --tuf-border-lo: #1a1a1a;
+  --tuf-border-hi: #2a2a2a;
+  --tuf-red: #8B0000;
+  --tuf-red-hi: #b30000;
+  --tuf-red-dark: #c0392b;
+  --tuf-red-glow: rgba(139, 0, 0, 0.35);
+  --tuf-red-fade: rgba(139, 0, 0, 0.08);
+  --tuf-red-mid: rgba(139, 0, 0, 0.18);
+  --tuf-gold: #C8973A;
+  --tuf-gold-lo: #7a5a1e;
+  --tuf-gold-hi: #e0a840;
+  --tuf-gold-bright: #f0b850;
+  --tuf-gold-fade: rgba(200, 151, 58, 0.08);
+  --tuf-gold-glow: rgba(200, 151, 58, 0.28);
+  --tuf-gold-border: rgba(200, 151, 58, 0.3);
+  --tuf-white: #f2f2f2;
+  --tuf-white-lo: rgba(242, 242, 242, 0.06);
+  --tuf-gray: #888888;
+  --tuf-gray-lo: #555555;
+  --tuf-dim: #333333;
+  --tuf-ok: #4caf50;
+  --tuf-ok-fade: rgba(76, 175, 80, 0.1);
+  --tuf-ok-border: rgba(76, 175, 80, 0.3);
+  --tuf-warn: #C8973A;
+  --tuf-danger: #b30000;
+  --tuf-blue: #4A90D9;
+  --tuf-accent-move: #C8973A;
+  --tuf-accent-fuel: #4caf50;
+  --tuf-accent-feast: #f97316;
+  --tuf-feast-dark: #c2510a;
+  --tuf-vault-purple: #a78bfa;
+
   --primary: var(--color-blue-700);
   --primary-foreground: var(--color-blue-50);
   --sidebar-primary: var(--color-blue-600);
@@ -53,22 +95,22 @@
   --chart-4: var(--color-blue-700);
   --chart-5: var(--color-blue-800);
   --radius: 0.65rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.235 0.015 65);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.235 0.015 65);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.235 0.015 65);
-  --secondary: oklch(0.98 0.001 286.375);
-  --secondary-foreground: oklch(0.4 0.015 65);
-  --muted: oklch(0.967 0.001 286.375);
-  --muted-foreground: oklch(0.552 0.016 285.938);
-  --accent: oklch(0.967 0.001 286.375);
-  --accent-foreground: oklch(0.141 0.005 285.823);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.92 0.004 286.32);
-  --input: oklch(0.92 0.004 286.32);
+  --background: var(--tuf-bg);
+  --foreground: var(--tuf-white);
+  --card: var(--tuf-bg3);
+  --card-foreground: var(--tuf-white);
+  --popover: var(--tuf-bg3);
+  --popover-foreground: var(--tuf-white);
+  --secondary: var(--tuf-bg4);
+  --secondary-foreground: var(--tuf-gray);
+  --muted: var(--tuf-bg5);
+  --muted-foreground: var(--tuf-gray-lo);
+  --accent: var(--tuf-gold);
+  --accent-foreground: var(--tuf-bg);
+  --destructive: var(--tuf-red);
+  --destructive-foreground: var(--tuf-white);
+  --border: var(--tuf-border);
+  --input: var(--tuf-bg4);
   --ring: oklch(0.623 0.214 259.815);
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.235 0.015 65);
@@ -79,38 +121,39 @@
 }
 
 .dark {
+  /* Dark theme is default for TUF */
   --primary: var(--color-blue-700);
   --primary-foreground: var(--color-blue-50);
   --sidebar-primary: var(--color-blue-500);
   --sidebar-primary-foreground: var(--color-blue-50);
-  --background: oklch(0.141 0.005 285.823);
-  --foreground: oklch(0.85 0.005 65);
-  --card: oklch(0.21 0.006 285.885);
-  --card-foreground: oklch(0.85 0.005 65);
-  --popover: oklch(0.21 0.006 285.885);
-  --popover-foreground: oklch(0.85 0.005 65);
-  --secondary: oklch(0.24 0.006 286.033);
-  --secondary-foreground: oklch(0.7 0.005 65);
-  --muted: oklch(0.274 0.006 286.033);
-  --muted-foreground: oklch(0.705 0.015 286.067);
-  --accent: oklch(0.274 0.006 286.033);
-  --accent-foreground:  oklch(0.92 0.005 65);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
+  --background: var(--tuf-bg);
+  --foreground: var(--tuf-white);
+  --card: var(--tuf-bg3);
+  --card-foreground: var(--tuf-white);
+  --popover: var(--tuf-bg3);
+  --popover-foreground: var(--tuf-white);
+  --secondary: var(--tuf-bg4);
+  --secondary-foreground: var(--tuf-gray);
+  --muted: var(--tuf-bg5);
+  --muted-foreground: var(--tuf-gray-lo);
+  --accent: var(--tuf-gold);
+  --accent-foreground: var(--tuf-bg);
+  --destructive: var(--tuf-red);
+  --destructive-foreground: var(--tuf-white);
+  --border: var(--tuf-border);
+  --input: var(--tuf-bg4);
   --ring: oklch(0.488 0.243 264.376);
   --chart-1: var(--color-blue-300);
   --chart-2: var(--color-blue-500);
   --chart-3: var(--color-blue-600);
   --chart-4: var(--color-blue-700);
   --chart-5: var(--color-blue-800);
-  --sidebar: oklch(0.21 0.006 285.885);
-  --sidebar-foreground: oklch(0.85 0.005 65);
-  --sidebar-accent: oklch(0.274 0.006 286.033);
-  --sidebar-accent-foreground:  oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.488 0.243 264.376);
+  --sidebar: var(--tuf-bg2);
+  --sidebar-foreground: var(--tuf-white);
+  --sidebar-accent: var(--tuf-gold);
+  --sidebar-accent-foreground: var(--tuf-bg);
+  --sidebar-border: var(--tuf-border);
+  --sidebar-ring: var(--tuf-gold-glow);
 }
 
 @layer base {
@@ -118,7 +161,17 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+    font-family: 'Barlow Condensed', 'Trebuchet MS', sans-serif;
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100vh;
+    overflow-x: hidden;
+    padding-bottom: 72px;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.1em;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
@@ -174,4 +227,188 @@
       max-width: 1280px; /* Standard content width */
     }
   }
+}
+/* TUF Button System */
+.tuf-btn {
+  display: block;
+  width: calc(100% - 28px);
+  margin: 0 14px 12px;
+  padding: 13px 48px 13px 20px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 16px;
+  letter-spacing: 4px;
+  text-align: left;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  text-transform: uppercase;
+  overflow: hidden;
+  clip-path: polygon(0% 0%, calc(100% - 20px) 0%, 100% 50%, calc(100% - 20px) 100%, 0% 100%);
+}
+
+.tuf-btn::after {
+  content: '›';
+  position: absolute;
+  right: 22px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 22px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 300;
+  line-height: 1;
+  transition: right 0.2s ease;
+  opacity: 0.8;
+}
+
+.tuf-btn:hover::after {
+  right: 16px;
+  opacity: 1;
+}
+
+.tuf-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.4s ease;
+}
+
+.tuf-btn:hover::before {
+  left: 125%;
+}
+
+.tuf-btn.primary {
+  background: linear-gradient(90deg, var(--tuf-red) 0%, var(--tuf-red-hi) 60%, var(--tuf-red-dark) 100%);
+  color: var(--tuf-white);
+  box-shadow: 0 2px 12px var(--tuf-red-glow);
+}
+
+.tuf-btn.primary:hover {
+  background: linear-gradient(90deg, var(--tuf-red-hi) 0%, var(--tuf-red-dark) 60%, #e74c3c 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px var(--tuf-red-glow);
+}
+
+.tuf-btn.primary:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.tuf-btn.gold {
+  background: linear-gradient(90deg, var(--tuf-gold-lo) 0%, var(--tuf-gold) 60%, var(--tuf-gold-hi) 100%);
+  color: var(--tuf-bg);
+  box-shadow: 0 2px 12px var(--tuf-gold-glow);
+}
+
+.tuf-btn.gold::after {
+  color: var(--tuf-bg);
+}
+
+.tuf-btn.gold:hover {
+  background: linear-gradient(90deg, var(--tuf-gold) 0%, var(--tuf-gold-hi) 60%, var(--tuf-gold-bright) 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px var(--tuf-gold-glow);
+}
+
+/* TUF Card */
+.tuf-card {
+  background: var(--tuf-bg3);
+  border: 1px solid var(--tuf-border);
+  margin: 0 14px 12px;
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.tuf-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--tuf-gold);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s;
+}
+
+.tuf-card:hover::before {
+  transform: scaleX(1);
+}
+
+.tuf-card.gold-border {
+  border-left: 3px solid var(--tuf-gold);
+}
+
+.tuf-card.red-border {
+  border-left: 3px solid var(--tuf-red);
+}
+
+.tuf-card.ok-border {
+  border-left: 3px solid var(--tuf-ok);
+}
+
+/* TUF Badge */
+.tuf-badge {
+  font-size: 8px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  display: inline-block;
+}
+
+.badge-gold {
+  background: rgba(200, 151, 58, 0.12);
+  color: var(--tuf-gold);
+  border: 1px solid rgba(200, 151, 58, 0.3);
+}
+
+.badge-green {
+  background: rgba(76, 175, 80, 0.1);
+  color: var(--tuf-ok);
+  border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.badge-red {
+  background: rgba(139, 0, 0, 0.15);
+  color: #ff5555;
+  border: 1px solid rgba(139, 0, 0, 0.4);
+}
+
+.badge-gray {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--tuf-gray);
+  border: 1px solid var(--tuf-dim);
+}
+
+/* Progress bar */
+.progress-bar {
+  height: 5px;
+  background: var(--tuf-bg5);
+  margin-top: 8px;
+  border-radius: 1px;
+}
+
+.progress-fill {
+  height: 100%;
+  transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 1px;
+}
+
+.progress-fill.gold {
+  background: var(--tuf-gold);
+}
+
+.progress-fill.ok {
+  background: var(--tuf-ok);
+}
+
+.progress-fill.red {
+  background: var(--tuf-red-hi);
 }

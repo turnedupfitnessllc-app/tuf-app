@@ -4,17 +4,30 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { TufHeader } from "./components/TufHeader";
+import { TufBottomNav } from "./components/TufBottomNav";
 import Home from "./pages/Home";
-
+import Move from "./pages/Move";
+import Fuel from "./pages/Fuel";
+import Feast from "./pages/Feast";
+import Vault from "./pages/Vault";
 
 function Router() {
   return (
-    <Switch>
-      <Route path={"/"} component={Home} />
-      <Route path={"/404"} component={NotFound} />
-      {/* Final fallback route */}
-      <Route component={NotFound} />
-    </Switch>
+    <>
+      <TufHeader />
+      <Switch>
+        <Route path={"/"} component={Home} />
+        <Route path={"/move"} component={Move} />
+        <Route path={"/fuel"} component={Fuel} />
+        <Route path={"/feast"} component={Feast} />
+        <Route path={"/vault"} component={Vault} />
+        <Route path={"/404"} component={NotFound} />
+        {/* Final fallback route */}
+        <Route component={NotFound} />
+      </Switch>
+      <TufBottomNav />
+    </>
   );
 }
 
@@ -27,8 +40,7 @@ function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider
-        defaultTheme="light"
-        // switchable
+        defaultTheme="dark"
       >
         <TooltipProvider>
           <Toaster />
