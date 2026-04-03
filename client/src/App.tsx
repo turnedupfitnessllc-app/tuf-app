@@ -11,6 +11,8 @@ import Move from "./pages/Move";
 import Fuel from "./pages/Fuel";
 import Feast from "./pages/Feast";
 import Vault from "./pages/Vault";
+import JarvisChat from "./pages/JarvisChat";
+import Progress from "./pages/Progress";
 
 function Router() {
   return (
@@ -22,6 +24,8 @@ function Router() {
         <Route path={"/fuel"} component={Fuel} />
         <Route path={"/feast"} component={Feast} />
         <Route path={"/vault"} component={Vault} />
+        <Route path={"/jarvis"} component={JarvisChat} />
+        <Route path={"/progress"} component={Progress} />
         <Route path={"/404"} component={NotFound} />
         {/* Final fallback route */}
         <Route component={NotFound} />

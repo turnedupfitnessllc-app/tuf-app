@@ -1,101 +1,118 @@
+import { Card } from "@/components/ui/card";
+import { BookOpen, Award, Zap } from "lucide-react";
+
 /**
- * TUF VAULT Page — Progress & History
- * Design System: Stats, achievements, personal records
+ * VAULT — Science Library & Achievements
+ * Research articles, science-backed guidance, and achievement tracking
  */
-
-import { TUF_DATA } from "@/lib/tuf-data";
-
 export default function Vault() {
-  const member = TUF_DATA.memberProfile;
-  const stats = member.stats;
-
   return (
-    <div className="min-h-screen bg-[#080808] text-[#f2f2f2] pb-20">
+    <div className="container mx-auto px-4 py-6 md:py-8">
       {/* Header */}
-      <section className="px-4 pt-6 pb-4 border-b border-[#1e1e1e]">
-        <div className="text-xs tracking-widest uppercase text-[#888888] mb-1">Progress</div>
-        <h1 className="font-bebas text-3xl tracking-wider text-white">
-          <span className="text-[#a78bfa]">VAULT</span>
-        </h1>
-      </section>
+      <div className="mb-8">
+        <h1 className="text-4xl md:text-5xl font-bold mb-2">VAULT</h1>
+        <p className="text-muted-foreground text-lg">Your personal science library and achievement vault</p>
+      </div>
 
-      {/* Member Info */}
-      <section className="px-4 py-6">
-        <div className="tuf-card gold-border">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="w-16 h-16 rounded-full bg-[#8B0000] border-2 border-[#C8973A] flex items-center justify-center font-bebas text-2xl text-[#C8973A]">
-              {member.name.charAt(0)}
-            </div>
-            <div>
-              <h2 className="font-bebas text-2xl tracking-wider text-white">{member.name}</h2>
-              <div className="text-xs text-[#888888]">{member.age} years old • {member.level}</div>
-              <div className="text-xs text-[#C8973A] mt-1">Member since {new Date(member.joinDate).toLocaleDateString()}</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Stats Grid */}
-      <section className="px-4 py-4">
-        <div className="font-bebas text-lg tracking-wider text-white border-l-4 border-l-[#a78bfa] pl-3 mb-4">
-          YOUR <span className="text-[#a78bfa]">ACHIEVEMENTS</span>
-        </div>
-
-        <div className="grid grid-cols-2 gap-3 mb-6">
-          <div className="tuf-card ok-border">
-            <div className="text-xs tracking-widest uppercase text-[#888888] mb-2">Total Workouts</div>
-            <div className="font-bebas text-3xl tracking-wider text-white">{stats.workoutsCompleted}</div>
-            <div className="text-xs text-[#4caf50] mt-2">💪 Keep crushing it</div>
-          </div>
-
-          <div className="tuf-card gold-border">
-            <div className="text-xs tracking-widest uppercase text-[#888888] mb-2">Total Minutes</div>
-            <div className="font-bebas text-3xl tracking-wider text-white">{stats.totalMinutes}</div>
-            <div className="text-xs text-[#C8973A] mt-2">⏱️ {Math.round(stats.totalMinutes / 60)}h invested</div>
-          </div>
-
-          <div className="tuf-card red-border">
-            <div className="text-xs tracking-widest uppercase text-[#888888] mb-2">Current Streak</div>
-            <div className="font-bebas text-3xl tracking-wider text-white">{stats.currentStreak}</div>
-            <div className="text-xs text-[#b30000] mt-2">🔥 {stats.currentStreak} days strong</div>
-          </div>
-
-          <div className="tuf-card">
-            <div className="text-xs tracking-widest uppercase text-[#888888] mb-2">Personal Records</div>
-            <div className="font-bebas text-3xl tracking-wider text-[#a78bfa]">{stats.personalRecords}</div>
-            <div className="text-xs text-[#a78bfa] mt-2">🏆 New milestones</div>
-          </div>
-        </div>
-      </section>
-
-      {/* Progress Timeline */}
-      <section className="px-4 py-4">
-        <div className="font-bebas text-lg tracking-wider text-white border-l-4 border-l-[#C8973A] pl-3 mb-4">
-          RECENT <span className="text-[#C8973A]">MILESTONES</span>
-        </div>
-
-        <div className="space-y-3">
+      {/* Science Articles */}
+      <div className="mb-12">
+        <h2 className="text-2xl font-bold mb-6">Science Articles</h2>
+        <div className="space-y-4">
           {[
-            { date: "Today", title: "Workout Completed", desc: "45 min • Chest & Back", icon: "✅" },
-            { date: "Yesterday", title: "7-Day Streak", desc: "Consistency unlocked", icon: "🔥" },
-            { date: "2 days ago", title: "Personal Record", desc: "DB Bench Press: 50 lbs", icon: "🏆" },
-          ].map((milestone, idx) => (
-            <div key={idx} className="tuf-card flex gap-3">
-              <div className="text-2xl">{milestone.icon}</div>
-              <div className="flex-1">
-                <div className="font-bebas text-sm tracking-wider text-white">{milestone.title}</div>
-                <div className="text-xs text-[#888888]">{milestone.desc}</div>
-                <div className="text-xs text-[#555555] mt-1">{milestone.date}</div>
+            {
+              title: "Sarcopenia After 40: What You Need to Know",
+              category: "Muscle Science",
+              excerpt: "Understanding muscle loss and how to prevent it",
+              icon: "💪",
+            },
+            {
+              title: "The Anti-Inflammatory Diet for Joint Health",
+              category: "Nutrition",
+              excerpt: "Foods that reduce inflammation and support mobility",
+              icon: "🥗",
+            },
+            {
+              title: "Sleep, Recovery, and the 40+ Body",
+              category: "Recovery",
+              excerpt: "Why sleep becomes more critical after 40",
+              icon: "😴",
+            },
+            {
+              title: "Progressive Overload for Beginners",
+              category: "Training",
+              excerpt: "How to safely increase intensity without injury",
+              icon: "📈",
+            },
+          ].map((article, i) => (
+            <Card
+              key={i}
+              className="p-4 md:p-6 bg-card border-border hover:border-primary/50 cursor-pointer transition-colors"
+            >
+              <div className="flex gap-4">
+                <div className="text-3xl flex-shrink-0">{article.icon}</div>
+                <div className="flex-1">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="font-semibold text-foreground text-lg flex-1">{article.title}</h3>
+                    <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded ml-3 flex-shrink-0 whitespace-nowrap">
+                      {article.category}
+                    </span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">{article.excerpt}</p>
+                </div>
               </div>
-            </div>
+            </Card>
           ))}
         </div>
-      </section>
+      </div>
 
-      {/* CTA */}
-      <section className="px-4 py-6">
-        <button className="tuf-btn primary">VIEW FULL HISTORY</button>
-      </section>
+      {/* Achievements */}
+      <div className="mb-12">
+        <h2 className="text-2xl font-bold mb-6">Achievements</h2>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {[
+            { icon: "🏆", label: "First Workout", unlocked: true },
+            { icon: "🔥", label: "7-Day Streak", unlocked: true },
+            { icon: "💪", label: "Strength Milestone", unlocked: true },
+            { icon: "🎯", label: "30-Day Streak", unlocked: false },
+            { icon: "⚡", label: "Phase Complete", unlocked: false },
+            { icon: "🚀", label: "90-Day Champion", unlocked: false },
+          ].map((achievement, i) => (
+            <Card
+              key={i}
+              className={`p-4 md:p-6 text-center transition-all ${
+                achievement.unlocked
+                  ? "bg-card border-border hover:border-primary/50"
+                  : "bg-secondary/30 border-border/50 opacity-50"
+              }`}
+            >
+              <div className="text-3xl md:text-4xl mb-3">{achievement.icon}</div>
+              <p className="text-xs md:text-sm font-semibold text-foreground">{achievement.label}</p>
+            </Card>
+          ))}
+        </div>
+      </div>
+
+      {/* Quick Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card className="p-6 bg-card border-border">
+          <BookOpen className="w-6 h-6 text-primary mb-3" />
+          <h3 className="font-semibold text-foreground mb-2">Articles Read</h3>
+          <p className="text-3xl font-bold text-primary">12</p>
+          <p className="text-xs text-muted-foreground mt-1">Keep learning and growing</p>
+        </Card>
+        <Card className="p-6 bg-card border-border">
+          <Award className="w-6 h-6 text-accent mb-3" />
+          <h3 className="font-semibold text-foreground mb-2">Achievements Unlocked</h3>
+          <p className="text-3xl font-bold text-accent">3</p>
+          <p className="text-xs text-muted-foreground mt-1">3 more to go!</p>
+        </Card>
+        <Card className="p-6 bg-card border-border">
+          <Zap className="w-6 h-6 text-destructive mb-3" />
+          <h3 className="font-semibold text-foreground mb-2">Knowledge Score</h3>
+          <p className="text-3xl font-bold text-destructive">82%</p>
+          <p className="text-xs text-muted-foreground mt-1">You know your stuff!</p>
+        </Card>
+      </div>
     </div>
   );
 }
