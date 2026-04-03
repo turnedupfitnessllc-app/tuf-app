@@ -1,118 +1,181 @@
-import { Card } from "@/components/ui/card";
-import { BookOpen, Award, Zap } from "lucide-react";
+import { TufHeader } from '@/components/TufHeader';
+import { TufBottomNav } from '@/components/TufBottomNav';
+import { BookOpen, Award, Lock, ChevronRight } from 'lucide-react';
 
-/**
- * VAULT — Science Library & Achievements
- * Research articles, science-backed guidance, and achievement tracking
- */
 export default function Vault() {
+  const articles = [
+    {
+      title: 'Sarcopenia After 40: What You Need to Know',
+      category: 'Muscle Science',
+      excerpt: 'Understanding muscle loss and how to prevent it',
+      icon: '💪',
+      locked: false,
+    },
+    {
+      title: 'The Anti-Inflammatory Diet for Joint Health',
+      category: 'Nutrition',
+      excerpt: 'Foods that reduce inflammation and support mobility',
+      icon: '🥗',
+      locked: false,
+    },
+    {
+      title: 'Sleep, Recovery, and the 40+ Body',
+      category: 'Recovery',
+      excerpt: 'Why sleep becomes more critical after 40',
+      icon: '😴',
+      locked: false,
+    },
+    {
+      title: 'Progressive Overload for Beginners',
+      category: 'Training',
+      excerpt: 'How to safely increase intensity without injury',
+      icon: '📈',
+      locked: true,
+    },
+  ];
+
+  const achievements = [
+    { title: 'First Week Complete', icon: '🏆', unlocked: true },
+    { title: '10 Workouts', icon: '💪', unlocked: true },
+    { title: '30-Day Streak', icon: '🔥', unlocked: false },
+    { title: 'Phase Complete', icon: '🎯', unlocked: false },
+  ];
+
   return (
-    <div className="container mx-auto px-4 py-6 md:py-8">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-4xl md:text-5xl font-bold mb-2">VAULT</h1>
-        <p className="text-muted-foreground text-lg">Your personal science library and achievement vault</p>
-      </div>
+    <div className="min-h-screen bg-background text-foreground">
+      <TufHeader />
 
-      {/* Science Articles */}
-      <div className="mb-12">
-        <h2 className="text-2xl font-bold mb-6">Science Articles</h2>
-        <div className="space-y-4">
-          {[
-            {
-              title: "Sarcopenia After 40: What You Need to Know",
-              category: "Muscle Science",
-              excerpt: "Understanding muscle loss and how to prevent it",
-              icon: "💪",
-            },
-            {
-              title: "The Anti-Inflammatory Diet for Joint Health",
-              category: "Nutrition",
-              excerpt: "Foods that reduce inflammation and support mobility",
-              icon: "🥗",
-            },
-            {
-              title: "Sleep, Recovery, and the 40+ Body",
-              category: "Recovery",
-              excerpt: "Why sleep becomes more critical after 40",
-              icon: "😴",
-            },
-            {
-              title: "Progressive Overload for Beginners",
-              category: "Training",
-              excerpt: "How to safely increase intensity without injury",
-              icon: "📈",
-            },
-          ].map((article, i) => (
-            <Card
-              key={i}
-              className="p-4 md:p-6 bg-card border-border hover:border-primary/50 cursor-pointer transition-colors"
-            >
-              <div className="flex gap-4">
-                <div className="text-3xl flex-shrink-0">{article.icon}</div>
-                <div className="flex-1">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-semibold text-foreground text-lg flex-1">{article.title}</h3>
-                    <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded ml-3 flex-shrink-0 whitespace-nowrap">
-                      {article.category}
-                    </span>
+      <main className="pb-24">
+        {/* Hero Section */}
+        <section className="bg-gradient-to-b from-card to-background px-4 py-8 border-b border-border">
+          <div className="max-w-4xl mx-auto">
+            <h1 className="text-headline mb-2">VAULT</h1>
+            <p className="text-muted-foreground">Science library & achievement tracking</p>
+          </div>
+        </section>
+
+        {/* Science Articles */}
+        <section className="px-4 py-8">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-label text-accent mb-4">SCIENCE ARTICLES</h2>
+            
+            <div className="space-y-3">
+              {articles.map((article, idx) => (
+                <div key={idx} className={`card-tuf group ${article.locked ? 'opacity-60' : ''}`}>
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-2xl">{article.icon}</span>
+                        <span className="text-xs font-semibold text-primary bg-primary/20 px-2 py-1 rounded">
+                          {article.category}
+                        </span>
+                        {article.locked && (
+                          <Lock className="w-4 h-4 text-muted-foreground" />
+                        )}
+                      </div>
+                      <h3 className="font-bold text-foreground mb-1 group-hover:text-primary transition-colors">
+                        {article.title}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">{article.excerpt}</p>
+                    </div>
+                    <ChevronRight className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-1" />
                   </div>
-                  <p className="text-sm text-muted-foreground">{article.excerpt}</p>
                 </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Achievements */}
+        <section className="px-4 py-8 border-t border-border">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-label text-accent mb-4">ACHIEVEMENTS</h2>
+            
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {achievements.map((achievement, idx) => (
+                <div
+                  key={idx}
+                  className={`card-tuf text-center ${achievement.unlocked ? '' : 'opacity-40'}`}
+                >
+                  <div className="text-3xl mb-2">{achievement.icon}</div>
+                  <p className="text-xs font-semibold text-foreground">{achievement.title}</p>
+                  {!achievement.unlocked && (
+                    <p className="text-xs text-muted-foreground mt-1">Locked</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Unlockable Content */}
+        <section className="px-4 py-8 border-t border-border">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-label text-accent mb-4">UNLOCK WITH PROGRESS</h2>
+            
+            <div className="space-y-3">
+              <div className="card-tuf opacity-60">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="font-bold text-foreground">Advanced Workout Tier</h3>
+                  <Lock className="w-4 h-4 text-muted-foreground" />
+                </div>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Unlock when MHI reaches 80
+                </p>
+                <div className="w-full bg-secondary rounded-full h-2">
+                  <div className="bg-primary h-2 rounded-full" style={{ width: '72%' }} />
+                </div>
+                <p className="text-xs text-muted-foreground mt-2">72/80 MHI</p>
               </div>
-            </Card>
-          ))}
-        </div>
-      </div>
 
-      {/* Achievements */}
-      <div className="mb-12">
-        <h2 className="text-2xl font-bold mb-6">Achievements</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {[
-            { icon: "🏆", label: "First Workout", unlocked: true },
-            { icon: "🔥", label: "7-Day Streak", unlocked: true },
-            { icon: "💪", label: "Strength Milestone", unlocked: true },
-            { icon: "🎯", label: "30-Day Streak", unlocked: false },
-            { icon: "⚡", label: "Phase Complete", unlocked: false },
-            { icon: "🚀", label: "90-Day Champion", unlocked: false },
-          ].map((achievement, i) => (
-            <Card
-              key={i}
-              className={`p-4 md:p-6 text-center transition-all ${
-                achievement.unlocked
-                  ? "bg-card border-border hover:border-primary/50"
-                  : "bg-secondary/30 border-border/50 opacity-50"
-              }`}
-            >
-              <div className="text-3xl md:text-4xl mb-3">{achievement.icon}</div>
-              <p className="text-xs md:text-sm font-semibold text-foreground">{achievement.label}</p>
-            </Card>
-          ))}
-        </div>
-      </div>
+              <div className="card-tuf opacity-60">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="font-bold text-foreground">Personalized Meal Plans</h3>
+                  <Lock className="w-4 h-4 text-muted-foreground" />
+                </div>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Unlock when you complete 30 days
+                </p>
+                <div className="w-full bg-secondary rounded-full h-2">
+                  <div className="bg-accent h-2 rounded-full" style={{ width: '28%' }} />
+                </div>
+                <p className="text-xs text-muted-foreground mt-2">28/30 Days</p>
+              </div>
 
-      {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="p-6 bg-card border-border">
-          <BookOpen className="w-6 h-6 text-primary mb-3" />
-          <h3 className="font-semibold text-foreground mb-2">Articles Read</h3>
-          <p className="text-3xl font-bold text-primary">12</p>
-          <p className="text-xs text-muted-foreground mt-1">Keep learning and growing</p>
-        </Card>
-        <Card className="p-6 bg-card border-border">
-          <Award className="w-6 h-6 text-accent mb-3" />
-          <h3 className="font-semibold text-foreground mb-2">Achievements Unlocked</h3>
-          <p className="text-3xl font-bold text-accent">3</p>
-          <p className="text-xs text-muted-foreground mt-1">3 more to go!</p>
-        </Card>
-        <Card className="p-6 bg-card border-border">
-          <Zap className="w-6 h-6 text-destructive mb-3" />
-          <h3 className="font-semibold text-foreground mb-2">Knowledge Score</h3>
-          <p className="text-3xl font-bold text-destructive">82%</p>
-          <p className="text-xs text-muted-foreground mt-1">You know your stuff!</p>
-        </Card>
-      </div>
+              <div className="card-tuf opacity-60">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="font-bold text-foreground">1-on-1 Coaching</h3>
+                  <Lock className="w-4 h-4 text-muted-foreground" />
+                </div>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Unlock when you reach 90-day milestone
+                </p>
+                <div className="w-full bg-secondary rounded-full h-2">
+                  <div className="bg-primary h-2 rounded-full" style={{ width: '35%' }} />
+                </div>
+                <p className="text-xs text-muted-foreground mt-2">32/90 Days</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Info Section */}
+        <section className="px-4 py-8 border-t border-border">
+          <div className="max-w-4xl mx-auto bg-secondary rounded-lg p-6 border-l-4 border-accent">
+            <div className="flex gap-3">
+              <BookOpen className="w-5 h-5 text-accent flex-shrink-0 mt-1" />
+              <div>
+                <h4 className="font-bold mb-1">Science-Backed Content</h4>
+                <p className="text-sm text-muted-foreground">
+                  All articles are written by fitness professionals and backed by peer-reviewed research. Your education is our priority.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <TufBottomNav />
     </div>
   );
 }

@@ -1,177 +1,254 @@
-/**
- * TUF MOVE Page — Exercise Library
- * Design System: Exercise cards with video placeholders, coaching cues, stats
- * Muscle group filtering with sticky nav
- */
+import { useState } from 'react';
+import { TufHeader } from '@/components/TufHeader';
+import { TufBottomNav } from '@/components/TufBottomNav';
+import { ChevronDown, Play, Info } from 'lucide-react';
 
-import { useState } from "react";
-import { TUF_DATA, type Exercise } from "@/lib/tuf-data";
-
-const muscleGroups = ["All", "Chest", "Back", "Shoulders"];
-
-export default function Move() {
-  const [selectedMuscle, setSelectedMuscle] = useState("All");
-
-  const filteredExercises = TUF_DATA.exercises.filter((ex) => {
-    if (selectedMuscle === "All") return true;
-    return ex.muscle === selectedMuscle.toLowerCase();
-  });
-
-  const getLevelColor = (level: string) => {
-    switch (level) {
-      case "B":
-        return "badge-green";
-      case "I":
-        return "badge-gold";
-      case "A":
-        return "badge-red";
-      default:
-        return "badge-gray";
-    }
-  };
-
-  const getLevelLabel = (level: string) => {
-    switch (level) {
-      case "B":
-        return "Beginner";
-      case "I":
-        return "Intermediate";
-      case "A":
-        return "Advanced";
-      default:
-        return level;
-    }
-  };
-
-  return (
-    <div className="min-h-screen bg-[#080808] text-[#f2f2f2] pb-20">
-      {/* Header */}
-      <section className="px-4 pt-6 pb-4 border-b border-[#1e1e1e]">
-        <div className="text-xs tracking-widest uppercase text-[#888888] mb-1">Exercise Library</div>
-        <h1 className="font-bebas text-3xl tracking-wider text-white">
-          <span className="text-[#C8973A]">MOVE</span>
-        </h1>
-      </section>
-
-      {/* Muscle Group Filter */}
-      <div className="sticky top-14 z-40 bg-[#0e0e0e] border-b border-[#1e1e1e] px-4 py-3 flex gap-2 overflow-x-auto scrollbar-hide">
-        {muscleGroups.map((muscle) => (
-          <button
-            key={muscle}
-            onClick={() => setSelectedMuscle(muscle)}
-            className={`flex-shrink-0 px-6 py-2 text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap ${
-              selectedMuscle === muscle
-                ? "bg-gradient-to-r from-[#8B0000] to-[#b30000] text-white shadow-lg"
-                : "bg-[#1c1c1c] text-[#888888] hover:text-white"
-            }`}
-            style={{
-              clipPath: "polygon(0% 0%, calc(100% - 10px) 0%, 100% 50%, calc(100% - 10px) 100%, 0% 100%)",
-            }}
-          >
-            {muscle}
-          </button>
-        ))}
-      </div>
-
-      {/* Exercise Cards */}
-      <section className="py-4">
-        {filteredExercises.length === 0 ? (
-          <div className="px-4 py-12 text-center">
-            <div className="text-3xl mb-3">🤔</div>
-            <div className="font-bebas text-lg tracking-wider text-[#333333] mb-2">NO EXERCISES</div>
-            <div className="text-xs text-[#555555]">Try selecting a different muscle group</div>
-          </div>
-        ) : (
-          filteredExercises.map((exercise) => (
-            <ExerciseCard key={exercise.id} exercise={exercise} levelColor={getLevelColor(exercise.level)} levelLabel={getLevelLabel(exercise.level)} />
-          ))
-        )}
-      </section>
-    </div>
-  );
+interface Exercise {
+  id: string;
+  name: string;
+  muscleGroup: string;
+  difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
+  sets: number;
+  reps: number;
+  duration?: string;
+  description: string;
+  coachingCue: string;
+  modification?: string;
 }
 
-function ExerciseCard({
-  exercise,
-  levelColor,
-  levelLabel,
-}: {
-  exercise: Exercise;
-  levelColor: string;
-  levelLabel: string;
-}) {
+const exercises: Exercise[] = [
+  {
+    id: '1',
+    name: 'Glute Bridge',
+    muscleGroup: 'Glutes',
+    difficulty: 'Beginner',
+    sets: 3,
+    reps: 15,
+    duration: '3 sec hold',
+    description: 'Building time under tension at the top',
+    coachingCue: 'Squeeze at the top for 3 seconds. Feel the glute contraction.',
+    modification: 'Single leg for more challenge without adding weight',
+  },
+  {
+    id: '2',
+    name: 'Band Row',
+    muscleGroup: 'Back',
+    difficulty: 'Beginner',
+    sets: 3,
+    reps: 12,
+    duration: '1 sec squeeze',
+    description: 'Add a one-second squeeze at the end of each rep',
+    coachingCue: 'Pull elbows back. Squeeze shoulder blades together.',
+    modification: 'Use lighter band if form breaks down',
+  },
+  {
+    id: '3',
+    name: 'Box Squat',
+    muscleGroup: 'Legs',
+    difficulty: 'Intermediate',
+    sets: 3,
+    reps: 12,
+    duration: 'Pause at bottom',
+    description: 'Same high box, add a brief pause at the bottom before standing',
+    coachingCue: 'Chest up. Knees track over toes. Pause 1 second at bottom.',
+    modification: 'Reduce depth if knee discomfort',
+  },
+  {
+    id: '4',
+    name: 'Farmer Carry',
+    muscleGroup: 'Core',
+    difficulty: 'Intermediate',
+    sets: 3,
+    reps: 40,
+    duration: 'seconds',
+    description: 'Slightly longer hold than week one, same light weight',
+    coachingCue: 'Stand tall. Shoulders back. Engage core.',
+    modification: 'Reduce weight or time if grip fails',
+  },
+  {
+    id: '5',
+    name: 'Chest Press',
+    muscleGroup: 'Chest',
+    difficulty: 'Intermediate',
+    sets: 4,
+    reps: 8,
+    duration: '2 sec lower',
+    description: 'Control the descent. Tempo training builds strength.',
+    coachingCue: 'Lower slowly. Press explosively. Full range of motion.',
+    modification: 'Reduce weight by 10% if shoulder discomfort',
+  },
+  {
+    id: '6',
+    name: 'Deadlift',
+    muscleGroup: 'Posterior Chain',
+    difficulty: 'Advanced',
+    sets: 5,
+    reps: 5,
+    duration: '2 sec hold',
+    description: 'Master the hinge pattern. This builds total body strength.',
+    coachingCue: 'Chest up. Hips back. Neutral spine. Drive through heels.',
+    modification: 'Reduce weight. Focus on form over load.',
+  },
+  {
+    id: '7',
+    name: 'Pull-up',
+    muscleGroup: 'Back',
+    difficulty: 'Advanced',
+    sets: 3,
+    reps: 5,
+    duration: '1 sec pause',
+    description: 'Build pulling strength. Modify as needed.',
+    coachingCue: 'Full range of motion. Chest to bar. Control the descent.',
+    modification: 'Use assistance band or machine if needed',
+  },
+];
+
+const muscleGroups = ['All', 'Glutes', 'Back', 'Legs', 'Chest', 'Core', 'Posterior Chain'];
+
+export default function Move() {
+  const [selectedMuscle, setSelectedMuscle] = useState('All');
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  const filteredExercises = selectedMuscle === 'All' 
+    ? exercises 
+    : exercises.filter(ex => ex.muscleGroup === selectedMuscle);
+
+  const getDifficultyColor = (difficulty: string) => {
+    switch (difficulty) {
+      case 'Beginner':
+        return 'bg-green-900 text-green-100';
+      case 'Intermediate':
+        return 'bg-yellow-900 text-yellow-100';
+      case 'Advanced':
+        return 'bg-red-900 text-red-100';
+      default:
+        return 'bg-gray-700 text-gray-100';
+    }
+  };
+
   return (
-    <div className="tuf-card mx-4 mb-4">
-      {/* Video Placeholder */}
-      <div className="w-full bg-[#080808] relative overflow-hidden mb-4" style={{ paddingTop: "56.25%" }}>
-        <div
-          className="absolute inset-0 flex flex-col items-center justify-center gap-3"
-          style={{ background: "linear-gradient(160deg, rgba(139,0,0,0.08) 0%, #080808 100%)" }}
-        >
-          <div
-            className="w-14 h-14 bg-[rgba(139,0,0,0.18)] border-2 border-[#C8973A] flex items-center justify-center text-white text-xl"
-            style={{ clipPath: "polygon(0% 0%, calc(100% - 10px) 0%, 100% 50%, calc(100% - 10px) 100%, 0% 100%)" }}
-          >
-            ▶
+    <div className="min-h-screen bg-background text-foreground">
+      <TufHeader />
+
+      <main className="pb-24">
+        {/* Hero Section */}
+        <section className="bg-gradient-to-b from-card to-background px-4 py-8 border-b border-border">
+          <div className="max-w-4xl mx-auto">
+            <h1 className="text-headline mb-2">MOVE</h1>
+            <p className="text-muted-foreground">33 exercises • Progressive difficulty • Strength focus</p>
           </div>
-          <div className="text-xs text-[#555555] tracking-widest uppercase">Video</div>
-          <div className="font-bebas text-sm text-[#333333] text-center px-4">{exercise.name}</div>
-        </div>
-      </div>
+        </section>
 
-      {/* Tags */}
-      <div className="flex flex-wrap gap-2 mb-3">
-        <span className={`tuf-badge ${levelColor}`}>{levelLabel}</span>
-        <span className="tuf-badge badge-gold">{exercise.equipment}</span>
-      </div>
-
-      {/* Exercise Name */}
-      <h3 className="font-bebas text-2xl tracking-wider text-white mb-1">{exercise.name}</h3>
-
-      {/* Muscles */}
-      <div className="text-xs text-[#888888] mb-3">
-        <div className="font-bold text-white">{exercise.primaryMuscle}</div>
-        <div className="text-[#555555]">{exercise.secondaryMuscle}</div>
-      </div>
-
-      {/* Stats Grid */}
-      <div className="grid grid-cols-4 gap-2 mb-4">
-        {[
-          { label: "Sets", value: exercise.sets },
-          { label: "Reps", value: exercise.reps },
-          { label: "Rest", value: exercise.rest },
-          { label: "Tempo", value: exercise.tempo },
-        ].map((stat) => (
-          <div key={stat.label} className="bg-[#0e0e0e] border border-[#1e1e1e] p-2 text-center relative">
-            <div
-              className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#C8973A] opacity-30"
-            />
-            <div className="font-bebas text-sm text-[#C8973A] tracking-wider">{stat.value}</div>
-            <div className="text-xs text-[#333333] uppercase tracking-wider mt-1">{stat.label}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Coaching Cue */}
-      <div className="bg-[#0e0e0e] border border-[#1e1e1e] border-l-4 border-l-[#C8973A] p-3 mb-3">
-        <div className="text-xs font-bold uppercase tracking-widest text-[#C8973A] mb-2">Coaching Cue</div>
-        <div className="text-xs text-[#888888] leading-relaxed">{exercise.coachingCue}</div>
-      </div>
-
-      {/* Modifications */}
-      {exercise.modifications.length > 0 && (
-        <div>
-          <div className="text-xs font-bold uppercase tracking-widest text-[#4caf50] mb-2">Modifications</div>
-          {exercise.modifications.map((mod, idx) => (
-            <div key={idx} className="flex gap-2 mb-2 text-xs">
-              <div className="w-1 h-1 rounded-full bg-[#4caf50] flex-shrink-0 mt-1.5" />
-              <div className="text-[#888888]">
-                <span className="text-white font-bold">{mod.condition}:</span> {mod.mod}
-              </div>
+        {/* Muscle Group Filter */}
+        <section className="px-4 py-6 border-b border-border sticky top-0 bg-background z-10">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex gap-2 overflow-x-auto pb-2">
+              {muscleGroups.map(group => (
+                <button
+                  key={group}
+                  onClick={() => setSelectedMuscle(group)}
+                  className={`px-4 py-2 rounded-full font-semibold text-sm whitespace-nowrap transition-all duration-200 ${
+                    selectedMuscle === group
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-secondary text-foreground hover:bg-opacity-80'
+                  }`}
+                >
+                  {group}
+                </button>
+              ))}
             </div>
-          ))}
-        </div>
-      )}
+          </div>
+        </section>
+
+        {/* Exercise List */}
+        <section className="px-4 py-6">
+          <div className="max-w-4xl mx-auto space-y-4">
+            {filteredExercises.map(exercise => (
+              <div key={exercise.id} className="card-tuf">
+                <button
+                  onClick={() => setExpandedId(expandedId === exercise.id ? null : exercise.id)}
+                  className="w-full text-left"
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1">
+                      <h3 className="text-lg font-bold mb-1">{exercise.name}</h3>
+                      <p className="text-sm text-muted-foreground">{exercise.muscleGroup}</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className={`text-xs font-semibold px-3 py-1 rounded-full ${getDifficultyColor(exercise.difficulty)}`}>
+                        {exercise.difficulty}
+                      </span>
+                      <ChevronDown
+                        className={`w-5 h-5 text-primary transition-transform duration-300 ${
+                          expandedId === exercise.id ? 'rotate-180' : ''
+                        }`}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Quick Stats */}
+                  <div className="flex gap-4 mt-3 pt-3 border-t border-border">
+                    <div className="text-sm">
+                      <p className="text-muted-foreground text-xs">SETS</p>
+                      <p className="font-bold text-primary">{exercise.sets}</p>
+                    </div>
+                    <div className="text-sm">
+                      <p className="text-muted-foreground text-xs">REPS</p>
+                      <p className="font-bold text-primary">{exercise.reps}</p>
+                    </div>
+                    {exercise.duration && (
+                      <div className="text-sm">
+                        <p className="text-muted-foreground text-xs">TIMING</p>
+                        <p className="font-bold text-primary">{exercise.duration}</p>
+                      </div>
+                    )}
+                  </div>
+                </button>
+
+                {/* Expanded Content */}
+                {expandedId === exercise.id && (
+                  <div className="mt-4 pt-4 border-t border-border space-y-4 animate-in fade-in duration-200">
+                    <div>
+                      <h4 className="text-label text-primary mb-2">DESCRIPTION</h4>
+                      <p className="text-sm text-foreground">{exercise.description}</p>
+                    </div>
+
+                    <div className="bg-secondary rounded p-3">
+                      <h4 className="text-label text-accent mb-2">💡 COACHING CUE</h4>
+                      <p className="text-sm text-foreground">{exercise.coachingCue}</p>
+                    </div>
+
+                    {exercise.modification && (
+                      <div className="bg-secondary rounded p-3">
+                        <h4 className="text-label text-primary mb-2">🔄 MODIFICATION</h4>
+                        <p className="text-sm text-foreground">{exercise.modification}</p>
+                      </div>
+                    )}
+
+                    <button className="btn-primary w-full">
+                      <Play className="w-4 h-4 inline mr-2" />
+                      Start Exercise
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Info Section */}
+        <section className="px-4 py-6">
+          <div className="max-w-4xl mx-auto bg-secondary rounded-lg p-6 border-l-4 border-primary flex gap-3">
+            <Info className="w-5 h-5 text-primary flex-shrink-0 mt-1" />
+            <div>
+              <h4 className="font-bold mb-1">Progressive Overload</h4>
+              <p className="text-sm text-muted-foreground">Each week, add 1-2 reps or increase weight by 5%. Small increments build lasting strength.</p>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <TufBottomNav />
     </div>
   );
 }
