@@ -31,7 +31,7 @@ export function TufHeader() {
           </button>
 
           {/* Avatar */}
-          <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold cursor-pointer hover:shadow-lg transition-shadow">
+          <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold cursor-pointer hover:shadow-lg transition-shadow">
             A
           </div>
         </div>

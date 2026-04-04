@@ -52,7 +52,7 @@ export default function Move() {
                 onClick={() => setSelectedMuscle(muscle === 'All' ? null : muscle)}
                 className={`px-4 py-2 rounded-lg font-bold text-sm transition-all ${
                   (selectedMuscle === muscle || (muscle === 'All' && !selectedMuscle))
-                    ? 'bg-primary text-white'
+                    ? 'bg-primary text-primary-foreground'
                     : 'bg-secondary text-foreground hover:bg-muted'
                 }`}
               >
@@ -100,7 +100,7 @@ export default function Move() {
                     <p className="text-xs text-muted-foreground font-bold mb-1">SETS</p>
                     <p className="font-bold text-primary">{exercise.sets}</p>
                   </div>
-                  <button className="ml-auto px-4 py-2 bg-primary text-white rounded font-bold hover:bg-red-700 transition-colors">
+                  <button className="ml-auto px-4 py-2 bg-primary text-primary-foreground rounded font-bold hover:bg-primary/90 transition-colors">
                     START
                   </button>
                 </div>
