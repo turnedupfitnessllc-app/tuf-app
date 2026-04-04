@@ -123,7 +123,10 @@ export default function Feast() {
         {/* Hero Section */}
         <section className="bg-gradient-to-b from-card to-background px-4 py-8 border-b border-border">
           <div className="max-w-4xl mx-auto">
-            <h1 className="text-headline mb-2">FEAST</h1>
+            <h1 className="heading-blade-lg mb-2">
+              <span className="text-black">LET'S </span>
+              <span className="text-primary">FEAST</span>
+            </h1>
             <p className="text-muted-foreground">43 recipes • Full macros • 40+ science notes</p>
           </div>
         </section>
