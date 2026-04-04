@@ -1,27 +1,37 @@
-/**
- * TUF Header Component
- * Design System: Dark theme with gold accents, sticky positioning
- * Bebas Neue for brand, Barlow Condensed for secondary text
- */
+import { useTheme } from '@/contexts/ThemeContext';
+import { Moon, Sun } from 'lucide-react';
 
 export function TufHeader() {
+  const { theme, toggleTheme } = useTheme();
+
   return (
-    <header className="sticky top-0 z-50 bg-[#0e0e0e] border-b border-[#1e1e1e] shadow-sm" style={{ boxShadow: '0 1px 0 rgba(200,151,58,0.12)' }}>
-      <div className="max-w-[480px] mx-auto px-4 py-3 flex items-center justify-between">
+    <header className="header-exec">
+      <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
         {/* Brand */}
-        <div className="font-bebas text-2xl tracking-widest text-white">
-          TUF <span className="text-[#C8973A]">MOVE</span>
+        <div className="flex items-center gap-2">
+          <div className="text-2xl font-bold">
+            <span className="text-foreground">TUF</span>
+            <span className="text-gradient ml-1">MOVE</span>
+          </div>
         </div>
 
         {/* Right section */}
-        <div className="flex items-center gap-2">
-          {/* Status pill */}
-          <div className="text-xs tracking-widest uppercase text-[#b30000] bg-[rgba(139,0,0,0.15)] border border-[rgba(139,0,0,0.35)] px-2 py-0.5">
-            ACTIVE
-          </div>
+        <div className="flex items-center gap-3">
+          {/* Theme Toggle */}
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-lg hover:bg-secondary transition-colors"
+            aria-label="Toggle theme"
+          >
+            {theme === 'light' ? (
+              <Moon className="w-5 h-5 text-foreground" />
+            ) : (
+              <Sun className="w-5 h-5 text-foreground" />
+            )}
+          </button>
 
           {/* Avatar */}
-          <div className="w-8 h-8 rounded-full bg-[#8B0000] border border-[#7a5a1e] flex items-center justify-center font-bebas text-sm text-[#C8973A] cursor-pointer">
+          <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold cursor-pointer hover:shadow-lg transition-shadow">
             A
           </div>
         </div>

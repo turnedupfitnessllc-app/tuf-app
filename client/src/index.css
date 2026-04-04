@@ -43,11 +43,11 @@
 }
 
 :root {
-  /* Apple-inspired color system */
-  --primary: #C0392B;        /* TUF Red */
+  /* Executive color system - Bright/Light Mode */
+  --primary: #C0392B;        /* TUF Red - Bold accent */
   --primary-foreground: #fff;
-  --accent: #F5A623;         /* TUF Gold */
-  --accent-foreground: #0D0D0D;
+  --accent: #F5A623;         /* TUF Gold - Secondary accent */
+  --accent-foreground: #fff;
   --sidebar-primary: #C0392B;
   --sidebar-primary-foreground: #fff;
   --chart-1: #FF6B6B;
@@ -55,29 +55,29 @@
   --chart-3: #4ECDC4;
   --chart-4: #45B7D1;
   --chart-5: #96CEB4;
-  --radius: 0.75rem;
+  --radius: 0.875rem;
   
-  /* Dark mode base */
-  --background: oklch(0.08 0 0);           /* Deep black #0D0D0D */
-  --foreground: oklch(0.98 0 0);           /* Off-white */
-  --card: oklch(0.12 0 0);                 /* Slightly lighter black */
-  --card-foreground: oklch(0.98 0 0);
-  --popover: oklch(0.12 0 0);
-  --popover-foreground: oklch(0.98 0 0);
-  --secondary: oklch(0.15 0 0);            /* Subtle gray */
-  --secondary-foreground: oklch(0.85 0 0);
-  --muted: oklch(0.20 0 0);
-  --muted-foreground: oklch(0.70 0 0);
+  /* Light mode base */
+  --background: oklch(0.99 0 0);           /* Off-white #FAFAFA */
+  --foreground: oklch(0.15 0 0);           /* Dark gray/black */
+  --card: oklch(1 0 0);                    /* Pure white */
+  --card-foreground: oklch(0.15 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.15 0 0);
+  --secondary: oklch(0.95 0 0);            /* Light gray */
+  --secondary-foreground: oklch(0.35 0 0);
+  --muted: oklch(0.92 0 0);
+  --muted-foreground: oklch(0.50 0 0);
   --destructive: #FF3B30;
-  --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(0.20 0 0);
-  --input: oklch(0.15 0 0);
+  --destructive-foreground: #fff;
+  --border: oklch(0.90 0 0);
+  --input: oklch(0.95 0 0);
   --ring: #C0392B;
-  --sidebar: oklch(0.12 0 0);
-  --sidebar-foreground: oklch(0.98 0 0);
+  --sidebar: oklch(1 0 0);
+  --sidebar-foreground: oklch(0.15 0 0);
   --sidebar-accent: #F5A623;
-  --sidebar-accent-foreground: #0D0D0D;
-  --sidebar-border: oklch(0.20 0 0);
+  --sidebar-accent-foreground: #fff;
+  --sidebar-border: oklch(0.90 0 0);
   --sidebar-ring: #C0392B;
 }
 
@@ -101,11 +101,6 @@
   input[type="checkbox"]:not(:disabled),
   input[type="radio"]:not(:disabled) {
     @apply cursor-pointer;
-  }
-
-  /* Apple-smooth transitions */
-  * {
-    @apply transition-all duration-300 ease-out;
   }
 
   /* Typography hierarchy */
@@ -156,96 +151,67 @@
     min-width: 0;
   }
 
-  /* Apple-inspired glass card */
-  .card-glass {
-    @apply bg-card/40 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-card/50 transition-all duration-300;
+  /* Executive card - clean white with subtle shadow */
+  .card-exec {
+    @apply bg-card border border-border rounded-2xl p-6;
   }
 
-  /* Premium button with smooth hover */
+  .card-exec:hover {
+    @apply shadow-lg;
+  }
+
+  /* Premium button with gradient */
   .btn-premium {
     @apply px-6 py-3 rounded-xl font-semibold text-sm tracking-wide;
-    @apply bg-gradient-to-r from-primary to-red-600;
-    @apply text-white shadow-lg hover:shadow-xl;
-    @apply hover:scale-105 active:scale-95;
-    @apply transition-all duration-300 ease-out;
+    @apply text-white shadow-md;
+    background: linear-gradient(135deg, #C0392B 0%, #A03428 100%);
   }
 
-  .btn-premium-secondary {
+  .btn-premium:hover {
+    @apply shadow-lg scale-105;
+  }
+
+  .btn-premium:active {
+    @apply scale-95;
+  }
+
+  .btn-secondary {
     @apply px-6 py-3 rounded-xl font-semibold text-sm tracking-wide;
-    @apply bg-secondary/50 border border-white/10;
-    @apply text-foreground hover:bg-secondary;
-    @apply hover:scale-105 active:scale-95;
-    @apply transition-all duration-300 ease-out;
+    @apply bg-secondary border border-border;
+    @apply text-foreground;
   }
 
-  /* Smooth stat card */
-  .stat-card {
-    @apply card-glass flex flex-col items-start;
-    @apply group cursor-pointer;
+  .btn-secondary:hover {
+    @apply bg-border scale-105;
   }
 
-  .stat-card:hover {
-    @apply border-primary/50;
-  }
-
-  /* Gradient text */
+  /* Gradient text - strategic pop */
   .text-gradient {
-    @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
+    background: linear-gradient(135deg, #C0392B 0%, #FF6B6B 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
-  /* Smooth divider */
-  .divider-smooth {
-    @apply h-px bg-gradient-to-r from-transparent via-white/10 to-transparent;
+  .text-gradient-accent {
+    background: linear-gradient(135deg, #F5A623 0%, #FFB84D 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
   /* Apple-style badge */
-  .badge-apple {
+  .badge-exec {
     @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold;
     @apply bg-primary/10 text-primary border border-primary/20;
   }
 
-  /* Smooth skeleton loader */
-  @keyframes shimmer {
-    0% {
-      background-position: -1000px 0;
-    }
-    100% {
-      background-position: 1000px 0;
-    }
+  .badge-accent {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold;
+    @apply bg-accent/10 text-accent border border-accent/20;
   }
 
-  .skeleton {
-    @apply bg-secondary rounded-lg;
-    background: linear-gradient(90deg, var(--secondary) 25%, rgba(255,255,255,0.1) 50%, var(--secondary) 75%);
-    background-size: 1000px 100%;
-    animation: shimmer 2s infinite;
-  }
-
-  /* Smooth focus ring */
-  .focus-ring {
-    @apply focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 focus:ring-offset-background;
-  }
-
-  /* Premium input */
-  .input-premium {
-    @apply w-full px-4 py-3 rounded-xl;
-    @apply bg-secondary/50 border border-white/10;
-    @apply text-foreground placeholder-muted-foreground;
-    @apply focus:bg-secondary focus:border-primary/50;
-    @apply transition-all duration-300;
-  }
-
-  /* Smooth hover lift effect */
-  .hover-lift {
-    @apply hover:-translate-y-1 hover:shadow-lg transition-all duration-300;
-  }
-
-  /* Apple-style header */
-  .header-apple {
-    @apply sticky top-0 z-50 backdrop-blur-xl bg-background/80 border-b border-white/10;
-  }
-
-  /* Smooth fade in animation */
+  /* Smooth animations */
   @keyframes fadeIn {
     from {
       opacity: 0;
@@ -261,7 +227,6 @@
     animation: fadeIn 0.5s ease-out;
   }
 
-  /* Smooth scale animation */
   @keyframes scaleIn {
     from {
       opacity: 0;
@@ -276,4 +241,68 @@
   .scale-in {
     animation: scaleIn 0.3s ease-out;
   }
+
+  /* Hover lift effect */
+  .hover-lift {
+    transition: all 0.3s ease-out;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Divider */
+  .divider-light {
+    @apply h-px bg-border;
+  }
+
+  /* Premium input */
+  .input-exec {
+    @apply w-full px-4 py-3 rounded-xl;
+    @apply bg-secondary border border-border;
+    @apply text-foreground placeholder-muted-foreground;
+  }
+
+  .input-exec:focus {
+    @apply bg-white border-primary/50 ring-1 ring-primary/20;
+  }
+
+  /* Header */
+  .header-exec {
+    @apply sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-border;
+  }
+}
+
+.dark {
+  /* Dark mode colors */
+  --primary: #FF5252;
+  --primary-foreground: #fff;
+  --accent: #FFB84D;
+  --accent-foreground: #000;
+  --sidebar-primary: #FF5252;
+  --sidebar-primary-foreground: #fff;
+  
+  /* Dark mode base */
+  --background: oklch(0.15 0 0);
+  --foreground: oklch(0.95 0 0);
+  --card: oklch(0.22 0 0);
+  --card-foreground: oklch(0.95 0 0);
+  --popover: oklch(0.22 0 0);
+  --popover-foreground: oklch(0.95 0 0);
+  --secondary: oklch(0.25 0 0);
+  --secondary-foreground: oklch(0.85 0 0);
+  --muted: oklch(0.30 0 0);
+  --muted-foreground: oklch(0.70 0 0);
+  --destructive: #FF5252;
+  --destructive-foreground: #000;
+  --border: oklch(0.30 0 0);
+  --input: oklch(0.25 0 0);
+  --ring: #FF5252;
+  --sidebar: oklch(0.22 0 0);
+  --sidebar-foreground: oklch(0.95 0 0);
+  --sidebar-accent: #FFB84D;
+  --sidebar-accent-foreground: #000;
+  --sidebar-border: oklch(0.30 0 0);
+  --sidebar-ring: #FF5252;
 }
