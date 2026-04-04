@@ -1,0 +1,2527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>TUF — TurnedUp Fitness</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════
+   TUF DESIGN SYSTEM — LOCKED v2
+   #080808 · #8B0000 · #C8973A
+═══════════════════════════════════════════════ */
+:root {
+  /* ── Backgrounds ── */
+  --bg:           #080808;
+  --bg2:          #0e0e0e;
+  --bg3:          #141414;
+  --bg4:          #1c1c1c;
+  --bg5:          #242424;
+
+  /* ── Borders ── */
+  --border:       #1e1e1e;
+  --border-lo:    #1a1a1a;
+  --border-hi:    #2a2a2a;
+
+  /* ── Red ── */
+  --red:          #8B0000;
+  --red-hi:       #b30000;
+  --red-dark:     #c0392b;
+  --red-glow:     rgba(139,0,0,0.35);
+  --red-fade:     rgba(139,0,0,0.08);
+  --red-mid:      rgba(139,0,0,0.18);
+
+  /* ── Gold ── */
+  --gold:         #C8973A;
+  --gold-lo:      #7a5a1e;
+  --gold-hi:      #e0a840;
+  --gold-bright:  #f0b850;
+  --gold-fade:    rgba(200,151,58,0.08);
+  --gold-glow:    rgba(200,151,58,0.28);
+  --gold-border:  rgba(200,151,58,0.3);
+
+  /* ── Text ── */
+  --white:        #f2f2f2;
+  --white-lo:     rgba(242,242,242,0.06);
+  --gray:         #888888;
+  --gray-lo:      #555555;
+  --dim:          #333333;
+
+  /* ── Semantic ── */
+  --ok:           #4caf50;
+  --ok-fade:      rgba(76,175,80,0.1);
+  --ok-border:    rgba(76,175,80,0.3);
+  --warn:         #C8973A;
+  --danger:       #b30000;
+  --blue:         #4A90D9;
+
+  /* ── Screen Accents ── */
+  --accent-move:  #C8973A;
+  --accent-fuel:  #4caf50;
+  --accent-feast: #f97316;
+  --feast-dark:   #c2510a;
+  --vault-purple: #a78bfa;
+  --accent-vault: #a78bfa;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background:var(--bg);
+  color:var(--white);
+  font-family:'Barlow Condensed', 'Trebuchet MS', sans-serif;
+  max-width:480px;
+  margin:0 auto;
+  min-height:100vh;
+  overflow-x:hidden;
+  padding-bottom:72px;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width:3px; height:3px; }
+::-webkit-scrollbar-track { background:var(--bg); }
+::-webkit-scrollbar-thumb { background:var(--dim); }
+
+/* ═══════════════════════════════════════════════
+   SCREENS
+═══════════════════════════════════════════════ */
+.screen { display:none; min-height:100vh; }
+.screen.active { display:block; animation:screenIn 0.2s ease; }
+@keyframes screenIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+/* ═══════════════════════════════════════════════
+   TOP HEADER
+═══════════════════════════════════════════════ */
+.tuf-header {
+  background:var(--bg2);
+  border-bottom:1px solid var(--border);
+  box-shadow:0 1px 0 rgba(200,151,58,0.12);
+  padding:14px 18px 12px;
+  position:sticky; top:0; z-index:200;
+  display:flex; align-items:center; justify-content:space-between;
+}
+
+.header-brand {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:22px; letter-spacing:4px; color:var(--white);
+}
+.header-brand span { color:var(--gold); }
+
+.header-right { display:flex; align-items:center; gap:10px; }
+
+.header-pill {
+  font-size:9px; letter-spacing:3px; text-transform:uppercase;
+  background:rgba(139,0,0,0.15); border:1px solid rgba(139,0,0,0.35);
+  color:var(--red-hi); padding:3px 9px;
+}
+
+.header-avatar {
+  width:32px; height:32px; border-radius:50%;
+  background:var(--red); border:1px solid var(--gold-lo);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Bebas Neue',sans-serif; font-size:14px; color:var(--gold);
+  cursor:pointer;
+}
+
+/* ═══════════════════════════════════════════════
+   BOTTOM NAV
+═══════════════════════════════════════════════ */
+.bottom-nav {
+  position:fixed; bottom:0; left:50%; transform:translateX(-50%);
+  width:100%; max-width:480px;
+  background:var(--bg2);
+  border-top:2px solid var(--red);
+  box-shadow:0 -4px 24px rgba(0,0,0,0.7);
+  display:flex; z-index:300;
+}
+
+.nav-btn {
+  flex:1; padding:10px 2px 8px; border:none; background:transparent;
+  color:var(--dim); display:flex; flex-direction:column; align-items:center;
+  gap:3px; cursor:pointer; border-top:2px solid transparent; margin-top:-2px;
+  transition:all 0.15s;
+}
+
+.nav-btn.active { color:var(--gold); border-top-color:var(--gold); background:linear-gradient(180deg, rgba(200,151,58,0.06) 0%, transparent 100%); }
+.nav-btn.active .nav-icon { filter:drop-shadow(0 0 6px rgba(200,151,58,0.5)); }
+
+.nav-icon { font-size:20px; line-height:1; }
+.nav-label { font-size:8px; text-transform:uppercase; letter-spacing:1.5px; font-weight:700; font-family:'Barlow Condensed',sans-serif; }
+
+/* ═══════════════════════════════════════════════
+   SHARED COMPONENTS
+═══════════════════════════════════════════════ */
+
+/* Section title */
+.section-title {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:18px; letter-spacing:4px; color:var(--white);
+  padding:20px 18px 10px;
+  display:flex; align-items:center; justify-content:space-between;
+  border-left:3px solid var(--red);
+  padding-left:14px;
+  margin-left:14px;
+  margin-right:14px;
+  padding-top:16px;
+  padding-bottom:8px;
+}
+.section-title span { color:var(--gold); }
+.section-title-action {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:10px; letter-spacing:2px; color:var(--gold);
+  text-transform:uppercase; opacity:0.7; cursor:pointer;
+}
+
+/* Card */
+.tuf-card {
+  background:var(--bg3);
+  border:1px solid var(--border);
+  margin:0 14px 12px;
+  padding:16px;
+  position:relative;
+  overflow:hidden;
+}
+
+.tuf-card.gold-border { border-left:3px solid var(--gold); }
+.tuf-card.red-border  { border-left:3px solid var(--red); }
+.tuf-card.ok-border   { border-left:3px solid var(--ok); }
+
+/* Card top bar hover effect */
+.tuf-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:var(--gold); transform:scaleX(0); transform-origin:left;
+  transition:transform 0.3s;
+}
+.tuf-card:hover::before { transform:scaleX(1); }
+
+/* Card label */
+.card-label {
+  font-size:8px; letter-spacing:4px; text-transform:uppercase;
+  color:var(--gray); margin-bottom:6px;
+}
+.card-label.gold { color:var(--gold); }
+.card-label.red  { color:var(--red-hi); }
+
+/* Card value */
+.card-value {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:36px; letter-spacing:2px; color:var(--white); line-height:1;
+}
+.card-value.gold  { color:var(--gold); }
+.card-value.ok    { color:var(--ok); }
+.card-value.warn  { color:var(--warn); }
+.card-value.small { font-size:22px; }
+
+/* Badge */
+.tuf-badge {
+  font-size:8px; letter-spacing:2px; text-transform:uppercase;
+  padding:3px 8px; display:inline-block;
+}
+.badge-gold  { background:rgba(200,151,58,0.12); color:var(--gold);    border:1px solid rgba(200,151,58,0.3); }
+.badge-green { background:rgba(76,175,80,0.1);   color:var(--ok);      border:1px solid rgba(76,175,80,0.3); }
+.badge-red   { background:rgba(139,0,0,0.15);    color:#ff5555;        border:1px solid rgba(139,0,0,0.4); }
+.badge-gray  { background:rgba(255,255,255,0.05); color:var(--gray);   border:1px solid var(--dim); }
+.badge-warn  { background:rgba(200,151,58,0.1);  color:var(--warn);    border:1px solid rgba(200,151,58,0.3); }
+
+/* Progress bar */
+.progress-bar { height:5px; background:var(--bg5); margin-top:8px; border-radius:1px; }
+.progress-fill { height:100%; transition:width 1.2s cubic-bezier(0.4,0,0.2,1); border-radius:1px; }
+.progress-fill.gold    { background:var(--gold); }
+.progress-fill.ok      { background:var(--ok); }
+.progress-fill.red     { background:var(--red-hi); }
+.progress-fill.warn    { background:var(--warn); }
+
+/* ═══════════════════════════════════════════════
+   TUF BUTTON SYSTEM v2
+   Diagonal slash + gradient — dark premium
+   Reference: angled right-edge cut, gradient fill,
+   arrow icon, Bebas Neue caps
+═══════════════════════════════════════════════ */
+
+/* ── BASE ── */
+.tuf-btn {
+  display: block;
+  width: calc(100% - 28px);
+  margin: 0 14px 12px;
+  padding: 13px 48px 13px 20px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 16px;
+  letter-spacing: 4px;
+  text-align: left;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  text-transform: uppercase;
+  overflow: hidden;
+  /* Diagonal right-edge slash — matches reference */
+  clip-path: polygon(0% 0%, calc(100% - 20px) 0%, 100% 50%, calc(100% - 20px) 100%, 0% 100%);
+}
+
+/* Arrow on right — injected via ::after pseudo */
+.tuf-btn::after {
+  content: '›';
+  position: absolute;
+  right: 22px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 22px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 300;
+  line-height: 1;
+  transition: right 0.2s ease;
+  opacity: 0.8;
+}
+.tuf-btn:hover::after { right: 16px; opacity: 1; }
+
+/* Shine sweep on hover */
+.tuf-btn::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -75%;
+  width: 50%; height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.08), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.4s ease;
+}
+.tuf-btn:hover::before { left: 125%; }
+
+/* ── PRIMARY — Red gradient (dark red → bright red) ── */
+.tuf-btn.primary {
+  background: linear-gradient(90deg, var(--red) 0%, var(--red-hi) 60%, var(--red-dark) 100%);
+  color: var(--white);
+  box-shadow: 0 2px 12px var(--red-glow);
+}
+.tuf-btn.primary:hover {
+  background: linear-gradient(90deg, var(--red-hi) 0%, var(--red-dark) 60%, #e74c3c 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px var(--red-glow);
+}
+.tuf-btn.primary:active { transform: translateY(0); box-shadow: none; }
+
+/* ── GOLD — Gold gradient (dark gold → bright gold) ── */
+.tuf-btn.gold {
+  background: linear-gradient(90deg, var(--gold-lo) 0%, var(--gold) 60%, var(--gold-hi) 100%);
+  color: var(--bg);
+  box-shadow: 0 2px 12px var(--gold-glow);
+  clip-path: polygon(0% 0%, calc(100% - 20px) 0%, 100% 50%, calc(100% - 20px) 100%, 0% 100%);
+}
+.tuf-btn.gold::after { color: var(--bg); }
+.tuf-btn.gold:hover {
+  background: linear-gradient(90deg, var(--gold) 0%, var(--gold-hi) 60%, var(--gold-bright) 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 18px var(--gold-glow);
+}
+.tuf-btn.gold:active { transform: translateY(0); box-shadow: none; }
+
+/* ── OUTLINE — Dark fill, white border, diagonal slash ── */
+.tuf-btn.outline {
+  background: var(--bg3);
+  color: var(--white);
+  border: 1.5px solid var(--white);
+  /* Clip doesn't work with border, use box approach */
+  clip-path: none;
+  position: relative;
+}
+/* Re-do slash shape with skew on outline */
+.tuf-btn.outline {
+  clip-path: polygon(0% 0%, calc(100% - 20px) 0%, 100% 50%, calc(100% - 20px) 100%, 0% 100%);
+  border: none;
+  /* Simulate border with box-shadow */
+  box-shadow: inset 0 0 0 1.5px var(--white);
+}
+.tuf-btn.outline:hover {
+  background: var(--bg4);
+  box-shadow: inset 0 0 0 1.5px var(--gold);
+  color: var(--gold);
+}
+
+/* ── OUTLINE-GOLD — Transparent, gold border ── */
+.tuf-btn.outline-gold {
+  background: transparent;
+  color: var(--gold);
+  clip-path: polygon(0% 0%, calc(100% - 20px) 0%, 100% 50%, calc(100% - 20px) 100%, 0% 100%);
+  box-shadow: inset 0 0 0 1.5px var(--gold);
+}
+.tuf-btn.outline-gold::after { color: var(--gold); }
+.tuf-btn.outline-gold:hover {
+  background: var(--gold-fade);
+  color: var(--white);
+  box-shadow: inset 0 0 0 1.5px var(--white);
+}
+.tuf-btn.outline-gold:hover::after { color: var(--white); }
+
+/* ── GHOST — Subtle, no fill, dim border ── */
+.tuf-btn.ghost {
+  background: transparent;
+  color: var(--gray);
+  clip-path: polygon(0% 0%, calc(100% - 20px) 0%, 100% 50%, calc(100% - 20px) 100%, 0% 100%);
+  box-shadow: inset 0 0 0 1px var(--dim);
+  font-size: 12px;
+  letter-spacing: 2px;
+  font-family: 'Barlow Condensed', sans-serif;
+  padding: 11px 44px 11px 18px;
+}
+.tuf-btn.ghost::after { font-size: 18px; opacity: 0.4; }
+.tuf-btn.ghost:hover {
+  color: var(--white);
+  box-shadow: inset 0 0 0 1px var(--gray);
+}
+
+/* ── TEXT LINK — No shape, underlined gold ── */
+.tuf-btn.text-link {
+  background: transparent;
+  color: var(--gold);
+  border: none;
+  clip-path: none;
+  box-shadow: none;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 14px;
+  letter-spacing: 1px;
+  padding: 10px 20px;
+  width: auto;
+  display: inline-block;
+  margin: 0;
+  text-align: center;
+}
+.tuf-btn.text-link::after { display: none; }
+.tuf-btn.text-link::before { display: none; }
+.tuf-btn.text-link:hover { color: var(--white); text-decoration-color: var(--gold); }
+
+/* Insight strip (Panther) */
+.panther-strip {
+  display:flex; align-items:center; gap:12px;
+  padding:12px 16px; margin:0 14px 12px;
+  background:var(--red-fade);
+  border:1px solid rgba(139,0,0,0.25);
+  border-left:3px solid var(--red);
+}
+.panther-avatar-sm {
+  width:40px; height:40px; border-radius:50%;
+  background:var(--bg4); border:1px solid var(--red);
+  display:flex; align-items:center; justify-content:center;
+  font-size:20px; flex-shrink:0;
+  animation:eyeGlow 3s ease-in-out infinite;
+}
+@keyframes eyeGlow {
+  0%,100% { box-shadow:inset 0 0 10px rgba(200,151,58,0.1); }
+  50%     { box-shadow:inset 0 0 16px rgba(200,151,58,0.3); }
+}
+.panther-insight-text { font-size:13px; color:var(--white); line-height:1.45; }
+.panther-insight-text strong { color:var(--gold); }
+.panther-name { font-size:8px; letter-spacing:3px; color:var(--gold); text-transform:uppercase; margin-bottom:3px; opacity:0.8; }
+
+/* Ring */
+.ring-wrap { position:relative; flex-shrink:0; }
+.ring-wrap svg { transform:rotate(-90deg); }
+.ring-center {
+  position:absolute; inset:0;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+}
+.ring-val {
+  font-family:'Bebas Neue',sans-serif; font-size:20px;
+  color:var(--gold); letter-spacing:1px; line-height:1;
+}
+.ring-denom { font-size:8px; color:var(--gray); letter-spacing:1px; }
+
+/* Science strip */
+.science-strip {
+  margin:0 14px 8px;
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-left:3px solid var(--gold);
+  padding:10px 12px;
+}
+.sci-lbl { font-size:8px; color:var(--gold); font-weight:700; text-transform:uppercase; letter-spacing:2px; margin-bottom:4px; }
+.sci-txt { font-size:12px; color:var(--gray); line-height:1.65; }
+
+/* Horizontal scroll row */
+.h-scroll { display:flex; gap:10px; padding:0 14px 4px; overflow-x:auto; scrollbar-width:none; }
+.h-scroll::-webkit-scrollbar { display:none; }
+
+/* Tab pills — diagonal slash mini */
+.tab-pill {
+  flex-shrink:0;
+  padding:7px 28px 7px 12px;
+  border:none;
+  background:var(--bg4);
+  color:var(--gray);
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:all 0.18s ease;
+  font-family:'Barlow Condensed',sans-serif;
+  clip-path:polygon(0% 0%, calc(100% - 10px) 0%, 100% 50%, calc(100% - 10px) 100%, 0% 100%);
+  box-shadow:inset 0 0 0 1px var(--dim);
+  white-space:nowrap;
+}
+.tab-pill.on {
+  background:linear-gradient(90deg, var(--red) 0%, var(--red-hi) 100%);
+  color:var(--white);
+  box-shadow:0 2px 8px var(--red-glow);
+}
+
+/* Stat row */
+.stat-row { display:flex; gap:8px; margin-bottom:12px; }
+.stat-tile {
+  flex:1; background:var(--bg4); border:1px solid var(--border);
+  padding:10px 6px; text-align:center;
+}
+.stat-tile-val { font-family:'Bebas Neue',sans-serif; font-size:22px; color:var(--gold); letter-spacing:1px; }
+.stat-tile-lbl { font-size:8px; color:var(--gray); text-transform:uppercase; letter-spacing:1px; margin-top:2px; }
+
+/* List item */
+.list-item {
+  display:flex; align-items:center; gap:12px;
+  padding:11px 18px; border-bottom:1px solid var(--border);
+  cursor:pointer; transition:all 0.15s;
+}
+.list-item:hover { background:var(--bg3); border-left:2px solid var(--gold-lo); padding-left:16px; }
+.list-item:last-child { border-bottom:none; }
+
+/* Divider */
+.tuf-divider {
+  display:flex; align-items:center; gap:10px; padding:8px 18px 16px;
+}
+.tuf-divider-line { flex:1; height:1px; background:var(--border); }
+.tuf-divider-label { font-size:8px; letter-spacing:4px; color:var(--dim); text-transform:uppercase; }
+
+/* ═══════════════════════════════════════════════
+   HOME SCREEN
+═══════════════════════════════════════════════ */
+.home-hero {
+  padding:20px 18px 16px;
+  border-bottom:1px solid var(--border);
+  background:linear-gradient(180deg, rgba(139,0,0,0.1) 0%, transparent 80%);
+}
+.home-greeting { font-size:11px; letter-spacing:3px; color:var(--gray); text-transform:uppercase; margin-bottom:4px; }
+.home-title { font-family:'Bebas Neue',sans-serif; font-size:32px; letter-spacing:4px; color:var(--white); line-height:1; }
+.home-title span { color:var(--gold); }
+
+.score-hero {
+  display:flex; align-items:center; gap:16px; margin:16px 0 0;
+}
+.score-text { flex:1; }
+.score-headline { font-family:'Bebas Neue',sans-serif; font-size:14px; letter-spacing:3px; color:var(--white); }
+.score-headline span { color:var(--gold); }
+.score-desc { font-size:12px; color:var(--gray); margin-top:4px; line-height:1.4; }
+
+.pillar-row {
+  display:grid; grid-template-columns:1fr 1fr 1fr;
+  gap:8px; padding:0 14px; margin-bottom:4px;
+}
+.pillar-tile {
+  background:var(--bg3); border:1px solid var(--border);
+  padding:14px 10px; text-align:center; cursor:pointer;
+  transition:all 0.15s; position:relative; overflow:hidden;
+}
+.pillar-tile:hover { border-color:var(--gold); background:var(--bg4); }
+.pillar-tile::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  transform:scaleX(0); transform-origin:left; transition:transform 0.25s;
+}
+.pillar-move::before  { background:linear-gradient(90deg, var(--gold), var(--gold-lo)); }
+.pillar-fuel::before  { background:linear-gradient(90deg, var(--ok), #2e7d32); }
+.pillar-feast::before { background:linear-gradient(90deg, #f97316, var(--feast-dark)); }
+.pillar-tile:hover::before { transform:scaleX(1); }
+.pillar-icon { font-size:22px; margin-bottom:6px; }
+.pillar-name {
+  font-family:'Bebas Neue',sans-serif; font-size:15px; letter-spacing:3px;
+  color:var(--white);
+}
+.pillar-stat { font-size:10px; color:var(--gray); letter-spacing:1px; margin-top:2px; }
+
+/* ═══════════════════════════════════════════════
+   MOVE SCREEN — EXERCISE LIBRARY
+═══════════════════════════════════════════════ */
+
+/* ── Muscle nav ── */
+.muscle-nav {
+  background:var(--bg2);
+  border-bottom:1px solid var(--border);
+  padding:10px 14px;
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  scrollbar-width:none;
+  position:sticky;
+  top:58px;
+  z-index:100;
+}
+.muscle-nav::-webkit-scrollbar { display:none; }
+
+.mtab {
+  flex-shrink:0;
+  padding:7px 26px 7px 11px;
+  border:none;
+  background:var(--bg4);
+  color:var(--gray);
+  font-size:11px;
+  font-weight:700;
+  cursor:pointer;
+  white-space:nowrap;
+  transition:all 0.18s ease;
+  letter-spacing:0.5px;
+  font-family:'Barlow Condensed',sans-serif;
+  clip-path:polygon(0% 0%, calc(100% - 10px) 0%, 100% 50%, calc(100% - 10px) 100%, 0% 100%);
+  box-shadow:inset 0 0 0 1px var(--dim);
+}
+.mtab:hover { color:var(--white); box-shadow:inset 0 0 0 1px var(--gray); }
+.mtab.on {
+  background:linear-gradient(90deg, var(--red) 0%, var(--red-hi) 100%);
+  color:var(--white);
+  box-shadow:0 2px 10px var(--red-glow);
+}
+
+/* ── Muscle group header ── */
+.move-group-header {
+  border-bottom:1px solid var(--border);
+  margin-bottom:4px;
+}
+.move-group-hero {
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:16px 18px 12px;
+}
+.move-group-icon {
+  font-size:32px;
+  line-height:1;
+  flex-shrink:0;
+}
+.move-group-info { flex:1; }
+.move-group-name {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:22px;
+  letter-spacing:4px;
+  color:var(--white);
+  line-height:1;
+}
+.move-group-name span { color:var(--gold); }
+.move-group-focus {
+  font-size:11px;
+  color:var(--gray);
+  letter-spacing:0.5px;
+  margin-top:3px;
+  line-height:1.3;
+}
+.move-group-count { text-align:center; flex-shrink:0; }
+
+/* ── Level selector row ── */
+.move-level-row {
+  padding:10px 14px 6px;
+  border-bottom:1px solid var(--border);
+  background:var(--bg2);
+  position:sticky;
+  top:104px;
+  z-index:90;
+}
+
+/* ── Exercise card ── */
+.ex-card {
+  background:var(--bg3);
+  border:1px solid var(--border);
+  margin:0 14px 14px;
+  overflow:hidden;
+  transition:border-color 0.2s;
+  position:relative;
+}
+.ex-card::before {
+  content:'';
+  position:absolute;
+  top:0; left:0; right:0;
+  height:3px;
+  background:linear-gradient(90deg, var(--red), var(--gold-lo));
+  opacity:0;
+  transition:opacity 0.2s;
+}
+.ex-card:hover { border-color:var(--border-hi); }
+.ex-card:hover::before { opacity:1; }
+
+/* ── Video area ── */
+.vid-area {
+  width:100%;
+  background:var(--bg);
+  position:relative;
+  overflow:hidden;
+  padding-top:56.25%;
+}
+.vid-area iframe { position:absolute; top:0; left:0; width:100%; height:100%; border:none; }
+.vid-ph {
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  background:linear-gradient(160deg, var(--red-fade) 0%, var(--bg) 100%);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+}
+.play-btn {
+  width:54px; height:54px;
+  background:var(--red-mid);
+  border:2px solid var(--gold);
+  display:flex; align-items:center; justify-content:center;
+  font-size:20px; color:var(--white);
+  clip-path:polygon(0% 0%, calc(100% - 10px) 0%, 100% 50%, calc(100% - 10px) 100%, 0% 100%);
+  transition:background 0.15s;
+}
+.play-btn:hover { background:var(--red); }
+.vid-lbl {
+  font-size:9px; color:var(--gray-lo);
+  letter-spacing:2px; text-transform:uppercase;
+}
+/* Video placeholder exercise name */
+.vid-ex-name {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:16px; letter-spacing:3px;
+  color:var(--dim); text-align:center;
+  padding:0 20px;
+}
+
+/* ── Exercise body ── */
+.ex-body { padding:14px 16px 16px; }
+
+.ex-tags { display:flex; flex-wrap:wrap; gap:4px; margin-bottom:10px; }
+.tag {
+  padding:2px 8px;
+  font-size:9px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:0.8px;
+  clip-path:polygon(0% 0%, calc(100% - 6px) 0%, 100% 50%, calc(100% - 6px) 100%, 0% 100%);
+}
+.t-muscle { background:var(--red-mid); color:#ff7777; border:none; padding-right:12px; }
+.t-level-b { background:var(--ok-fade); color:var(--ok); border:none; padding-right:12px; }
+.t-level-i { background:var(--gold-fade); color:var(--gold); border:none; padding-right:12px; }
+.t-level-a { background:var(--red-fade); color:#ff6666; border:none; padding-right:12px; }
+.t-equip { background:rgba(74,144,217,0.1); color:var(--blue); border:1px solid rgba(74,144,217,0.25); padding-right:10px; clip-path:none; }
+
+.ex-name {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:24px;
+  letter-spacing:2px;
+  color:var(--white);
+  margin-bottom:2px;
+  line-height:1.1;
+}
+.ex-muscles {
+  font-size:11px;
+  color:var(--gray);
+  margin-bottom:12px;
+  letter-spacing:0.3px;
+}
+
+/* ── Stat grid ── */
+.ex-stats {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:6px;
+  margin-bottom:12px;
+}
+.ex-stat-box {
+  background:var(--bg2);
+  border:1px solid var(--border);
+  padding:9px 4px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.ex-stat-box::after {
+  content:'';
+  position:absolute;
+  bottom:0; left:0; right:0;
+  height:2px;
+  background:var(--gold);
+  opacity:0.3;
+}
+.ex-stat-val {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:15px;
+  color:var(--gold);
+  letter-spacing:1px;
+  line-height:1;
+}
+.ex-stat-lbl {
+  font-size:7px;
+  color:var(--dim);
+  text-transform:uppercase;
+  letter-spacing:1px;
+  margin-top:3px;
+}
+
+/* ── Coaching cue box ── */
+.cue-box {
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-left:3px solid var(--gold);
+  padding:11px 12px;
+  margin-bottom:10px;
+}
+.cue-lbl {
+  font-size:8px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:2px;
+  color:var(--gold);
+  margin-bottom:6px;
+}
+.cue-lbl.green { color:var(--ok); }
+.cue-txt { font-size:13px; color:var(--gray); line-height:1.7; }
+
+/* ── Modification items ── */
+.mod-item {
+  display:flex;
+  gap:8px;
+  margin-bottom:6px;
+  align-items:flex-start;
+}
+.mod-item:last-child { margin-bottom:0; }
+.mod-dot {
+  width:5px; height:5px;
+  border-radius:50%;
+  background:var(--ok);
+  margin-top:5px;
+  flex-shrink:0;
+}
+.mod-txt { font-size:12px; color:var(--gray); line-height:1.5; }
+
+/* ── Empty state ── */
+.ex-empty {
+  padding:40px 18px;
+  text-align:center;
+}
+.ex-empty-icon { font-size:36px; margin-bottom:10px; }
+.ex-empty-title {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:18px;
+  letter-spacing:3px;
+  color:var(--dim);
+  margin-bottom:6px;
+}
+.ex-empty-sub { font-size:12px; color:var(--dim); letter-spacing:0.5px; }
+
+/* ═══════════════════════════════════════════════
+   FUEL SCREEN — NUTRITION
+═══════════════════════════════════════════════ */
+.fuel-protein-hero {
+  margin:14px 14px 0;
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-top:3px solid var(--gold);
+  padding:16px;
+}
+.fuel-protein-title { font-size:8px; letter-spacing:4px; text-transform:uppercase; color:var(--gold); margin-bottom:12px; }
+.fuel-protein-row { display:flex; align-items:center; gap:16px; margin-bottom:14px; }
+.fuel-protein-ring { position:relative; flex-shrink:0; }
+.fuel-protein-ring svg { transform:rotate(-90deg); }
+.fuel-ring-center { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.fuel-ring-val { font-family:'Bebas Neue',sans-serif; font-size:22px; color:var(--gold); letter-spacing:1px; line-height:1; }
+.fuel-ring-unit { font-size:8px; color:var(--gray); letter-spacing:1px; }
+.fuel-protein-stats { flex:1; }
+.fuel-stat-line { display:flex; justify-content:space-between; align-items:center; padding:5px 0; border-bottom:1px solid var(--border); font-size:12px; }
+.fuel-stat-line:last-child { border-bottom:none; }
+.fuel-stat-line span:first-child { color:var(--gray); }
+.fuel-stat-line span:last-child { font-family:'Bebas Neue',sans-serif; font-size:16px; color:var(--gold); letter-spacing:1px; }
+.fuel-meal-dist { margin-top:12px; border-top:1px solid var(--border); padding-top:12px; }
+.fuel-meal-dist-title { font-size:8px; letter-spacing:3px; color:var(--gray); text-transform:uppercase; margin-bottom:10px; }
+.fuel-meal-row { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.fuel-meal-label { font-size:10px; color:var(--gray); letter-spacing:1px; text-transform:uppercase; width:80px; flex-shrink:0; }
+.fuel-meal-bar { flex:1; height:6px; background:var(--bg5); }
+.fuel-meal-fill { height:100%; transition:width 1.2s ease; }
+.fuel-meal-fill.under { background:var(--red-hi); }
+.fuel-meal-fill.ok    { background:var(--ok); }
+.fuel-meal-val { font-family:'Bebas Neue',sans-serif; font-size:14px; color:var(--gray); letter-spacing:1px; width:40px; text-align:right; }
+.fuel-meal-val.ok    { color:var(--ok); }
+.fuel-meal-val.under { color:var(--red-hi); }
+.fuel-supplement-card {
+  background:var(--bg3); border:1px solid var(--border); border-left:3px solid var(--gold);
+  margin:0 14px 10px; padding:12px 14px; display:flex; align-items:flex-start; gap:12px; transition:all 0.15s;
+}
+.fuel-supplement-card:hover { background:var(--bg4); }
+.fuel-supp-icon { font-size:22px; flex-shrink:0; line-height:1; margin-top:2px; }
+.fuel-supp-info { flex:1; }
+.fuel-supp-name { font-size:13px; font-weight:700; color:var(--white); letter-spacing:0.3px; }
+.fuel-supp-dose { font-size:10px; color:var(--gold); letter-spacing:0.5px; margin-top:1px; }
+.fuel-supp-note { font-size:11px; color:var(--gray); line-height:1.4; margin-top:3px; }
+.fuel-supp-priority { font-size:8px; letter-spacing:2px; padding:3px 7px; background:var(--gold-fade); border:1px solid var(--gold-border); color:var(--gold); text-transform:uppercase; flex-shrink:0; clip-path:polygon(0% 0%, calc(100% - 6px) 0%, 100% 50%, calc(100% - 6px) 100%, 0% 100%); }
+.food-card {
+  background:var(--bg3); border:1px solid var(--border); border-left:2px solid var(--gold-lo);
+  padding:11px 14px; margin:0 14px 8px; display:flex; align-items:center; gap:12px; transition:all 0.15s;
+}
+.food-card:hover { border-left-color:var(--gold); background:var(--bg4); }
+.food-icon { font-size:20px; flex-shrink:0; line-height:1; }
+.food-info { flex:1; min-width:0; }
+.food-name { font-size:13px; font-weight:600; color:var(--white); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.food-macros { font-size:10px; color:var(--gray); margin-top:2px; }
+.food-note { font-size:10px; color:var(--dim); margin-top:3px; line-height:1.35; }
+.food-protein-badge { flex-shrink:0; text-align:center; }
+.food-protein-val { font-family:'Bebas Neue',sans-serif; font-size:22px; color:var(--gold); letter-spacing:1px; line-height:1; }
+.food-protein-lbl { font-size:7px; color:var(--gray); letter-spacing:2px; text-transform:uppercase; }
+.meal-template-card {
+  background:var(--bg3); border:1px solid var(--border); border-left:3px solid var(--gold);
+  margin:0 14px 10px; padding:14px; transition:all 0.15s; cursor:pointer;
+}
+.meal-template-card:hover { background:var(--bg4); }
+.meal-type { font-size:8px; letter-spacing:3px; color:var(--gold); text-transform:uppercase; margin-bottom:4px; }
+.meal-name { font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:3px; color:var(--white); margin-bottom:8px; }
+.meal-macros { display:flex; gap:8px; margin-bottom:8px; flex-wrap:wrap; }
+.macro-chip { font-size:10px; letter-spacing:0.5px; padding:3px 9px; background:var(--bg4); border:1px solid var(--border); clip-path:polygon(0% 0%, calc(100% - 6px) 0%, 100% 50%, calc(100% - 6px) 100%, 0% 100%); }
+.macro-chip span { color:var(--gold); font-weight:700; }
+.meal-desc { font-size:12px; color:var(--gray); line-height:1.5; }
+.meal-science { font-size:11px; color:var(--gold); line-height:1.4; margin-top:8px; padding-top:8px; border-top:1px solid var(--border); font-style:italic; }
+
+/* ═══════════════════════════════════════════════
+   PROGRESS SCREEN
+═══════════════════════════════════════════════ */
+.chart-wrap {
+  padding:0 14px; margin-bottom:4px; position:relative; height:120px;
+}
+.chart-svg { width:100%; height:100%; overflow:visible; }
+
+.vital-card {
+  background:var(--bg3);
+  border:1px solid var(--border);
+  margin:0 14px 10px;
+  padding:14px;
+  transition:border-color 0.2s;
+}
+.vital-card-top { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:10px; }
+.vital-icon { font-size:18px; }
+.vital-values { display:flex; gap:16px; margin-bottom:8px; }
+.vital-val-block { }
+.vital-val-label { font-size:8px; letter-spacing:2px; color:var(--gray); text-transform:uppercase; margin-bottom:2px; }
+.vital-val-num { font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:1px; line-height:1; }
+.vital-val-num.ok   { color:var(--ok); }
+.vital-val-num.warn { color:var(--warn); }
+.vital-insight { font-size:12px; color:var(--gray); line-height:1.45; border-top:1px solid var(--border); padding-top:8px; }
+.vital-insight strong { color:var(--white); }
+
+/* NSV log */
+.nsv-item {
+  display:flex; align-items:flex-start; gap:10px;
+  padding:10px 18px; border-bottom:1px solid var(--border);
+}
+.nsv-item:last-child { border-bottom:none; }
+.nsv-dot { width:6px; height:6px; border-radius:50%; background:var(--gold); margin-top:5px; flex-shrink:0; }
+.nsv-text { font-size:12px; color:var(--white); line-height:1.4; flex:1; }
+.nsv-date { font-size:10px; color:var(--dim); letter-spacing:1px; flex-shrink:0; }
+
+/* ═══════════════════════════════════════════════
+   FEAST / RECIPE SCREEN
+═══════════════════════════════════════════════ */
+.recipe-card {
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-top:2px solid var(--gold-lo);
+  margin:0 14px 12px;
+  overflow:hidden;
+  transition:border-top-color 0.2s;
+}
+.recipe-card:hover { border-top-color:var(--gold); }
+.recipe-hero {
+  background:linear-gradient(135deg,rgba(139,0,0,0.15),#080808);
+  padding:20px 16px; border-bottom:1px solid var(--border);
+  position:relative;
+}
+.recipe-category-tag {
+  font-size:8px; letter-spacing:3px; text-transform:uppercase;
+  color:var(--gold); margin-bottom:6px; opacity:0.8;
+}
+.recipe-name { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:3px; color:var(--white); line-height:1; margin-bottom:8px; }
+.recipe-meta { display:flex; gap:12px; flex-wrap:wrap; }
+.recipe-meta-chip { font-size:10px; color:var(--gray); letter-spacing:1px; }
+.recipe-meta-chip span { color:var(--white); font-weight:600; }
+.recipe-body { padding:14px 16px; }
+.recipe-macro-row { display:flex; gap:8px; margin-bottom:12px; }
+.recipe-macro {
+  flex:1; background:var(--bg4); padding:8px 4px; text-align:center;
+  border:1px solid var(--border);
+}
+.recipe-macro-val { font-family:'Bebas Neue',sans-serif; font-size:18px; color:var(--gold); letter-spacing:1px; }
+.recipe-macro-lbl { font-size:8px; color:var(--gray); text-transform:uppercase; letter-spacing:1px; margin-top:1px; }
+.recipe-desc { font-size:12px; color:var(--gray); line-height:1.55; margin-bottom:12px; }
+.recipe-toggle {
+  font-size:11px; letter-spacing:2px; text-transform:uppercase;
+  color:var(--gold); cursor:pointer; opacity:0.8; margin-bottom:8px;
+  display:flex; align-items:center; gap:6px;
+}
+.recipe-steps { display:none; }
+.recipe-steps.open { display:block; }
+.recipe-step {
+  display:flex; gap:10px; margin-bottom:8px; align-items:flex-start;
+}
+.step-num {
+  font-family:'Bebas Neue',sans-serif; font-size:16px; color:var(--red);
+  opacity:0.5; width:20px; flex-shrink:0; line-height:1.2;
+}
+.step-txt { font-size:12px; color:var(--gray); line-height:1.6; flex:1; }
+
+/* ═══════════════════════════════════════════════
+   LEARN / VAULT SCREEN
+═══════════════════════════════════════════════ */
+.vault-unlock-bar {
+  margin:0 14px 12px;
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-top:3px solid var(--gold);
+  padding:14px;
+}
+.vault-unlock-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.vault-unlock-title { font-family:'Bebas Neue',sans-serif; font-size:14px; letter-spacing:3px; color:var(--white); }
+.vault-unlock-count { font-family:'Bebas Neue',sans-serif; font-size:20px; color:var(--gold); letter-spacing:1px; }
+
+.article-card {
+  background:var(--bg3);
+  border:1px solid var(--border);
+  margin:0 14px 10px;
+  padding:16px;
+  position:relative;
+  overflow:hidden;
+  transition:border-color 0.2s;
+}
+.article-card:hover { border-color:var(--gold-lo); }
+.article-card.premium { border-color:var(--gold-lo); }
+.article-card.premium::before {
+  content:'PREMIUM'; position:absolute; top:10px; right:-18px;
+  background:var(--gold); color:var(--bg);
+  font-size:8px; letter-spacing:3px; padding:3px 24px;
+  transform:rotate(45deg);
+}
+.article-category { font-size:8px; letter-spacing:3px; color:var(--gold); text-transform:uppercase; margin-bottom:5px; opacity:0.8; }
+.article-title { font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:2px; color:var(--white); margin-bottom:6px; line-height:1.1; }
+.article-summary { font-size:12px; color:var(--gray); line-height:1.55; margin-bottom:10px; }
+.article-stat { font-size:10px; color:var(--dim); letter-spacing:1px; }
+
+.locked-card {
+  background:var(--gold-fade);
+  border:1px solid var(--gold-border);
+  margin:0 14px 10px;
+  padding:20px;
+  text-align:center;
+}
+.locked-icon { font-size:32px; margin-bottom:8px; }
+.locked-title { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:3px; color:var(--gold); margin-bottom:6px; }
+.locked-desc { font-size:12px; color:var(--gray); line-height:1.55; }
+
+/* ═══════════════════════════════════════════════
+   GOALS SCREEN
+═══════════════════════════════════════════════ */
+.goal-card {
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-left:3px solid var(--gold);
+  margin:0 14px 10px;
+  padding:14px;
+}
+.goal-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:8px; }
+.goal-title { font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:2px; color:var(--white); }
+.goal-pillar { font-size:9px; letter-spacing:2px; color:var(--gray); text-transform:uppercase; margin-top:1px; }
+.goal-progress-row { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.goal-current { font-family:'Bebas Neue',sans-serif; font-size:28px; color:var(--gold); letter-spacing:1px; line-height:1; }
+.goal-target { font-size:11px; color:var(--gray); letter-spacing:0.5px; }
+.goal-desc { font-size:11px; color:var(--gray); line-height:1.45; }
+
+/* ═══════════════════════════════════════════════
+   PROFILE SCREEN
+═══════════════════════════════════════════════ */
+.profile-hero {
+  padding:24px 18px 20px;
+  background:linear-gradient(180deg,rgba(139,0,0,0.08),transparent);
+  border-bottom:1px solid var(--border);
+  text-align:center;
+}
+.profile-avatar-lg {
+  width:72px; height:72px; border-radius:50%;
+  background:var(--red); border:2px solid var(--gold);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Bebas Neue',sans-serif; font-size:28px; color:var(--gold);
+  margin:0 auto 12px;
+}
+.profile-name { font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:4px; color:var(--white); }
+.profile-sub { font-size:11px; color:var(--gray); letter-spacing:2px; text-transform:uppercase; margin-top:3px; }
+.profile-plan { margin-top:8px; }
+
+.setting-row {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:13px 18px;
+  border-bottom:1px solid var(--border);
+  cursor:pointer;
+  transition:all 0.15s;
+}
+.setting-row:hover {
+  background:var(--bg3);
+  border-left:2px solid var(--gold);
+  padding-left:16px;
+}
+.setting-icon { font-size:18px; width:28px; flex-shrink:0; }
+.setting-text { flex:1; }
+.setting-name { font-size:13px; font-weight:600; color:var(--white); letter-spacing:0.3px; }
+.setting-sub { font-size:10px; color:var(--gray); letter-spacing:0.5px; margin-top:1px; }
+.setting-arrow { color:var(--dim); font-size:14px; }
+
+/* ═══════════════════════════════════════════════
+   CHART — TRAJECTORY
+═══════════════════════════════════════════════ */
+.traj-line {
+  stroke-dasharray:700; stroke-dashoffset:700;
+  animation:drawLine 1.5s 0.5s ease forwards;
+}
+@keyframes drawLine { to { stroke-dashoffset:0; } }
+
+/* ── RING ANIMATIONS ── */
+.ring-animated {
+  stroke-dasharray:220;
+  stroke-dashoffset:220;
+  animation:fillRing 1.2s 0.4s cubic-bezier(0.4,0,0.2,1) forwards;
+}
+@keyframes fillRing { to { stroke-dashoffset:var(--offset); } }
+
+/* ── TOAST ── */
+.tuf-toast {
+  position:fixed; bottom:82px; left:50%; transform:translateX(-50%) translateY(8px);
+  background:var(--bg3); border:1px solid var(--gold); border-left:3px solid var(--gold);
+  padding:10px 18px; font-size:12px; color:var(--white); letter-spacing:0.5px;
+  z-index:500; opacity:0; transition:all 0.25s; pointer-events:none;
+  white-space:nowrap;
+}
+.tuf-toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* ── LOADING ── */
+.tuf-loading { padding:40px 18px; text-align:center; font-size:11px; color:var(--dim); letter-spacing:3px; text-transform:uppercase; }
+
+/* ── FADE IN ── */
+.fade-in { opacity:0; animation:fadeIn 0.4s ease forwards; }
+@keyframes fadeIn { to { opacity:1; } }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════ HOME -->
+<div id="screen-home" class="screen active">
+
+  <!-- HEADER -->
+  <div class="tuf-header">
+    <div class="header-brand">TUF<span>.</span></div>
+    <div class="header-right">
+      <div class="header-pill" id="homeDatePill"></div>
+      <div class="header-avatar" onclick="showScreen('profile')">M</div>
+    </div>
+  </div>
+
+  <!-- HERO BLOCK -->
+  <div class="home-hero">
+    <div class="home-greeting" id="homeGreeting">Good morning, Marc</div>
+    <div class="home-title">PROTECT YOUR<br><span>MUSCLE.</span></div>
+
+    <!-- MHI Score + Ring -->
+    <div class="score-hero">
+      <div class="ring-wrap" style="width:72px;height:72px;">
+        <svg viewBox="0 0 72 72" width="72" height="72">
+          <circle cx="36" cy="36" r="31.5" fill="none" stroke="var(--border)" stroke-width="5"/>
+          <circle id="mhiRing" cx="36" cy="36" r="31.5" fill="none" stroke="#C8973A" stroke-width="5" stroke-linecap="square"/>
+        </svg>
+        <div class="ring-center">
+          <div class="ring-val" id="mhiScore">87</div>
+          <div class="ring-denom">/100</div>
+        </div>
+      </div>
+      <div class="score-text">
+        <div class="score-headline">MUSCLE HEALTH <span>INDEX</span></div>
+        <div class="score-desc" id="mhiDesc">Loading your score...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANTHER CO-PILOT -->
+  <div class="panther-strip">
+    <div class="panther-avatar-sm">🐆</div>
+    <div style="flex:1">
+      <div class="panther-name">AI Co-Pilot · Daily Insight</div>
+      <div class="panther-insight-text" id="homePantherInsight">Analyzing your data...</div>
+    </div>
+  </div>
+
+  <!-- READINESS BAR -->
+  <div class="home-readiness-row">
+    <div class="readiness-label">
+      <span style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gray)">Today's Readiness</span>
+      <span id="homeReadinessScore" style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gold);letter-spacing:2px;margin-left:10px;">77</span>
+      <span style="font-size:9px;color:var(--gray)">/100</span>
+    </div>
+    <div class="progress-bar" style="margin-top:6px;">
+      <div class="progress-fill gold" id="homeReadinessBar" style="width:0%"></div>
+    </div>
+    <div id="homeReadinessStatus" style="font-size:11px;color:var(--gray);margin-top:5px;letter-spacing:0.5px;"></div>
+  </div>
+
+  <!-- THREE PILLARS -->
+  <div class="section-title">TODAY'S <span>PILLARS</span></div>
+  <div class="pillar-row">
+    <div class="pillar-tile pillar-move" onclick="showScreen('workouts')">
+      <div class="pillar-icon">🏋️</div>
+      <div class="pillar-name">MOVE</div>
+      <div class="pillar-stat" id="moveStreak">—</div>
+    </div>
+    <div class="pillar-tile pillar-fuel" onclick="showScreen('nutrition')">
+      <div class="pillar-icon">🥗</div>
+      <div class="pillar-name">FUEL</div>
+      <div class="pillar-stat" id="fuelProtein">—</div>
+    </div>
+    <div class="pillar-tile pillar-feast" onclick="showScreen('feast')">
+      <div class="pillar-icon">🍽️</div>
+      <div class="pillar-name">FEAST</div>
+      <div class="pillar-stat" id="feastRecipes">—</div>
+    </div>
+  </div>
+
+  <!-- DAILY SNAPSHOT -->
+  <div class="section-title">DAILY <span>SNAPSHOT</span></div>
+  <div style="padding:0 14px 4px;">
+    <div class="stat-row" id="homeStatsRow"></div>
+  </div>
+
+  <!-- TODAY'S ACTIONS — driven by data -->
+  <div class="section-title">TODAY'S <span>ACTIONS</span></div>
+  <div id="homeActionList" style="padding:0 14px 8px;display:flex;flex-direction:column;gap:8px;"></div>
+
+  <!-- PRIMARY CTAs -->
+  <button class="tuf-btn primary" onclick="showScreen('workouts')">START TODAY'S WORKOUT</button>
+  <button class="tuf-btn outline" onclick="showScreen('progress')">VIEW VITALS & PROGRESS</button>
+
+  <!-- STREAK / MOTIVATION FOOTER -->
+  <div class="home-streak-footer" id="homeStreakFooter"></div>
+
+</div>
+
+<!-- ══════════════════════════════════════ WORKOUTS / MOVE -->
+<div id="screen-workouts" class="screen">
+
+  <!-- HEADER -->
+  <div class="tuf-header">
+    <div class="header-brand">MOVE<span>.</span></div>
+    <div class="header-right">
+      <div class="header-pill" id="moveLevelPill">BEGINNER</div>
+      <div id="moveExerciseCount" style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--gold);">33</div>
+    </div>
+  </div>
+
+  <!-- STICKY MUSCLE NAV -->
+  <nav class="muscle-nav" id="muscleNav"></nav>
+
+  <!-- MUSCLE GROUP HEADER -->
+  <div class="move-group-header" id="moveGroupHeader">
+    <div class="move-group-hero">
+      <div class="move-group-icon" id="moveGroupIcon">🫁</div>
+      <div class="move-group-info">
+        <div class="move-group-name" id="moveGroupName">CHEST <span>EXERCISES</span></div>
+        <div class="move-group-focus" id="moveGroupFocus">Push patterns · Pectorals · Shoulders · Triceps</div>
+      </div>
+      <div class="move-group-count" id="moveGroupCount">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--gold);letter-spacing:2px;line-height:1" id="moveCountNum">4</div>
+        <div style="font-size:8px;color:var(--gray);letter-spacing:2px;text-transform:uppercase;">exercises</div>
+      </div>
+    </div>
+    <div class="science-strip" id="muscleScience" style="margin:0;border-left:3px solid var(--accent-move);"></div>
+  </div>
+
+  <!-- LEVEL SELECTOR -->
+  <div class="move-level-row">
+    <div class="h-scroll" id="levelNav"></div>
+  </div>
+
+  <!-- EXERCISE LIST -->
+  <div id="exerciseList" class="tuf-loading">Loading exercises...</div>
+
+  <!-- LOG WORKOUT CTA -->
+  <div style="padding:8px 0 4px;">
+    <button class="tuf-btn primary" onclick="logWorkoutPrompt()">LOG THIS WORKOUT</button>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════ NUTRITION / FUEL -->
+<div id="screen-nutrition" class="screen">
+
+  <!-- HEADER -->
+  <div class="tuf-header">
+    <div class="header-brand">FUEL<span>.</span></div>
+    <div class="header-right">
+      <div class="header-pill" id="fuelTargetPill">126g / day</div>
+    </div>
+  </div>
+
+  <!-- PROTEIN HERO -->
+  <div class="fuel-protein-hero">
+    <div class="fuel-protein-title">Protein Distribution Today</div>
+    <div class="fuel-protein-row">
+      <!-- Ring -->
+      <div class="fuel-protein-ring" style="width:70px;height:70px;">
+        <svg viewBox="0 0 70 70" width="70" height="70">
+          <circle cx="35" cy="35" r="30" fill="none" stroke="var(--border)" stroke-width="5"/>
+          <circle id="proteinRing" cx="35" cy="35" r="30" fill="none" stroke="var(--gold)" stroke-width="5" stroke-linecap="square"/>
+        </svg>
+        <div class="fuel-ring-center">
+          <div class="fuel-ring-val" id="proteinPct">0%</div>
+          <div class="fuel-ring-unit">of goal</div>
+        </div>
+      </div>
+      <!-- Stats -->
+      <div class="fuel-protein-stats">
+        <div class="fuel-stat-line">
+          <span>Daily Target</span>
+          <span id="fuelDailyTarget">126g</span>
+        </div>
+        <div class="fuel-stat-line">
+          <span>Per Meal Min</span>
+          <span>25g</span>
+        </div>
+        <div class="fuel-stat-line">
+          <span>Per Kg Body Weight</span>
+          <span>1.8g</span>
+        </div>
+      </div>
+    </div>
+    <!-- Per-meal distribution -->
+    <div class="fuel-meal-dist">
+      <div class="fuel-meal-dist-title">Meal Breakdown — Target 25g+ Each</div>
+      <div id="fuelMealDist"></div>
+    </div>
+  </div>
+
+  <!-- SCIENCE -->
+  <div class="science-strip" style="margin-top:12px;border-left-color:var(--accent-fuel);">
+    <div class="sci-lbl" style="color:var(--accent-fuel);">40+ Protein Science</div>
+    <div class="sci-txt">Muscle protein synthesis requires <strong style="color:var(--white)">25–30g per meal</strong> to trigger. Total daily intake spread unevenly does not activate MPS the same way. Distribution is the lever.</div>
+  </div>
+
+  <!-- SUPPLEMENT STACK -->
+  <div class="section-title">SUPPLEMENT <span>STACK</span></div>
+  <div id="fuelSupplementList"></div>
+
+  <!-- MEAL TEMPLATES -->
+  <div class="section-title">MEAL <span>TEMPLATES</span></div>
+  <div id="mealTemplateList"></div>
+
+  <!-- FOOD DATABASE -->
+  <div class="section-title">FOOD <span>DATABASE</span></div>
+  <div class="h-scroll" id="foodCategoryNav" style="margin-bottom:10px;padding-bottom:4px;"></div>
+  <div id="foodList"></div>
+
+</div>
+
+<!-- ══════════════════════════════════════ FEAST (Recipes) -->
+<div id="screen-feast" class="screen">
+  <div class="tuf-header">
+    <div class="header-brand">FEAST<span>.</span></div>
+    <div class="header-right">
+      <div class="header-pill">Recipes</div>
+    </div>
+  </div>
+
+  <div class="science-strip" style="margin-top:14px;">
+    <div class="sci-lbl">TUTK · Turned Up In The Kitchen</div>
+    <div class="sci-txt">Every recipe is built around the 40+ protein target. All meals hit minimum 25g protein and are designed for real prep schedules — not just ideal conditions.</div>
+  </div>
+
+  <!-- Recipe category filter -->
+  <div class="h-scroll" id="recipeCategoryNav" style="padding-top:10px;margin-bottom:8px;"></div>
+  <div id="recipeList"></div>
+</div>
+
+<!-- ══════════════════════════════════════ PROGRESS -->
+<div id="screen-progress" class="screen">
+  <div class="tuf-header">
+    <div class="header-brand">PROGRESS<span>.</span></div>
+    <div class="header-right">
+      <div class="header-pill">90-Day</div>
+    </div>
+  </div>
+
+  <!-- MHI Section -->
+  <div class="section-title">MUSCLE HEALTH <span>INDEX</span></div>
+  <div class="tuf-card gold-border">
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px;">
+      <div class="ring-wrap" style="width:68px;height:68px;">
+        <svg viewBox="0 0 68 68" width="68" height="68">
+          <circle cx="34" cy="34" r="30" fill="none" stroke="var(--border)" stroke-width="5"/>
+          <circle id="mhiRingProg" cx="34" cy="34" r="30" fill="none" stroke="#C8973A" stroke-width="5"/>
+        </svg>
+        <div class="ring-center">
+          <div class="ring-val" style="font-size:18px" id="mhiScoreProg">87</div>
+          <div class="ring-denom">/100</div>
+        </div>
+      </div>
+      <div>
+        <div class="card-label gold">Current Score</div>
+        <div style="font-size:12px;color:var(--gray);line-height:1.5;">Target: 95+ · Above average for age 52<br>Two levers open: protein per meal, sleep.</div>
+      </div>
+    </div>
+    <!-- Key factors -->
+    <div id="mhiFactors"></div>
+  </div>
+
+  <!-- Trajectory Chart -->
+  <div class="section-title">90-DAY <span>TRAJECTORY</span></div>
+  <div class="tuf-card" style="padding:14px;">
+    <div class="chart-wrap" style="padding:0;height:110px;">
+      <svg class="chart-svg" viewBox="0 0 380 110" preserveAspectRatio="none" id="trajChart"></svg>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:6px;">
+      <span style="font-size:9px;color:var(--dim);letter-spacing:1px;">JAN 1</span>
+      <span style="font-size:9px;color:var(--dim);letter-spacing:1px;">FEB 1</span>
+      <span style="font-size:9px;color:var(--dim);letter-spacing:1px;">MAR 1</span>
+      <span style="font-size:9px;color:var(--dim);letter-spacing:1px;">TODAY</span>
+    </div>
+  </div>
+
+  <!-- Vitals -->
+  <div class="section-title">VITALS <span>TODAY</span></div>
+
+  <!-- Readiness Score -->
+  <div class="tuf-card gold-border" style="margin-bottom:10px;">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div class="ring-wrap" style="width:56px;height:56px;">
+        <svg viewBox="0 0 56 56" width="56" height="56">
+          <circle cx="28" cy="28" r="24" fill="none" stroke="var(--border)" stroke-width="4"/>
+          <circle id="readinessRing" cx="28" cy="28" r="24" fill="none" stroke-width="4"/>
+        </svg>
+        <div class="ring-center">
+          <div class="ring-val" style="font-size:16px" id="readinessScore">77</div>
+        </div>
+      </div>
+      <div>
+        <div class="card-label gold">Readiness Score</div>
+        <div id="readinessStatus" style="font-size:13px;color:var(--white);font-weight:600;margin-bottom:2px;"></div>
+        <div id="readinessInsight" style="font-size:11px;color:var(--gray);line-height:1.4;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4 Vital Cards -->
+  <div id="vitalCards"></div>
+
+  <!-- Workout Log -->
+  <div class="section-title" style="padding-top:8px;">WORKOUT <span>LOG</span>
+    <span class="section-title-action" onclick="toast('Workout logging coming next build')">+ LOG SESSION</span>
+  </div>
+  <div class="tuf-card" style="padding:0;overflow:hidden;">
+    <div id="workoutLogList"></div>
+  </div>
+
+  <!-- NSV Log -->
+  <div class="section-title" style="padding-top:8px;">NSV <span>LOG</span>
+    <span class="section-title-action" onclick="logNSVPrompt()">+ LOG WIN</span>
+  </div>
+  <div class="tuf-card" style="padding:0;overflow:hidden;">
+    <div id="nsvList"></div>
+  </div>
+
+  <!-- Biometrics -->
+  <div class="section-title" style="padding-top:8px;">BIOMETRICS <span>TREND</span></div>
+  <div id="biometricsList"></div>
+</div>
+
+<!-- ══════════════════════════════════════ LEARN / VAULT -->
+<div id="screen-learn" class="screen">
+  <div class="tuf-header">
+    <div class="header-brand">VAULT<span>.</span></div>
+    <div class="header-right">
+      <div class="header-pill">The Learn</div>
+    </div>
+  </div>
+
+  <!-- Vault unlock progress -->
+  <div class="vault-unlock-bar" style="margin-top:14px;">
+    <div class="vault-unlock-header">
+      <div>
+        <div class="card-label gold">40+ Performance Code</div>
+        <div class="vault-unlock-title">UNLOCK AT 30 NSV WINS</div>
+      </div>
+      <div class="vault-unlock-count" id="vaultNsvCount">5 / 30</div>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill gold" id="vaultProgressBar" style="width:0%"></div>
+    </div>
+    <div style="font-size:10px;color:var(--gray);margin-top:5px;" id="vaultProgressLabel">Log 25 more Non-Scale Victories to unlock</div>
+  </div>
+
+  <!-- Free articles -->
+  <div class="section-title">SCIENCE <span>LIBRARY</span></div>
+  <div id="freeArticleList"></div>
+
+  <!-- Premium / locked -->
+  <div class="tuf-divider">
+    <div class="tuf-divider-line"></div>
+    <div class="tuf-divider-label">Premium Content</div>
+    <div class="tuf-divider-line"></div>
+  </div>
+  <div id="premiumArticleList"></div>
+</div>
+
+<!-- ══════════════════════════════════════ GOALS -->
+<div id="screen-goals" class="screen">
+  <div class="tuf-header">
+    <div class="header-brand">GOALS<span>.</span></div>
+    <div class="header-right">
+      <div class="header-pill">SMART Goals</div>
+    </div>
+  </div>
+
+  <div class="panther-strip" style="margin-top:14px;">
+    <div class="panther-avatar-sm">🐆</div>
+    <div>
+      <div class="panther-name">AI Co-Pilot</div>
+      <div class="panther-insight-text"><strong>2 goals on track.</strong> Protein per meal needs work — that's the lever that closes the gap to 95+ MHI.</div>
+    </div>
+  </div>
+
+  <div class="section-title">ACTIVE <span>GOALS</span></div>
+  <div id="goalsList"></div>
+
+  <button class="tuf-btn gold" onclick="toast('Goal builder coming in next build')">+ BUILD NEW GOAL</button>
+</div>
+
+<!-- ══════════════════════════════════════ PROFILE -->
+<div id="screen-profile" class="screen">
+  <div class="tuf-header">
+    <div class="header-brand">PROFILE<span>.</span></div>
+    <div class="header-right">
+      <div class="header-pill">Settings</div>
+    </div>
+  </div>
+
+  <div class="profile-hero">
+    <div class="profile-avatar-lg">M</div>
+    <div class="profile-name">MARC</div>
+    <div class="profile-sub">Founder · TurnedUp Fitness LLC</div>
+    <div class="profile-plan"><span class="tuf-badge badge-gray">FREE PLAN</span></div>
+  </div>
+
+  <!-- Stats -->
+  <div style="padding:0 14px;margin-top:14px;">
+    <div class="stat-row" id="profileStatsRow"></div>
+  </div>
+
+  <div class="section-title">ACCOUNT <span>SETTINGS</span></div>
+  <div id="profileSettings"></div>
+
+  <div class="section-title" style="padding-top:8px;">ABOUT <span>TUF</span></div>
+  <div class="tuf-card" style="padding:14px 16px;">
+    <div style="font-size:12px;color:var(--gray);line-height:1.7;">
+      TurnedUp Fitness LLC — built for adults 40+ fighting sarcopenia.<br>
+      Platform: MOVE · FUEL · FEAST<br>
+      Coaches: Marc · Coach Taylor Hawks<br>
+      Georgia-first · Global vision<br>
+      <span style="color:var(--gold);">v2.0</span> · TUF_DATA.js shared data layer
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-btn active" onclick="showScreen('home')" id="nav-home">
+    <span class="nav-icon">🏠</span><span class="nav-label">Home</span>
+  </button>
+  <button class="nav-btn" onclick="showScreen('workouts')" id="nav-workouts">
+    <span class="nav-icon">🏋️</span><span class="nav-label">Move</span>
+  </button>
+  <button class="nav-btn" onclick="showScreen('nutrition')" id="nav-nutrition">
+    <span class="nav-icon">🥗</span><span class="nav-label">Fuel</span>
+  </button>
+  <button class="nav-btn" onclick="showScreen('progress')" id="nav-progress">
+    <span class="nav-icon">📊</span><span class="nav-label">Progress</span>
+  </button>
+  <button class="nav-btn" onclick="showScreen('learn')" id="nav-learn">
+    <span class="nav-icon">🔓</span><span class="nav-label">Vault</span>
+  </button>
+</nav>
+
+<!-- TOAST -->
+<div class="tuf-toast" id="toast"></div>
+
+<!-- LOAD SHARED DATA LAYER -->
+<script src="TUF_DATA.js"></script>
+
+<script>
+'use strict';
+
+// ══════════════════════════════════════════════
+// SCREEN NAVIGATION
+// ══════════════════════════════════════════════
+const SCREENS = ['home','workouts','nutrition','feast','progress','learn','goals','profile'];
+
+function showScreen(id) {
+  SCREENS.forEach(s => {
+    const el = document.getElementById('screen-' + s);
+    const btn = document.getElementById('nav-' + s);
+    if (el) el.classList.toggle('active', s === id);
+    if (btn) btn.classList.toggle('active', s === id);
+  });
+  window.scrollTo(0, 0);
+  if (id === 'workouts')  renderWorkoutsScreen();
+  if (id === 'nutrition') renderNutritionScreen();
+  if (id === 'feast')     renderFeastScreen();
+  if (id === 'progress')  renderProgressScreen();
+  if (id === 'learn')     renderLearnScreen();
+  if (id === 'goals')     renderGoalsScreen();
+  if (id === 'profile')   renderProfileScreen();
+}
+
+// ══════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════
+function toast(msg, type='ok') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.borderLeftColor = type === 'ok' ? 'var(--ok)' : type === 'warn' ? 'var(--gold)' : 'var(--red-hi)';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ══════════════════════════════════════════════
+// RING HELPER
+// ══════════════════════════════════════════════
+function setRing(elId, score, r, max) {
+  try {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  const circ = 2 * Math.PI * r;
+  const fill = (score / max) * circ;
+  const offset = circ - fill;
+  el.setAttribute('stroke-dasharray', circ);
+  el.setAttribute('stroke-dashoffset', circ);
+  // Color
+  const color = score >= 80 ? 'var(--ok)' : score >= 60 ? 'var(--gold)' : 'var(--red-hi)';
+  el.setAttribute('stroke', color);
+  // Animate
+  setTimeout(() => {
+    el.style.transition = 'stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1)';
+    el.setAttribute('stroke-dashoffset', offset);
+  }, 100);
+  } catch(e) { /* SVG element not ready yet */ }
+}
+
+// ══════════════════════════════════════════════
+// HOME SCREEN
+// ══════════════════════════════════════════════
+function renderHomeScreen() {
+  const d    = new Date();
+  const hr   = d.getHours();
+  const mhi  = TUF_DATA.progress.muscleHealthIndex.current;
+  const rs   = TUF_DATA.getReadinessScore();
+  const v    = TUF_DATA.progress.vitals;
+  const p    = TUF_DATA.memberProfile;
+  const stats = TUF_DATA.getPlatformStats();
+  const streak = TUF_DATA.getWorkoutStreak();
+
+  // ── Date pill ──
+  document.getElementById('homeDatePill').textContent =
+    d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}).toUpperCase();
+
+  // ── Time-based greeting ──
+  const greet = hr < 12 ? 'Good morning' : hr < 17 ? 'Good afternoon' : 'Good evening';
+  document.getElementById('homeGreeting').textContent = greet + ', Marc';
+
+  // ── MHI Ring ──
+  document.getElementById('mhiScore').textContent = mhi;
+  setRing('mhiRing', mhi, 31.5, 100);
+  document.getElementById('mhiDesc').textContent =
+    mhi >= 90 ? 'Excellent. Top tier for your age group.'
+    : mhi >= 80 ? 'Above average for 40+. Two levers to close the gap to 95.'
+    : mhi >= 70 ? 'Good foundation. Protein distribution is the key lever.'
+    : 'Below target. Sleep and protein are the two immediate fixes.';
+
+  // ── Readiness bar ──
+  document.getElementById('homeReadinessScore').textContent = rs;
+  setTimeout(() => {
+    document.getElementById('homeReadinessBar').style.width = rs + '%';
+  }, 300);
+  const rsColor = rs >= 80 ? 'var(--ok)' : rs >= 60 ? 'var(--gold)' : 'var(--danger)';
+  document.getElementById('homeReadinessBar').style.background = rsColor;
+  document.getElementById('homeReadinessScore').style.color = rsColor;
+  document.getElementById('homeReadinessStatus').textContent =
+    rs >= 80 ? '✓ Full session cleared. Recovery is strong.'
+    : rs >= 60 ? '⚠ Moderate recovery. Reduce volume by 20%.'
+    : '✗ Under-recovered. Light movement or rest today.';
+
+  // ── Panther insight — prioritized by severity ──
+  let insight = '';
+  if (v.sleep.status === 'warn' && v.sleep.duration < 6.5) {
+    insight = `<strong>Sleep deficit detected (${v.sleep.duration}h).</strong> Muscle repair is compromised. Prioritize 25g protein within 30 min of waking. Reduce today's intensity by 20%.`;
+  } else if (v.bloodPressure.status === 'warn') {
+    insight = `<strong>BP at ${v.bloodPressure.systolic}/${v.bloodPressure.diastolic} — monitor.</strong> Reduce sodium today. 30 min walk over high-intensity. Hydrate to target.`;
+  } else if (v.hydration.waterToday < v.hydration.dailyTarget * 0.5) {
+    insight = `<strong>Hydration is low (${v.hydration.waterToday}oz of ${v.hydration.dailyTarget}oz).</strong> Dehydration reduces strength by 20%. Hit your water target before training.`;
+  } else {
+    insight = `<strong>Readiness ${rs}/100 — looking good.</strong> Green light for full session. Hit ${p.dailyProteinTarget}g protein today — that's the lever for your ${mhi} MHI score.`;
+  }
+  document.getElementById('homePantherInsight').innerHTML = insight;
+
+  // ── Pillar tiles ──
+  document.getElementById('moveStreak').textContent = streak > 0 ? streak + ' day streak' : 'Start today';
+  document.getElementById('fuelProtein').textContent = p.dailyProteinTarget + 'g target';
+  document.getElementById('feastRecipes').textContent = stats.recipes + ' recipes ready';
+
+  // ── Daily snapshot ──
+  document.getElementById('homeStatsRow').innerHTML = `
+    <div class="stat-tile">
+      <div class="stat-tile-val" style="color:var(--gold)">${mhi}</div>
+      <div class="stat-tile-lbl">MHI</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-tile-val" style="color:${rsColor}">${rs}</div>
+      <div class="stat-tile-lbl">Ready</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-tile-val">${streak}</div>
+      <div class="stat-tile-lbl">Streak</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-tile-val">${stats.nsvCount}</div>
+      <div class="stat-tile-lbl">NSV</div>
+    </div>
+  `;
+
+  // ── Today's action items — data driven ──
+  const actions = [];
+
+  // Workout action
+  const lastWorkout = TUF_DATA.progress.workoutLog[0];
+  const lastDate = lastWorkout ? new Date(lastWorkout.date) : null;
+  const daysSince = lastDate ? Math.floor((new Date() - lastDate) / 86400000) : 99;
+  if (daysSince === 0) {
+    actions.push({ color:'var(--ok)',   icon:'✓', text:'Workout logged today', sub:'Great work. Recovery starts now.', screen:'progress' });
+  } else {
+    actions.push({ color:'var(--gold)', icon:'🏋️', text:'Time to train — ' + (daysSince === 1 ? 'yesterday was rest' : daysSince + ' days since last session'), sub:'Tap to open MOVE library', screen:'workouts' });
+  }
+
+  // Protein action
+  const protTarget = p.dailyProteinTarget;
+  actions.push({ color:'var(--accent-fuel)', icon:'🥩', text:'Hit ' + protTarget + 'g protein today', sub:'Spread across 3 meals — min 25g each meal', screen:'nutrition' });
+
+  // Vitals action if flagged
+  if (v.sleep.status === 'warn' || v.bloodPressure.status === 'warn') {
+    actions.push({ color:'var(--danger)', icon:'⚠', text:'Vitals need attention', sub:'Sleep or BP flagged — tap to review', screen:'progress' });
+  }
+
+  // Hydration
+  const hydPct = Math.round((v.hydration.waterToday / v.hydration.dailyTarget) * 100);
+  if (hydPct < 60) {
+    actions.push({ color:'var(--blue)', icon:'💧', text:'Hydration at ' + hydPct + '% of target', sub:'Drink ' + (v.hydration.dailyTarget - v.hydration.waterToday) + ' more oz today', screen:'progress' });
+  }
+
+  document.getElementById('homeActionList').innerHTML = actions.map(a => `
+    <div class="action-item" onclick="showScreen('${a.screen}')">
+      <div class="action-dot" style="background:${a.color}"></div>
+      <div class="action-text">${a.text}<span>${a.sub}</span></div>
+      <div class="action-arrow">›</div>
+    </div>
+  `).join('');
+
+  // ── Streak footer ──
+  const streakMsg = streak >= 7 ? `🔥 ${streak}-day streak. Don't break the chain.`
+    : streak >= 3 ? `💪 ${streak} days strong. Keep building momentum.`
+    : streak === 0 ? `Today is day 1. Start your streak now.`
+    : `${streak} day${streak > 1 ? 's' : ''} in. Keep going.`;
+  document.getElementById('homeStreakFooter').innerHTML = `
+    <div style="font-size:13px;color:var(--gray);letter-spacing:0.5px;">${streakMsg}</div>
+    <div style="font-size:10px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;margin-top:4px;">TurnedUp Fitness · Georgia</div>
+  `;
+}
+
+// ══════════════════════════════════════════════
+// MOVE / WORKOUTS SCREEN
+// ══════════════════════════════════════════════
+let currentMuscle = 'chest';
+let currentLevel  = 'B';
+let muscleNavBuilt = false;
+
+function renderWorkoutsScreen() {
+  buildMuscleNav();
+  showMuscle(currentMuscle);
+}
+
+function buildMuscleNav() {
+  if (muscleNavBuilt) return;
+  const nav = document.getElementById('muscleNav');
+  nav.innerHTML = '';
+  Object.entries(TUF_DATA.muscleGroups).forEach(([key, mg]) => {
+    const btn = document.createElement('button');
+    btn.className = 'mtab' + (key === currentMuscle ? ' on' : '');
+    btn.setAttribute('data-muscle', key);
+    btn.innerHTML = `${mg.icon} ${mg.label}`;
+    btn.onclick = () => showMuscle(key, btn);
+    nav.appendChild(btn);
+  });
+  muscleNavBuilt = true;
+}
+
+function showMuscle(key, btn) {
+  currentMuscle = key;
+  currentLevel  = 'B';
+  const mg = TUF_DATA.muscleGroups[key];
+  const allExercises = TUF_DATA.getByMuscle(key);
+
+  // ── Update nav active ──
+  document.querySelectorAll('.mtab').forEach(t => t.classList.remove('on'));
+  if (btn) btn.classList.add('on');
+  else {
+    const activeBtn = document.querySelector(`.mtab[data-muscle="${key}"]`);
+    if (activeBtn) activeBtn.classList.add('on');
+  }
+
+  // ── Group header ──
+  document.getElementById('moveGroupIcon').textContent = mg.icon;
+  document.getElementById('moveGroupName').innerHTML = `${mg.label.toUpperCase()} <span>EXERCISES</span>`;
+  document.getElementById('moveGroupFocus').textContent = mg.focus;
+  document.getElementById('moveCountNum').textContent = allExercises.length;
+  document.getElementById('muscleScience').innerHTML =
+    `<div class="sci-lbl">40+ Science</div><div class="sci-txt">${mg.science}</div>`;
+
+  // ── Level tabs with counts ──
+  const levelNav = document.getElementById('levelNav');
+  levelNav.innerHTML = '';
+  const levelLabels = {B:'Beginner', I:'Intermediate', A:'Advanced'};
+  ['B','I','A'].forEach(lvl => {
+    const count = TUF_DATA.getByMuscleAndLevel(key, lvl).length;
+    const btn2 = document.createElement('button');
+    btn2.className = 'tab-pill' + (lvl === 'B' ? ' on' : '');
+    btn2.setAttribute('data-level', lvl);
+    btn2.innerHTML = levelLabels[lvl] + (count ? ` <span style="opacity:0.6;font-size:10px">(${count})</span>` : '');
+    btn2.disabled = count === 0;
+    if (count === 0) btn2.style.opacity = '0.3';
+    btn2.onclick = () => {
+      if (count === 0) return;
+      currentLevel = lvl;
+      document.querySelectorAll('#levelNav .tab-pill').forEach(t => t.classList.remove('on'));
+      btn2.classList.add('on');
+      document.getElementById('moveLevelPill').textContent = levelLabels[lvl].toUpperCase();
+      renderExercises(key, lvl);
+    };
+    levelNav.appendChild(btn2);
+  });
+
+  // ── Header pill ──
+  document.getElementById('moveLevelPill').textContent = 'BEGINNER';
+  document.getElementById('moveExerciseCount').textContent = allExercises.length;
+
+  renderExercises(key, 'B');
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function renderExercises(muscle, level) {
+  const exercises = TUF_DATA.getByMuscleAndLevel(muscle, level);
+  const list = document.getElementById('exerciseList');
+
+  if (!exercises.length) {
+    const mg = TUF_DATA.muscleGroups[muscle];
+    list.innerHTML = `
+      <div class="ex-empty">
+        <div class="ex-empty-icon">${mg.icon}</div>
+        <div class="ex-empty-title">Coming Soon</div>
+        <div class="ex-empty-sub">Advanced ${mg.label.toLowerCase()} exercises<br>are being added to the library.</div>
+      </div>`;
+    return;
+  }
+
+  list.innerHTML = exercises.map(ex => buildExCard(ex)).join('');
+}
+
+function buildExCard(ex) {
+  const levelClass  = {B:'t-level-b', I:'t-level-i', A:'t-level-a'}[ex.level];
+  const levelLabel  = {B:'Beginner', I:'Intermediate', A:'Advanced'}[ex.level];
+  const intensityColor = {Light:'var(--ok)', Moderate:'var(--gold)', High:'var(--danger)'}[ex.intensity] || 'var(--gray)';
+  const mg = TUF_DATA.muscleGroups[ex.muscle];
+
+  const videoHtml = ex.video.type === 'youtube'
+    ? `<iframe src="${ex.video.url}" title="${ex.name} — TurnedUp Fitness"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen loading="lazy"></iframe>`
+    : `<div class="vid-ph">
+        <div class="play-btn">▶</div>
+        <div class="vid-ex-name">${ex.name}</div>
+        <div class="vid-lbl">Video coming soon</div>
+      </div>`;
+
+  const modsHtml = ex.modifications.length ? `
+    <div class="cue-box" style="border-left-color:var(--ok);margin-top:0;">
+      <div class="cue-lbl green">40+ Modifications</div>
+      ${ex.modifications.map(m =>
+        `<div class="mod-item">
+          <div class="mod-dot"></div>
+          <div class="mod-txt"><strong>${m.condition}:</strong> ${m.mod}</div>
+        </div>`
+      ).join('')}
+    </div>` : '';
+
+  return `
+    <div class="ex-card fade-in">
+      <div class="vid-area">${videoHtml}</div>
+      <div class="ex-body">
+
+        <div class="ex-tags">
+          <span class="tag t-muscle">${mg.label}</span>
+          <span class="tag ${levelClass}">${levelLabel}</span>
+          <span class="tag t-equip">${ex.equipment}</span>
+        </div>
+
+        <div class="ex-name">${ex.name}</div>
+        <div class="ex-muscles">
+          <strong style="color:var(--white)">Primary:</strong> ${ex.primaryMuscle}
+          &nbsp;·&nbsp;
+          <span style="color:var(--dim)">Secondary: ${ex.secondaryMuscle}</span>
+        </div>
+
+        <div class="ex-stats">
+          <div class="ex-stat-box">
+            <div class="ex-stat-val">${ex.sets}×${ex.reps}</div>
+            <div class="ex-stat-lbl">Sets×Reps</div>
+          </div>
+          <div class="ex-stat-box">
+            <div class="ex-stat-val">${ex.rest}</div>
+            <div class="ex-stat-lbl">Rest</div>
+          </div>
+          <div class="ex-stat-box">
+            <div class="ex-stat-val">${ex.tempo}</div>
+            <div class="ex-stat-lbl">Tempo</div>
+          </div>
+          <div class="ex-stat-box">
+            <div class="ex-stat-val" style="color:${intensityColor}">${ex.intensity}</div>
+            <div class="ex-stat-lbl">Intensity</div>
+          </div>
+        </div>
+
+        <div class="cue-box">
+          <div class="cue-lbl">Coaching Cue</div>
+          <div class="cue-txt">${ex.coachingCue}</div>
+        </div>
+
+        ${modsHtml}
+
+        <div class="science-strip" style="margin:0;">
+          <div class="sci-lbl">40+ Note</div>
+          <div class="sci-txt">${ex.scienceNote}</div>
+        </div>
+
+      </div>
+    </div>`;
+}
+
+function logWorkoutPrompt() {
+  const mg = TUF_DATA.muscleGroups[currentMuscle];
+  const levelLabel = {B:'Beginner', I:'Intermediate', A:'Advanced'}[currentLevel];
+  const exercises = TUF_DATA.getByMuscleAndLevel(currentMuscle, currentLevel);
+  TUF_DATA.logWorkout(currentMuscle, currentLevel, exercises.length, 45, 7, '');
+  toast(`${mg.label} ${levelLabel} workout logged ✓`, 'ok');
+  renderHomeScreen();
+}
+
+// ══════════════════════════════════════════════
+// FUEL / NUTRITION SCREEN
+// ══════════════════════════════════════════════
+let currentFoodCategory = 'protein';
+let foodCategoryNavBuilt = false;
+
+function renderNutritionScreen() {
+  const p      = TUF_DATA.memberProfile;
+  const target = p.dailyProteinTarget;
+  const pt     = TUF_DATA.nutrition.proteinTargets;
+
+  // ── Header pill ──
+  document.getElementById('fuelTargetPill').textContent = target + 'g / day';
+
+  // ── Protein ring — 0% logged for now (Phase 2: real logging) ──
+  document.getElementById('fuelDailyTarget').textContent = target + 'g';
+  document.getElementById('proteinPct').textContent = '0%';
+  setRing('proteinRing', 0, 30, 100);
+
+  // ── Per-meal distribution ──
+  // Demo: show typical under-fueled pattern + targets
+  const meals = [
+    { label:'Breakfast', current:10, target:pt.perMeal.target },
+    { label:'Lunch',     current:22, target:pt.perMeal.target },
+    { label:'Dinner',    current:38, target:pt.perMeal.target },
+    { label:'Snacks',    current:8,  target:20 },
+  ];
+  document.getElementById('fuelMealDist').innerHTML = meals.map(m => {
+    const pct   = Math.min(100, Math.round((m.current / m.target) * 100));
+    const isOk  = m.current >= pt.perMeal.min;
+    const cls   = isOk ? 'ok' : 'under';
+    return `
+      <div class="fuel-meal-row">
+        <div class="fuel-meal-label">${m.label}</div>
+        <div class="fuel-meal-bar">
+          <div class="fuel-meal-fill ${cls}" style="width:${pct}%"></div>
+        </div>
+        <div class="fuel-meal-val ${cls}">${m.current}g</div>
+      </div>`;
+  }).join('');
+
+  // ── Supplement stack ──
+  const suppFoods = TUF_DATA.getFoodsByCategory('supplements');
+  const suppIcons = { 'Creatine Monohydrate':'💪', 'Vitamin D3 + K2':'☀️', 'Magnesium Glycinate':'🌙', 'Omega-3 Fish Oil':'🐟' };
+  document.getElementById('fuelSupplementList').innerHTML = suppFoods.map(s => `
+    <div class="fuel-supplement-card fade-in">
+      <div class="fuel-supp-icon">${suppIcons[s.name] || '💊'}</div>
+      <div class="fuel-supp-info">
+        <div class="fuel-supp-name">${s.name}</div>
+        <div class="fuel-supp-dose">${s.serving}</div>
+        <div class="fuel-supp-note">${s.notes}</div>
+      </div>
+      <div class="fuel-supp-priority">P1</div>
+    </div>
+  `).join('');
+
+  // ── Meal templates ──
+  document.getElementById('mealTemplateList').innerHTML =
+    TUF_DATA.nutrition.mealTemplates.map(m => `
+      <div class="meal-template-card fade-in">
+        <div class="meal-type">${m.type.replace(/-/g,' ')} · ${m.pillar}</div>
+        <div class="meal-name">${m.name}</div>
+        <div class="meal-macros">
+          <div class="macro-chip">Protein <span>${m.targetProtein}g</span></div>
+          <div class="macro-chip">Calories <span>${m.targetCalories}</span></div>
+          <div class="macro-chip">${m.items.length} Foods</div>
+        </div>
+        <div class="meal-desc">${m.description}</div>
+        <div class="meal-science">${m.science}</div>
+      </div>
+    `).join('');
+
+  // ── Food category nav — build once ──
+  if (!foodCategoryNavBuilt) {
+    const catNav = document.getElementById('foodCategoryNav');
+    catNav.innerHTML = '';
+    Object.entries(TUF_DATA.nutrition.foodCategories)
+      .sort((a,b) => a[1].priority - b[1].priority)
+      .forEach(([key, cat]) => {
+        const btn = document.createElement('button');
+        btn.className = 'tab-pill' + (key === currentFoodCategory ? ' on' : '');
+        btn.setAttribute('data-cat', key);
+        btn.innerHTML = `${cat.icon} ${cat.label}`;
+        btn.onclick = () => {
+          currentFoodCategory = key;
+          document.querySelectorAll('#foodCategoryNav .tab-pill').forEach(t => t.classList.remove('on'));
+          btn.classList.add('on');
+          renderFoodList(key);
+        };
+        catNav.appendChild(btn);
+      });
+    foodCategoryNavBuilt = true;
+  }
+  renderFoodList(currentFoodCategory);
+}
+
+function renderFoodList(category) {
+  const foods = TUF_DATA.getFoodsByCategory(category);
+  const list  = document.getElementById('foodList');
+  const cat   = TUF_DATA.nutrition.foodCategories[category];
+
+  if (!foods.length) {
+    list.innerHTML = `<div class="tuf-loading">No foods logged in this category.</div>`;
+    return;
+  }
+
+  const icons = {
+    protein:'🥩', carbs:'🍠', vegetables:'🥦', fats:'🥑',
+    dairy:'🥛', fruits:'🫐', grains:'🌾', beverages:'💧', supplements:'💊'
+  };
+
+  // Category note at top
+  const note = cat ? `<div class="science-strip" style="margin:0 14px 10px;border-left-color:var(--accent-fuel);">
+    <div class="sci-lbl" style="color:var(--accent-fuel);">${cat.label}</div>
+    <div class="sci-txt">${cat.note}</div>
+  </div>` : '';
+
+  list.innerHTML = note + foods.map(f => {
+    const protColor = f.protein >= 20 ? 'var(--ok)' : f.protein >= 10 ? 'var(--gold)' : 'var(--gray)';
+    return `
+      <div class="food-card fade-in">
+        <div class="food-icon">${icons[f.category] || '🍽️'}</div>
+        <div class="food-info">
+          <div class="food-name">${f.name}</div>
+          <div class="food-macros">${f.serving} · ${f.calories} cal · ${f.carbs}g C · ${f.fat}g F · ${f.fiber}g Fiber</div>
+          <div class="food-note">${f.notes}</div>
+        </div>
+        <div class="food-protein-badge">
+          <div class="food-protein-val" style="color:${protColor}">${f.protein}g</div>
+          <div class="food-protein-lbl">protein</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════
+// FEAST / RECIPES SCREEN
+// ══════════════════════════════════════════════
+let currentRecipeCategory = 'all';
+
+function renderFeastScreen() {
+  // Category nav
+  const catNav = document.getElementById('recipeCategoryNav');
+  if (!catNav.children.length) {
+    const allBtn = document.createElement('button');
+    allBtn.className = 'tab-pill on';
+    allBtn.textContent = '🍽️ All';
+    allBtn.onclick = () => { currentRecipeCategory = 'all'; filterRecipes('all', allBtn); };
+    catNav.appendChild(allBtn);
+
+    Object.entries(TUF_DATA.recipeCategories).forEach(([key, cat]) => {
+      if (!TUF_DATA.recipes.some(r => r.category === key)) return;
+      const btn = document.createElement('button');
+      btn.className = 'tab-pill';
+      btn.innerHTML = `${cat.icon} ${cat.label}`;
+      btn.onclick = () => filterRecipes(key, btn);
+      catNav.appendChild(btn);
+    });
+  }
+  renderRecipes(currentRecipeCategory);
+}
+
+function filterRecipes(category, btn) {
+  currentRecipeCategory = category;
+  document.querySelectorAll('#recipeCategoryNav .tab-pill').forEach(t => t.classList.remove('on'));
+  btn.classList.add('on');
+  renderRecipes(category);
+}
+
+function renderRecipes(category) {
+  const recipes = category === 'all'
+    ? TUF_DATA.recipes.filter(r => r.published)
+    : TUF_DATA.getRecipesByCategory(category);
+
+  document.getElementById('recipeList').innerHTML = recipes.map((r, i) => `
+    <div class="recipe-card fade-in">
+      <div class="recipe-hero">
+        <div class="recipe-category-tag">${r.category.replace('-',' ')} · ${r.pillar}</div>
+        <div class="recipe-name">${r.name}</div>
+        <div class="recipe-meta">
+          <div class="recipe-meta-chip">Prep <span>${r.prepTime}m</span></div>
+          <div class="recipe-meta-chip">Cook <span>${r.cookTime}m</span></div>
+          <div class="recipe-meta-chip">Servings <span>${r.servings}</span></div>
+          <div class="recipe-meta-chip">Difficulty <span>${r.difficulty}</span></div>
+        </div>
+      </div>
+      <div class="recipe-body">
+        <div class="recipe-macro-row">
+          <div class="recipe-macro"><div class="recipe-macro-val">${r.targetProtein}g</div><div class="recipe-macro-lbl">Protein</div></div>
+          <div class="recipe-macro"><div class="recipe-macro-val">${r.calories}</div><div class="recipe-macro-lbl">Calories</div></div>
+          <div class="recipe-macro"><div class="recipe-macro-val">${r.carbs}g</div><div class="recipe-macro-lbl">Carbs</div></div>
+          <div class="recipe-macro"><div class="recipe-macro-val">${r.fat}g</div><div class="recipe-macro-lbl">Fat</div></div>
+        </div>
+        <div class="recipe-desc">${r.description}</div>
+        <div class="recipe-toggle" onclick="toggleRecipeSteps('steps-${i}', this)">
+          <span>▶</span> View Steps & Ingredients
+        </div>
+        <div class="recipe-steps" id="steps-${i}">
+          <div class="cue-box" style="margin-bottom:10px;">
+            <div class="cue-lbl">Ingredients</div>
+            ${r.ingredients.map(ing => `<div class="mod-item"><div class="mod-dot"></div><div class="mod-txt">${ing.amount} ${ing.name}</div></div>`).join('')}
+          </div>
+          <div class="cue-box">
+            <div class="cue-lbl">Steps</div>
+            ${r.steps.map((s, si) => `<div class="recipe-step"><div class="step-num">${si+1}</div><div class="step-txt">${s}</div></div>`).join('')}
+          </div>
+          <div class="science-strip" style="margin:8px 0 0;">
+            <div class="sci-lbl">Coach Note</div>
+            <div class="sci-txt">${r.coachNote}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleRecipeSteps(id, btn) {
+  const el = document.getElementById(id);
+  const isOpen = el.classList.toggle('open');
+  btn.innerHTML = `<span>${isOpen ? '▼' : '▶'}</span> ${isOpen ? 'Hide' : 'View Steps & Ingredients'}`;
+}
+
+// ══════════════════════════════════════════════
+// PROGRESS SCREEN
+// ══════════════════════════════════════════════
+function renderProgressScreen() {
+  // MHI ring
+  const mhi = TUF_DATA.progress.muscleHealthIndex.current;
+  document.getElementById('mhiScoreProg').textContent = mhi;
+  setRing('mhiRingProg', mhi, 30, 100);
+
+  // MHI factors
+  const factors = TUF_DATA.progress.muscleHealthIndex.factors;
+  document.getElementById('mhiFactors').innerHTML = Object.entries(factors).map(([key, f]) => {
+    const labels = {workoutFrequency:'Workout Frequency', proteinPerMeal:'Protein Per Meal', weightTrend:'Weight Trend', ageFactor:'Age Factor'};
+    const icon = f.status === 'ok' ? '✅' : '⚠️';
+    const valStr = typeof f.value === 'string' ? f.value : `${f.value}${f.unit ? ' ' + f.unit : ''}`;
+    const color = f.status === 'ok' ? 'var(--ok)' : 'var(--warn)';
+    return `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+        <div style="font-size:12px;color:var(--gray)">${labels[key] || key}</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="font-size:13px;color:${color};font-weight:600;">${valStr}</div>
+          <div>${icon}</div>
+        </div>
+      </div>`;
+  }).join('');
+
+  // Trajectory chart
+  buildTrajectoryChart();
+
+  // Readiness
+  const rs = TUF_DATA.getReadinessScore();
+  document.getElementById('readinessScore').textContent = rs;
+  setRing('readinessRing', rs, 24, 100);
+  document.getElementById('readinessStatus').textContent =
+    rs >= 80 ? 'Recovery is strong.' : rs >= 60 ? 'Moderate recovery.' : 'Under-recovered.';
+  document.getElementById('readinessInsight').textContent =
+    rs >= 80 ? 'Green light for full-intensity session today.'
+    : rs >= 60 ? 'Reduce volume by 20%. Prioritize protein timing.'
+    : 'Rest or light movement only. Recovery is the workout today.';
+
+  // Vital cards
+  renderVitalCards();
+
+  // NSV log
+  document.getElementById('nsvList').innerHTML = TUF_DATA.progress.nsvLog.slice(0,5).map(nsv => `
+    <div class="nsv-item">
+      <div class="nsv-dot"></div>
+      <div class="nsv-text">${nsv.entry}</div>
+      <div class="nsv-date">${nsv.date}</div>
+    </div>
+  `).join('');
+
+  // Workout log
+  const wlog = document.getElementById('workoutLogList');
+  if (wlog) {
+    wlog.innerHTML = TUF_DATA.progress.workoutLog.slice(0,7).map(w => {
+      const mg = TUF_DATA.muscleGroups[w.muscle];
+      const lvl = {B:'Beginner',I:'Intermediate',A:'Advanced'}[w.level];
+      return `
+        <div class="nsv-item">
+          <div style="font-size:18px;flex-shrink:0">${mg?.icon || '🏋️'}</div>
+          <div style="flex:1;">
+            <div style="font-size:13px;font-weight:600;color:var(--white)">${mg?.label || w.muscle} · ${lvl}</div>
+            <div style="font-size:10px;color:var(--gray);letter-spacing:0.5px;margin-top:1px;">${w.exercisesCompleted} exercises · ${w.duration}min · RPE ${w.rpe}${w.notes ? ' · ' + w.notes : ''}</div>
+          </div>
+          <div class="nsv-date">${w.date}</div>
+        </div>`;
+    }).join('');
+  }
+
+  // Biometrics
+  document.getElementById('biometricsList').innerHTML =
+    `<div style="padding:0 14px;">` +
+    TUF_DATA.progress.biometrics.map(b => `
+      <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
+        <div style="font-size:11px;color:var(--gray);letter-spacing:1px;">${b.date}</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gold);letter-spacing:1px;">${b.weight} <span style="font-size:11px;color:var(--gray);">lbs</span></div>
+      </div>
+    `).join('') + `</div>`;
+}
+
+function buildTrajectoryChart() {
+  try {
+  const history = TUF_DATA.getMHITrajectory();
+  const svg = document.getElementById('trajChart');
+  const W = 380, H = 110, pad = 20;
+  const minScore = 60, maxScore = 100;
+
+  const pts = history.map((h, i) => {
+    const x = pad + (i / (history.length - 1)) * (W - pad * 2);
+    const y = H - pad - ((h.score - minScore) / (maxScore - minScore)) * (H - pad * 2);
+    return [x, y];
+  });
+
+  const pathD = pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${p[0]},${p[1]}`).join(' ');
+
+  // Gradient area
+  const areaD = pathD + ` L${pts[pts.length-1][0]},${H} L${pts[0][0]},${H} Z`;
+
+  svg.innerHTML = `
+    <defs>
+      <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#C8973A" stop-opacity="0.2"/>
+        <stop offset="100%" stop-color="#C8973A" stop-opacity="0"/>
+      </linearGradient>
+      <filter id="glow"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+    <!-- Grid lines -->
+    <line x1="0" y1="${H - pad - ((80-minScore)/(maxScore-minScore))*(H-pad*2)}" x2="${W}" y2="${H - pad - ((80-minScore)/(maxScore-minScore))*(H-pad*2)}" stroke="var(--border-lo)" stroke-width="1"/>
+    <text x="4" y="${H - pad - ((80-minScore)/(maxScore-minScore))*(H-pad*2) - 3}" fill="#333" font-size="8" font-family="Barlow Condensed" letter-spacing="1">80</text>
+    <!-- Target line -->
+    <line x1="0" y1="${H - pad - ((95-minScore)/(maxScore-minScore))*(H-pad*2)}" x2="${W}" y2="${H - pad - ((95-minScore)/(maxScore-minScore))*(H-pad*2)}" stroke="#8B0000" stroke-width="1" stroke-dasharray="4 4" opacity="0.5"/>
+    <text x="${W-70}" y="${H - pad - ((95-minScore)/(maxScore-minScore))*(H-pad*2) - 3}" fill="#8B0000" font-size="8" font-family="Barlow Condensed" letter-spacing="1" opacity="0.7">TARGET 95+</text>
+    <!-- Area -->
+    <path d="${areaD}" fill="url(#areaGrad)"/>
+    <!-- Line -->
+    <path class="traj-line" d="${pathD}" fill="none" stroke="#C8973A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+    <!-- Current point -->
+    <circle cx="${pts[pts.length-1][0]}" cy="${pts[pts.length-1][1]}" r="5" fill="#C8973A"/>
+    <text x="${pts[pts.length-1][0] - 10}" y="${pts[pts.length-1][1] - 9}" fill="#C8973A" font-size="9" font-family="Barlow Condensed" letter-spacing="1">87 NOW</text>
+  `;
+  } catch(e) { console.warn('Chart render error:', e.message); }
+}
+
+function renderVitalCards() {
+  const v = TUF_DATA.progress.vitals;
+
+  const cards = [
+    {
+      icon:'❤️', label:'Heart Rate / HRV',
+      badge: v.heartRate.status === 'ok' ? {cls:'badge-green', txt:'OPTIMAL'} : {cls:'badge-warn', txt:'MONITOR'},
+      values: [
+        {label:'RHR', val:v.heartRate.rhr, unit:'bpm', status:v.heartRate.status},
+        {label:'HRV', val:v.heartRate.hrv, unit:'ms', status:'ok'}
+      ],
+      barPct: Math.round((v.heartRate.hrv / 60) * 100),
+      barClass: 'ok',
+      insight: v.heartRate.status === 'ok'
+        ? `<strong>Recovery is strong.</strong> HRV at ${v.heartRate.hrv}ms — above average. Green light for high intensity.`
+        : `<strong>HRV is low.</strong> Reduce today's intensity. Prioritize sleep and recovery.`
+    },
+    {
+      icon:'🩺', label:'Blood Pressure',
+      badge: v.bloodPressure.status === 'ok' ? {cls:'badge-green', txt:'OPTIMAL'} : {cls:'badge-warn', txt:'MONITOR'},
+      values: [
+        {label:'Systolic', val:v.bloodPressure.systolic, unit:'mmHg', status:v.bloodPressure.status},
+        {label:'Diastolic', val:v.bloodPressure.diastolic, unit:'mmHg', status:v.bloodPressure.status}
+      ],
+      barPct: Math.max(0, Math.min(100, Math.round(((160 - v.bloodPressure.systolic) / 70) * 100))),
+      barClass: v.bloodPressure.status === 'ok' ? 'ok' : 'warn',
+      insight: v.bloodPressure.status === 'warn'
+        ? `<strong>Stage 1 elevated.</strong> Reduce sodium today. 30 min walk over high-intensity lift.`
+        : `<strong>Blood pressure optimal.</strong> Keep up the cardio and low-sodium habits.`
+    },
+    {
+      icon:'🌙', label:'Sleep Quality',
+      badge: v.sleep.status === 'ok' ? {cls:'badge-green', txt:'RESTORED'} : {cls:'badge-warn', txt:'BELOW TARGET'},
+      values: [
+        {label:'Duration', val:v.sleep.duration, unit:'hrs', status:v.sleep.status},
+        {label:'Quality', val:v.sleep.quality, unit:'/100', status:v.sleep.status}
+      ],
+      barPct: v.sleep.quality,
+      barClass: v.sleep.status === 'ok' ? 'ok' : 'warn',
+      insight: v.sleep.status === 'warn'
+        ? `<strong>Under-recovered.</strong> Muscle repair compromised below 7h. Reduce volume 20% today.`
+        : `<strong>Sleep was restorative.</strong> Full recovery. Protein timing is now the main lever.`
+    },
+    {
+      icon:'💧', label:'Hydration',
+      badge: v.hydration.status === 'ok' ? {cls:'badge-green', txt:'ON TRACK'} : {cls:'badge-warn', txt:'BEHIND'},
+      values: [
+        {label:'Water Today', val:v.hydration.waterToday, unit:'oz', status:v.hydration.status},
+        {label:'Recovery', val:v.hydration.recoveryScore, unit:'/100', status:'ok'}
+      ],
+      barPct: Math.round((v.hydration.waterToday / v.hydration.dailyTarget) * 100),
+      barClass: 'ok',
+      insight: `<strong>Hit ${v.hydration.dailyTarget - v.hydration.waterToday} more oz</strong> today to reach your target. Dehydration reduces strength by up to 20%.`
+    }
+  ];
+
+  document.getElementById('vitalCards').innerHTML = cards.map(c => `
+    <div class="vital-card fade-in">
+      <div class="vital-card-top">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:18px">${c.icon}</span>
+          <div style="font-size:10px;letter-spacing:2px;color:var(--gray);text-transform:uppercase;">${c.label}</div>
+        </div>
+        <span class="tuf-badge ${c.badge.cls}">${c.badge.txt}</span>
+      </div>
+      <div class="vital-values">
+        ${c.values.map(v => `
+          <div class="vital-val-block">
+            <div class="vital-val-label">${v.label}</div>
+            <div class="vital-val-num ${v.status}">${v.val} <span style="font-size:11px;color:var(--gray)">${v.unit}</span></div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="progress-bar" style="margin-bottom:8px;">
+        <div class="progress-fill ${c.barClass}" style="width:${Math.min(100,c.barPct)}%"></div>
+      </div>
+      <div class="vital-insight">${c.insight}</div>
+    </div>
+  `).join('');
+}
+
+// ══════════════════════════════════════════════
+// LEARN / VAULT SCREEN
+// ══════════════════════════════════════════════
+function renderLearnScreen() {
+  const nsvCount = TUF_DATA.progress.nsvCount;
+  const pct = Math.round((nsvCount / 30) * 100);
+
+  document.getElementById('vaultNsvCount').textContent = `${nsvCount} / 30`;
+  document.getElementById('vaultProgressBar').style.width = pct + '%';
+  document.getElementById('vaultProgressLabel').textContent =
+    nsvCount >= 30
+      ? '🔓 UNLOCKED — Access the 40+ Performance Code'
+      : `Log ${30 - nsvCount} more Non-Scale Victories to unlock`;
+
+  // Free articles
+  const freeArticles = TUF_DATA.getVaultArticles(false).filter(a => !a.premium);
+  document.getElementById('freeArticleList').innerHTML = freeArticles.map(a => `
+    <div class="article-card fade-in">
+      <div class="article-category">${a.category} · ${a.pillar}</div>
+      <div class="article-title">${a.title}</div>
+      <div class="article-summary">${a.summary}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+        ${a.keyStats.map(s => `<div style="font-size:10px;color:var(--gold);background:rgba(200,151,58,0.08);border:1px solid rgba(200,151,58,0.2);padding:3px 8px;letter-spacing:0.5px;">• ${s}</div>`).join('')}
+      </div>
+      <div class="article-stat">📖 ${a.readTime} min read</div>
+    </div>
+  `).join('');
+
+  // Premium articles
+  const premiumArticles = TUF_DATA.getVaultArticles(true).filter(a => a.premium);
+  const isUnlocked = TUF_DATA.progress.vaultUnlocked;
+
+  document.getElementById('premiumArticleList').innerHTML = premiumArticles.map(a => {
+    if (isUnlocked) {
+      return `
+        <div class="article-card premium fade-in">
+          <div class="article-category">${a.category} · ${a.pillar}</div>
+          <div class="article-title">${a.title}</div>
+          <div class="article-summary">${a.summary}</div>
+          <div class="article-stat">📖 ${a.readTime} min read</div>
+        </div>`;
+    }
+    return `
+      <div class="locked-card fade-in">
+        <div class="locked-icon">🔒</div>
+        <div class="locked-title">${a.title}</div>
+        <div class="locked-desc">${a.summary.split('.')[0]}.</div>
+        <div style="margin-top:12px;font-size:10px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;">${30 - nsvCount} NSV wins to unlock</div>
+      </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════
+// GOALS SCREEN
+// ══════════════════════════════════════════════
+function renderGoalsScreen() {
+  document.getElementById('goalsList').innerHTML = TUF_DATA.goals.map(g => {
+    const progress = TUF_DATA.getGoalProgress(g.id);
+    const statusBadge = g.status === 'on-track'
+      ? 'badge-green' : g.status === 'in-progress' ? 'badge-warn' : 'badge-gray';
+    const barClass = g.status === 'on-track' ? 'ok' : 'warn';
+    const gt = TUF_DATA.goalTypes[g.type];
+
+    return `
+      <div class="goal-card fade-in">
+        <div class="goal-header">
+          <div>
+            <div style="font-size:18px;margin-bottom:4px;">${gt?.icon || '🎯'}</div>
+            <div class="goal-title">${g.title}</div>
+            <div class="goal-pillar">${g.type.replace('-',' ')} · ${g.pillar}</div>
+          </div>
+          <span class="tuf-badge ${statusBadge}">${g.status.replace('-',' ')}</span>
+        </div>
+        <div class="goal-progress-row">
+          <div class="goal-current">${g.current}<span style="font-size:14px;color:var(--gray);margin-left:3px;">${g.unit.split('/')[0]}</span></div>
+          <div style="flex:1;">
+            <div class="goal-target">Target: ${g.target} ${g.unit}</div>
+            <div class="progress-bar" style="margin-top:4px;">
+              <div class="progress-fill ${barClass}" style="width:${Math.min(100,progress)}%"></div>
+            </div>
+            <div style="font-size:9px;color:var(--dim);margin-top:3px;letter-spacing:1px;">${progress}% complete</div>
+          </div>
+        </div>
+        <div class="goal-desc">${g.description}</div>
+      </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════
+// PROFILE SCREEN
+// ══════════════════════════════════════════════
+function renderProfileScreen() {
+  const p = TUF_DATA.memberProfile;
+  const stats = TUF_DATA.getPlatformStats();
+
+  document.getElementById('profileStatsRow').innerHTML = `
+    <div class="stat-tile"><div class="stat-tile-val">${p.dailyProteinTarget}g</div><div class="stat-tile-lbl">Daily Protein</div></div>
+    <div class="stat-tile"><div class="stat-tile-val">${p.dailyWaterTarget}oz</div><div class="stat-tile-lbl">Daily Water</div></div>
+    <div class="stat-tile"><div class="stat-tile-val">${p.bmi}</div><div class="stat-tile-lbl">BMI</div></div>
+    <div class="stat-tile"><div class="stat-tile-val">${stats.workoutStreak}</div><div class="stat-tile-lbl">Streak</div></div>
+  `;
+
+  const settings = [
+    { icon:'👤', name:'Personal Info', sub:`Age ${p.age} · ${p.weight}lbs · Georgia`, arrow:'›' },
+    { icon:'🎯', name:'Fitness Level', sub:`${{B:'Beginner',I:'Intermediate',A:'Advanced'}[p.fitnessLevel]} · ${p.activityLevel}`, arrow:'›' },
+    { icon:'⚕️', name:'Health Conditions', sub: p.healthConditions.length ? p.healthConditions.join(', ') : 'None logged', arrow:'›' },
+    { icon:'🔔', name:'Notifications', sub:'Daily coaching cues active', arrow:'›' },
+    { icon:'📱', name:'Connected Apps', sub:'Apple Health · Google Fit', arrow:'›' },
+    { icon:'⭐', name:'Upgrade to Pro', sub:'Unlock full coaching + white-glove support', arrow:'›', gold:true },
+  ];
+
+  document.getElementById('profileSettings').innerHTML = settings.map(s => `
+    <div class="setting-row" onclick="toast('${s.name} settings coming soon')">
+      <div class="setting-icon">${s.icon}</div>
+      <div class="setting-text">
+        <div class="setting-name" style="${s.gold ? 'color:var(--gold)' : ''}">${s.name}</div>
+        <div class="setting-sub">${s.sub}</div>
+      </div>
+      <div class="setting-arrow">${s.arrow}</div>
+    </div>
+  `).join('');
+}
+
+// ══════════════════════════════════════════════
+// NSV PROMPT
+// ══════════════════════════════════════════════
+function logNSVPrompt() {
+  const entry = prompt('Log a Non-Scale Victory:\n(e.g. "Completed all sets at heavier weight", "Slept 8 hours", "Hit 25g protein at breakfast")');
+  if (!entry || !entry.trim()) return;
+  TUF_DATA.logNSV(entry.trim(), 'strength');
+  toast('NSV logged! ' + TUF_DATA.progress.nsvCount + ' / 30 toward Vault unlock 🏆');
+  renderProgressScreen();
+  renderLearnScreen();
+}
+
+// ══════════════════════════════════════════════
+// STORAGE SYNC — admin changes auto-update app
+// ══════════════════════════════════════════════
+window.addEventListener('storage', (e) => {
+  if (['TUF_EXERCISES','TUF_NUTRITION','TUF_RECIPES','TUF_PROGRESS','TUF_ADMIN_PING'].includes(e.key)) {
+    TUF_DATA.loadFromStorage();
+    // Re-render current screen
+    const active = document.querySelector('.screen.active');
+    if (active) {
+      const id = active.id.replace('screen-', '');
+      if (id === 'home')     renderHomeScreen();
+      if (id === 'workouts') renderWorkoutsScreen();
+      if (id === 'progress') renderProgressScreen();
+      toast('Data updated by admin ✓', 'warn');
+    }
+  }
+});
+
+// ══════════════════════════════════════════════
+// INIT — guarded startup
+// ══════════════════════════════════════════════
+(function init() {
+  if (typeof TUF_DATA === 'undefined') {
+    document.body.innerHTML = [
+      '<div style="background:#080808;min-height:100vh;display:flex;flex-direction:column;',
+      'align-items:center;justify-content:center;padding:40px 20px;text-align:center;">',
+      '<div style="font-family:Bebas Neue,sans-serif;font-size:36px;letter-spacing:6px;color:#C8973A;">TUF.</div>',
+      '<div style="font-family:Bebas Neue,sans-serif;font-size:20px;letter-spacing:4px;color:#f2f2f2;margin-top:16px;">DATA FILE MISSING</div>',
+      '<div style="font-size:13px;color:#888;margin-top:12px;letter-spacing:1px;line-height:1.7;">',
+      'TUF_DATA.js must be in the same folder as TUF_App_v2.html<br>',
+      'Both files must be opened from the same directory.',
+      '</div></div>'
+    ].join('');
+    return;
+  }
+  try {
+    renderHomeScreen();
+  } catch(e) {
+    console.error('TUF App init error:', e.message, e.stack);
+  }
+})();
+</script>
+</body>
+</html>

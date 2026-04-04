@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Turned Up Fitness — Exercise Library</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ════════════════════════════════════════════
+   RESET & VARIABLES
+════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#8B0000;--red2:#A31515;--red3:#C41E1E;
+  --gold:#C8973A;--gold2:#8A6420;
+  --black:#080808;--d1:#0D0D0D;--d2:#141414;--d3:#1C1C1C;--d4:#242424;
+  --border:rgba(255,255,255,0.07);
+  --text:#E8E8E8;--muted:#666;
+  --blue:#3A7BD5;--yellow:#F5C518;--orange:#E8651A;--green:#2DAA4F;
+  --purple:#8B5CF6;
+}
+html{scroll-behavior:smooth}
+body{background:var(--black);font-family:'Barlow',sans-serif;color:var(--text);overflow-x:hidden}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:var(--red)}
+
+/* ════════════════════════════════════════════
+   PAGE HEADER
+════════════════════════════════════════════ */
+.page-header{
+  background:linear-gradient(160deg,#1a0000 0%,var(--d1) 55%,#001508 100%);
+  padding:clamp(30px,6vw,60px) clamp(16px,5vw,48px) clamp(24px,4vw,40px);
+  position:relative;overflow:hidden;
+  border-bottom:2px solid var(--red);
+  text-align:center;
+}
+.page-header::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(45deg,transparent,transparent 50px,rgba(255,255,255,.013) 50px,rgba(255,255,255,.013) 51px);
+}
+.ph-eyebrow{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:clamp(9px,2vw,11px);letter-spacing:5px;color:var(--gold);margin-bottom:10px;position:relative}
+.ph-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(38px,8vw,76px);color:#fff;line-height:.88;letter-spacing:3px;position:relative}
+.ph-title span{color:var(--gold)}
+.ph-sub{font-family:'Barlow Condensed',sans-serif;font-size:clamp(10px,2.2vw,13px);color:var(--muted);letter-spacing:3px;margin-top:10px;position:relative}
+.ph-stats{display:flex;justify-content:center;gap:clamp(10px,2.5vw,24px);margin-top:20px;flex-wrap:wrap;position:relative}
+.phstat{background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:clamp(8px,2vw,12px) clamp(14px,3vw,22px);text-align:center}
+.phstat-n{font-family:'Bebas Neue',sans-serif;font-size:clamp(20px,4vw,30px);color:var(--gold);line-height:1}
+.phstat-l{font-family:'Barlow Condensed',sans-serif;font-size:clamp(8px,1.5vw,10px);letter-spacing:2px;color:#444;margin-top:2px}
+.darebee-credit{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(45,170,79,.1);border:1px solid rgba(45,170,79,.25);
+  border-radius:20px;padding:6px 16px;margin-top:14px;
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;
+  letter-spacing:1.5px;color:#6EE68A;position:relative;text-decoration:none;
+}
+.darebee-credit:hover{background:rgba(45,170,79,.2)}
+
+/* ════════════════════════════════════════════
+   PATTERN TABS
+════════════════════════════════════════════ */
+.pattern-tabs{
+  display:flex;overflow-x:auto;scrollbar-width:none;
+  background:rgba(10,10,10,.98);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:100;
+}
+.pattern-tabs::-webkit-scrollbar{display:none}
+.ptab{
+  flex:1;min-width:clamp(70px,14vw,110px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:2px;padding:clamp(10px,2vw,16px) clamp(8px,2vw,14px);
+  border:none;background:transparent;cursor:pointer;
+  color:var(--muted);font-family:'Barlow Condensed',sans-serif;
+  font-weight:800;font-size:clamp(8px,1.8vw,11px);letter-spacing:1.5px;
+  border-bottom:2px solid transparent;transition:all .2s;
+}
+.ptab .pti{font-size:clamp(16px,3vw,22px)}
+.ptab:hover{color:#fff;background:rgba(255,255,255,.03)}
+.ptab.on{color:#fff;border-bottom-color:var(--red)}
+.ptab.on .pti{filter:drop-shadow(0 0 6px rgba(139,0,0,.8))}
+
+/* ════════════════════════════════════════════
+   PATTERN PANELS
+════════════════════════════════════════════ */
+.panel{display:none;animation:fadeIn .3s ease}
+.panel.on{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── PANEL HERO ── */
+.panel-hero{
+  padding:clamp(24px,5vw,48px) clamp(16px,5vw,48px) clamp(20px,4vw,36px);
+  position:relative;overflow:hidden;
+  border-bottom:1px solid var(--border);
+}
+.panel-hero::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(45deg,transparent,transparent 40px,rgba(255,255,255,.012) 40px,rgba(255,255,255,.012) 41px);
+}
+.ph-layout{display:flex;align-items:flex-end;gap:clamp(16px,4vw,40px);flex-wrap:wrap;position:relative}
+.ph-main{flex:1;min-width:200px}
+.pat-eyebrow{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:clamp(9px,1.8vw,11px);letter-spacing:4px;color:var(--gold);margin-bottom:8px}
+.pat-name{font-family:'Bebas Neue',sans-serif;font-size:clamp(52px,12vw,110px);color:#fff;line-height:.85;letter-spacing:2px;text-shadow:3px 3px 0 rgba(0,0,0,.4)}
+.pat-desc{font-size:clamp(11px,2.2vw,14px);color:#999;margin-top:10px;line-height:1.6;max-width:540px}
+.pat-targets{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.target-pill{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:clamp(8px,1.5vw,10px);letter-spacing:2px;background:rgba(139,0,0,.25);border:1px solid rgba(139,0,0,.4);color:#FF8A8A;padding:4px 12px;border-radius:20px}
+.ph-meta{display:flex;flex-direction:column;gap:8px;flex-shrink:0}
+.meta-badge{background:rgba(0,0,0,.5);border:1px solid var(--border);border-radius:10px;padding:10px 16px;text-align:center}
+.mb-val{font-family:'Bebas Neue',sans-serif;font-size:clamp(18px,3.5vw,26px);color:var(--gold);line-height:1}
+.mb-lbl{font-family:'Barlow Condensed',sans-serif;font-size:clamp(7px,1.3vw,9px);letter-spacing:2px;color:#444;margin-top:2px}
+
+/* ── WHY THIS PATTERN (40+ SCIENCE) ── */
+.why-box{
+  margin:clamp(16px,3vw,28px) clamp(16px,5vw,48px);
+  background:linear-gradient(135deg,#071520,var(--d2));
+  border:1px solid rgba(58,123,213,.3);border-radius:12px;
+  padding:clamp(14px,3vw,22px);
+  display:flex;gap:clamp(10px,2vw,18px);align-items:flex-start;
+}
+.why-icon{font-size:clamp(20px,4vw,28px);flex-shrink:0}
+.why-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:clamp(10px,2vw,12px);letter-spacing:3px;color:var(--blue);margin-bottom:6px}
+.why-text{font-size:clamp(11px,2vw,13px);color:#9BB8D4;line-height:1.65}
+
+/* ── EXERCISE GRID ── */
+.ex-section-title{
+  font-family:'Barlow Condensed',sans-serif;font-weight:800;
+  font-size:clamp(10px,2vw,12px);letter-spacing:4px;color:var(--gold);
+  padding:0 clamp(16px,5vw,48px);margin-bottom:clamp(12px,2.5vw,20px);
+  padding-top:clamp(14px,3vw,24px);
+  display:flex;align-items:center;gap:10px;
+  border-top:1px solid var(--border);
+}
+.ex-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(clamp(280px,40vw,340px),1fr));
+  gap:clamp(10px,2vw,16px);
+  padding:0 clamp(16px,5vw,48px) clamp(20px,4vw,32px);
+}
+.ex-card{
+  background:var(--d2);border:1px solid var(--border);border-radius:14px;
+  overflow:hidden;cursor:pointer;transition:all .25s;
+  position:relative;
+}
+.ex-card:hover{transform:translateY(-4px);box-shadow:0 16px 50px rgba(0,0,0,.7);border-color:rgba(200,151,58,.25)}
+.ex-card.active{border-color:var(--gold);box-shadow:0 0 0 1px rgba(200,151,58,.3)}
+
+/* card header */
+.ec-head{
+  padding:clamp(12px,2.5vw,18px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:flex-start;gap:12px;
+}
+.ec-num{
+  font-family:'Bebas Neue',sans-serif;font-size:clamp(20px,4vw,28px);
+  color:var(--red2);line-height:1;flex-shrink:0;width:28px;
+}
+.ec-info{flex:1}
+.ec-name{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:clamp(14px,3vw,18px);color:#fff;letter-spacing:.5px}
+.ec-level{
+  display:inline-block;margin-top:4px;
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:clamp(7px,1.3vw,9px);letter-spacing:2px;
+  padding:2px 8px;border-radius:6px;
+}
+.lvl-beg{background:rgba(45,170,79,.2);border:1px solid rgba(45,170,79,.3);color:#6EE68A}
+.lvl-int{background:rgba(245,197,24,.15);border:1px solid rgba(245,197,24,.3);color:#F5C518}
+.lvl-adv{background:rgba(139,0,0,.25);border:1px solid rgba(139,0,0,.4);color:#FF8A8A}
+.ec-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.ec-tag{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:clamp(7px,1.3vw,9px);letter-spacing:1.5px;background:var(--d3);border:1px solid var(--border);color:var(--muted);padding:2px 7px;border-radius:5px}
+
+/* card body */
+.ec-body{padding:clamp(12px,2.5vw,16px);display:none}
+.ec-card.active .ec-body, .ec-body.open{display:block;animation:fadeIn .2s ease}
+.ec-section{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:clamp(8px,1.5vw,10px);letter-spacing:3px;color:var(--gold);margin-bottom:6px;margin-top:12px}
+.ec-section:first-child{margin-top:0}
+.ec-text{font-size:clamp(10px,2vw,12px);color:#bbb;line-height:1.65}
+.ec-steps{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.ec-step{display:flex;gap:8px;background:var(--d3);border-radius:8px;padding:8px 10px;border-left:3px solid var(--red)}
+.ec-step-n{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--red);line-height:1;flex-shrink:0;width:18px}
+.ec-step-t{font-size:clamp(10px,1.8vw,11px);color:#ccc;line-height:1.5}
+.ec-mods{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+.ec-mod{background:var(--d3);border-radius:8px;padding:8px 10px;border-left:3px solid var(--blue)}
+.ec-mod-label{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:clamp(7px,1.3vw,9px);letter-spacing:2px;color:#7EB5FF;margin-bottom:3px}
+.ec-mod-text{font-size:clamp(10px,1.8vw,11px);color:#9BB8D4;line-height:1.5}
+.ec-prog{background:rgba(200,151,58,.1);border:1px solid rgba(200,151,58,.25);border-radius:8px;padding:10px 12px;margin-top:8px}
+.ec-prog-l{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:clamp(7px,1.3vw,9px);letter-spacing:2px;color:var(--gold);margin-bottom:3px}
+.ec-prog-t{font-size:clamp(10px,1.8vw,11px);color:#D4B870;line-height:1.5}
+.ec-sets-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.ec-set-pill{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:clamp(8px,1.5vw,10px);letter-spacing:1.5px;background:rgba(139,0,0,.25);border:1px solid rgba(139,0,0,.35);color:#FF8A8A;padding:4px 10px;border-radius:8px}
+
+/* toggle arrow */
+.ec-arrow{font-size:12px;color:var(--muted);transition:transform .25s;margin-left:auto;flex-shrink:0;padding-top:4px}
+.ex-card.active .ec-arrow{transform:rotate(180deg);color:var(--gold)}
+
+/* ── PROGRESSION LADDER ── */
+.prog-ladder{
+  margin:0 clamp(16px,5vw,48px) clamp(20px,4vw,32px);
+  background:var(--d2);border:1px solid var(--border);border-radius:14px;overflow:hidden;
+}
+.pl-header{background:var(--red);padding:12px 18px;display:flex;justify-content:space-between;align-items:center}
+.pl-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(14px,3vw,19px);color:#fff;letter-spacing:1px}
+.pl-steps{display:flex;flex-direction:column;gap:0}
+.pl-step{
+  display:flex;align-items:center;gap:clamp(10px,2.5vw,18px);
+  padding:clamp(10px,2.5vw,16px) clamp(14px,3vw,22px);
+  border-bottom:1px solid var(--border);transition:background .2s;cursor:pointer;
+}
+.pl-step:last-child{border-bottom:none}
+.pl-step:hover{background:rgba(255,255,255,.03)}
+.pl-n{font-family:'Bebas Neue',sans-serif;font-size:clamp(22px,4vw,30px);color:var(--red);flex-shrink:0;width:32px;line-height:1}
+.pl-info{flex:1}
+.pl-name{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:clamp(12px,2.5vw,16px);color:#fff}
+.pl-desc{font-size:clamp(9px,1.8vw,11px);color:var(--muted);margin-top:2px;line-height:1.4}
+.pl-badge{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:clamp(7px,1.3vw,9px);letter-spacing:2px;padding:3px 10px;border-radius:20px;flex-shrink:0}
+
+/* ════════════════════════════════════════════
+   RESPONSIVE
+════════════════════════════════════════════ */
+@media(max-width:500px){
+  .ex-grid{grid-template-columns:1fr}
+  .ph-meta{flex-direction:row;flex-wrap:wrap}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ PAGE HEADER ══════════════════════════ -->
+<header class="page-header">
+  <div class="ph-eyebrow">TURNED UP FITNESS · ORIGINAL CONTENT · 40+ OPTIMIZED</div>
+  <div class="ph-title">EXERCISE<br><span>LIBRARY</span></div>
+  <div class="ph-sub">6 MOVEMENT PATTERNS · 30+ EXERCISES · FULL PROGRESSIONS · CONDITION MODIFICATIONS</div>
+  <div class="ph-stats">
+    <div class="phstat"><div class="phstat-n">6</div><div class="phstat-l">Patterns</div></div>
+    <div class="phstat"><div class="phstat-n">30+</div><div class="phstat-l">Exercises</div></div>
+    <div class="phstat"><div class="phstat-n">3</div><div class="phstat-l">Levels Each</div></div>
+    <div class="phstat"><div class="phstat-n">6</div><div class="phstat-l">Conditions</div></div>
+  </div>
+  <div style="margin-top:14px;position:relative">
+    <a class="darebee-credit" href="https://darebee.com" target="_blank">
+      🌿 Exercise inspiration: DAREBEE.COM — Non-profit fitness resource. Please consider donating to support their work.
+    </a>
+  </div>
+</header>
+
+<!-- ══ PATTERN TABS ═════════════════════════ -->
+<div class="pattern-tabs" id="patternTabs">
+  <button class="ptab on" onclick="showPanel('push',this)"><span class="pti">🔼</span>PUSH</button>
+  <button class="ptab" onclick="showPanel('pull',this)"><span class="pti">🔽</span>PULL</button>
+  <button class="ptab" onclick="showPanel('squat',this)"><span class="pti">⬇️</span>SQUAT</button>
+  <button class="ptab" onclick="showPanel('hinge',this)"><span class="pti">↩️</span>HINGE</button>
+  <button class="ptab" onclick="showPanel('carry',this)"><span class="pti">🏋</span>CARRY</button>
+  <button class="ptab" onclick="showPanel('core',this)"><span class="pti">🔵</span>CORE</button>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PUSH PANEL
+══════════════════════════════════════════ -->
+<div class="panel on" id="panel-push">
+  <div class="panel-hero" style="background:linear-gradient(135deg,#2a0000,var(--d1))">
+    <div class="ph-layout">
+      <div class="ph-main">
+        <div class="pat-eyebrow">MOVEMENT PATTERN 01 · UPPER BODY</div>
+        <div class="pat-name">PUSH</div>
+        <div class="pat-desc">Pushing movements train the chest, shoulders, and triceps — the primary muscles responsible for pressing objects away from your body. After 40, these muscles support posture correction and help counterbalance the forward-rounding that comes from years of desk work and driving.</div>
+        <div class="pat-targets">
+          <span class="target-pill">CHEST</span><span class="target-pill">SHOULDERS</span><span class="target-pill">TRICEPS</span><span class="target-pill">UPPER BACK (STABILIZER)</span><span class="target-pill">CORE (STABILIZER)</span>
+        </div>
+      </div>
+      <div class="ph-meta">
+        <div class="meta-badge"><div class="mb-val">5</div><div class="mb-lbl">EXERCISES</div></div>
+        <div class="meta-badge"><div class="mb-val">3</div><div class="mb-lbl">LEVELS</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="why-box">
+    <div class="why-icon">🔬</div>
+    <div><div class="why-title">40+ SCIENCE — WHY PUSH MATTERS</div>
+    <div class="why-text">After 40, the rotator cuff tendons begin losing tensile strength at roughly 1% per year. Controlled pushing movements — particularly those that keep the elbows at 45 degrees rather than flared — actively load these tendons within their safe range, stimulating collagen production and slowing that decline. Push training also increases bone density in the wrist, forearm, and shoulder girdle through compressive loading — one of the most effective natural defenses against osteoporosis.</div></div>
+  </div>
+
+  <div class="ex-section-title">💪 PUSH EXERCISES — BEGINNER TO ADVANCED</div>
+  <div class="ex-grid">
+
+    <div class="ex-card" onclick="toggleCard(this)">
+      <div class="ec-head">
+        <div class="ec-num">01</div>
+        <div class="ec-info">
+          <div class="ec-name">Wall Push-Up</div>
+          <span class="ec-level lvl-beg">BEGINNER</span>
+          <div class="ec-tags"><span class="ec-tag">NO EQUIPMENT</span><span class="ec-tag">SHOULDER SAFE</span><span class="ec-tag">KNEE SAFE</span></div>
+        </div>
+        <div class="ec-arrow">▼</div>
+      </div>
+      <div class="ec-body">
+        <div class="ec-section">HOW TO PERFORM</div>
+        <div class="ec-steps">
+          <div class="ec-step"><div class="ec-step-n">1</div><div class="ec-step-t">Stand arm's length from a wall. Place hands flat on the wall at shoulder width and shoulder height.</div></div>
+          <div class="ec-step"><div class="ec-step-n">2</div><div class="ec-step-t">Keep your body in a straight line from head to heels — engage your core before moving.</div></div>
+          <div class="ec-step"><div class="ec-step-n">3</div><div class="ec-step-t">Bend elbows at 45 degrees and lower your chest toward the wall with control. Don't let hips sag forward.</div></div>
+          <div class="ec-step"><div class="ec-step-n">4</div><div class="ec-step-t">Press back to start. Full extension without locking elbows. That's one rep.</div></div>
+        </div>
+        <div class="ec-sets-row">
+          <span class="ec-set-pill">3 SETS</span><span class="ec-set-pill">10–15 REPS</span><span class="ec-set-pill">REST 45 SEC</span>
+        </div>
+        <div class="ec-section">MODIFICATIONS</div>
+        <div class="ec-mods">
+          <div class="ec-mod"><div class="ec-mod-label">SHOULDER ISSUES</div><div class="ec-mod-text">Narrow your hand position to just inside shoulder width. This reduces rotator cuff stress while maintaining chest activation.</div></div>
+          <div class="ec-mod"><div class="ec-mod-label">LOWER BACK PAIN</div><div class="ec-mod-text">This is one of the safest options. Ensure full core engagement and avoid arching through the lower back at the top.</div></div>
+        </div>
+        <div class="ec-prog"><div class="ec-prog-l">PROGRESSION CUE</div><div class="ec-prog-t">When 3×15 feels easy with perfect form, move to the Incline Push-Up using a countertop or bench.</div></div>
+      </div>
+    </div>
+
+    <div class="ex-card" onclick="toggleCard(this)">
+      <div class="ec-head">
+        <div class="ec-num">02</div>
+        <div class="ec-info">
+          <div class="ec-name">Incline Push-Up</div>
+          <span class="ec-level lvl-beg">BEGINNER+</span>
+          <div class="ec-tags"><span class="ec-tag">BENCH/COUNTER</span><span class="ec-tag">CHEST FOCUS</span><span class="ec-tag">SHOULDER SAFE</span></div>
+        </div>
+        <div class="ec-arrow">▼</div>
+      </div>
+      <div class="ec-body">
+        <div class="ec-section">HOW TO PERFORM</div>
+        <div class="ec-steps">
+          <div class="ec-step"><div class="ec-step-n">1</div><div class="ec-step-t">Place hands on a bench, counter, or sturdy chair. Body forms a diagonal line — the lower the surface, the harder the movement.</div></div>
+          <div class="ec-step"><div class="ec-step-n">2</div><div class="ec-step-t">Set feet together or hip-width. Brace your core and squeeze your glutes — your body should move as one unit.</div></div>
+          <div class="ec-step"><div class="ec-step-n">3</div><div class="ec-step-t">Lower your chest to the surface, elbows tracking at 45 degrees from your torso. Chin stays neutral — don't lead with your face.</div></div>
+          <div class="ec-step"><div class="ec-step-n">4</div><div class="ec-step-t">Press through your palms to full extension. Exhale on the press.</div></div>
+        </div>
+        <div class="ec-sets-row">
+          <span class="ec-set-pill">3 SETS</span><span class="ec-set-pill">8–12 REPS</span><span class="ec-set-pill">REST 60 SEC</span>
+        </div>
+        <div class="ec-section">MODIFICATIONS</div>
+        <div class="ec-mods">
+          <div class="ec-mod"><div class="ec-mod-label">SHOULDER ISSUES</div><div class="ec-mod-text">Use a slightly wider grip and higher surface angle. If you feel pinching at the top of the movement, raise the surface height 2–3 inches.</div></div>
+          <div class="ec-mod"><div class="ec-mod-label">WRIST PAIN</div><div class="ec-mod-text">Make fists and perform on knuckles, or use push-up handles if available. This keeps the wrist in a neutral position.</div></div>
+        </div>
+        <div class="ec-prog"><div class="ec-prog-l">PROGRESSION CUE</div><div class="ec-prog-t">Lower the surface height progressively — kitchen counter → dining chair → coffee table → floor. Each drop increases difficulty by roughly 15%.</div></div>
+      </div>
+    </div>
+
+    <div class="ex-card" onclick="toggleCard(this)">
+      <div class="ec-head">
+        <div class="ec-num">03</div>
+        <div class="ec-info">
+          <div class="ec-name">Knee Push-Up</div>
+          <span class="ec-level lvl-beg">BEGINNER</span>
+          <div class="ec-tags"><span class="ec-tag">NO EQUIPMENT</span><span class="ec-tag">FLOOR</span><span class="ec-tag">FULL RANGE</span></div>
+        </div>
+        <div class="ec-arrow">▼</div>
+      </div>
+      <div class="ec-body">
+        <div class="ec-section">HOW TO PERFORM</div>
+        <div class="ec-steps">
+          <div class="ec-step"><div class="ec-step-n">1</div><div class="ec-step-t">Start on all fours. Walk hands forward until your body forms a straight line from knees to shoulders. Cross your feet behind you.</div></div>
+          <div class="ec-step"><div class="ec-step-n">2</div><div class="ec-step-t">Hands slightly wider than shoulder width. Keep hips in line — the most common mistake is allowing the hips to pike up.</div></div>
+          <div class="ec-step"><div class="ec-step-n">3</div><div class="ec-step-t">Lower chest to just above the floor. Pause for one count at the bottom. Don't rest on the floor.</div></div>
+          <div class="ec-step"><div class="ec-step-n">4</div><div class="ec-step-t">Press back to start with full elbow extension. That's one rep.</div></div>
+        </div>
+        <div class="ec-sets-row">
+          <span class="ec-set-pill">3 SETS</span><span class="ec-set-pill">8–10 REPS</span><span class="ec-set-pill">REST 60 SEC</span>
+        </div>
+        <div class="ec-section">MODIFICATIONS</div>
+        <div class="ec-mods">
+          <div class="ec-mod"><div class="ec-mod-label">KNEE DISCOMFORT</div><div class="ec-mod-text">Fold a yoga mat or towel under your knees to add padding. Some people also prefer to keep feet on the floor rather than crossed.</div></div>
+          <div class="ec-mod"><div class="ec-mod-label">SHOULDER ISSUES</div><div class="ec-mod-text">Move to a partial range of motion — lower only halfway until shoulder mobility improves.</div></div>
+        </div>
+        <div class="ec-prog"><div class="ec-prog-l">PROGRESSION CUE</div><div class="ec-prog-t">Target: 3 sets of 12 with a 2-second descent. Once achieved, begin transitioning to full floor push-up by placing toes down and lifting knees slightly.</div></div>
+      </div>
+    </div>
+
+    <div class="ex-card" onclick="toggleCard(this)">
+      <div class="ec-head">
+        <div class="ec-num">04</div>
+        <div class="ec-info">
+          <div class="ec-name">Full Push-Up</div>
+          <span class="ec-level lvl-int">INTERMEDIATE</span>
+          <div class="ec-tags"><span class="ec-tag">NO EQUIPMENT</span><span class="ec-tag">FULL BODY</span><span class="ec-tag">BENCHMARK</span></div>
+        </div>
+        <div class="ec-arrow">▼</div>
+      </div>
+      <div class="ec-body">
+        <div class="ec-section">HOW TO PERFORM</div>
+        <div class="ec-steps">
+          <div class="ec-step"><div class="ec-step-n">1</div><div class="ec-step-t">High plank position. Hands shoulder-width, fingers spread, weight distributed across the entire hand — not just the heel of the palm.</div></div>
+          <div class="ec-step"><div class="ec-step-n">2</div><div class="ec-step-t">Full body tension — glutes tight, core braced, thighs squeezed. Your body moves as one solid unit.</div></div>
+          <div class="ec-step"><div class="ec-step-n">3</div><div class="ec-step-t">Descend with control — 2 to 3 seconds down. Chest brushes the floor. Elbows at 45 degrees, not flared wide.</div></div>
+          <div class="ec-step"><div class="ec-step-n">4</div><div class="ec-step-t">Explosive drive back to top. Fully lock out arms. Reset tension and repeat.</div></div>
+        </div>
+        <div class="ec-sets-row">
+          <span class="ec-set-pill">3 SETS</span><span class="ec-set-pill">5–10 REPS</span><span class="ec-set-pill">REST 75 SEC</span>
+        </div>
+        <div class="ec-section">MODIFICATIONS</div>
+        <div class="ec-mods">
+          <div class="ec-mod"><div class="ec-mod-label">LOWER BACK PAIN</div><div class="ec-mod-text">Focus intensely on core bracing before every rep. If the lower back sags before rep 5, drop to knee push-ups for remaining sets.</div></div>
+          <div class="ec-mod"><div class="ec-mod-label">SHOULDER ISSUES</div><div class="ec-mod-text">Use a slightly narrower grip (hands directly under shoulders). Avoid locking out completely at the top if you feel impingement.</div></div>
+        </div>
+        <div class="ec-prog"><div class="ec-prog-l">PROGRESSION CUE</div><div class="ec-prog-t">The 40+ standard of fitness: 3×10 with full range, controlled descent, zero hip sag. Achieve this and you're ready for loaded variations.</div></div>
+      </div>
+    </div>
+
+    <div class="ex-card" onclick="toggleCard(this)">
+      <div class="ec-head">
+        <div class="ec-num">05</div>
+        <div class="ec-info">
+          <div class="ec-name">Pike Push-Up</div>
+          <span class="ec-level lvl-adv">ADVANCED</span>
+          <div class="ec-tags"><span class="ec-tag">SHOULDER FOCUS</span><span class="ec-tag">OVERHEAD STRENGTH</span><span class="ec-tag">NO EQUIPMENT</span></div>
+        </div>
+        <div class="ec-arrow">▼</div>
+      </div>
+      <div class="ec-body">
+        <div class="ec-section">HOW TO PERFORM</div>
+        <div class="ec-steps">
+          <div class="ec-step"><div class="ec-step-n">1</div><div class="ec-step-t">Start in a downward dog position — hips high, forming an inverted V. Hands shoulder-width, fingers spread.</div></div>
+          <div class="ec-step"><div class="ec-step-n">2</div><div class="ec-step-t">Keep hips elevated throughout. Lower the top of your head toward the floor between your hands.</div></div>
+          <div class="ec-step"><div class="ec-step-n">3</div><div class="ec-step-t">Elbows flare slightly outward — this is intentional and targets the deltoids more directly than regular push-ups.</div></div>
+          <div class="ec-step"><div class="ec-step-n">4</div><div class="ec-step-t">Press back to starting position without letting hips drop. Maintain the inverted V throughout.</div></div>
+        </div>
+        <div class="ec-sets-row">
+          <span class="ec-set-pill">3 SETS</span><span class="ec-set-pill">5–8 REPS</span><span class="ec-set-pill">REST 90 SEC</span>
+        </div>
+        <div class="ec-section">MODIFICATIONS</div>
+        <div class="ec-mods">
+          <div class="ec-mod"><div class="ec-mod-label">SHOULDER ISSUES</div><div class="ec-mod-text">Avoid this exercise during active shoulder pain. Return to it when full overhead range of motion is pain-free. Use wall shoulder circles as a prerequisite.</div></div>
+          <div class="ec-mod"><div class="ec-mod-label">WRIST ISSUES</div><div class="ec-mod-text">Perform on push-up handles or with fists to keep wrists neutral. The elevated position reduces wrist extension angle significantly.</div></div>
+        </div>
+        <div class="ec-prog"><div class="ec-prog-l">PROGRESSION CUE</div><div class="ec-prog-t">This is your bridge to overhead pressing with weights. When 3×8 is controlled, you're ready for dumbbell shoulder press.</div></div>
+      </div>
+    </div>
+
+  </div><!-- /push grid -->
+
+  <!-- Progression Ladder -->
+  <div class="ex-section-title" style="border-top:none">📈 PUSH PATTERN PROGRESSION LADDER</div>
+  <div class="prog-ladder" style="margin-bottom:clamp(20px,4vw,36px)">
+    <div class="pl-header"><span class="pl-title">START HERE → WORK YOUR WAY UP</span><span class="tag" style="background:rgba(200,151,58,.2);color:var(--gold);border:1px solid rgba(200,151,58,.3);font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:9px;letter-spacing:2px;padding:3px 10px;border-radius:10px">40+ OPTIMIZED</span></div>
+    <div class="pl-step"><div class="pl-n">1</div><div class="pl-info"><div class="pl-name">Wall Push-Up</div><div class="pl-desc">Build the movement pattern. Zero injury risk. 3×15 before advancing.</div></div><span class="pl-badge lvl-beg">BEGINNER</span></div>
+    <div class="pl-step"><div class="pl-n">2</div><div class="pl-info"><div class="pl-name">Incline Push-Up (Counter Height)</div><div class="pl-desc">Increase load gradually. Kitchen counter is perfect starting point.</div></div><span class="pl-badge lvl-beg">BEGINNER+</span></div>
+    <div class="pl-step"><div class="pl-n">3</div><div class="pl-info"><div class="pl-name">Incline Push-Up (Chair Height)</div><div class="pl-desc">Drop the surface. More chest, more work. 3×12 target.</div></div><span class="pl-badge lvl-beg">BEGINNER+</span></div>
+    <div class="pl-step"><div class="pl-n">4</div><div class="pl-info"><div class="pl-name">Knee Push-Up</div><div class="pl-desc">Full range of motion. Builds chest strength for the floor version.</div></div><span class="pl-badge lvl-beg">BEGINNER</span></div>
+    <div class="pl-step"><div class="pl-n">5</div><div class="pl-info"><div class="pl-name">Full Push-Up</div><div class="pl-desc">The TUF benchmark. 3×10 = ready for intermediate program.</div></div><span class="pl-badge lvl-int">INTERMEDIATE</span></div>
+    <div class="pl-step"><div class="pl-n">6</div><div class="pl-info"><div class="pl-name">Pike Push-Up</div><div class="pl-desc">Shoulder strength for overhead pressing. Advanced milestone.</div></div><span class="pl-badge lvl-adv">ADVANCED</span></div>
+  </div>
+</div><!-- /push panel -->
+
+<!-- ══════════════════════════════════════════
+     PULL PANEL
+══════════════════════════════════════════ -->
+<div class="panel" id="panel-pull">
+  <div class="panel-hero" style="background:linear-gradient(135deg,var(--d1),#1a0000 60%,#3a0000 100%)">
+    <div class="ph-layout">
+      <div class="ph-main">
+        <div class="pat-eyebrow">MOVEMENT PATTERN 02 · UPPER BODY</div>
+        <div class="pat-name">PULL</div>
+        <div class="pat-desc">Pulling movements are the single most neglected pattern in beginner fitness. After 40, years of forward posture — phones, computers, steering wheels — create chronic tightness in the chest and weakness in the upper back. Pulling directly reverses this. Every rep is corrective therapy.</div>
+        <div class="pat-targets"><span class="target-pill">UPPER BACK</span><span class="target-pill">REAR DELTOIDS</span><span class="target-pill">BICEPS</span><span class="target-pill">RHOMBOIDS</span><span class="target-pill">ROTATOR CUFF</span></div>
+      </div>
+      <div class="ph-meta">
+        <div class="meta-badge"><div class="mb-val">5</div><div class="mb-lbl">EXERCISES</div></div>
+        <div class="meta-badge"><div class="mb-val">3</div><div class="mb-lbl">LEVELS</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="why-box">
+    <div class="why-icon">🔬</div>
+    <div><div class="why-title">40+ SCIENCE — WHY PULL MATTERS</div>
+    <div class="why-text">The upper back muscles — particularly the rhomboids and lower trapezius — are chronically underactive in adults over 40 due to sedentary posture patterns. Weakness in these muscles allows the shoulders to round forward, placing the cervical spine in a compromised position that contributes to neck pain, headaches, and rotator cuff impingement. Just 2 pulling sessions per week has been shown to measurably reduce forward head posture within 8 weeks.</div></div>
+  </div>
+
+  <div class="ex-section-title">💪 PULL EXERCISES — BEGINNER TO ADVANCED</div>
+  <div class="ex-grid">
+
+    <div class="ex-card" onclick="toggleCard(this)">
+      <div class="ec-head"><div class="ec-num">01</div><div class="ec-info"><div class="ec-name">Door Frame Row</div><span class="ec-level lvl-beg">BEGINNER</span><div class="ec-tags"><span class="ec-tag">NO EQUIPMENT</span><span class="ec-tag">HOME FRIENDLY</span></div></div><div class="ec-arrow">▼</div></div>
+      <div class="ec-body">
+        <div class="ec-section">HOW TO PERFORM</div>
+        <div class="ec-steps">
+          <div class="ec-step"><div class="ec-step-n">1</div><div class="ec-step-t">Stand in a doorway and grip both sides of the frame at hip height. Walk feet forward until your body leans back at roughly 45 degrees.</div></div>
+          <div class="ec-step"><div class="ec-step-n">2</div><div class="ec-step-t">Arms fully extended. Body straight from ears to heels. This is your starting position.</div></div>
+          <div class="ec-step"><div class="ec-step-n">3</div><div class="ec-step-t">Pull your chest toward the door frame. Lead with your elbows — drive them back and down. Squeeze your shoulder blades together at the top.</div></div>
+          <div class="ec-step"><div class="ec-step-n">4</div><div class="ec-step-t">Lower with control — a 3-second descent is the goal. Feel the stretch across your upper back.</div></div>
+        </div>
+        <div class="ec-sets-row"><span class="ec-set-pill">3 SETS</span><span class="ec-set-pill">10–15 REPS</span><span class="ec-set-pill">REST 60 SEC</span></div>
+        <div class="ec-section">MODIFICATIONS</div>
+        <div class="ec-mods">
+          <div class="ec-mod"><div class="ec-mod-label">SHOULDER ISSUES</div><div class="ec-mod-text">Use a neutral grip (palms facing each other) if possible. Keep elbows tucked closer to your sides rather than flaring outward.</div></div>
+          <div class="ec-mod"><div class="ec-mod-label">LOWER BACK PAIN</div><div class="ec-mod-text">Walk feet closer to the door to reduce the angle and body weight being lifted. Less angle = less load.</div></div>
+        </div>
+        <div class="ec-prog"><div class="ec-prog-l">PROGRESSION CUE</div><div class="ec-prog-t">Walk feet further forward to increase the challenge. As you get parallel to the floor, you're doing a true bodyweight row.</div></div>
+      </div>
+    </div>
+
+    <div class="ex-card" onclick="toggleCard(this)">
+      <div class="ec-head"><div class="ec-num">02</div><div class="ec-info"><div class="ec-name">Resistance Band Row</div><span class="ec-level lvl-beg">BEGINNER</span><div class="ec-tags"><span class="ec-tag">RESISTANCE BAND</span><span class="ec-tag">SEATED</span><span class="ec-tag">ADJUSTABLE</span></div></div><div class="ec-arrow">▼</div></div>
+      <div class="ec-body">
+        <div class="ec-section">HOW TO PERFORM</div>
+        <div class="ec-steps">
+          <div class="ec-step"><div class="ec-step-n">1</div><div class="ec-step-t">Sit on the floor with legs extended. Loop a resistance band around the bottom of your feet. Hold one end in each hand.</div></div>
+          <div class="ec-step"><div class="ec-step-n">2</div><div class="ec-step-t">Sit tall — chest up, slight natural curve in the lower back. Don't slouch. Think: "proud chest."</div></div>
+          <div class="ec-step"><div class="ec-step-n">3</div><div class="ec-step-t">Pull the band toward your lower ribcage. Elbows travel close to your sides. Squeeze shoulder blades together at the end of the movement.</div></div>
+          <div class="ec-step"><div class="ec-step-n">4</div><div class="ec-step-t">Slowly return to start — resist the band on the way out. This is where upper back muscles work hardest.</div></div>
+        </div>
+        <div class="ec-sets-row"><span class="ec-set-pill">3 SETS</span><span class="ec-set-pill">12–15 REPS</span><span class="ec-set-pill">REST 60 SEC</span></div>
+        <div class="ec-section">MODIFICATIONS</div>
+        <div class="ec-mods">
+          <div class="ec-mod"><div class="ec-mod-label">LOWER BACK PAIN</div><div class="ec-mod-text">Bend knees slightly to reduce hamstring tension which can cause you to round your lower back. Or perform in a chair — anchor the band to a door handle at chest height.</div></div>
+          <div class="ec-mod"><div class="ec-mod-label">SHOULDER ISSUES</div><div class="ec-mod-text">Keep elbows at 90 degrees rather than pulling all the way back. Focus on the mid-back squeeze rather than full elbow extension behind the body.</div></div>
+        </div>
+        <div class="ec-prog"><div class="ec-prog-l">PROGRESSION CUE</div><div class="ec-prog-t">Use a thicker resistance band or double-loop for more challenge. When 3×15 feels easy, move to a standing single-arm dumbbell row.</div></div>
+      </div>
+    </div>
+
+    <div class="ex-card" onclick="toggleCard(this)">
+      <div class="ec-head"><div class="ec-num">03</div><div class="ec-info"><div class="ec-name">Band Pull-Apart</div><span class="ec-level lvl-beg">BEGINNER</span><div class="ec-tags"><span class="ec-tag">RESISTANCE BAND</span><span class="ec-tag">POSTURE FIX</span><span class="ec-tag">SHOULDER HEALTH</span></div></div><div class="ec-arrow">▼</div></div>
+      <div class="ec-body">
+        <div class="ec-section">HOW TO PERFORM</div>
+        <div class="ec-steps">
+          <div class="ec-step"><div class="ec-step-n">1</div><div class="ec-step-t">Hold a light resistance band with both hands, arms extended in front at shoulder height. Palms down, hands shoulder-width apart.</div></div>
+          <div class="ec-step"><div class="ec-step-n">2</div><div class="ec-step-t">Keep arms straight. Pull the band apart by moving both hands outward to your sides — like opening a curtain.</div></div>
+          <div class="ec-step"><div class="ec-step-n">3</div><div class="ec-step-t">The band should reach your chest. Hold for one count and actively squeeze your shoulder blades together. This is the most important part.</div></div>
+          <div class="ec-step"><div class="ec-step-n">4</div><div class="ec-step-t">Slowly return to start. Resist the band — don't let it snap back.</div></div>
+        </div>
+        <div class="ec-sets-row"><span class="ec-set-pill">3 SETS</span><span class="ec-set-pill">15–20 REPS</span><span class="ec-set-pill">REST 45 SEC</span></div>
+        <div class="ec-mods">
+          <div class="ec-mod"><div class="ec-mod-label">SHOULDER ISSUES</div><div class="ec-mod-text">This exercise is often prescribed specifically for shoulder rehabilitation. If you feel pain, reduce band resistance significantly — a very light band is sufficient to activate the rear deltoids.</div></div>
+        </div>
+        <div class="ec-prog"><div class="ec-prog-l">PROGRESSION CUE</div><div class="ec-prog-t">This is a "forever exercise" — it should be done as a warm-up for every upper body session regardless of fitness level. Progress by adding reps, not resistance.</div></div>
+      </div>
+    </div>
+
+    <div class="ex-card" onclick="toggleCard(this)">
+      <div class="ec-head"><div class="ec-num">04</div><div class="ec-info"><div class="ec-name">Table Inverted Row</div><span class="ec-level lvl-int">INTERMEDIATE</span><div class="ec-tags"><span class="ec-tag">TABLE REQUIRED</span><span class="ec-tag">BODYWEIGHT</span><span class="ec-tag">FULL BACK</span></div></div><div class="ec-arrow">▼</div></div>
+      <div class="ec-body">
+        <div class="ec-section">HOW TO PERFORM</div>
+        <div class="ec-steps">
+          <div class="ec-step"><div class="ec-step-n">1</div><div class="ec-step-t">Lie under a sturdy table. Grip the edge with both hands, shoulder-width. Your chest should be directly below the table edge.</div></div>
+          <div class="ec-step"><div class="ec-step-n">2</div><div class="ec-step-t">Extend legs so you're in a reverse plank — only your heels on the floor, body straight as a board.</div></div>
+          <div class="ec-step"><div class="ec-step-n">3</div><div class="ec-step-t">Pull your chest up to the table edge. Lead with your chest, not your chin. Elbows drive back and down.</div></div>
+          <div class="ec-step"><div class="ec-step-n">4</div><div class="ec-step-t">Lower with full control — 3 seconds down. Don't let your hips sag.</div></div>
+        </div>
+        <div class="ec-sets-row"><span class="ec-set-pill">3 SETS</span><span class="ec-set-pill">6–10 REPS</span><span class="ec-set-pill">REST 75 SEC</span></div>
+        <div class="ec-mods">
+          <div class="ec-mod"><div class="ec-mod-label">LOWER BACK PAIN</div><div class="ec-mod-text">Bend knees and plant feet flat on the floor. This reduces the weight being lifted by 20–30% and removes lower back tension.</div></div>
+          <div class="ec-mod"><div class="ec-mod-label">SHOULDER ISSUES</div><div class="ec-mod-text">Use a neutral grip (palms facing each other) by gripping table legs instead. This reduces impingement risk significantly.</div></div>
+        </div>
+        <div class="ec-prog"><div class="ec-prog-l">PROGRESSION CUE</div><div class="ec-prog-t">Elevate feet on a chair to increase difficulty. When 3×10 with feet elevated is solid, you're ready for assisted pull-ups.</div></div>
+      </div>
+    </div>
+
+    <div class="ex-card" onclick="toggleCard(this)">
+      <div class="ec-head"><div class="ec-num">05</div><div class="ec-info"><div class="ec-name">Single-Arm Dumbbell Row</div><span class="ec-level lvl-int">INTERMEDIATE</span><div class="ec-tags"><span class="ec-tag">DUMBBELL</span><span class="ec-tag">UNILATERAL</span><span class="ec-tag">LOADED</span></div></div><div class="ec-arrow">▼</div></div>
+      <div class="ec-body">
+        <div class="ec-section">HOW TO PERFORM</div>
+        <div class="ec-steps">
+          <div class="ec-step"><div class="ec-step-n">1</div><div class="ec-step-t">Place one knee and same-side hand on a bench or chair. Opposite foot flat on the floor. Back is flat and parallel to the ground.</div></div>
+          <div class="ec-step"><div class="ec-step-n">2</div><div class="ec-step-t">Hold dumbbell in free hand, arm hanging straight. Don't rotate the shoulder — keep it packed.</div></div>
+          <div class="ec-step"><div class="ec-step-n">3</div><div class="ec-step-t">Drive the elbow up and back — think "starting a lawn mower." The dumbbell travels in a straight vertical line. No swinging.</div></div>
+          <div class="ec-step"><div class="ec-step-n">4</div><div class="ec-step-t">Hold at the top for one count — feel the full contraction in the lat. Lower with full control.</div></div>
+        </div>
+        <div class="ec-sets-row"><span class="ec-set-pill">3 SETS</span><span class="ec-set-pill">8–10 REPS EACH SIDE</span><span class="ec-set-pill">REST 60 SEC</span></div>
+        <div class="ec-mods">
+          <div class="ec-mod"><div class="ec-mod-label">LOWER BACK PAIN</div><div class="ec-mod-text">Use a lighter dumbbell. The key is keeping the back perfectly flat — if it rounds, the weight is too heavy. Start with 5–10 lbs regardless of ego.</div></div>
+          <div class="ec-mod"><div class="ec-mod-label">SHOULDER ISSUES</div><div class="ec-mod-text">Stop the row when your elbow is at 90 degrees rather than pulling past your torso. This partial range still builds back strength without impingement.</div></div>
+        </div>
+        <div class="ec-prog"><div class="ec-prog-l">PROGRESSION CUE</div><div class="ec-prog-t">Increase weight in 2.5 lb increments when 3×10 is clean and controlled. This is the most scalable pulling exercise available at home.</div></div>
+      </div>
+    </div>
+
+  </div>
+  <div class="ex-section-title" style="border-top:none">📈 PULL PATTERN PROGRESSION LADDER</div>
+  <div class="prog-ladder" style="margin-bottom:clamp(20px,4vw,36px)">
+    <div class="pl-header"><span class="pl-title">POSTURE CORRECTION SEQUENCE</span></div>
+    <div class="pl-step"><div class="pl-n">1</div><div class="pl-info"><div class="pl-name">Band Pull-Apart</div><div class="pl-desc">Daily warm-up. Rear delts and rhomboids. The foundation of shoulder health.</div></div><span class="pl-badge lvl-beg">BEGINNER</span></div>
+    <div class="pl-step"><div class="pl-n">2</div><div class="pl-info"><div class="pl-name">Resistance Band Row (Seated)</div><div class="pl-desc">Build the pulling pattern safely. 3×15 target before advancing.</div></div><span class="pl-badge lvl-beg">BEGINNER</span></div>
+    <div class="pl-step"><div class="pl-n">3</div><div class="pl-info"><div class="pl-name">Door Frame Row</div><div class="pl-desc">Bodyweight pull against gravity. Angle controls difficulty.</div></div><span class="pl-badge lvl-beg">BEGINNER+</span></div>
+    <div class="pl-step"><div class="pl-n">4</div><div class="pl-info"><div class="pl-name">Table Inverted Row (Knees Bent)</div><div class="pl-desc">Heavier load. True horizontal pull. Build to 3×10.</div></div><span class="pl-badge lvl-int">INTERMEDIATE</span></div>
+    <div class="pl-step"><div class="pl-n">5</div><div class="pl-info"><div class="pl-name">Table Inverted Row (Legs Extended)</div><div class="pl-desc">Full bodyweight row. The benchmark intermediate pull.</div></div><span class="pl-badge lvl-int">INTERMEDIATE</span></div>
+    <div class="pl-step"><div class="pl-n">6</div><div class="pl-info"><div class="pl-name">Single-Arm Dumbbell Row</div><div class="pl-desc">Loaded unilateral pull. Scales indefinitely with weight.</div></div><span class="pl-badge lvl-int">INTERMEDIATE+</span></div>
+  </div>
+</div><!-- /pull panel -->
+
+<!-- ══════════════════════════════════════════
+     SQUAT PANEL
+══════════════════════════════════════════ -->
+<div class="panel" id="panel-squat">
+  <div class="panel-hero" style="background:linear-gradient(135deg,#1a1a00,var(--d1),#2a1000)">
+    <div class="ph-layout">
+      <div class="ph-main">
+        <div class="pat-eyebrow">MOVEMENT PATTERN 03 · LOWER BODY</div>
+        <div class="pat-name">SQUAT</div>
+        <div class="pat-desc">The squat is how humans sit down and stand up. It's the most fundamental movement in daily life, and after 40 it's the first pattern to deteriorate — directly linked to falls, knee pain, and loss of independence. Restoring a confident squat is one of the highest-value investments you can make in your body.</div>
+        <div class="pat-targets"><span class="target-pill">QUADRICEPS</span><span class="target-pill">GLUTES</span><span class="target-pill">HAMSTRINGS</span><span class="target-pill">HIP FLEXORS</span><span class="target-pill">ADDUCTORS</span><span class="target-pill">CALVES</span></div>
+      </div>
+      <div class="ph-meta">
+        <div class="meta-badge"><div class="mb-val">5</div><div class="mb-lbl">EXERCISES</div></div>
+        <div class="meta-badge"><div class="mb-val">3</div><div class="mb-lbl">LEVELS</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="why-box">
+    <div class="why-icon">🔬</div>
+    <div><div class="why-title">40+ SCIENCE — WHY SQUAT MATTERS</div>
+    <div class="why-text">Quadriceps strength is one of the strongest predictors of longevity in adults over 40. A 2022 study found that people with greater thigh muscle mass had a 32% lower risk of all-cause mortality. The squat pattern also requires significant hip mobility — and hip mobility directly impacts lower back health. Tight hip flexors from sitting create anterior pelvic tilt, a leading cause of chronic lower back pain that deep squatting progressively corrects.</div></div>
+  </div>
+  <div class="ex-section-title">💪 SQUAT EXERCISES — BEGINNER TO ADVANCED</div>
+  <div class="ex-grid">
+    <div class="ex-card" onclick="toggleCard(this)"><div class="ec-head"><div class="ec-num">01</div><div class="ec-info"><div class="ec-name">Chair-Assisted Squat</div><span class="ec-level lvl-beg">BEGINNER</span><div class="ec-tags"><span class="ec-tag">CHAIR</span><span class="ec-tag">BALANCE AID</span><span class="ec-tag">CONFIDENCE BUILDER</span></div></div><div class="ec-arrow">▼</div></div>
+      <div class="ec-body"><div class="ec-section">HOW TO PERFORM</div><div class="ec-steps"><div class="ec-step"><div class="ec-step-n">1</div><div class="ec-step-t">Stand in front of a chair, feet shoulder-width, toes pointed slightly out (10–30 degrees). Hold chair back lightly for balance — not to pull yourself up.</div></div><div class="ec-step"><div class="ec-step-n">2</div><div class="ec-step-t">Push hips back first, then bend knees. Think: "reach back for the chair" not "bend forward at the waist."</div></div><div class="ec-step"><div class="ec-step-n">3</div><div class="ec-step-t">Lower until you touch the chair lightly — don't collapse. Chest stays up throughout. Weight in heels and midfoot.</div></div><div class="ec-step"><div class="ec-step-n">4</div><div class="ec-step-t">Drive through heels to stand. Squeeze glutes at the top. That's one rep.</div></div></div><div class="ec-sets-row"><span class="ec-set-pill">3 SETS</span><span class="ec-set-pill">10–15 REPS</span><span class="ec-set-pill">REST 60 SEC</span></div><div class="ec-mods"><div class="ec-mod"><div class="ec-mod-label">BAD KNEES</div><div class="ec-mod-text">Use a higher chair (or add pillows) to reduce the depth of the squat. Shallower depth = significantly less knee stress. Work depth gradually over weeks.</div></div><div class="ec-mod"><div class="ec-mod-label">LOWER BACK PAIN</div><div class="ec-mod-text">Keep an exaggerated upright torso. If the back rounds at the bottom, the chair height is too low. Raise it.</div></div></div><div class="ec-prog"><div class="ec-prog-l">PROGRESSION CUE</div><div class="ec-prog-t">Progress to touching the chair without gripping it. Then to a box squat without a chair for guidance.</div></div></div></div>
+    <div class="ex-card" onclick="toggleCard(this)"><div class="ec-head"><div class="ec-num">02</div><div class="ec-info"><div class="ec-name">Box Squat</div><span class="ec-level lvl-beg">BEGINNER+</span><div class="ec-tags"><span class="ec-tag">NO EQUIPMENT</span><span class="ec-tag">DEPTH CONTROL</span><span class="ec-tag">GLUTE FOCUS</span></div></div><div class="ec-arrow">▼</div></div>
+      <div class="ec-body"><div class="ec-section">HOW TO PERFORM</div><div class="ec-steps"><div class="ec-step"><div class="ec-step-n">1</div><div class="ec-step-t">Stand with a chair or box directly behind you. Feet shoulder-width, toes slightly out.</div></div><div class="ec-step"><div class="ec-step-n">2</div><div class="ec-step-t">Reach arms forward for counterbalance. Initiate by pushing hips back and sitting down as if the box will catch you.</div></div><div class="ec-step"><div class="ec-step-n">3</div><div class="ec-step-t">Touch the box lightly and pause for one second. Don't relax. Maintain full tension throughout the pause.</div></div><div class="ec-step"><div class="ec-step-n">4</div><div class="ec-step-t">Drive through heels. Think "push the floor away." Stand tall and lock out at the top.</div></div></div><div class="ec-sets-row"><span class="ec-set-pill">3 SETS</span><span class="ec-set-pill">10–12 REPS</span><span class="ec-set-pill">REST 75 SEC</span></div><div class="ec-mods"><div class="ec-mod"><div class="ec-mod-label">BAD KNEES</div><div class="ec-mod-text">Wider stance takes load off the knees and increases hip involvement. Toes can point out more (up to 45 degrees). Use a higher box if needed.</div></div><div class="ec-mod"><div class="ec-mod-label">LOWER BACK PAIN</div><div class="ec-mod-text">Focus on chest staying upright. If you forward-lean, widen stance and point toes out more — this allows more upright torso without losing depth.</div></div></div><div class="ec-prog"><div class="ec-prog-l">PROGRESSION CUE</div><div class="ec-prog-t">Lower the box height by 1–2 inches every 2 weeks as strength and mobility improve. This is the safest path to a full depth squat.</div></div></div></div>
+    <div class="ex-card" onclick="toggleCard(this)"><div class="ec-head"><div class="ec-num">03</div><div class="ec-info"><div class="ec-name">Goblet Squat</div><span class="ec-level lvl-int">INTERMEDIATE</span><div class="ec-tags"><span class="ec-tag">DUMBBELL/KETTLEBELL</span><span class="ec-tag">COUNTERBALANCE</span><span class="ec-tag">FULL DEPTH</span></div></div><div class="ec-arrow">▼</div></div>
+      <div class="ec-body"><div class="ec-section">HOW TO PERFORM</div><div class="ec-steps"><div class="ec-step"><div class="ec-step-n">1</div><div class="ec-step-t">Hold a dumbbell or kettlebell vertically at chest height with both hands — like a goblet. This weight acts as a counterbalance that actually makes squatting deeper easier.</div></div><div class="ec-step"><div class="ec-step-n">2</div><div class="ec-step-t">Feet slightly wider than shoulder-width, toes angled out. Elbows track down between your knees as you descend.</div></div><div class="ec-step"><div class="ec-step-n">3</div><div class="ec-step-t">Descend until thighs are parallel or below. The weight helps keep your chest upright. At the bottom, use elbows to gently push knees out.</div></div><div class="ec-step"><div class="ec-step-n">4</div><div class="ec-step-t">Drive through the full foot to stand. Exhale on the way up.</div></div></div><div class="ec-sets-row"><span class="ec-set-pill">3 SETS</span><span class="ec-set-pill">8–12 REPS</span><span class="ec-set-pill">REST 75 SEC</span></div><div class="ec-mods"><div class="ec-mod"><div class="ec-mod-label">BAD KNEES</div><div class="ec-mod-text">This is actually one of the best squat variations for knee issues — the wide stance and heel-weighted position distributes load more favorably. Use a lighter weight and partial depth.</div></div></div><div class="ec-prog"><div class="ec-prog-l">PROGRESSION CUE</div><div class="ec-prog-t">Increase dumbbell weight by 5 lbs when 3×12 is clean. When holding 25+ lbs in goblet position, you're ready for loaded split squats.</div></div></div></div>
+    <div class="ex-card" onclick="toggleCard(this)"><div class="ec-head"><div class="ec-num">04</div><div class="ec-info"><div class="ec-name">Split Squat</div><span class="ec-level lvl-int">INTERMEDIATE</span><div class="ec-tags"><span class="ec-tag">UNILATERAL</span><span class="ec-tag">BALANCE</span><span class="ec-tag">HIP FLEXOR</span></div></div><div class="ec-arrow">▼</div></div>
+      <div class="ec-body"><div class="ec-section">HOW TO PERFORM</div><div class="ec-steps"><div class="ec-step"><div class="ec-step-n">1</div><div class="ec-step-t">Take a large step forward — front foot flat, back foot toes on the floor. Feet should be hip-width apart laterally (not on a tightrope).</div></div><div class="ec-step"><div class="ec-step-n">2</div><div class="ec-step-t">Torso upright. Lower straight down until the back knee hovers just above the floor. The front shin stays vertical — don't let the knee cave in.</div></div><div class="ec-step"><div class="ec-step-n">3</div><div class="ec-step-t">Drive through the front heel to rise. Keep 70% of weight in the front foot throughout.</div></div><div class="ec-step"><div class="ec-step-n">4</div><div class="ec-step-t">Complete all reps on one side before switching.</div></div></div><div class="ec-sets-row"><span class="ec-set-pill">3 SETS</span><span class="ec-set-pill">8–10 REPS EACH SIDE</span><span class="ec-set-pill">REST 75 SEC</span></div><div class="ec-mods"><div class="ec-mod"><div class="ec-mod-label">BAD KNEES</div><div class="ec-mod-text">Shorten your stance to reduce depth. Place back knee on a folded mat. Focus on a slow, controlled descent — pain usually comes from dropping too fast.</div></div><div class="ec-mod"><div class="ec-mod-label">BALANCE ISSUES</div><div class="ec-mod-text">Hold a chair or wall for balance. This is not cheating — it allows you to focus on the movement pattern without fear of falling.</div></div></div><div class="ec-prog"><div class="ec-prog-l">PROGRESSION CUE</div><div class="ec-prog-t">Add dumbbells once 3×10 bodyweight is solid. Start with 10–15 lbs per hand. This is one of the best single-leg strength builders available.</div></div></div></div>
+    <div class="ex-card" onclick="toggleCard(this)"><div class="ec-head"><div class="ec-num">05</div><div class="ec-info"><div class="ec-name">Bodyweight Squat</div><span class="ec-level lvl-int">INTERMEDIATE</span><div class="ec-tags"><span class="ec-tag">NO EQUIPMENT</span><span class="ec-tag">FULL DEPTH</span><span class="ec-tag">BENCHMARK</span></div></div><div class="ec-arrow">▼</div></div>
+      <div class="ec-body"><div class="ec-section">HOW TO PERFORM</div><div class="ec-steps"><div class="ec-step"><div class="ec-step-n">1</div><div class="ec-step-t">Feet shoulder-width, toes slightly out. Arms forward or crossed at chest. Take a breath in before descending.</div></div><div class="ec-step"><div class="ec-step-n">2</div><div class="ec-step-t">Push hips back and down simultaneously — it's not a sit-back or a sit-down, it's both at once. Knees track over toes.</div></div><div class="ec-step"><div class="ec-step-n">3</div><div class="ec-step-t">Descend to at least parallel — thighs level with the floor. Heels must stay flat. If they rise, mobility work is needed.</div></div><div class="ec-step"><div class="ec-step-n">4</div><div class="ec-step-t">Drive through heels to rise. Breathe out on the way up. Lock out completely at the top.</div></div></div><div class="ec-sets-row"><span class="ec-set-pill">3 SETS</span><span class="ec-set-pill">10–15 REPS</span><span class="ec-set-pill">REST 60 SEC</span></div><div class="ec-mods"><div class="ec-mod"><div class="ec-mod-label">BAD KNEES</div><div class="ec-mod-text">Squat to a target — a box, a chair cushion, a yoga block. The target prevents you from going past a comfortable depth and gives confidence.</div></div></div><div class="ec-prog"><div class="ec-prog-l">PROGRESSION CUE</div><div class="ec-prog-t">The 40+ benchmark: 3×15 full depth with perfect form. When achieved, add a goblet hold or resistance band above the knees for added challenge.</div></div></div></div>
+  </div>
+  <div class="ex-section-title" style="border-top:none">📈 SQUAT PATTERN PROGRESSION LADDER</div>
+  <div class="prog-ladder" style="margin-bottom:clamp(20px,4vw,36px)">
+    <div class="pl-header"><span class="pl-title">SIT DOWN & STAND UP — MASTERED</span></div>
+    <div class="pl-step"><div class="pl-n">1</div><div class="pl-info"><div class="pl-name">Chair-Assisted Squat</div><div class="pl-desc">Build confidence and pattern. 3×15 before moving on.</div></div><span class="pl-badge lvl-beg">BEGINNER</span></div>
+    <div class="pl-step"><div class="pl-n">2</div><div class="pl-info"><div class="pl-name">Box Squat (High Box)</div><div class="pl-desc">No hands. Controlled depth. Lower box over time.</div></div><span class="pl-badge lvl-beg">BEGINNER+</span></div>
+    <div class="pl-step"><div class="pl-n">3</div><div class="pl-info"><div class="pl-name">Bodyweight Squat</div><div class="pl-desc">Full range. The base benchmark. 3×15 clean.</div></div><span class="pl-badge lvl-int">INTERMEDIATE</span></div>
+    <div class="pl-step"><div class="pl-n">4</div><div class="pl-info"><div class="pl-name">Goblet Squat (Light)</div><div class="pl-desc">Counter-weighted. Deeper range. Better posture automatically.</div></div><span class="pl-badge lvl-int">INTERMEDIATE</span></div>
+    <div class="pl-step"><div class="pl-n">5</div><div class="pl-info"><div class="pl-name">Split Squat</div><div class="pl-desc">Unilateral strength. Addresses imbalances. Hip flexor bonus.</div></div><span class="pl-badge lvl-int">INTERMEDIATE</span></div>
+    <div class="pl-step"><div class="pl-n">6</div><div class="pl-info"><div class="pl-name">Loaded Goblet / Dumbbell Squat</div><div class="pl-desc">Progressive overload. Builds the quads that protect your longevity.</div></div><span class="pl-badge lvl-adv">ADVANCED</span></div>
+  </div>
+</div><!-- /squat panel -->
+
+<!-- ══════════════════════════════════════════
+     HINGE PANEL
+══════════════════════════════════════════ -->
+<div class="panel" id="panel-hinge">
+  <div class="panel-hero" style="background:linear-gradient(135deg,#001a10,var(--d1),#1a0800)">
+    <div class="ph-layout">
+      <div class="ph-main">
+        <div class="pat-eyebrow">MOVEMENT PATTERN 04 · POSTERIOR CHAIN</div>
+        <div class="pat-name">HINGE</div>
+        <div class="pat-desc">The hip hinge is bending forward at the hips while keeping the spine neutral. It's picking something up off the floor, loading the dishwasher, tying your shoes. After 40, most people perform this movement with their lower back instead of their hips — which is the primary cause of back injuries. The hinge teaches you to load the hips and spare the spine.</div>
+        <div class="pat-targets"><span class="target-pill">GLUTES</span><span class="target-pill">HAMSTRINGS</span><span class="target-pill">LOWER BACK (SUPPORT)</span><span class="target-pill">CORE</span><span class="target-pill">SPINAL ERECTORS</span></div>
+      </div>
+      <div class="ph-meta">
+        <div class="meta-badge"><div class="mb-val">5</div><div class="mb-lbl">EXERCISES</div></div>
+        <div class="meta-badge"><div class="mb-val">3</div><div class="mb-lbl">LEVELS</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="why-box">
+    <div class="why-icon">🔬</div>
+    <div><div class="why-title">40+ SCIENCE — WHY HINGE MATTERS</div>
+    <div class="why-text">Glute weakness is epidemic in sedentary adults over 40. When the glutes don't fire properly, the lower back muscles compensate — becoming chronically overworked and inflamed. Glute bridges and hip hinges directly reactivate dormant glute fibers, reducing lower back load by up to 40% in daily activities. The posterior chain — glutes, hamstrings, lower back — also contains the body's largest muscle groups and is responsible for nearly all explosive power, making it the primary driver of metabolic rate.</div></div>
+  </div>
+  <div class="ex-section-title">💪 HINGE EXERCISES — BEGINNER TO ADVANCED</div>
+  <div class="ex-grid">
+    <div class="ex-card" onclick="toggleCard(this)"><div class="ec-head"><div class="ec-num">01</div><div class="ec-info"><div class="ec-name">Glute Bridge</div><span class="ec-level lvl-beg">BEGINNER</span><div class="ec-tags"><span class="ec-tag">NO EQUIPMENT</span><span class="ec-tag">FLOOR</span><span class="ec-tag">BACK SAFE</span><span class="ec-tag">KNEE SAFE</span></div></div><div class="ec-arrow">▼</div></div>
+      <div class="ec-body"><div class="ec-section">HOW TO PERFORM</div><div class="ec-steps"><div class="ec-step"><div class="ec-step-n">1</div><div class="ec-step-t">Lie on your back, knees bent, feet flat on the floor hip-width apart. Feet about 12 inches from your glutes.</div></div><div class="ec-step"><div class="ec-step-n">2</div><div class="ec-step-t">Arms flat by your sides, palms down. Take a breath in. Press the lower back gently into the floor — this is your starting position.</div></div><div class="ec-step"><div class="ec-step-n">3</div><div class="ec-step-t">Drive through heels and squeeze glutes to lift hips. At the top, your body forms a straight line from knees to shoulders. Hold for 2 counts.</div></div><div class="ec-step"><div class="ec-step-n">4</div><div class="ec-step-t">Lower with control — don't drop. The descent should take 2–3 seconds. Don't rest at the bottom — maintain tension and repeat.</div></div></div><div class="ec-sets-row"><span class="ec-set-pill">3 SETS</span><span class="ec-set-pill">12–15 REPS</span><span class="ec-set-pill">REST 60 SEC</span></div><div class="ec-mods"><div class="ec-mod"><div class="ec-mod-label">LOWER BACK PAIN</div><div class="ec-mod-text">This is often the first prescribed exercise for lower back rehab. If you feel it in your back instead of your glutes, reduce range of motion and focus on the glute squeeze before lifting.</div></div><div class="ec-mod"><div class="ec-mod-label">BAD KNEES</div><div class="ec-mod-text">This exercise is excellent for knee conditions — it builds glute strength that directly reduces knee strain. Keep feet flat and avoid pointing toes up.</div></div></div><div class="ec-prog"><div class="ec-prog-l">PROGRESSION CUE</div><div class="ec-prog-t">When 3×15 is easy, add a 3-second hold at the top of every rep. Then progress to single-leg glute bridges.</div></div></div></div>
+    <div class="ex-card" onclick="toggleCard(this)"><div class="ec-head"><div class="ec-num">02</div><div class="ec-info"><div class="ec-name">Single-Leg Glute Bridge</div><span class="ec-level lvl-int">INTERMEDIATE</span><div class="ec-tags"><span class="ec-tag">NO EQUIPMENT</span><span class="ec-tag">UNILATERAL</span><span class="ec-tag">BALANCE</span></div></div><div class="ec-arrow">▼</div></div>
+      <div class="ec-body"><div class="ec-section">HOW TO PERFORM</div><div class="ec-steps"><div class="ec-step"><div class="ec-step-n">1</div><div class="ec-step-t">Start in the standard glute bridge position. Extend one leg straight — toes pointing up toward the ceiling.</div></div><div class="ec-step"><div class="ec-step-n">2</div><div class="ec-step-t">Drive through the heel of the planted foot. Squeeze the glute on the working side. Keep hips level — don't let the extended-leg side drop.</div></div><div class="ec-step"><div class="ec-step-n">3</div><div class="ec-step-t">Hold 1–2 seconds at the top. Lower with control. Complete all reps on one side before switching.</div></div></div><div class="ec-sets-row"><span class="ec-set-pill">3 SETS</span><span class="ec-set-pill">10 REPS EACH SIDE</span><span class="ec-set-pill">REST 60 SEC</span></div><div class="ec-mods"><div class="ec-mod"><div class="ec-mod-label">LOWER BACK PAIN</div><div class="ec-mod-text">If your back arches at the top, reduce the range of motion. The spine should remain neutral — not hyperextended — throughout.</div></div></div><div class="ec-prog"><div class="ec-prog-l">PROGRESSION CUE</div><div class="ec-prog-t">Add a dumbbell or weight plate across the hip of the working leg for progressive overload. Start with 10 lbs.</div></div></div></div>
+    <div class="ex-card" onclick="toggleCard(this)"><div class="ec-head"><div class="ec-num">03</div><div class="ec-info"><div class="ec-name">Hip Hinge (Bodyweight)</div><span class="ec-level lvl-beg">BEGINNER</span><div class="ec-tags"><span class="ec-tag">NO EQUIPMENT</span><span class="ec-tag">SPINE TEACHING</span><span class="ec-tag">FOUNDATION</span></div></div><div class="ec-arrow">▼</div></div>
+      <div class="ec-body"><div class="ec-section">HOW TO PERFORM</div><div class="ec-steps"><div class="ec-step"><div class="ec-step-n">1</div><div class="ec-step-t">Stand with feet hip-width. Place one hand on lower back and one on your sternum. The goal is to feel your back stay flat throughout.</div></div><div class="ec-step"><div class="ec-step-n">2</div><div class="ec-step-t">Soft bend in the knees — not a squat, just unlocked. Push hips backward as if reaching for a wall behind you.</div></div><div class="ec-step"><div class="ec-step-n">3</div><div class="ec-step-t">Hinge until your torso is close to parallel with the floor. Your weight shifts to your heels. You should feel a stretch in the hamstrings.</div></div><div class="ec-step"><div class="ec-step-n">4</div><div class="ec-step-t">Drive hips forward to stand. Squeeze glutes at the top. This is the movement you'll eventually do with weight in the Romanian Deadlift.</div></div></div><div class="ec-sets-row"><span class="ec-set-pill">3 SETS</span><span class="ec-set-pill">10–12 REPS</span><span class="ec-set-pill">REST 45 SEC</span></div><div class="ec-mods"><div class="ec-mod"><div class="ec-mod-label">LOWER BACK PAIN</div><div class="ec-mod-text">Stand near a wall and use it to guide the hip push-back. When you feel your hips touch the wall, that's the hinge position. This teaches the movement without risk.</div></div></div><div class="ec-prog"><div class="ec-prog-l">PROGRESSION CUE</div><div class="ec-prog-t">When the movement feels natural and you feel it in your hamstrings (not back), you're ready to add a dumbbell or kettlebell for the Romanian Deadlift.</div></div></div></div>
+    <div class="ex-card" onclick="toggleCard(this)"><div class="ec-head"><div class="ec-num">04</div><div class="ec-info"><div class="ec-name">Romanian Deadlift (Dumbbell)</div><span class="ec-level lvl-int">INTERMEDIATE</span><div class="ec-tags"><span class="ec-tag">DUMBBELLS</span><span class="ec-tag">LOADED HINGE</span><span class="ec-tag">POSTERIOR CHAIN</span></div></div><div class="ec-arrow">▼</div></div>
+      <div class="ec-body"><div class="ec-section">HOW TO PERFORM</div><div class="ec-steps"><div class="ec-step"><div class="ec-step-n">1</div><div class="ec-step-t">Hold dumbbells in front of thighs, palms facing you. Stand tall with chest up and shoulders packed back.</div></div><div class="ec-step"><div class="ec-step-n">2</div><div class="ec-step-t">Hinge at hips — push them back. Dumbbells travel close to your legs (almost dragging). Knees stay soft but don't bend further.</div></div><div class="ec-step"><div class="ec-step-n">3</div><div class="ec-step-t">Lower until you feel a deep stretch in the hamstrings — usually mid-shin level. Back stays flat the entire time.</div></div><div class="ec-step"><div class="ec-step-n">4</div><div class="ec-step-t">Drive hips forward to return. Squeeze glutes at the top. This is not a squat — the movement is all hips.</div></div></div><div class="ec-sets-row"><span class="ec-set-pill">3 SETS</span><span class="ec-set-pill">8–10 REPS</span><span class="ec-set-pill">REST 75 SEC</span></div><div class="ec-mods"><div class="ec-mod"><div class="ec-mod-label">LOWER BACK PAIN</div><div class="ec-mod-text">Start extremely light — even 5 lb dumbbells. The movement must be perfect before adding load. If back rounds at any point, the weight is too heavy.</div></div></div><div class="ec-prog"><div class="ec-prog-l">PROGRESSION CUE</div><div class="ec-prog-t">Increase weight by 5 lbs per hand when 3×10 is controlled with full hamstring stretch. This exercise scales beautifully — eventually leading to barbell deadlifts.</div></div></div></div>
+    <div class="ex-card" onclick="toggleCard(this)"><div class="ec-head"><div class="ec-num">05</div><div class="ec-info"><div class="ec-name">Good Morning</div><span class="ec-level lvl-int">INTERMEDIATE</span><div class="ec-tags"><span class="ec-tag">BODYWEIGHT</span><span class="ec-tag">SPINAL ERECTORS</span><span class="ec-tag">HAMSTRINGS</span></div></div><div class="ec-arrow">▼</div></div>
+      <div class="ec-body"><div class="ec-section">HOW TO PERFORM</div><div class="ec-steps"><div class="ec-step"><div class="ec-step-n">1</div><div class="ec-step-t">Stand feet shoulder-width. Place hands behind head or cross arms at chest. Take a breath and brace your core.</div></div><div class="ec-step"><div class="ec-step-n">2</div><div class="ec-step-t">Hinge forward at the hips — torso lowers while maintaining a perfectly flat, neutral spine. Imagine balancing a glass of water on your back.</div></div><div class="ec-step"><div class="ec-step-n">3</div><div class="ec-step-t">Lower to roughly parallel with the floor or until you feel strong hamstring tension. Pause for one count.</div></div><div class="ec-step"><div class="ec-step-n">4</div><div class="ec-step-t">Drive hips forward to rise. Squeeze glutes at the top. Exhale on the way up.</div></div></div><div class="ec-sets-row"><span class="ec-set-pill">3 SETS</span><span class="ec-set-pill">10–12 REPS</span><span class="ec-set-pill">REST 60 SEC</span></div><div class="ec-mods"><div class="ec-mod"><div class="ec-mod-label">LOWER BACK PAIN</div><div class="ec-mod-text">Reduce range of motion — hinge only to 30–45 degrees rather than parallel. As lower back strength builds, gradually increase range over weeks.</div></div></div><div class="ec-prog"><div class="ec-prog-l">PROGRESSION CUE</div><div class="ec-prog-t">Add a light resistance band around the upper back for feedback. When 3×15 is solid, advance to banded good mornings or dumbbell Romanian deadlifts.</div></div></div></div>
+  </div>
+  <div class="ex-section-title" style="border-top:none">📈 HINGE PATTERN PROGRESSION LADDER</div>
+  <div class="prog-ladder" style="margin-bottom:clamp(20px,4vw,36px)">
+    <div class="pl-header"><span class="pl-title">WAKE UP YOUR GLUTES — SAVE YOUR BACK</span></div>
+    <div class="pl-step"><div class="pl-n">1</div><div class="pl-info"><div class="pl-name">Glute Bridge</div><div class="pl-desc">Reactivate dormant glutes. The most important first step.</div></div><span class="pl-badge lvl-beg">BEGINNER</span></div>
+    <div class="pl-step"><div class="pl-n">2</div><div class="pl-info"><div class="pl-name">Hip Hinge (Bodyweight)</div><div class="pl-desc">Learn the movement pattern before adding any load.</div></div><span class="pl-badge lvl-beg">BEGINNER</span></div>
+    <div class="pl-step"><div class="pl-n">3</div><div class="pl-info"><div class="pl-name">Single-Leg Glute Bridge</div><div class="pl-desc">Unilateral loading. Addresses imbalances between sides.</div></div><span class="pl-badge lvl-int">INTERMEDIATE</span></div>
+    <div class="pl-step"><div class="pl-n">4</div><div class="pl-info"><div class="pl-name">Good Morning</div><div class="pl-desc">Standing hinge. Builds spinal erectors and hamstrings.</div></div><span class="pl-badge lvl-int">INTERMEDIATE</span></div>
+    <div class="pl-step"><div class="pl-n">5</div><div class="pl-info"><div class="pl-name">Romanian Deadlift (Light)</div><div class="pl-desc">Loaded hinge. The foundation of posterior chain strength.</div></div><span class="pl-badge lvl-int">INTERMEDIATE</span></div>
+    <div class="pl-step"><div class="pl-n">6</div><div class="pl-info"><div class="pl-name">Romanian Deadlift (Progressive Load)</div><div class="pl-desc">Scales to significant weight. Directly builds longevity-linked muscle mass.</div></div><span class="pl-badge lvl-adv">ADVANCED</span></div>
+  </div>
+</div><!-- /hinge panel -->
+
+<!-- ══════════════════════════════════════════
+     CARRY PANEL
+══════════════════════════════════════════ -->
+<div class="panel" id="panel-carry">
+  <div class="panel-hero" style="background:linear-gradient(135deg,#0a0a00,var(--d1),#1a0500)">
+    <div class="ph-layout">
+      <div class="ph-main">
+        <div class="pat-eyebrow">MOVEMENT PATTERN 05 · FULL BODY</div>
+        <div class="pat-name">CARRY</div>
+        <div class="pat-desc">Carry patterns are the most underrated movement in fitness. Walking while holding weight develops full-body stability, grip strength, shoulder stability, core strength, and cardiovascular fitness simultaneously. After 40, grip strength is one of the single strongest predictors of overall health and longevity — and carries build it directly.</div>
+        <div class="pat-targets"><span class="target-pill">GRIP STRENGTH</span><span class="target-pill">TRAPEZIUS</span><span class="target-pill">CORE ANTI-ROTATION</span><span class="target-pill">SHOULDER STABILIZERS</span><span class="target-pill">ENTIRE LOWER BODY</span></div>
+      </div>
+      <div class="ph-meta">
+        <div class="meta-badge"><div class="mb-val">5</div><div class="mb-lbl">EXERCISES</div></div>
+        <div class="meta-badge"><div class="mb-val">3</div><div class="mb-lbl">LEVELS</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="why-box">
+    <div class="why-icon">🔬</div>
+    <div><div class="why-title">40+ SCIENCE — WHY CARRY MATTERS</div>
+    <div class="why-text">A 2018 JAMA Internal Medicine study following 140,000 adults found that every 11-pound decrease in grip strength was associated with a 17% higher risk of cardiovascular death. Grip strength declines at approximately 2–3% per year after age 40 if untrained — making it one of the fastest-declining physical capacities. Farmer carries are the most efficient grip-strengthening exercise available and simultaneously challenge every stabilizing muscle in the body, making them one of the highest-value exercises per minute in existence.</div></div>
+  </div>
+  <div class="ex-section-title">💪 CARRY EXERCISES — BEGINNER TO ADVANCED</div>
+  <div class="ex-grid">
+    <div class="ex-card" onclick="toggleCard(this)"><div class="ec-head"><div class="ec-num">01</div><div class="ec-info"><div class="ec-name">Suitcase Carry (Light)</div><span class="ec-level lvl-beg">BEGINNER</span><div class="ec-tags"><span class="ec-tag">DUMBBELL OR HOUSEHOLD ITEM</span><span class="ec-tag">ONE SIDE</span><span class="ec-tag">ANTI-LEAN</span></div></div><div class="ec-arrow">▼</div></div>
+      <div class="ec-body"><div class="ec-section">HOW TO PERFORM</div><div class="ec-steps"><div class="ec-step"><div class="ec-step-n">1</div><div class="ec-step-t">Hold a dumbbell (or a heavy bag, grocery bag, full water jug) in one hand at your side. Stand tall — shoulder blades back and down.</div></div><div class="ec-step"><div class="ec-step-n">2</div><div class="ec-step-t">Walk forward at a controlled pace. The goal is to look like you're carrying nothing — no leaning to either side, no swaying hips.</div></div><div class="ec-step"><div class="ec-step-n">3</div><div class="ec-step-t">Your core works overtime to prevent you from tilting toward the weight. This is the entire point. Resist the lean.</div></div><div class="ec-step"><div class="ec-step-n">4</div><div class="ec-step-t">Walk 30–40 steps, switch hands, repeat.</div></div></div><div class="ec-sets-row"><span class="ec-set-pill">3 SETS</span><span class="ec-set-pill">30–40 STEPS EACH SIDE</span><span class="ec-set-pill">REST 60 SEC</span></div><div class="ec-mods"><div class="ec-mod"><div class="ec-mod-label">SHOULDER ISSUES</div><div class="ec-mod-text">Keep the weight at your side — avoid holding it in front of the body or raised. A neutral hanging position is the most shoulder-friendly carry position.</div></div><div class="ec-mod"><div class="ec-mod-label">LOWER BACK PAIN</div><div class="ec-mod-text">Start lighter than you think. The core demand is what matters. A 10-lb dumbbell for 40 steps is genuinely challenging for beginners.</div></div></div><div class="ec-prog"><div class="ec-prog-l">PROGRESSION CUE</div><div class="ec-prog-t">When you can walk 40 steps per side with zero torso tilt, increase weight by 5 lbs or extend to 60 steps per side.</div></div></div></div>
+    <div class="ex-card" onclick="toggleCard(this)"><div class="ec-head"><div class="ec-num">02</div><div class="ec-info"><div class="ec-name">Farmer Carry (Two Hands)</div><span class="ec-level lvl-beg">BEGINNER+</span><div class="ec-tags"><span class="ec-tag">DUMBBELLS</span><span class="ec-tag">BILATERAL</span><span class="ec-tag">GRIP + TRAPS</span></div></div><div class="ec-arrow">▼</div></div>
+      <div class="ec-body"><div class="ec-section">HOW TO PERFORM</div><div class="ec-steps"><div class="ec-step"><div class="ec-step-n">1</div><div class="ec-step-t">Hold a dumbbell in each hand. Stand tall — shoulders packed, chest up, chin neutral. Take a breath.</div></div><div class="ec-step"><div class="ec-step-n">2</div><div class="ec-step-t">Walk with purpose. Short, controlled steps. Eyes forward. Don't look down at the weights.</div></div><div class="ec-step"><div class="ec-step-n">3</div><div class="ec-step-t">Maintain shoulder packing throughout — don't let shoulders round forward or shrug up. Feel the trapezius working to hold the shoulder blade position.</div></div><div class="ec-step"><div class="ec-step-n">4</div><div class="ec-step-t">Walk for the prescribed time or distance. Set weights down with control — don't drop them.</div></div></div><div class="ec-sets-row"><span class="ec-set-pill">3 SETS</span><span class="ec-set-pill">30–60 SECONDS</span><span class="ec-set-pill">REST 75 SEC</span></div><div class="ec-mods"><div class="ec-mod"><div class="ec-mod-label">SHOULDER ISSUES</div><div class="ec-mod-text">Reduce weight significantly. The shoulder-packing requirement is actually therapeutic for shoulder health when done correctly, but only with appropriate load.</div></div></div><div class="ec-prog"><div class="ec-prog-l">PROGRESSION CUE</div><div class="ec-prog-t">Increase duration before weight. Target 60 seconds with perfect posture before adding 5 lbs per hand.</div></div></div></div>
+    <div class="ex-card" onclick="toggleCard(this)"><div class="ec-head"><div class="ec-num">03</div><div class="ec-info"><div class="ec-name">Waiter Carry</div><span class="ec-level lvl-int">INTERMEDIATE</span><div class="ec-tags"><span class="ec-tag">DUMBBELL</span><span class="ec-tag">OVERHEAD STABILITY</span><span class="ec-tag">SHOULDER STRENGTH</span></div></div><div class="ec-arrow">▼</div></div>
+      <div class="ec-body"><div class="ec-section">HOW TO PERFORM</div><div class="ec-steps"><div class="ec-step"><div class="ec-step-n">1</div><div class="ec-step-t">Press a light dumbbell overhead in one hand. Arm fully extended, palm facing forward. Think of balancing a tray.</div></div><div class="ec-step"><div class="ec-step-n">2</div><div class="ec-step-t">Walk with complete upper body stillness. The overhead arm doesn't move — it's locked and stable. Other arm is relaxed at your side.</div></div><div class="ec-step"><div class="ec-step-n">3</div><div class="ec-step-t">Every step challenges the shoulder rotator cuff and core to maintain the overhead position. This is controlled instability training.</div></div></div><div class="ec-sets-row"><span class="ec-set-pill">3 SETS</span><span class="ec-set-pill">20–30 STEPS EACH SIDE</span><span class="ec-set-pill">REST 75 SEC</span></div><div class="ec-mods"><div class="ec-mod"><div class="ec-mod-label">SHOULDER ISSUES</div><div class="ec-mod-text">Skip this variation and focus on suitcase and farmer carries instead. Return to waiter carries only when full overhead range is pain-free for 6+ weeks.</div></div></div><div class="ec-prog"><div class="ec-prog-l">PROGRESSION CUE</div><div class="ec-prog-t">When 3×30 steps is controlled, progress to a bottoms-up carry (holding the dumbbell upside down) for increased rotator cuff demand.</div></div></div></div>
+    <div class="ex-card" onclick="toggleCard(this)"><div class="ec-head"><div class="ec-num">04</div><div class="ec-info"><div class="ec-name">Rack Carry (Goblet Position)</div><span class="ec-level lvl-int">INTERMEDIATE</span><div class="ec-tags"><span class="ec-tag">DUMBBELL</span><span class="ec-tag">CORE BRACING</span><span class="ec-tag">UPPER BACK</span></div></div><div class="ec-arrow">▼</div></div>
+      <div class="ec-body"><div class="ec-section">HOW TO PERFORM</div><div class="ec-steps"><div class="ec-step"><div class="ec-step-n">1</div><div class="ec-step-t">Hold a dumbbell at chest height in both hands — the same goblet position used in the squat. Elbows pointing down.</div></div><div class="ec-step"><div class="ec-step-n">2</div><div class="ec-step-t">Walk tall. The weight at chest height shifts your center of gravity forward, requiring significant core engagement to remain upright.</div></div><div class="ec-step"><div class="ec-step-n">3</div><div class="ec-step-t">Don't let the weight drag your upper back into a rounded position. Fight to keep the chest up throughout.</div></div></div><div class="ec-sets-row"><span class="ec-set-pill">3 SETS</span><span class="ec-set-pill">30–45 SECONDS</span><span class="ec-set-pill">REST 75 SEC</span></div><div class="ec-mods"><div class="ec-mod"><div class="ec-mod-label">SHOULDER ISSUES</div><div class="ec-mod-text">This variation is shoulder-friendly as the weight is at chest height in a supported position. Use a lighter weight and keep elbows close to the body.</div></div></div><div class="ec-prog"><div class="ec-prog-l">PROGRESSION CUE</div><div class="ec-prog-t">Increase dumbbell weight by 5 lbs when 45 seconds feels controlled. This doubles as core and upper back training.</div></div></div></div>
+    <div class="ex-card" onclick="toggleCard(this)"><div class="ec-head"><div class="ec-num">05</div><div class="ec-info"><div class="ec-name">Mixed Carry (Up/Down)</div><span class="ec-level lvl-adv">ADVANCED</span><div class="ec-tags"><span class="ec-tag">TWO DUMBBELLS</span><span class="ec-tag">ASYMMETRIC</span><span class="ec-tag">FULL SYSTEM</span></div></div><div class="ec-arrow">▼</div></div>
+      <div class="ec-body"><div class="ec-section">HOW TO PERFORM</div><div class="ec-steps"><div class="ec-step"><div class="ec-step-n">1</div><div class="ec-step-t">Hold one dumbbell overhead (waiter position) in one hand, and another at your side (suitcase position) in the other hand.</div></div><div class="ec-step"><div class="ec-step-n">2</div><div class="ec-step-t">Walk with complete body control. Every muscle system is working: shoulder stability overhead, lateral core resistance below, and full-body coordination.</div></div><div class="ec-step"><div class="ec-step-n">3</div><div class="ec-step-t">Switch positions after 20 steps — overhead arm goes to side, side arm goes overhead.</div></div></div><div class="ec-sets-row"><span class="ec-set-pill">3 SETS</span><span class="ec-set-pill">20 STEPS EACH CONFIGURATION</span><span class="ec-set-pill">REST 90 SEC</span></div><div class="ec-mods"><div class="ec-mod"><div class="ec-mod-label">SHOULDER ISSUES</div><div class="ec-mod-text">Replace the overhead component with a rack carry (chest height). This gives you asymmetric loading without overhead stress.</div></div></div><div class="ec-prog"><div class="ec-prog-l">PROGRESSION CUE</div><div class="ec-prog-t">This is a top-tier advanced carry. When this feels controlled, you have carry-pattern mastery. Load both sides heavier as the final progression.</div></div></div></div>
+  </div>
+  <div class="ex-section-title" style="border-top:none">📈 CARRY PATTERN PROGRESSION LADDER</div>
+  <div class="prog-ladder" style="margin-bottom:clamp(20px,4vw,36px)">
+    <div class="pl-header"><span class="pl-title">GRIP STRENGTH IS LONGEVITY</span></div>
+    <div class="pl-step"><div class="pl-n">1</div><div class="pl-info"><div class="pl-name">Suitcase Carry (One Side)</div><div class="pl-desc">Single side. Anti-lean core training. Foundation of carries.</div></div><span class="pl-badge lvl-beg">BEGINNER</span></div>
+    <div class="pl-step"><div class="pl-n">2</div><div class="pl-info"><div class="pl-name">Farmer Carry (Two Hands)</div><div class="pl-desc">Bilateral loaded walk. Build up to 60 seconds with good posture.</div></div><span class="pl-badge lvl-beg">BEGINNER+</span></div>
+    <div class="pl-step"><div class="pl-n">3</div><div class="pl-info"><div class="pl-name">Rack Carry (Goblet Position)</div><div class="pl-desc">Weight at chest. Massive core demand. Upper back builder.</div></div><span class="pl-badge lvl-int">INTERMEDIATE</span></div>
+    <div class="pl-step"><div class="pl-n">4</div><div class="pl-info"><div class="pl-name">Waiter Carry (Overhead)</div><div class="pl-desc">Overhead stability. Rotator cuff and shoulder health.</div></div><span class="pl-badge lvl-int">INTERMEDIATE</span></div>
+    <div class="pl-step"><div class="pl-n">5</div><div class="pl-info"><div class="pl-name">Mixed Carry (Up/Down)</div><div class="pl-desc">Master level. Every system working simultaneously.</div></div><span class="pl-badge lvl-adv">ADVANCED</span></div>
+  </div>
+</div><!-- /carry panel -->
+
+<!-- ══════════════════════════════════════════
+     CORE PANEL
+══════════════════════════════════════════ -->
+<div class="panel" id="panel-core">
+  <div class="panel-hero" style="background:linear-gradient(135deg,#00101a,var(--d1),#0a0015)">
+    <div class="ph-layout">
+      <div class="ph-main">
+        <div class="pat-eyebrow">MOVEMENT PATTERN 06 · STABILITY</div>
+        <div class="pat-name">CORE</div>
+        <div class="pat-desc">The core is not your abs. It's the entire cylinder of muscles surrounding your spine — front, sides, and back. After 40, true core training means anti-movement: the ability to resist forces trying to bend, twist, or compress the spine. Crunches are not core training. Planks, dead bugs, and pallof presses are.</div>
+        <div class="pat-targets"><span class="target-pill">DEEP STABILIZERS (TVA)</span><span class="target-pill">OBLIQUES</span><span class="target-pill">SPINAL ERECTORS</span><span class="target-pill">GLUTES</span><span class="target-pill">HIP FLEXORS</span></div>
+      </div>
+      <div class="ph-meta">
+        <div class="meta-badge"><div class="mb-val">5</div><div class="mb-lbl">EXERCISES</div></div>
+        <div class="meta-badge"><div class="mb-val">3</div><div class="mb-lbl">LEVELS</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="why-box">
+    <div class="why-icon">🔬</div>
+    <div><div class="why-title">40+ SCIENCE — WHY CORE MATTERS</div>
+    <div class="why-text">The transverse abdominis — the deepest core muscle — acts like a natural weight belt, compressing the spine to protect it during every movement. After 40, this muscle becomes inhibited due to poor posture and sedentary behavior, leaving the spine vulnerable. Research by Dr. Stuart McGill at the University of Waterloo established that anti-extension and anti-rotation core training (planks, dead bugs) is significantly more spine-protective than flexion training (sit-ups, crunches) — which can actually increase disc pressure and accelerate degeneration.</div></div>
+  </div>
+  <div class="ex-section-title">💪 CORE EXERCISES — BEGINNER TO ADVANCED</div>
+  <div class="ex-grid">
+    <div class="ex-card" onclick="toggleCard(this)"><div class="ec-head"><div class="ec-num">01</div><div class="ec-info"><div class="ec-name">Modified Plank (Knees)</div><span class="ec-level lvl-beg">BEGINNER</span><div class="ec-tags"><span class="ec-tag">NO EQUIPMENT</span><span class="ec-tag">ANTI-EXTENSION</span><span class="ec-tag">SHOULDER SAFE</span></div></div><div class="ec-arrow">▼</div></div>
+      <div class="ec-body"><div class="ec-section">HOW TO PERFORM</div><div class="ec-steps"><div class="ec-step"><div class="ec-step-n">1</div><div class="ec-step-t">On forearms and knees. Elbows directly under shoulders. Forearms parallel, palms flat or fists — whichever feels more stable.</div></div><div class="ec-step"><div class="ec-step-n">2</div><div class="ec-step-t">Lift hips to form a straight line from knees to shoulders. Don't let hips pike up or sag down. Find the diagonal plank position.</div></div><div class="ec-step"><div class="ec-step-n">3</div><div class="ec-step-t">Squeeze everything: glutes tight, core braced like you're about to take a punch, quads engaged. Breathe slowly — don't hold your breath.</div></div><div class="ec-step"><div class="ec-step-n">4</div><div class="ec-step-t">Hold for the prescribed time. If form breaks before the time is up, rest and restart rather than holding bad position.</div></div></div><div class="ec-sets-row"><span class="ec-set-pill">3 SETS</span><span class="ec-set-pill">20–40 SEC HOLDS</span><span class="ec-set-pill">REST 45 SEC</span></div><div class="ec-mods"><div class="ec-mod"><div class="ec-mod-label">LOWER BACK PAIN</div><div class="ec-mod-text">If you feel this in your lower back, your hips are likely sagging. Reduce hold time and focus on squeezing glutes throughout. The glute tension protects the lower back during planks.</div></div><div class="ec-mod"><div class="ec-mod-label">SHOULDER ISSUES</div><div class="ec-mod-text">Forearm position distributes load across the forearm rather than the shoulder joint. This is specifically preferred over hand planks for anyone with shoulder concerns.</div></div></div><div class="ec-prog"><div class="ec-prog-l">PROGRESSION CUE</div><div class="ec-prog-t">Add 5 seconds every week. When 3×40 seconds with perfect form is easy, advance to full forearm plank on toes.</div></div></div></div>
+    <div class="ex-card" onclick="toggleCard(this)"><div class="ec-head"><div class="ec-num">02</div><div class="ec-info"><div class="ec-name">Dead Bug</div><span class="ec-level lvl-beg">BEGINNER</span><div class="ec-tags"><span class="ec-tag">NO EQUIPMENT</span><span class="ec-tag">FLOOR</span><span class="ec-tag">BACK SAFE</span><span class="ec-tag">COORDINATION</span></div></div><div class="ec-arrow">▼</div></div>
+      <div class="ec-body"><div class="ec-section">HOW TO PERFORM</div><div class="ec-steps"><div class="ec-step"><div class="ec-step-n">1</div><div class="ec-step-t">Lie on your back. Arms pointing straight up to the ceiling. Knees bent at 90 degrees, shins parallel to the floor — "tabletop" position.</div></div><div class="ec-step"><div class="ec-step-n">2</div><div class="ec-step-t">Press your lower back firmly into the floor and keep it there for the entire exercise. This is the core engagement cue.</div></div><div class="ec-step"><div class="ec-step-n">3</div><div class="ec-step-t">Simultaneously lower your right arm overhead and extend your left leg toward the floor — both hovering 2 inches above without touching.</div></div><div class="ec-step"><div class="ec-step-n">4</div><div class="ec-step-t">Return to start slowly. Switch sides. The movement should be slow and controlled — 3–4 seconds per extension.</div></div></div><div class="ec-sets-row"><span class="ec-set-pill">3 SETS</span><span class="ec-set-pill">8–10 REPS EACH SIDE</span><span class="ec-set-pill">REST 45 SEC</span></div><div class="ec-mods"><div class="ec-mod"><div class="ec-mod-label">LOWER BACK PAIN</div><div class="ec-mod-text">This is one of the best back-safe core exercises. The key is maintaining the lower back pressing into the floor. If it lifts, your range of motion is too large. Reduce how far you extend.</div></div><div class="ec-mod"><div class="ec-mod-label">COORDINATION DIFFICULTY</div><div class="ec-mod-text">Isolate the movement — practice just the arm extension for a week, then just the leg extension, then combine. This is a skill as much as an exercise.</div></div></div><div class="ec-prog"><div class="ec-prog-l">PROGRESSION CUE</div><div class="ec-prog-t">Add a resistance band between hands and feet for additional anti-extension resistance. Or slow the movement to 5–6 seconds per rep.</div></div></div></div>
+    <div class="ex-card" onclick="toggleCard(this)"><div class="ec-head"><div class="ec-num">03</div><div class="ec-info"><div class="ec-name">Bird Dog</div><span class="ec-level lvl-beg">BEGINNER</span><div class="ec-tags"><span class="ec-tag">NO EQUIPMENT</span><span class="ec-tag">BALANCE</span><span class="ec-tag">SPINE NEUTRAL</span><span class="ec-tag">GLUTE ACTIVATOR</span></div></div><div class="ec-arrow">▼</div></div>
+      <div class="ec-body"><div class="ec-section">HOW TO PERFORM</div><div class="ec-steps"><div class="ec-step"><div class="ec-step-n">1</div><div class="ec-step-t">On hands and knees, table-top position. Wrists under shoulders, knees under hips. Spine neutral — not arched or rounded.</div></div><div class="ec-step"><div class="ec-step-n">2</div><div class="ec-step-t">Before moving, brace your core and squeeze the glute of the leg you're about to extend. This prevents the hip from dropping.</div></div><div class="ec-step"><div class="ec-step-n">3</div><div class="ec-step-t">Extend right arm forward and left leg back simultaneously. Hold 2–3 seconds. Body from extended hand to extended heel should be level.</div></div><div class="ec-step"><div class="ec-step-n">4</div><div class="ec-step-t">Return slowly. Switch sides. No rotation allowed — the hips stay square to the floor throughout.</div></div></div><div class="ec-sets-row"><span class="ec-set-pill">3 SETS</span><span class="ec-set-pill">10 REPS EACH SIDE</span><span class="ec-set-pill">REST 45 SEC</span></div><div class="ec-mods"><div class="ec-mod"><div class="ec-mod-label">LOWER BACK PAIN</div><div class="ec-mod-text">Place a water bottle on your lower back as a feedback tool. If it falls off, your hips are rotating. This exercise is prescribed by physiotherapists specifically for lower back rehab.</div></div><div class="ec-mod"><div class="ec-mod-label">WRIST PAIN</div><div class="ec-mod-text">Make fists and perform on knuckles, or use push-up handles to maintain a neutral wrist position.</div></div></div><div class="ec-prog"><div class="ec-prog-l">PROGRESSION CUE</div><div class="ec-prog-t">Add a resistance band around the wrists and ankles for added anti-rotation demand. Or touch knee to elbow at the bottom for an advanced version.</div></div></div></div>
+    <div class="ex-card" onclick="toggleCard(this)"><div class="ec-head"><div class="ec-num">04</div><div class="ec-info"><div class="ec-name">Full Forearm Plank</div><span class="ec-level lvl-int">INTERMEDIATE</span><div class="ec-tags"><span class="ec-tag">NO EQUIPMENT</span><span class="ec-tag">FULL BODY TENSION</span><span class="ec-tag">BENCHMARK</span></div></div><div class="ec-arrow">▼</div></div>
+      <div class="ec-body"><div class="ec-section">HOW TO PERFORM</div><div class="ec-steps"><div class="ec-step"><div class="ec-step-n">1</div><div class="ec-step-t">On forearms and toes. Elbows under shoulders. Body forms one straight line from heels to the crown of your head.</div></div><div class="ec-step"><div class="ec-step-n">2</div><div class="ec-step-t">Engage everything simultaneously: grip the floor with your forearms, squeeze glutes, brace core, push heels back.</div></div><div class="ec-step"><div class="ec-step-n">3</div><div class="ec-step-t">The goal is maximum full-body tension, not just holding the position. Think of "dragging your elbows toward your feet" — this activates the lats and makes the plank significantly more effective.</div></div><div class="ec-step"><div class="ec-step-n">4</div><div class="ec-step-t">Hold. Breathe through the nose. Don't hold your breath — elevated blood pressure risk in 40+ adults during breath-holding under load.</div></div></div><div class="ec-sets-row"><span class="ec-set-pill">3 SETS</span><span class="ec-set-pill">20–60 SEC HOLDS</span><span class="ec-set-pill">REST 60 SEC</span></div><div class="ec-mods"><div class="ec-mod"><div class="ec-mod-label">HIGH BLOOD PRESSURE</div><div class="ec-mod-text">Never hold your breath during planks. Continuous nasal breathing is mandatory. If holding posture causes you to hold breath involuntarily, reduce hold time to 15 seconds and build from there.</div></div><div class="ec-mod"><div class="ec-mod-label">LOWER BACK PAIN</div><div class="ec-mod-text">If the lower back aches, squeeze glutes harder — glute engagement is the primary protector of the lower back during planks. Also ensure the hips aren't too high or too low.</div></div></div><div class="ec-prog"><div class="ec-prog-l">PROGRESSION CUE</div><div class="ec-prog-t">The TUF 40+ benchmark: 3×60 second forearm plank with zero form breakdown. When achieved, advance to shoulder taps or plank reaches.</div></div></div></div>
+    <div class="ex-card" onclick="toggleCard(this)"><div class="ec-head"><div class="ec-num">05</div><div class="ec-info"><div class="ec-name">Side Plank (Modified)</div><span class="ec-level lvl-int">INTERMEDIATE</span><div class="ec-tags"><span class="ec-tag">NO EQUIPMENT</span><span class="ec-tag">ANTI-LATERAL FLEXION</span><span class="ec-tag">OBLIQUES</span></div></div><div class="ec-arrow">▼</div></div>
+      <div class="ec-body"><div class="ec-section">HOW TO PERFORM</div><div class="ec-steps"><div class="ec-step"><div class="ec-step-n">1</div><div class="ec-step-t">Lie on your side. Bottom elbow directly under shoulder. Knees bent (modified) or legs extended (advanced). Hips stacked.</div></div><div class="ec-step"><div class="ec-step-n">2</div><div class="ec-step-t">Lift hips off the ground. Your body forms a straight diagonal line from knees (or feet) to shoulders. Top hip doesn't sag forward or backward.</div></div><div class="ec-step"><div class="ec-step-n">3</div><div class="ec-step-t">Top arm along your body or raised to the ceiling. Breathe. Hold the position — resist the urge to let the hip sag toward the floor.</div></div><div class="ec-step"><div class="ec-step-n">4</div><div class="ec-step-t">Hold, lower, switch sides.</div></div></div><div class="ec-sets-row"><span class="ec-set-pill">3 SETS</span><span class="ec-set-pill">20–40 SEC EACH SIDE</span><span class="ec-set-pill">REST 45 SEC</span></div><div class="ec-mods"><div class="ec-mod"><div class="ec-mod-label">SHOULDER ISSUES</div><div class="ec-mod-text">Reduce hold time and ensure the supporting elbow is perfectly under the shoulder. If direct shoulder loading causes pain, skip side planks and add lateral band walks instead for oblique activation.</div></div><div class="ec-mod"><div class="ec-mod-label">HIP PAIN</div><div class="ec-mod-text">Place a folded mat under the supporting hip. The ground contact point can cause discomfort — padding eliminates this entirely.</div></div></div><div class="ec-prog"><div class="ec-prog-l">PROGRESSION CUE</div><div class="ec-prog-t">When 3×40 seconds modified is solid, extend to full side plank on feet. Then add hip dips (controlled) for an oblique strength challenge.</div></div></div></div>
+  </div>
+  <div class="ex-section-title" style="border-top:none">📈 CORE PATTERN PROGRESSION LADDER</div>
+  <div class="prog-ladder" style="margin-bottom:clamp(20px,4vw,36px)">
+    <div class="pl-header"><span class="pl-title">BUILD THE NATURAL WEIGHT BELT</span></div>
+    <div class="pl-step"><div class="pl-n">1</div><div class="pl-info"><div class="pl-name">Dead Bug</div><div class="pl-desc">Anti-extension on the floor. Back completely safe. Coordination builder.</div></div><span class="pl-badge lvl-beg">BEGINNER</span></div>
+    <div class="pl-step"><div class="pl-n">2</div><div class="pl-info"><div class="pl-name">Bird Dog</div><div class="pl-desc">Spine neutral training. Glute activation. Balance requirement.</div></div><span class="pl-badge lvl-beg">BEGINNER</span></div>
+    <div class="pl-step"><div class="pl-n">3</div><div class="pl-info"><div class="pl-name">Modified Plank (Knees)</div><div class="pl-desc">Anti-extension hold. Full tension practice. Build to 3×40 sec.</div></div><span class="pl-badge lvl-beg">BEGINNER</span></div>
+    <div class="pl-step"><div class="pl-n">4</div><div class="pl-info"><div class="pl-name">Full Forearm Plank</div><div class="pl-desc">Benchmark exercise. 3×60 seconds = advanced core baseline.</div></div><span class="pl-badge lvl-int">INTERMEDIATE</span></div>
+    <div class="pl-step"><div class="pl-n">5</div><div class="pl-info"><div class="pl-name">Side Plank (Modified)</div><div class="pl-desc">Lateral stability. Protects the spine from sideways forces.</div></div><span class="pl-badge lvl-int">INTERMEDIATE</span></div>
+    <div class="pl-step"><div class="pl-n">6</div><div class="pl-info"><div class="pl-name">Side Plank (Full) + Hip Dips</div><div class="pl-desc">Advanced oblique training. Full lateral chain strength.</div></div><span class="pl-badge lvl-adv">ADVANCED</span></div>
+  </div>
+</div><!-- /core panel -->
+
+<script>
+function showPanel(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.ptab').forEach(t => t.classList.remove('on'));
+  document.getElementById('panel-' + id).classList.add('on');
+  btn.classList.add('on');
+  // Scroll to top of content
+  document.getElementById('panel-' + id).scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function toggleCard(card) {
+  const body = card.querySelector('.ec-body');
+  const isActive = card.classList.contains('active');
+  // Close all others in same grid
+  card.closest('.ex-grid').querySelectorAll('.ex-card').forEach(c => {
+    c.classList.remove('active');
+    c.querySelector('.ec-body').style.display = 'none';
+  });
+  if (!isActive) {
+    card.classList.add('active');
+    body.style.display = 'block';
+    body.classList.add('open');
+  }
+}
+</script>
+</body>
+</html>

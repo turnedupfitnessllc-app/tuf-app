@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TUF — Exercise Library</title>
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --bg:#0D0D0D; --surface:#141414; --elevated:#1C1C1C;
+      --border:#242424; --red:#8B0000; --gold:#C8973A;
+      --white:#F5F5F5; --g1:#CCCCCC; --g2:#888888; --g3:#555555;
+      --blue:#4A90D9; --green:#27AE60;
+    }
+    html { scroll-behavior:smooth; }
+    body { background:var(--bg); color:var(--white); font-family:'Trebuchet MS',sans-serif; max-width:480px; margin:0 auto; padding-bottom:90px; }
+
+    .hdr { background:linear-gradient(135deg,#8B0000 0%,#3a0000 100%); padding:15px 18px 13px; position:sticky; top:0; z-index:300; border-bottom:1px solid #5a0000; display:flex; justify-content:space-between; align-items:center; }
+    .hdr-brand { font-size:9px; color:var(--gold); letter-spacing:3px; text-transform:uppercase; font-weight:bold; }
+    .hdr-title { font-size:19px; font-weight:bold; font-family:Georgia,serif; color:var(--white); margin-top:2px; }
+    .badge { background:var(--gold); color:#000; border-radius:20px; padding:4px 12px; font-size:11px; font-weight:bold; }
+
+    .muscle-nav { background:var(--surface); border-bottom:1px solid var(--border); padding:10px 14px; display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; position:sticky; top:58px; z-index:290; }
+    .muscle-nav::-webkit-scrollbar { display:none; }
+    .mtab { flex-shrink:0; padding:8px 14px; border-radius:24px; border:1px solid var(--border); background:var(--elevated); color:var(--g2); font-size:12px; font-weight:bold; cursor:pointer; white-space:nowrap; transition:all 0.15s; }
+    .mtab.on { background:var(--red); color:var(--white); border-color:var(--gold); }
+
+    .level-nav { display:flex; gap:8px; padding:16px 16px 0; overflow-x:auto; scrollbar-width:none; }
+    .level-nav::-webkit-scrollbar { display:none; }
+    .ltab { flex-shrink:0; padding:7px 16px; border-radius:20px; border:1px solid var(--border); background:var(--elevated); color:var(--g2); font-size:12px; font-weight:bold; cursor:pointer; transition:all 0.15s; }
+    .ltab.on { background:var(--red); color:var(--white); border-color:var(--gold); }
+
+    .sec-hdr { padding:20px 16px 0; }
+    .sec-icon { font-size:30px; margin-bottom:6px; }
+    .sec-name { font-size:28px; font-weight:bold; font-family:Georgia,serif; color:var(--white); margin-bottom:4px; display:flex; align-items:center; gap:10px; }
+    .sec-count { background:var(--red); color:var(--white); border-radius:12px; padding:2px 10px; font-size:11px; font-weight:bold; font-family:'Trebuchet MS',sans-serif; }
+    .sec-sub { font-size:13px; color:var(--g2); line-height:1.5; margin-bottom:14px; }
+
+    .science-strip { margin:0 16px 4px; background:var(--bg); border-left:3px solid var(--gold); border-radius:0 8px 8px 0; padding:12px 14px; }
+    .sci-lbl { font-size:9px; color:var(--gold); font-weight:bold; text-transform:uppercase; letter-spacing:2px; margin-bottom:5px; }
+    .sci-txt { font-size:13px; color:var(--g1); line-height:1.7; }
+
+    .ex-list { padding:16px; display:flex; flex-direction:column; gap:18px; }
+
+    .ex-card { background:var(--elevated); border:1px solid var(--border); border-radius:16px; overflow:hidden; }
+
+    .vid-area { width:100%; background:#000; position:relative; overflow:hidden; padding-top:56.25%; }
+    .vid-area iframe { position:absolute; top:0; left:0; width:100%; height:100%; border:none; }
+    .vid-ph { position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(135deg,#1a0000 0%,#0D0D0D 100%); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; }
+    .play-btn { width:58px; height:58px; border-radius:50%; background:rgba(139,0,0,0.55); border:2px solid var(--gold); display:flex; align-items:center; justify-content:center; font-size:22px; color:var(--white); }
+    .vid-ph-lbl { font-size:11px; color:var(--g3); letter-spacing:1px; text-transform:uppercase; }
+
+    .cb { padding:18px 18px 20px; }
+    .tags { margin-bottom:10px; display:flex; flex-wrap:wrap; gap:4px; }
+    .tag { display:inline-block; padding:3px 9px; border-radius:14px; font-size:10px; font-weight:bold; text-transform:uppercase; letter-spacing:0.8px; }
+    .t-muscle { background:rgba(139,0,0,0.2); color:#E74C3C; border:1px solid rgba(139,0,0,0.4); }
+    .t-level-b { background:rgba(39,174,96,0.15); color:#27AE60; border:1px solid rgba(39,174,96,0.35); }
+    .t-level-i { background:rgba(200,151,58,0.15); color:var(--gold); border:1px solid rgba(200,151,58,0.35); }
+    .t-level-a { background:rgba(231,76,60,0.15); color:#E74C3C; border:1px solid rgba(231,76,60,0.35); }
+    .t-equip { background:rgba(74,144,217,0.15); color:var(--blue); border:1px solid rgba(74,144,217,0.35); }
+
+    .ex-name { font-size:21px; font-weight:bold; font-family:Georgia,serif; color:var(--white); margin-bottom:4px; line-height:1.25; }
+    .ex-sub { font-size:12px; color:var(--g2); margin-bottom:14px; }
+
+    .stats-row { display:flex; gap:8px; margin-bottom:16px; }
+    .stat-box { flex:1; background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:10px 4px; text-align:center; }
+    .stat-val { font-size:15px; font-weight:bold; color:var(--gold); font-family:Georgia,serif; }
+    .stat-lbl { font-size:9px; color:var(--g3); text-transform:uppercase; letter-spacing:1px; margin-top:3px; }
+
+    .cue-box { background:var(--bg); border-radius:10px; padding:13px 14px; margin-bottom:12px; }
+    .box-lbl { font-size:9px; font-weight:bold; text-transform:uppercase; letter-spacing:2px; margin-bottom:6px; }
+    .lbl-gold { color:var(--gold); }
+    .lbl-green { color:var(--green); }
+    .box-txt { font-size:14px; color:var(--g1); line-height:1.75; }
+
+    .mods-box { background:var(--bg); border-radius:10px; padding:13px 14px; margin-bottom:12px; }
+    .mod-item { display:flex; align-items:flex-start; gap:9px; margin-bottom:7px; }
+    .mod-item:last-child { margin-bottom:0; }
+    .mod-dot { width:6px; height:6px; border-radius:50%; background:var(--green); margin-top:5px; flex-shrink:0; }
+    .mod-txt { font-size:13px; color:var(--g2); line-height:1.55; }
+
+    .sci-note { background:var(--bg); border-left:3px solid var(--gold); border-radius:0 8px 8px 0; padding:12px 14px; }
+
+    .muscle-sec { display:none; }
+    .muscle-sec.on { display:block; }
+
+    .bnav { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:480px; background:#0A0A0A; border-top:2px solid var(--red); display:flex; z-index:300; }
+    .nbtn { flex:1; padding:10px 2px 8px; border:none; background:transparent; color:#444; display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; border-top:2px solid transparent; margin-top:-2px; }
+    .nbtn.on { color:var(--gold); border-top-color:var(--gold); }
+    .ni { font-size:20px; }
+    .nl { font-size:9px; text-transform:uppercase; letter-spacing:1.2px; font-weight:bold; }
+
+    .loading { padding:40px; text-align:center; color:var(--g3); font-size:13px; letter-spacing:2px; text-transform:uppercase; }
+  </style>
+</head>
+<body>
+
+<header class="hdr">
+  <div><div class="hdr-brand">TurnedUp Fitness LLC</div><div class="hdr-title">Exercise Library</div></div>
+  <div class="badge">40+</div>
+</header>
+
+<nav class="muscle-nav" id="muscleNav"></nav>
+
+<div id="appContent"><div class="loading">Loading library...</div></div>
+
+<nav class="bnav">
+  <button class="nbtn on"><span class="ni">🏋️</span><span class="nl">Library</span></button>
+  <button class="nbtn"><span class="ni">🥗</span><span class="nl">Nutrition</span></button>
+  <button class="nbtn"><span class="ni">📊</span><span class="nl">Stats</span></button>
+  <button class="nbtn"><span class="ni">💡</span><span class="nl">Learn</span></button>
+  <button class="nbtn"><span class="ni">👤</span><span class="nl">Profile</span></button>
+</nav>
+
+<!-- Load shared data layer -->
+<script src="TUF_DATA.js"></script>
+
+<script>
+  const LEVEL_LABELS = { B: 'Beginner', I: 'Intermediate', A: 'Advanced' };
+  const LEVEL_TAG_CLASS = { B: 't-level-b', I: 't-level-i', A: 't-level-a' };
+  let currentMuscle = 'chest';
+  let currentLevel = 'B';
+
+  // ── BUILD MUSCLE NAV ──
+  function buildMuscleNav() {
+    const nav = document.getElementById('muscleNav');
+    nav.innerHTML = '';
+    Object.entries(TUF_DATA.muscleGroups).forEach(([key, mg], i) => {
+      const btn = document.createElement('button');
+      btn.className = 'mtab' + (key === currentMuscle ? ' on' : '');
+      btn.innerHTML = `${mg.icon} ${mg.label}`;
+      btn.onclick = () => showMuscle(key, btn);
+      nav.appendChild(btn);
+    });
+  }
+
+  // ── BUILD SECTION ──
+  function buildSection(muscleKey) {
+    const mg = TUF_DATA.muscleGroups[muscleKey];
+    const exercises = TUF_DATA.getByMuscle(muscleKey);
+    const count = exercises.length;
+
+    return `
+      <section class="muscle-sec on" id="sec-${muscleKey}">
+        <div class="sec-hdr">
+          <div class="sec-icon">${mg.icon}</div>
+          <div class="sec-name">${mg.label} <span class="sec-count">${count} exercises</span></div>
+          <div class="sec-sub">${mg.focus}</div>
+        </div>
+        <div class="science-strip">
+          <div class="sci-lbl">40+ Science</div>
+          <div class="sci-txt">${mg.science}</div>
+        </div>
+        <div class="level-nav" id="levelnav-${muscleKey}">
+          <button class="ltab on" onclick="showLevel('${muscleKey}','B',this)">Beginner</button>
+          <button class="ltab" onclick="showLevel('${muscleKey}','I',this)">Intermediate</button>
+          <button class="ltab" onclick="showLevel('${muscleKey}','A',this)">Advanced</button>
+        </div>
+        <div class="ex-list" id="exlist-${muscleKey}">
+          ${exercises.map(ex => buildExCard(ex, muscleKey)).join('')}
+        </div>
+      </section>
+    `;
+  }
+
+  // ── BUILD EXERCISE CARD ──
+  function buildExCard(ex, muscleKey) {
+    const levelClass = LEVEL_TAG_CLASS[ex.level];
+    const levelLabel = LEVEL_LABELS[ex.level];
+    const isDefault = ex.level === 'B';
+
+    const videoHtml = ex.video.type === 'youtube'
+      ? `<iframe src="${ex.video.url}" title="${ex.name} — TurnedUp Fitness" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
+      : `<div class="vid-ph"><div class="play-btn">▶</div><div class="vid-ph-lbl">Video coming soon</div></div>`;
+
+    const modsHtml = ex.modifications.length > 0 ? `
+      <div class="mods-box">
+        <div class="box-lbl lbl-green">40+ Modifications</div>
+        ${ex.modifications.map(m => `
+          <div class="mod-item"><div class="mod-dot"></div><div class="mod-txt"><strong>${m.condition}:</strong> ${m.mod}</div></div>
+        `).join('')}
+      </div>
+    ` : '';
+
+    return `
+      <div class="ex-card${isDefault ? ' show' : ''}" data-muscle="${muscleKey}" data-level="${ex.level}" data-id="${ex.id}">
+        <div class="vid-area">${videoHtml}</div>
+        <div class="cb">
+          <div class="tags">
+            <span class="tag t-muscle">${TUF_DATA.muscleGroups[muscleKey].label}</span>
+            <span class="tag ${levelClass}">${levelLabel}</span>
+            <span class="tag t-equip">${ex.equipment}</span>
+          </div>
+          <div class="ex-name">${ex.name}</div>
+          <div class="ex-sub">Primary: ${ex.primaryMuscle} · Secondary: ${ex.secondaryMuscle}</div>
+          <div class="stats-row">
+            <div class="stat-box"><div class="stat-val">${ex.sets}×${ex.reps}</div><div class="stat-lbl">Sets×Reps</div></div>
+            <div class="stat-box"><div class="stat-val">${ex.rest}</div><div class="stat-lbl">Rest</div></div>
+            <div class="stat-box"><div class="stat-val">${ex.tempo}</div><div class="stat-lbl">Tempo</div></div>
+            <div class="stat-box"><div class="stat-val">${ex.intensity}</div><div class="stat-lbl">Intensity</div></div>
+          </div>
+          <div class="cue-box"><div class="box-lbl lbl-gold">Coaching Cue</div><div class="box-txt">${ex.coachingCue}</div></div>
+          ${modsHtml}
+          <div class="sci-note"><div class="sci-lbl">40+ Note</div><div class="sci-txt">${ex.scienceNote}</div></div>
+        </div>
+      </div>
+    `;
+  }
+
+  // ── SHOW MUSCLE ──
+  function showMuscle(key, btn) {
+    currentMuscle = key;
+    currentLevel = 'B';
+
+    // Update nav
+    document.querySelectorAll('.mtab').forEach(t => t.classList.remove('on'));
+    btn.classList.add('on');
+
+    // Rebuild content
+    document.getElementById('appContent').innerHTML = buildSection(key);
+    showLevelForSection(key, 'B');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ── SHOW LEVEL ──
+  function showLevel(muscleKey, level, btn) {
+    currentLevel = level;
+    const section = document.getElementById('sec-' + muscleKey);
+    section.querySelectorAll('.ltab').forEach(t => t.classList.remove('on'));
+    if (btn) btn.classList.add('on');
+    showLevelForSection(muscleKey, level);
+  }
+
+  function showLevelForSection(muscleKey, level) {
+    const list = document.getElementById('exlist-' + muscleKey);
+    if (!list) return;
+    list.querySelectorAll('.ex-card').forEach(card => {
+      card.style.display = card.dataset.level === level ? 'block' : 'none';
+    });
+  }
+
+  // ── INIT ──
+  function init() {
+    buildMuscleNav();
+    document.getElementById('appContent').innerHTML = buildSection(currentMuscle);
+    showLevelForSection(currentMuscle, currentLevel);
+  }
+
+  // Listen for admin updates via localStorage events
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'TUF_EXERCISES') {
+      TUF_DATA.loadFromStorage();
+      init(); // re-render
+    }
+  });
+
+  init();
+</script>
+
+</body>
+</html>

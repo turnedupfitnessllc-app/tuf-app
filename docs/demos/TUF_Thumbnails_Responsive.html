@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Turned Up Fitness — Exercise Pattern Thumbnails</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;0,900;1,800&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
+<style>
+
+/* ═══════════════════════════════════════════
+   RESET & ROOT
+═══════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --red:    #8B0000;
+  --red2:   #C41E1E;
+  --gold:   #C8973A;
+  --black:  #080808;
+  --dark:   #0D0D0D;
+  --dark2:  #141414;
+  --border: rgba(255,255,255,0.07);
+  --text:   #E8E8E8;
+  --muted:  #555;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--black);
+  font-family: 'Barlow', sans-serif;
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+/* ═══════════════════════════════════════════
+   PAGE HEADER
+═══════════════════════════════════════════ */
+.page-header {
+  padding: clamp(32px, 6vw, 60px) clamp(16px, 5vw, 40px) clamp(24px, 4vw, 40px);
+  background: linear-gradient(160deg, #1a0000 0%, var(--dark) 60%, #001a08 100%);
+  border-bottom: 2px solid var(--red);
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+.page-header::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(45deg, transparent, transparent 50px,
+    rgba(255,255,255,.012) 50px, rgba(255,255,255,.012) 51px);
+}
+.header-eyebrow {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800; font-size: clamp(9px, 2vw, 11px);
+  letter-spacing: 5px; color: var(--gold);
+  margin-bottom: 10px; position: relative;
+}
+.header-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(36px, 8vw, 72px);
+  color: #fff; line-height: 0.88;
+  letter-spacing: 3px; position: relative;
+}
+.header-title span { color: var(--gold); }
+.header-sub {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: clamp(10px, 2.5vw, 13px);
+  color: var(--muted); letter-spacing: 3px;
+  margin-top: 12px; position: relative;
+}
+.header-stats {
+  display: flex; justify-content: center;
+  gap: clamp(12px, 3vw, 28px);
+  margin-top: 20px; flex-wrap: wrap;
+  position: relative;
+}
+.hstat {
+  background: rgba(0,0,0,.4);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 10px;
+  padding: clamp(8px,2vw,12px) clamp(14px,3vw,22px);
+  text-align: center;
+}
+.hstat-n {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(22px, 4vw, 32px);
+  color: var(--gold); line-height: 1;
+}
+.hstat-l {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: clamp(8px, 1.5vw, 10px);
+  letter-spacing: 2px; color: #444;
+  text-transform: uppercase; margin-top: 2px;
+}
+
+/* ═══════════════════════════════════════════
+   STACK CONTAINER
+═══════════════════════════════════════════ */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
+}
+
+/* ═══════════════════════════════════════════
+   THUMBNAIL ROW
+═══════════════════════════════════════════ */
+.thumb-row {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  /* 16:9 aspect ratio that scales with screen */
+  aspect-ratio: 16 / 5.5;
+  min-height: 120px;
+  transition: all 0.35s cubic-bezier(.4,0,.2,1);
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+
+/* Expand on hover */
+.thumb-row:hover {
+  aspect-ratio: 16 / 7;
+  z-index: 10;
+  box-shadow: 0 20px 80px rgba(0,0,0,.9), 0 0 0 2px rgba(200,151,58,.3);
+}
+
+/* Unique backgrounds per pattern */
+.t-push  { background: linear-gradient(135deg, #8B0000 0%, #3a0000 45%, #0D0D0D 100%); }
+.t-pull  { background: linear-gradient(135deg, #0D0D0D 0%, #1a0000 50%, #6B0000 100%); }
+.t-squat { background: linear-gradient(160deg, #4a0000 0%, #0D0D0D 55%, #1a1a1a 100%); }
+.t-hinge { background: linear-gradient(135deg, #0D0D0D 0%, #2a0000 40%, #8B0000 100%); }
+.t-carry { background: linear-gradient(160deg, #7B0000 0%, #1a0000 50%, #0D0D0D 100%); }
+.t-core  { background: linear-gradient(135deg, #1a0000 0%, #0D0D0D 45%, #3a0000 100%); }
+
+/* Diagonal slash overlay */
+.slash {
+  position: absolute; top: 0; right: 0;
+  width: 50%; height: 100%;
+  clip-path: polygon(20% 0, 100% 0, 100% 100%, 0% 100%);
+  opacity: 0.15;
+  transition: opacity .35s;
+}
+.thumb-row:hover .slash { opacity: 0.25; }
+.slash-red  { background: #FF2222; }
+.slash-gold { background: #C8973A; }
+
+/* Grid texture */
+.thumb-row::before {
+  content: '';
+  position: absolute; inset: 0; z-index: 1;
+  background: repeating-linear-gradient(45deg, transparent, transparent 30px,
+    rgba(255,255,255,.015) 30px, rgba(255,255,255,.015) 31px);
+}
+
+/* Glow orb */
+.orb {
+  position: absolute; border-radius: 50%;
+  filter: blur(50px); opacity: 0.2; z-index: 0;
+  transition: opacity .35s;
+}
+.thumb-row:hover .orb { opacity: 0.35; }
+
+/* ── CONTENT LAYER ── */
+.thumb-content {
+  position: absolute; inset: 0; z-index: 5;
+  display: flex; align-items: center;
+  padding: 0 clamp(14px, 4vw, 48px);
+  gap: clamp(12px, 3vw, 32px);
+}
+
+/* Pattern number column */
+.pat-col {
+  flex-shrink: 0;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 4px;
+}
+.pat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(11px, 2vw, 16px);
+  color: var(--red2);
+  letter-spacing: 2px; line-height: 1;
+}
+.pat-line {
+  width: 2px;
+  height: clamp(20px, 4vw, 40px);
+  background: linear-gradient(180deg, var(--red), transparent);
+  border-radius: 1px;
+}
+
+/* Main text block */
+.text-block { flex: 1; min-width: 0; }
+
+.pattern-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: clamp(7px, 1.5vw, 11px);
+  letter-spacing: 4px;
+  color: rgba(255,255,255,.4);
+  margin-bottom: clamp(2px, .5vw, 6px);
+  white-space: nowrap;
+}
+
+.pattern-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(40px, 10vw, 110px);
+  color: #fff;
+  line-height: 0.85;
+  letter-spacing: 2px;
+  text-shadow: 3px 3px 0 rgba(0,0,0,.5), 0 0 40px rgba(139,0,0,.5);
+  transition: font-size .35s, letter-spacing .35s;
+  white-space: nowrap;
+}
+.thumb-row:hover .pattern-name {
+  letter-spacing: 4px;
+  text-shadow: 4px 4px 0 rgba(0,0,0,.6), 0 0 60px rgba(200,151,58,.25);
+}
+
+.exercise-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: clamp(9px, 2vw, 13px);
+  letter-spacing: 3px;
+  color: rgba(255,255,255,0);
+  transition: color .3s;
+  margin-top: clamp(2px, .5vw, 6px);
+  white-space: nowrap;
+}
+.thumb-row:hover .exercise-name { color: rgba(255,255,255,.55); }
+
+/* Gold accent line that slides in on hover */
+.gold-bar {
+  width: 0; height: 2px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+  border-radius: 1px;
+  margin-top: clamp(3px,1vw,8px);
+  transition: width .4s cubic-bezier(.4,0,.2,1);
+}
+.thumb-row:hover .gold-bar { width: clamp(60px, 15vw, 180px); }
+
+/* Right side — mascot slot + stats */
+.right-col {
+  flex-shrink: 0;
+  display: flex; flex-direction: column;
+  align-items: flex-end; gap: clamp(4px, 1vw, 10px);
+  min-width: clamp(80px, 20vw, 200px);
+}
+
+.mascot-slot {
+  width: clamp(50px, 12vw, 120px);
+  aspect-ratio: 1;
+  border: 1.5px dashed rgba(200,151,58,.3);
+  border-radius: 8px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 4px;
+  background: rgba(0,0,0,.3);
+  opacity: 0.6;
+  transition: opacity .3s, border-color .3s;
+  overflow: hidden;
+}
+.thumb-row:hover .mascot-slot {
+  opacity: 1;
+  border-color: rgba(200,151,58,.6);
+}
+.mascot-slot img {
+  width: 100%; height: 100%;
+  object-fit: contain;
+  display: block;
+}
+.mascot-hint {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: clamp(6px, 1.2vw, 9px);
+  letter-spacing: 1.5px;
+  color: rgba(200,151,58,.5);
+  text-align: center;
+  line-height: 1.3;
+  padding: 4px;
+}
+
+.stat-pills {
+  display: flex; flex-direction: column;
+  gap: clamp(3px, .8vw, 6px);
+  align-items: flex-end;
+}
+.pill {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: clamp(7px, 1.3vw, 10px);
+  letter-spacing: 1.5px;
+  background: rgba(0,0,0,.4);
+  border: 1px solid rgba(255,255,255,.1);
+  color: rgba(255,255,255,.5);
+  padding: 2px clamp(6px,1.5vw,10px);
+  border-radius: 20px;
+  white-space: nowrap;
+  transition: color .3s, border-color .3s;
+}
+.thumb-row:hover .pill {
+  color: rgba(255,255,255,.75);
+  border-color: rgba(255,255,255,.2);
+}
+.pill-red {
+  background: rgba(139,0,0,.3);
+  border-color: rgba(139,0,0,.4);
+  color: #FF8A8A;
+}
+
+/* ── BRAND FOOTER BAR ── */
+.brand-bar {
+  position: absolute; bottom: 0; left: 0; right: 0; z-index: 6;
+  height: clamp(22px, 4vw, 34px);
+  background: rgba(139,0,0,.85);
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 0 clamp(14px,4vw,48px);
+  border-top: 1px solid rgba(200,151,58,.2);
+  transition: height .35s;
+}
+.thumb-row:hover .brand-bar { background: rgba(139,0,0,.95); }
+.brand-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(10px, 2vw, 15px);
+  color: #fff; letter-spacing: 3px;
+}
+.brand-right {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: clamp(7px, 1.3vw, 10px);
+  color: var(--gold); letter-spacing: 2px;
+}
+
+/* Canva edit button — appears on hover */
+.canva-btn {
+  position: absolute; top: clamp(8px, 2vw, 14px); right: clamp(10px, 2.5vw, 18px);
+  z-index: 8;
+  background: var(--gold);
+  color: #000;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800; font-size: clamp(8px, 1.5vw, 10px);
+  letter-spacing: 2px;
+  padding: clamp(4px,1vw,6px) clamp(10px,2vw,16px);
+  border-radius: 6px;
+  text-decoration: none;
+  opacity: 0; transform: translateY(-4px);
+  transition: opacity .25s, transform .25s;
+  white-space: nowrap;
+}
+.thumb-row:hover .canva-btn { opacity: 1; transform: translateY(0); }
+.canva-btn.locked {
+  background: rgba(200,151,58,.2);
+  color: rgba(200,151,58,.5);
+  border: 1px solid rgba(200,151,58,.2);
+  cursor: default;
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════
+   STAGGER ANIMATION ON LOAD
+═══════════════════════════════════════════ */
+.thumb-row {
+  opacity: 0;
+  transform: translateX(-20px);
+  animation: slideIn .5s ease forwards;
+}
+.thumb-row:nth-child(1) { animation-delay: .05s; }
+.thumb-row:nth-child(2) { animation-delay: .15s; }
+.thumb-row:nth-child(3) { animation-delay: .25s; }
+.thumb-row:nth-child(4) { animation-delay: .35s; }
+.thumb-row:nth-child(5) { animation-delay: .45s; }
+.thumb-row:nth-child(6) { animation-delay: .55s; }
+@keyframes slideIn {
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* ═══════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════ */
+.page-footer {
+  padding: clamp(20px,4vw,36px) clamp(16px,5vw,40px);
+  background: var(--dark);
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+.footer-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(14px, 3vw, 20px);
+  color: var(--gold); letter-spacing: 3px;
+  margin-bottom: 10px;
+}
+.footer-body {
+  font-size: clamp(10px, 2vw, 12px);
+  color: #444; line-height: 1.8;
+  letter-spacing: .5px;
+  max-width: 600px; margin: 0 auto;
+}
+.footer-body a { color: var(--gold); text-decoration: none; }
+.footer-body a:hover { text-decoration: underline; }
+.step-list {
+  display: flex;
+  justify-content: center;
+  gap: clamp(10px, 3vw, 24px);
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+.step {
+  background: var(--dark2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: clamp(10px,2vw,14px) clamp(14px,3vw,20px);
+  text-align: center;
+  max-width: 160px;
+}
+.step-n {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(22px, 4vw, 28px);
+  color: var(--red2); line-height: 1;
+}
+.step-t {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: clamp(9px, 1.8vw, 11px);
+  letter-spacing: 1.5px; color: #fff; margin-top: 4px;
+}
+.step-d {
+  font-size: clamp(9px, 1.5vw, 10px);
+  color: #555; margin-top: 3px; line-height: 1.4;
+}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE — ensure readability on mobile
+═══════════════════════════════════════════ */
+@media (max-width: 480px) {
+  .right-col { min-width: 60px; }
+  .stat-pills .pill:not(:first-child) { display: none; }
+  .pattern-name { white-space: normal; line-height: .9; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══════════════════════════════ -->
+<header class="page-header">
+  <div class="header-eyebrow">TURNED UP FITNESS · @TURNEDUPFITNESS</div>
+  <div class="header-title">EXERCISE PATTERN<br><span>THUMBNAIL SERIES</span></div>
+  <div class="header-sub">6 PATTERNS · YOUTUBE READY · HOVER TO EXPAND · MASCOT SLOTS INCLUDED</div>
+  <div class="header-stats">
+    <div class="hstat"><div class="hstat-n">6</div><div class="hstat-l">Patterns</div></div>
+    <div class="hstat"><div class="hstat-n">3</div><div class="hstat-l">In Canva</div></div>
+    <div class="hstat"><div class="hstat-n">40+</div><div class="hstat-l">Optimized</div></div>
+    <div class="hstat"><div class="hstat-n">1280×720</div><div class="hstat-l">YouTube Size</div></div>
+  </div>
+</header>
+
+<!-- ══ THUMBNAIL STACK ══════════════════════ -->
+<div class="stack">
+
+  <!-- 01 PUSH -->
+  <div class="thumb-row t-push">
+    <div class="slash slash-red"></div>
+    <div class="orb" style="width:40%;padding-bottom:40%;background:#8B0000;top:-20%;right:-10%"></div>
+    <a class="canva-btn" href="https://www.canva.com/d/rYo9UZW4zz38yfE" target="_blank">✏️ EDIT IN CANVA</a>
+    <div class="thumb-content">
+      <div class="pat-col">
+        <div class="pat-num">01</div>
+        <div class="pat-line"></div>
+      </div>
+      <div class="text-block">
+        <div class="pattern-label">MOVEMENT PATTERN · UPPER BODY</div>
+        <div class="pattern-name">PUSH</div>
+        <div class="gold-bar"></div>
+        <div class="exercise-name">PUSH-UP PROGRESSION · 3 SETS × 8–10 REPS</div>
+      </div>
+      <div class="right-col">
+        <div class="mascot-slot">
+          <img src="/mnt/user-data/uploads/white.png" alt="TUF Mascot" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="mascot-hint" style="display:none">🐾<br>MASCOT<br>SLOT</div>
+        </div>
+        <div class="stat-pills">
+          <div class="pill pill-red">PATTERN 01</div>
+          <div class="pill">BEGINNER</div>
+          <div class="pill">40+ OPTIMIZED</div>
+        </div>
+      </div>
+    </div>
+    <div class="brand-bar">
+      <span class="brand-name">TURNED UP FITNESS</span>
+      <span class="brand-right">BEGINNER EXERCISE LIBRARY</span>
+    </div>
+  </div>
+
+  <!-- 02 PULL -->
+  <div class="thumb-row t-pull">
+    <div class="slash slash-red" style="clip-path:polygon(0 0,80% 0,100% 100%,0% 100%);right:auto;left:0;opacity:.12"></div>
+    <div class="orb" style="width:40%;padding-bottom:40%;background:#8B0000;bottom:-20%;left:-10%"></div>
+    <a class="canva-btn" href="https://www.canva.com/d/gSwoIi9H7FuL9Ym" target="_blank">✏️ EDIT IN CANVA</a>
+    <div class="thumb-content">
+      <div class="pat-col">
+        <div class="pat-num">02</div>
+        <div class="pat-line"></div>
+      </div>
+      <div class="text-block">
+        <div class="pattern-label">MOVEMENT PATTERN · UPPER BODY</div>
+        <div class="pattern-name">PULL</div>
+        <div class="gold-bar"></div>
+        <div class="exercise-name">ASSISTED ROW · 3 SETS × 8–10 REPS</div>
+      </div>
+      <div class="right-col">
+        <div class="mascot-slot">
+          <img src="/mnt/user-data/uploads/red.png" alt="TUF Mascot" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="mascot-hint" style="display:none">🐾<br>MASCOT<br>SLOT</div>
+        </div>
+        <div class="stat-pills">
+          <div class="pill pill-red">PATTERN 02</div>
+          <div class="pill">POSTURE FIX</div>
+          <div class="pill">40+ OPTIMIZED</div>
+        </div>
+      </div>
+    </div>
+    <div class="brand-bar">
+      <span class="brand-name">TURNED UP FITNESS</span>
+      <span class="brand-right">BEGINNER EXERCISE LIBRARY</span>
+    </div>
+  </div>
+
+  <!-- 03 SQUAT -->
+  <div class="thumb-row t-squat">
+    <div class="slash slash-gold" style="opacity:.08"></div>
+    <div class="orb" style="width:45%;padding-bottom:45%;background:#C8973A;top:-25%;right:-5%"></div>
+    <a class="canva-btn" href="https://www.canva.com/d/8wnJcE4FhBf_Pcg" target="_blank">✏️ EDIT IN CANVA</a>
+    <div class="thumb-content">
+      <div class="pat-col">
+        <div class="pat-num">03</div>
+        <div class="pat-line"></div>
+      </div>
+      <div class="text-block">
+        <div class="pattern-label">MOVEMENT PATTERN · LOWER BODY</div>
+        <div class="pattern-name">SQUAT</div>
+        <div class="gold-bar"></div>
+        <div class="exercise-name">BOX SQUAT · 3 SETS × 10–12 REPS</div>
+      </div>
+      <div class="right-col">
+        <div class="mascot-slot">
+          <img src="/mnt/user-data/uploads/black.png" alt="TUF Mascot" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="mascot-hint" style="display:none">🐾<br>MASCOT<br>SLOT</div>
+        </div>
+        <div class="stat-pills">
+          <div class="pill pill-red">PATTERN 03</div>
+          <div class="pill">FUNCTIONAL</div>
+          <div class="pill">40+ OPTIMIZED</div>
+        </div>
+      </div>
+    </div>
+    <div class="brand-bar">
+      <span class="brand-name">TURNED UP FITNESS</span>
+      <span class="brand-right">BEGINNER EXERCISE LIBRARY</span>
+    </div>
+  </div>
+
+  <!-- 04 HINGE -->
+  <div class="thumb-row t-hinge">
+    <div class="slash slash-red"></div>
+    <div class="orb" style="width:40%;padding-bottom:40%;background:#8B0000;bottom:-15%;right:20%"></div>
+    <span class="canva-btn locked">⏳ CANVA COMING</span>
+    <div class="thumb-content">
+      <div class="pat-col">
+        <div class="pat-num">04</div>
+        <div class="pat-line"></div>
+      </div>
+      <div class="text-block">
+        <div class="pattern-label">MOVEMENT PATTERN · POSTERIOR CHAIN</div>
+        <div class="pattern-name">HINGE</div>
+        <div class="gold-bar"></div>
+        <div class="exercise-name">GLUTE BRIDGE · 3 SETS × 12–15 REPS</div>
+      </div>
+      <div class="right-col">
+        <div class="mascot-slot">
+          <img src="/mnt/user-data/uploads/white.png" alt="TUF Mascot" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="mascot-hint" style="display:none">🐾<br>MASCOT<br>SLOT</div>
+        </div>
+        <div class="stat-pills">
+          <div class="pill pill-red">PATTERN 04</div>
+          <div class="pill">SPINE SAFE</div>
+          <div class="pill">40+ OPTIMIZED</div>
+        </div>
+      </div>
+    </div>
+    <div class="brand-bar">
+      <span class="brand-name">TURNED UP FITNESS</span>
+      <span class="brand-right">BEGINNER EXERCISE LIBRARY</span>
+    </div>
+  </div>
+
+  <!-- 05 CARRY -->
+  <div class="thumb-row t-carry">
+    <div class="slash slash-red" style="opacity:.18"></div>
+    <div class="orb" style="width:50%;padding-bottom:50%;background:#8B0000;top:-30%;left:-15%"></div>
+    <span class="canva-btn locked">⏳ CANVA COMING</span>
+    <div class="thumb-content">
+      <div class="pat-col">
+        <div class="pat-num">05</div>
+        <div class="pat-line"></div>
+      </div>
+      <div class="text-block">
+        <div class="pattern-label">MOVEMENT PATTERN · FULL BODY</div>
+        <div class="pattern-name">CARRY</div>
+        <div class="gold-bar"></div>
+        <div class="exercise-name">FARMER CARRY · 3 SETS × 30–60 SEC</div>
+      </div>
+      <div class="right-col">
+        <div class="mascot-slot">
+          <img src="/mnt/user-data/uploads/red.png" alt="TUF Mascot" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="mascot-hint" style="display:none">🐾<br>MASCOT<br>SLOT</div>
+        </div>
+        <div class="stat-pills">
+          <div class="pill pill-red">PATTERN 05</div>
+          <div class="pill">GRIP + CORE</div>
+          <div class="pill">40+ OPTIMIZED</div>
+        </div>
+      </div>
+    </div>
+    <div class="brand-bar">
+      <span class="brand-name">TURNED UP FITNESS</span>
+      <span class="brand-right">BEGINNER EXERCISE LIBRARY</span>
+    </div>
+  </div>
+
+  <!-- 06 CORE -->
+  <div class="thumb-row t-core">
+    <div class="slash slash-gold" style="opacity:.1"></div>
+    <div class="orb" style="width:40%;padding-bottom:40%;background:#C8973A;bottom:-20%;right:-5%"></div>
+    <span class="canva-btn locked">⏳ CANVA COMING</span>
+    <div class="thumb-content">
+      <div class="pat-col">
+        <div class="pat-num">06</div>
+        <div class="pat-line"></div>
+      </div>
+      <div class="text-block">
+        <div class="pattern-label">MOVEMENT PATTERN · STABILITY</div>
+        <div class="pattern-name">CORE</div>
+        <div class="gold-bar"></div>
+        <div class="exercise-name">MODIFIED PLANK · 3 SETS × 20–40 SEC HOLD</div>
+      </div>
+      <div class="right-col">
+        <div class="mascot-slot">
+          <img src="/mnt/user-data/uploads/black.png" alt="TUF Mascot" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="mascot-hint" style="display:none">🐾<br>MASCOT<br>SLOT</div>
+        </div>
+        <div class="stat-pills">
+          <div class="pill pill-red">PATTERN 06</div>
+          <div class="pill">ANTI-ROTATION</div>
+          <div class="pill">40+ OPTIMIZED</div>
+        </div>
+      </div>
+    </div>
+    <div class="brand-bar">
+      <span class="brand-name">TURNED UP FITNESS</span>
+      <span class="brand-right">BEGINNER EXERCISE LIBRARY</span>
+    </div>
+  </div>
+
+</div><!-- /stack -->
+
+<!-- ══ FOOTER ════════════════════════════════ -->
+<footer class="page-footer">
+  <div class="footer-title">NEXT STEPS TO COMPLETE THIS SET</div>
+  <div class="step-list">
+    <div class="step">
+      <div class="step-n">01</div>
+      <div class="step-t">CANVA EDITS</div>
+      <div class="step-d">Open any gold "Edit in Canva" link and add your mascot image</div>
+    </div>
+    <div class="step">
+      <div class="step-n">02</div>
+      <div class="step-t">KLING AI</div>
+      <div class="step-d">Upload mascot to kling.ai — animate with Motion Control</div>
+    </div>
+    <div class="step">
+      <div class="step-n">03</div>
+      <div class="step-t">YOUTUBE</div>
+      <div class="step-d">Upload videos → send links here → I wire into the app</div>
+    </div>
+    <div class="step">
+      <div class="step-n">04</div>
+      <div class="step-t">HINGE-CORE</div>
+      <div class="step-d">Canva rate limit resets in ~1hr — remaining 3 thumbnails auto-complete</div>
+    </div>
+  </div>
+  <div class="footer-body" style="margin-top:20px">
+    Channel: <a href="https://youtube.com/@turnedupfitness" target="_blank">youtube.com/@turnedupfitness</a>
+    &nbsp;·&nbsp; Hover each row to expand &nbsp;·&nbsp; Mascot rotates across colorways automatically
+  </div>
+</footer>
+
+</body>
+</html>

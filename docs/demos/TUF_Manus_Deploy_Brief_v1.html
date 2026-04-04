@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TUF — Manus Deployment Brief v1</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#080808; --bg2:#0e0e0e; --bg3:#141414; --bg4:#1c1c1c;
+    --red:#8B0000; --red-hi:#b30000;
+    --gold:#C8973A; --white:#f2f2f2; --gray:#888; --dim:#333;
+    --ok:#4caf50; --warn:#C8973A;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--white); font-family:'Barlow Condensed',sans-serif; padding:40px 32px; max-width:900px; margin:0 auto; }
+
+  /* ── COVER ── */
+  .cover { border:1px solid #1e1e1e; border-top:4px solid var(--red); padding:44px; margin-bottom:52px; background:var(--bg2); position:relative; overflow:hidden; }
+  .cover::before { content:''; position:absolute; top:0; right:0; width:300px; height:100%; background:linear-gradient(135deg, transparent 0%, rgba(139,0,0,0.04) 100%); pointer-events:none; }
+  .cover::after { content:'MANUS AUTONOMOUS BRIEF'; position:absolute; bottom:40px; right:44px; font-family:'Bebas Neue',sans-serif; font-size:11px; letter-spacing:6px; color:var(--dim); }
+  .eyebrow { font-size:10px; letter-spacing:5px; color:var(--red-hi); text-transform:uppercase; margin-bottom:12px; opacity:0.9; }
+  .cover-title { font-family:'Bebas Neue',sans-serif; font-size:68px; letter-spacing:5px; line-height:0.9; color:var(--white); margin-bottom:10px; }
+  .cover-title span { color:var(--gold); }
+  .cover-sub { font-size:14px; letter-spacing:3px; color:var(--gray); text-transform:uppercase; margin-bottom:36px; max-width:500px; line-height:1.6; }
+  .cover-meta { display:grid; grid-template-columns:repeat(5,1fr); gap:20px; border-top:1px solid #1e1e1e; padding-top:24px; }
+  .meta-label { font-size:8px; letter-spacing:3px; color:var(--gray); text-transform:uppercase; margin-bottom:4px; }
+  .meta-val { font-size:12px; font-weight:600; color:var(--white); letter-spacing:0.5px; }
+  .meta-val.gold { color:var(--gold); }
+  .meta-val.red { color:var(--red-hi); }
+
+  /* ── ALERT BOX ── */
+  .alert-box { background:rgba(139,0,0,0.08); border:1px solid rgba(139,0,0,0.3); border-left:4px solid var(--red-hi); padding:16px 20px; margin-bottom:28px; display:flex; gap:14px; align-items:flex-start; }
+  .alert-icon { font-size:22px; flex-shrink:0; }
+  .alert-title { font-family:'Bebas Neue',sans-serif; font-size:14px; letter-spacing:4px; color:var(--red-hi); margin-bottom:5px; }
+  .alert-body { font-size:12px; color:var(--gray); line-height:1.65; }
+  .alert-body strong { color:var(--white); }
+
+  /* ── SECTION ── */
+  .section { margin-bottom:36px; }
+  .section-header { display:flex; align-items:center; gap:14px; margin-bottom:18px; padding-bottom:10px; border-bottom:1px solid #1a1a1a; position:relative; }
+  .section-header::after { content:''; position:absolute; bottom:-1px; left:0; width:50px; height:2px; background:var(--gold); }
+  .section-num { font-family:'Bebas Neue',sans-serif; font-size:30px; color:var(--red); opacity:0.45; line-height:1; }
+  .section-title { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:5px; color:var(--white); }
+  .section-title span { color:var(--gold); }
+
+  /* ── SPEC BLOCKS ── */
+  .spec-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
+  .spec-grid.three { grid-template-columns:1fr 1fr 1fr; }
+  .spec-block { background:var(--bg3); border:1px solid #1e1e1e; padding:14px 16px; }
+  .spec-block.full { grid-column:1/-1; }
+  .spec-block.gold { border-left:3px solid var(--gold); }
+  .spec-block.red { border-left:3px solid var(--red); }
+  .spec-label { font-size:8px; letter-spacing:4px; text-transform:uppercase; color:var(--gold); margin-bottom:8px; }
+  .spec-label.red { color:var(--red-hi); }
+  .spec-label.gray { color:var(--gray); }
+  .spec-body { font-size:12px; color:var(--white); line-height:1.7; letter-spacing:0.3px; }
+  .spec-body strong { color:var(--gold); font-weight:700; }
+  .spec-body em { color:var(--gray); font-style:normal; }
+  .spec-body code { font-family:monospace; font-size:11px; background:var(--bg4); padding:1px 5px; color:var(--gold); }
+
+  /* ── FILE TABLE ── */
+  .file-table { width:100%; border-collapse:collapse; margin-bottom:12px; }
+  .file-table th { font-size:8px; letter-spacing:3px; text-transform:uppercase; color:var(--gray); text-align:left; padding:8px 12px; border-bottom:1px solid #1e1e1e; background:var(--bg4); }
+  .file-table td { padding:9px 12px; font-size:12px; color:var(--white); border-bottom:1px solid #111; vertical-align:top; line-height:1.45; }
+  .file-table tr:last-child td { border-bottom:none; }
+  .file-table td:first-child { font-family:monospace; font-size:11px; color:var(--gold); white-space:nowrap; }
+  .file-table td em { color:var(--gray); font-style:normal; font-size:11px; }
+
+  /* ── TASK LIST ── */
+  .task-list { display:flex; flex-direction:column; }
+  .task { display:flex; gap:16px; padding:14px 0; border-bottom:1px solid #111; align-items:flex-start; }
+  .task:last-child { border-bottom:none; }
+  .task-num { font-family:'Bebas Neue',sans-serif; font-size:32px; color:var(--red); opacity:0.4; line-height:1; width:36px; flex-shrink:0; }
+  .task-content { flex:1; }
+  .task-title { font-size:14px; font-weight:700; color:var(--white); letter-spacing:1px; margin-bottom:4px; }
+  .task-desc { font-size:12px; color:var(--gray); line-height:1.6; }
+  .task-desc strong { color:var(--white); }
+  .task-desc code { font-family:monospace; font-size:11px; background:var(--bg4); padding:1px 5px; color:var(--gold); }
+  .task-priority { flex-shrink:0; }
+
+  /* ── BADGES ── */
+  .badge { font-size:8px; letter-spacing:2px; text-transform:uppercase; padding:3px 8px; }
+  .p1 { background:rgba(139,0,0,0.2); color:#ff5555; border:1px solid rgba(139,0,0,0.4); }
+  .p2 { background:rgba(200,151,58,0.12); color:var(--gold); border:1px solid rgba(200,151,58,0.3); }
+  .p3 { background:rgba(255,255,255,0.05); color:var(--gray); border:1px solid #333; }
+
+  /* ── CODE BLOCK ── */
+  .code-block { background:#050505; border:1px solid #1e1e1e; border-left:3px solid var(--gold); padding:16px 18px; margin-bottom:12px; overflow-x:auto; }
+  .code-block pre { font-family:monospace; font-size:12px; color:var(--white); line-height:1.8; white-space:pre-wrap; }
+  .code-block .comment { color:var(--dim); }
+  .code-block .key { color:var(--gold); }
+  .code-block .val { color:#86efac; }
+  .code-block .str { color:#fca5a5; }
+
+  /* ── ARCH DIAGRAM ── */
+  .arch { background:var(--bg3); border:1px solid #1e1e1e; padding:24px; margin-bottom:12px; }
+  .arch-row { display:flex; align-items:center; justify-content:center; gap:0; margin-bottom:8px; }
+  .arch-box { background:var(--bg4); border:1px solid #252525; padding:10px 16px; text-align:center; min-width:100px; }
+  .arch-box.gold { border-color:var(--gold); background:rgba(200,151,58,0.06); }
+  .arch-box.red { border-color:var(--red); background:rgba(139,0,0,0.06); }
+  .arch-label { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--gray); margin-bottom:3px; }
+  .arch-name { font-family:'Bebas Neue',sans-serif; font-size:14px; letter-spacing:2px; color:var(--white); }
+  .arch-name.gold { color:var(--gold); }
+  .arch-arrow { font-size:18px; color:var(--dim); padding:0 8px; }
+  .arch-note { font-size:10px; color:var(--dim); text-align:center; margin-top:10px; letter-spacing:1px; }
+
+  /* ── DECISION TABLE ── */
+  .decision-table { width:100%; border-collapse:collapse; margin-bottom:12px; }
+  .decision-table th { font-size:8px; letter-spacing:3px; text-transform:uppercase; color:var(--gray); text-align:left; padding:8px 12px; border-bottom:1px solid #1e1e1e; background:var(--bg4); }
+  .decision-table td { padding:10px 12px; font-size:12px; color:var(--white); border-bottom:1px solid #111; vertical-align:top; line-height:1.5; }
+  .decision-table tr:last-child td { border-bottom:none; }
+  .decision-table td:first-child { color:var(--gold); font-weight:600; white-space:nowrap; }
+  .decision-table td em { color:var(--gray); font-style:normal; font-size:11px; }
+
+  /* ── RULE / FOOTER ── */
+  .rule { height:1px; background:linear-gradient(90deg,var(--red),transparent); opacity:0.25; margin:32px 0; }
+  .footer { margin-top:48px; padding-top:20px; border-top:1px solid #1a1a1a; display:flex; justify-content:space-between; align-items:flex-end; }
+  .footer-left { font-size:10px; letter-spacing:1px; color:var(--dim); text-transform:uppercase; line-height:1.8; }
+  .footer-right { font-family:'Bebas Neue',sans-serif; font-size:32px; letter-spacing:4px; color:var(--dim); }
+  .footer-right span { color:var(--gold); opacity:0.3; }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="eyebrow">TurnedUp Fitness LLC · Autonomous Deployment</div>
+  <div class="cover-title">MANUS<br><span>DEPLOY</span><br>BRIEF</div>
+  <div class="cover-sub">Full platform deployment instructions for Manus autonomous agent. Wilfred (Claude) hands off here. Manus executes without confirmation loops.</div>
+  <div class="cover-meta">
+    <div><div class="meta-label">From</div><div class="meta-val">Wilfred (Claude)</div></div>
+    <div><div class="meta-label">To</div><div class="meta-val red">Manus Agent</div></div>
+    <div><div class="meta-label">Platform</div><div class="meta-val">TUF + TUTK</div></div>
+    <div><div class="meta-label">Files Ready</div><div class="meta-val gold">8 Files</div></div>
+    <div><div class="meta-label">Version</div><div class="meta-val">v1 · 2026</div></div>
+  </div>
+</div>
+
+<!-- ALERT -->
+<div class="alert-box">
+  <div class="alert-icon">⚡</div>
+  <div>
+    <div class="alert-title">TO MANUS — READ FIRST</div>
+    <div class="alert-body">
+      This brief was prepared by <strong>Wilfred (Claude)</strong> — the build AI on the TUF platform. Your role is <strong>deployment and infrastructure only</strong>. Do not modify HTML/JS/CSS content — that's Wilfred's domain. Do not wait for confirmation on each step — execute the full task list autonomously. If a decision point arises that requires Marc's input, flag it in a summary at the end, not mid-task. <strong>Marc communicates in direct bursts. Deliver results, not process updates.</strong>
+    </div>
+  </div>
+</div>
+
+<!-- 01 PLATFORM CONTEXT -->
+<div class="section">
+  <div class="section-header"><div class="section-num">01</div><div class="section-title">PLATFORM <span>CONTEXT</span></div></div>
+
+  <div class="spec-grid">
+    <div class="spec-block gold full">
+      <div class="spec-label">What TUF Is</div>
+      <div class="spec-body">
+        <strong>TurnedUp Fitness LLC (TUF)</strong> is a premium fitness and nutrition platform for adults 40+. Three pillars: <strong>MOVE · FUEL · FEAST</strong>. Science-backed, direct voice, no fluff. Companion brand: <strong>Turned Up In The Kitchen (TUTK)</strong> covering nutrition and recipes. Georgia-first market, global scalability roadmap. Coaches: <strong>Marc (Founder) + Coach Taylor Hawks</strong>. The platform includes a member-facing mobile app, an admin dashboard, and an AI-VA mascot (the TUF Panther).
+      </div>
+    </div>
+  </div>
+
+  <div class="spec-grid three">
+    <div class="spec-block">
+      <div class="spec-label gray">Current Build State</div>
+      <div class="spec-body">
+        Static HTML/JS/CSS files. No backend yet. Data layer in <code>TUF_DATA.js</code>. Admin ↔ Member sync via <code>localStorage</code>. Ready for deployment to static host + future backend wiring.
+      </div>
+    </div>
+    <div class="spec-block">
+      <div class="spec-label gray">Target Audience</div>
+      <div class="spec-body">
+        Adults 40+ · Georgia-first · Mobile-first (iPhone primary) · YouTube channel: <code>@turnedupfitness</code>. Large readable type, high contrast, no friction UX.
+      </div>
+    </div>
+    <div class="spec-block">
+      <div class="spec-label gray">Brand System — Locked</div>
+      <div class="spec-body">
+        Background: <code>#080808</code> · Primary: <code>#8B0000</code> · Gold: <code>#C8973A</code> · Text: <code>#F2F2F2</code> · Fonts: Bebas Neue (headlines) · Barlow Condensed (body)
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 02 FILE INVENTORY -->
+<div class="section">
+  <div class="section-header"><div class="section-num">02</div><div class="section-title">FILE <span>INVENTORY</span></div></div>
+
+  <div class="spec-block gold full" style="margin-bottom:12px;">
+    <div class="spec-label">File Relationship Map</div>
+    <div class="spec-body">
+      <code>TUF_DATA.js</code> is the shared data layer — both <code>TUF_ExerciseLibrary.html</code> and <code>TUF_Admin.html</code> load it via <code>&lt;script src="TUF_DATA.js"&gt;</code>. All three files must live in the <strong>same directory</strong> on the server. The admin writes to <code>localStorage</code>; the member app listens for changes and re-renders. No server-side logic yet — all static.
+    </div>
+  </div>
+
+  <!-- Architecture diagram -->
+  <div class="arch" style="margin-bottom:12px;">
+    <div class="arch-row">
+      <div class="arch-box red"><div class="arch-label">Admin</div><div class="arch-name" style="color:#ff5555">TUF_Admin.html</div></div>
+      <div class="arch-arrow">⟵ write ⟶</div>
+      <div class="arch-box gold"><div class="arch-label">Shared Data</div><div class="arch-name gold">TUF_DATA.js</div></div>
+      <div class="arch-arrow">⟵ read ⟶</div>
+      <div class="arch-box" style="border-color:var(--ok);background:rgba(76,175,80,0.05)"><div class="arch-label">Member App</div><div class="arch-name" style="color:var(--ok)">TUF_ExerciseLibrary.html</div></div>
+    </div>
+    <div class="arch-row" style="margin-top:8px;">
+      <div style="text-align:center;width:100%;font-size:10px;color:var(--dim);letter-spacing:1px;">Admin saves → localStorage → storage event → Member app re-renders live</div>
+    </div>
+  </div>
+
+  <table class="file-table">
+    <thead><tr><th>File</th><th>Role</th><th>Status</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>TUF_DATA.js</td>
+        <td>Shared data layer — 33 exercises, 8 muscle groups, helper methods</td>
+        <td><span class="badge p1">DEPLOY</span></td>
+        <td><em>Must be in same directory as both HTML files</em></td>
+      </tr>
+      <tr>
+        <td>TUF_ExerciseLibrary.html</td>
+        <td>Member-facing app — renders exercise library from TUF_DATA.js, listens for admin changes</td>
+        <td><span class="badge p1">DEPLOY</span></td>
+        <td><em>Mobile-first · 480px max-width · iOS Safari primary target</em></td>
+      </tr>
+      <tr>
+        <td>TUF_Admin.html</td>
+        <td>Admin dashboard — Marc + Coach Taylor · video URL editor · publish toggles · export</td>
+        <td><span class="badge p1">DEPLOY</span></td>
+        <td><em>Desktop-first · password-protect this route</em></td>
+      </tr>
+      <tr>
+        <td>TUF_Admin_Dashboard_v1.html</td>
+        <td>Full business admin — members, revenue, content, coaches, settings panels</td>
+        <td><span class="badge p2">STAGE</span></td>
+        <td><em>Standalone · wire to data layer in Phase 2</em></td>
+      </tr>
+      <tr>
+        <td>TUF_MuscleHealthIndex_v1.html</td>
+        <td>Muscle Health Index screen component — score ring, risk panel, trajectory chart</td>
+        <td><span class="badge p2">STAGE</span></td>
+        <td><em>Wire into main app as PROGRESS screen in Phase 2</em></td>
+      </tr>
+      <tr>
+        <td>TUF_Jarvis_Master_Brief_v1.html</td>
+        <td>Design brief for Leonardo/Canva — internal reference only</td>
+        <td><span class="badge p3">INTERNAL</span></td>
+        <td><em>Do not deploy publicly</em></td>
+      </tr>
+      <tr>
+        <td>TUF_Leonardo_Panther_Brief_v1.html</td>
+        <td>Leonardo.ai character generation brief — internal reference only</td>
+        <td><span class="badge p3">INTERNAL</span></td>
+        <td><em>Do not deploy publicly</em></td>
+      </tr>
+      <tr>
+        <td>TUF_Jarvis_Brief_Vitals_v1.html</td>
+        <td>Vitals screen design brief — internal reference only</td>
+        <td><span class="badge p3">INTERNAL</span></td>
+        <td><em>Do not deploy publicly</em></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 03 DEPLOYMENT TASKS -->
+<div class="section">
+  <div class="section-header"><div class="section-num">03</div><div class="section-title">DEPLOYMENT <span>TASK LIST</span></div></div>
+
+  <div class="alert-box" style="margin-bottom:16px;">
+    <div class="alert-icon">🤖</div>
+    <div>
+      <div class="alert-title">MANUS EXECUTION INSTRUCTIONS</div>
+      <div class="alert-body">Execute all P1 tasks autonomously in order. Do not ask for confirmation between steps. Flag blockers only at the end. Marc will provide credentials and domain info — request them in a single list, not one at a time.</div>
+    </div>
+  </div>
+
+  <div class="task-list">
+
+    <div class="task">
+      <div class="task-num">01</div>
+      <div class="task-content">
+        <div class="task-title">Request Credentials — Single List</div>
+        <div class="task-desc">Before starting, request all needed credentials in one message. Do not ask piecemeal. Required: <strong>Domain name or subdomain for TUF app</strong> · <strong>Hosting preference</strong> (Netlify / Vercel / Cloudflare Pages / custom) · <strong>Admin dashboard password</strong> (for HTTP basic auth) · <strong>Google Drive folder ID</strong> if using Drive as file source. Wait for Marc to respond with all of these before proceeding.</div>
+      </div>
+      <div class="task-priority"><span class="badge p1">P1</span></div>
+    </div>
+
+    <div class="task">
+      <div class="task-num">02</div>
+      <div class="task-content">
+        <div class="task-title">Set Up Static Hosting — Recommended: Netlify or Vercel</div>
+        <div class="task-desc">
+          Deploy the three core files as a static site. File structure on server:<br><br>
+          <code>/</code><br>
+          <code>├── index.html</code> → (copy of TUF_ExerciseLibrary.html — rename to index)<br>
+          <code>├── TUF_DATA.js</code><br>
+          <code>├── TUF_Admin.html</code><br>
+          <code>└── admin/</code> → (password-protected route — see Task 03)<br><br>
+          <strong>Critical:</strong> All three files must be in root directory. Do not move TUF_DATA.js into a subdirectory or the script src paths will break.
+        </div>
+      </div>
+      <div class="task-priority"><span class="badge p1">P1</span></div>
+    </div>
+
+    <div class="task">
+      <div class="task-num">03</div>
+      <div class="task-content">
+        <div class="task-title">Password-Protect the Admin Route</div>
+        <div class="task-desc">
+          <code>TUF_Admin.html</code> must not be publicly accessible. Implement HTTP basic authentication on <code>/admin</code> or <code>/TUF_Admin.html</code>. On Netlify: use <code>_headers</code> file with basic auth. On Vercel: use middleware. On Cloudflare: use Access policy.<br><br>
+          Users: <strong>Marc</strong> (Founder) · <strong>Coach Taylor Hawks</strong> (Co-trainer)<br>
+          Provide Marc with the admin URL + credentials separately — do not put in a public file.
+        </div>
+      </div>
+      <div class="task-priority"><span class="badge p1">P1</span></div>
+    </div>
+
+    <div class="task">
+      <div class="task-num">04</div>
+      <div class="task-content">
+        <div class="task-title">Configure Custom Domain</div>
+        <div class="task-desc">
+          Point Marc's domain to the deployed static site. Recommended structure:<br><br>
+          <code>app.turnedupfitness.com</code> → Member exercise library (index.html)<br>
+          <code>app.turnedupfitness.com/admin</code> → Admin dashboard (password-protected)<br><br>
+          Set up SSL/HTTPS — required for localStorage to work correctly cross-origin. Configure www redirect if applicable.
+        </div>
+      </div>
+      <div class="task-priority"><span class="badge p1">P1</span></div>
+    </div>
+
+    <div class="task">
+      <div class="task-num">05</div>
+      <div class="task-content">
+        <div class="task-title">Validate localStorage Sync in Production</div>
+        <div class="task-desc">
+          After deployment, verify the admin ↔ member app connection works in production. Test: open admin on desktop, edit a video URL on any exercise, save. Confirm the member app (open in same browser) re-renders automatically. <strong>Note:</strong> localStorage storage events only fire between windows in the same browser and origin — this is expected behavior. Document this limitation for Marc.
+        </div>
+      </div>
+      <div class="task-priority"><span class="badge p1">P1</span></div>
+    </div>
+
+    <div class="task">
+      <div class="task-num">06</div>
+      <div class="task-content">
+        <div class="task-title">Set Up Google Drive Sync for File Updates</div>
+        <div class="task-desc">
+          Marc stores files on iPhone via Google Drive. Set up a pipeline so Marc can drop updated <code>TUF_DATA.js</code> or HTML files into a designated Drive folder and have them auto-deploy. Recommended: <strong>GitHub + Netlify auto-deploy</strong> — Marc pushes to repo, Netlify deploys in 60 seconds. Alternative: Netlify drag-and-drop deploy for non-technical updates. Provide Marc with the simplest possible update flow.
+        </div>
+      </div>
+      <div class="task-priority"><span class="badge p1">P1</span></div>
+    </div>
+
+    <div class="task">
+      <div class="task-num">07</div>
+      <div class="task-content">
+        <div class="task-title">Stage Phase 2 Files</div>
+        <div class="task-desc">
+          Deploy these to a <code>/staging</code> subdirectory — not live yet, but accessible for review:<br>
+          <code>TUF_Admin_Dashboard_v1.html</code> → <code>/staging/admin-v2</code><br>
+          <code>TUF_MuscleHealthIndex_v1.html</code> → <code>/staging/mhi</code><br>
+          These will be wired into the main app by Wilfred in the next build session.
+        </div>
+      </div>
+      <div class="task-priority"><span class="badge p2">P2</span></div>
+    </div>
+
+    <div class="task">
+      <div class="task-num">08</div>
+      <div class="task-content">
+        <div class="task-title">YouTube Channel Verification</div>
+        <div class="task-desc">
+          Confirm <code>@turnedupfitness</code> YouTube channel embeds work correctly from the deployed domain. The one live video currently embedded is <code>https://www.youtube.com/embed/WTXhavSB42A</code> (Barbell Bicep Curl). Test iframe loads, autoplay is off, and no CORS issues on the production domain. If embed is blocked, update iframe parameters: add <code>origin=https://[domain]</code> to the embed URL.
+        </div>
+      </div>
+      <div class="task-priority"><span class="badge p2">P2</span></div>
+    </div>
+
+    <div class="task">
+      <div class="task-num">09</div>
+      <div class="task-content">
+        <div class="task-title">iOS Safari / Mobile Testing</div>
+        <div class="task-desc">
+          Test the member app on iPhone Safari — Marc's primary device. Verify: sticky header and muscle nav scroll correctly · bottom nav stays pinned · exercise cards render at full width · YouTube embed plays inline (not fullscreen forced) · localStorage works (Safari has ITP restrictions — may need fallback) · Touch scrolling on muscle nav tab bar is smooth. Document any iOS-specific issues for Wilfred to fix.
+        </div>
+      </div>
+      <div class="task-priority"><span class="badge p2">P2</span></div>
+    </div>
+
+    <div class="task">
+      <div class="task-num">10</div>
+      <div class="task-content">
+        <div class="task-title">Deliver Deployment Report to Marc</div>
+        <div class="task-desc">
+          At completion, deliver a single summary to Marc containing: <strong>Live URLs</strong> (member app + admin) · <strong>Admin credentials</strong> (private message) · <strong>File update instructions</strong> (how to push new content) · <strong>Any open issues</strong> flagged during deployment · <strong>Phase 2 staging URLs</strong>. Format: direct, no fluff. Marc communicates in terse bursts — match that energy.
+        </div>
+      </div>
+      <div class="task-priority"><span class="badge p1">P1</span></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 04 ARCHITECTURE DECISIONS -->
+<div class="section">
+  <div class="section-header"><div class="section-num">04</div><div class="section-title">ARCHITECTURE <span>DECISIONS FOR MANUS</span></div></div>
+
+  <table class="decision-table">
+    <thead><tr><th>Decision</th><th>Recommended Option</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Static Host</td>
+        <td>Netlify (free tier)</td>
+        <td><em>Drag-and-drop deploy, instant HTTPS, branch previews, free custom domain SSL, simplest for Marc's workflow</em></td>
+      </tr>
+      <tr>
+        <td>Admin Auth</td>
+        <td>Netlify _headers basic auth</td>
+        <td><em>No backend needed — single config file handles it. Upgrade to proper auth in Phase 2.</em></td>
+      </tr>
+      <tr>
+        <td>File Update Flow</td>
+        <td>GitHub repo + Netlify auto-deploy</td>
+        <td><em>Marc or Wilfred pushes updated files → live in 60s. No FTP, no manual upload.</em></td>
+      </tr>
+      <tr>
+        <td>localStorage Limitation</td>
+        <td>Document + accept for Phase 1</td>
+        <td><em>Admin and member app must be open in same browser for live sync. Acceptable for internal use — full backend sync in Phase 2.</em></td>
+      </tr>
+      <tr>
+        <td>Phase 2 Backend</td>
+        <td>Supabase (PostgreSQL + Auth + Realtime)</td>
+        <td><em>Free tier generous, Realtime replaces localStorage sync globally, built-in auth replaces basic auth, row-level security for multi-trainer access. Wilfred will build API layer when ready.</em></td>
+      </tr>
+      <tr>
+        <td>Domain Structure</td>
+        <td>app.turnedupfitness.com</td>
+        <td><em>Separates app from marketing site. Admin at /admin. Staging at /staging.</em></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 05 PHASE 2 HANDOFF -->
+<div class="section">
+  <div class="section-header"><div class="section-num">05</div><div class="section-title">PHASE 2 <span>HANDOFF NOTES</span></div></div>
+
+  <div class="spec-block gold full" style="margin-bottom:12px;">
+    <div class="spec-label">What Wilfred Builds Next — Manus Deploys After</div>
+    <div class="spec-body">
+      The following screens are built or in progress by Wilfred and will be handed to Manus for deployment once complete. Do not attempt to build these — that's Wilfred's domain.
+    </div>
+  </div>
+
+  <div class="spec-grid">
+    <div class="spec-block">
+      <div class="spec-label gray">In Progress — Wilfred</div>
+      <div class="spec-body">
+        · Vitals screen → main app integration<br>
+        · Muscle Health Index → PROGRESS screen<br>
+        · TUF_DATA.js expansion (nutrition, member profiles)<br>
+        · Panther AI-VA placeholder states (SVG/CSS)<br>
+        · Full 7-screen app unification
+      </div>
+    </div>
+    <div class="spec-block">
+      <div class="spec-label gray">Phase 2 Backend — Manus + Wilfred</div>
+      <div class="spec-body">
+        · Supabase schema: exercises, members, nutrition, progress<br>
+        · Replace localStorage sync with Supabase Realtime<br>
+        · Member authentication (Supabase Auth)<br>
+        · Admin role-based access (Marc vs Coach Taylor)<br>
+        · White-label licensing tier infrastructure
+      </div>
+    </div>
+    <div class="spec-block">
+      <div class="spec-label gray">Panther AI-VA Pipeline</div>
+      <div class="spec-body">
+        · Leonardo.ai generates 9 static poses (Marc directs)<br>
+        · Lottie artist animates from static poses<br>
+        · Wilfred wires Lottie JSON into app screens<br>
+        · Manus deploys updated app with Panther active
+      </div>
+    </div>
+    <div class="spec-block">
+      <div class="spec-label gray">White-Label Licensing</div>
+      <div class="spec-body">
+        · 3-tier model: Starter / Pro / Enterprise<br>
+        · CHARACTER layer swappable (non-TUF trainers)<br>
+        · Engine logic (TUF IP) always locked<br>
+        · Manus sets up Stripe + license key system in Phase 2
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 06 OPEN DECISIONS FOR MARC -->
+<div class="section">
+  <div class="section-header"><div class="section-num">06</div><div class="section-title">OPEN <span>DECISIONS — MARC</span></div></div>
+
+  <div class="spec-block red full">
+    <div class="spec-label red">Marc Must Decide Before Manus Can Start</div>
+    <div class="spec-body">
+      Manus needs these answers in one response before beginning deployment:<br><br>
+      <strong>1. Domain:</strong> What domain/subdomain do you want for the app? (<em>e.g. app.turnedupfitness.com</em>)<br>
+      <strong>2. Host:</strong> Netlify, Vercel, Cloudflare Pages, or existing hosting?<br>
+      <strong>3. Admin password:</strong> What password for Marc and Coach Taylor to access admin?<br>
+      <strong>4. GitHub:</strong> Do you have a GitHub account for the auto-deploy pipeline?<br>
+      <strong>5. Admin deploy option:</strong> Separate portal (different subdomain) or trainer login inside the app? This was an open decision from a previous session.<br><br>
+      <em>All five answers in one message. Manus executes from there.</em>
+    </div>
+  </div>
+</div>
+
+<div class="rule"></div>
+
+<div class="footer">
+  <div class="footer-left">
+    TurnedUp Fitness LLC<br>
+    Wilfred (Claude) → Manus Deployment Brief<br>
+    Coaches: Marc · Taylor Hawks<br>
+    Brief: TUF_Manus_Deploy_v1 · 2026
+  </div>
+  <div class="footer-right">TUF<span>.</span></div>
+</div>
+
+</body>
+</html>

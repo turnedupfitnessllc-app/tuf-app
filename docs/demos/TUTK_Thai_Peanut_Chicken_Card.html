@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thai Peanut Chicken – Turned Up In The Kitchen</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #111;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 20px 60px;
+    gap: 24px;
+    font-family: 'Barlow', sans-serif;
+  }
+
+  h2.section-label {
+    color: #888;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: -12px;
+  }
+
+  /* ── FULL PAGE CARD ── */
+  .recipe-card {
+    width: 600px;
+    background: #0D0D0D;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.06);
+    position: relative;
+  }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, #8B0000 0%, #6B0000 60%, #3a0000 100%);
+    padding: 28px 28px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; right: -60px;
+    width: 250px; height: 100%;
+    background: rgba(0,0,0,0.25);
+    transform: skewX(-12deg);
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #C8973A, #8B0000, transparent);
+  }
+
+  .hero-tag {
+    display: inline-block;
+    background: #C8973A;
+    color: #000;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 10px;
+    letter-spacing: 2px;
+    padding: 3px 10px;
+    border-radius: 3px;
+    margin-bottom: 10px;
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 60px;
+    color: #fff;
+    line-height: 0.95;
+    letter-spacing: 1px;
+    position: relative;
+    z-index: 1;
+    text-shadow: 3px 3px 0 rgba(0,0,0,0.4);
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-meta span {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    color: rgba(255,255,255,0.65);
+    letter-spacing: 1px;
+    background: rgba(0,0,0,0.3);
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  /* Macro Bar */
+  .macro-section {
+    background: #111;
+    padding: 14px 24px;
+    border-bottom: 1px solid #1e1e1e;
+  }
+  .macro-bar {
+    height: 8px;
+    border-radius: 4px;
+    display: flex;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .macro-protein { background: #3A7BD5; width: 55%; }
+  .macro-fat     { background: #F5C518; width: 29%; }
+  .macro-carbs   { background: #E8651A; width: 16%; }
+
+  .macro-labels {
+    display: flex;
+    gap: 16px;
+  }
+  .macro-label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+  }
+  .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .dot-p { background: #3A7BD5; }
+  .dot-f { background: #F5C518; }
+  .dot-c { background: #E8651A; }
+  .dot-v { background: #2DAA4F; }
+  .macro-label span { color: #aaa; }
+  .macro-label strong { color: #fff; }
+
+  .cal-badge {
+    margin-left: auto;
+    background: #C8973A;
+    color: #000;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 12px;
+    padding: 2px 10px;
+    border-radius: 12px;
+  }
+
+  /* Content Grid */
+  .content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+
+  .ingredients-col {
+    padding: 22px 20px 22px 24px;
+    border-right: 1px solid #1e1e1e;
+  }
+
+  .col-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 13px;
+    color: #C8973A;
+    letter-spacing: 3px;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #8B0000;
+  }
+
+  .ingredient-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .ingredient-item .dot { margin-top: 5px; flex-shrink: 0; }
+  .ingredient-item p {
+    font-size: 12px;
+    color: #ccc;
+    line-height: 1.4;
+  }
+
+  .nutrition-col {
+    padding: 22px 24px 22px 20px;
+    background: #0f0f0f;
+  }
+
+  .nutrition-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .nutrition-table tr {
+    border-bottom: 1px solid #1e1e1e;
+  }
+  .nutrition-table td {
+    padding: 5px 0;
+    font-size: 11px;
+  }
+  .nutrition-table td:first-child { color: #888; }
+  .nutrition-table td:last-child {
+    text-align: right;
+    color: #fff;
+    font-weight: 600;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+  }
+
+  /* Steps */
+  .steps-section {
+    padding: 20px 24px;
+    border-top: 1px solid #1e1e1e;
+    background: #0a0a0a;
+  }
+
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 12px;
+  }
+
+  .step-item {
+    background: #161616;
+    border-radius: 10px;
+    padding: 14px 12px;
+    border: 1px solid #1e1e1e;
+    position: relative;
+    overflow: hidden;
+  }
+  .step-item::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #8B0000, transparent);
+  }
+
+  .step-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: #8B0000;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .step-icon {
+    font-size: 20px;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .step-text {
+    font-size: 10.5px;
+    color: #bbb;
+    line-height: 1.5;
+  }
+
+  /* Pro Tip */
+  .pro-tip {
+    margin: 0 24px 16px;
+    background: #1A1200;
+    border: 1px solid #C8973A;
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .pro-tip-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 10px;
+    color: #C8973A;
+    letter-spacing: 2px;
+    white-space: nowrap;
+    padding-top: 1px;
+  }
+  .pro-tip p {
+    font-size: 11px;
+    color: #D4B870;
+    line-height: 1.5;
+  }
+
+  /* 40+ Science */
+  .science-note {
+    margin: 0 24px 20px;
+    background: #071520;
+    border: 1px solid #3A7BD5;
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .science-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 10px;
+    color: #3A7BD5;
+    letter-spacing: 2px;
+    white-space: nowrap;
+    padding-top: 1px;
+  }
+  .science-note p {
+    font-size: 11px;
+    color: #9BB8D4;
+    line-height: 1.5;
+  }
+
+  /* Footer */
+  .card-footer {
+    background: #8B0000;
+    padding: 10px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .brand-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 15px;
+    color: #fff;
+    letter-spacing: 2px;
+  }
+  .recipe-tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 10px;
+    color: #C8973A;
+    letter-spacing: 2px;
+  }
+
+  /* ── SQUARE SOCIAL CARD ── */
+  .social-card {
+    width: 600px;
+    height: 600px;
+    background: #0D0D0D;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.06);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .social-hero {
+    background: linear-gradient(140deg, #8B0000 0%, #4a0000 100%);
+    flex: 1;
+    padding: 30px 32px 24px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  .social-hero::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(200,151,58,0.15) 0%, transparent 70%);
+  }
+  .social-hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 40px,
+      rgba(255,255,255,0.015) 40px,
+      rgba(255,255,255,0.015) 41px
+    );
+  }
+
+  .social-big-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 86px;
+    color: #fff;
+    line-height: 0.88;
+    letter-spacing: 2px;
+    position: relative;
+    z-index: 1;
+    text-shadow: 4px 4px 0 rgba(0,0,0,0.5);
+  }
+
+  .social-subtitle {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    color: #C8973A;
+    letter-spacing: 5px;
+    margin-top: 6px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .social-macros {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .macro-pill {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: #fff;
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .macro-pill .dot { width: 7px; height: 7px; }
+
+  .social-bottom {
+    background: #111;
+    padding: 18px 32px;
+    border-top: 3px solid #8B0000;
+  }
+
+  .quick-steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .quick-step {
+    text-align: center;
+  }
+  .qs-icon { font-size: 22px; display: block; margin-bottom: 3px; }
+  .qs-text {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    color: #888;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .social-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid #1e1e1e;
+  }
+  .social-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    color: #fff;
+    letter-spacing: 2px;
+  }
+  .social-cals {
+    background: #C8973A;
+    color: #000;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 13px;
+    padding: 4px 12px;
+    border-radius: 12px;
+  }
+</style>
+</head>
+<body>
+
+<h2 class="section-label">Full Recipe Page — Print / PDF Format</h2>
+
+<!-- FULL RECIPE CARD -->
+<div class="recipe-card">
+
+  <div class="hero">
+    <div class="hero-tag">MAIN DISH &nbsp;•&nbsp; HIGH PROTEIN</div>
+    <div class="hero-title">THAI PEANUT<br>CHICKEN</div>
+    <div class="hero-meta">
+      <span>⏱ 20 MIN</span>
+      <span>🍽 1 SERVING</span>
+      <span>🔥 ~395 CAL</span>
+    </div>
+  </div>
+
+  <div class="macro-section">
+    <div style="display:flex; align-items:center; gap:12px;">
+      <div style="flex:1">
+        <div class="macro-bar">
+          <div class="macro-protein"></div>
+          <div class="macro-fat"></div>
+          <div class="macro-carbs"></div>
+        </div>
+        <div class="macro-labels">
+          <div class="macro-label"><div class="dot dot-p"></div><strong>42g</strong><span>Protein</span></div>
+          <div class="macro-label"><div class="dot dot-f"></div><strong>22g</strong><span>Fat</span></div>
+          <div class="macro-label"><div class="dot dot-c"></div><strong>12g</strong><span>Carbs</span></div>
+          <div class="macro-label" style="margin-left:auto;"><div class="dot dot-v"></div><span style="color:#2DAA4F; font-size:10px;">Veggie Included</span></div>
+        </div>
+      </div>
+      <div class="cal-badge">395 CAL</div>
+    </div>
+  </div>
+
+  <div class="content-grid">
+    <div class="ingredients-col">
+      <div class="col-title">INGREDIENTS</div>
+      <div class="ingredient-item"><div class="dot dot-p"></div><p>6 oz skinless chicken breast</p></div>
+      <div class="ingredient-item"><div class="dot dot-f"></div><p>2 tbsp peanut butter</p></div>
+      <div class="ingredient-item"><div class="dot dot-f"></div><p>2 tbsp Bragg's soy alternative</p></div>
+      <div class="ingredient-item"><div class="dot dot-f"></div><p>1 tbsp lemon juice</p></div>
+      <div class="ingredient-item"><div class="dot dot-f"></div><p>1 tbsp rice vinegar</p></div>
+      <div class="ingredient-item"><div class="dot dot-f"></div><p>¼ tsp cayenne pepper</p></div>
+      <div class="ingredient-item"><div class="dot dot-v"></div><p>1 cup mixed veggies of choice</p></div>
+    </div>
+
+    <div class="nutrition-col">
+      <div class="col-title">NUTRITION FACTS</div>
+      <table class="nutrition-table">
+        <tr><td>Calories</td><td>395</td></tr>
+        <tr><td>Protein</td><td>42g</td></tr>
+        <tr><td>Total Fat</td><td>22g</td></tr>
+        <tr><td>Carbohydrates</td><td>12g</td></tr>
+        <tr><td>Dietary Fiber</td><td>3g</td></tr>
+        <tr><td>Sugars</td><td>4g</td></tr>
+        <tr><td>Sodium</td><td>480mg</td></tr>
+        <tr><td>Potassium</td><td>620mg</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="steps-section">
+    <div class="col-title">DIRECTIONS</div>
+    <div class="steps-grid">
+      <div class="step-item">
+        <span class="step-icon">🥜</span>
+        <div class="step-num">01</div>
+        <p class="step-text">Microwave peanut butter slightly. Whisk with Bragg's, lemon juice, rice vinegar & cayenne until thick.</p>
+      </div>
+      <div class="step-item">
+        <span class="step-icon">🍗</span>
+        <div class="step-num">02</div>
+        <p class="step-text">Shred or slice cooked chicken into thin pieces. Prep your choice of mixed veggies.</p>
+      </div>
+      <div class="step-item">
+        <span class="step-icon">🥗</span>
+        <div class="step-num">03</div>
+        <p class="step-text">Toss chicken and veggies in sauce. Top with salt, green onion, or sesame seeds. Serve immediately.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="pro-tip">
+    <div class="pro-tip-label">💡 PRO TIP</div>
+    <p>Add sriracha or chili oil for extra heat. Serve over cauliflower rice for a lower-carb option.</p>
+  </div>
+
+  <div class="science-note">
+    <div class="science-label">🔬 40+ SCIENCE</div>
+    <p>Peanut butter's monounsaturated fats support joint lubrication — critical after 40. The lean protein from chicken helps maintain muscle mass as metabolism slows with age.</p>
+  </div>
+
+  <div class="card-footer">
+    <div class="brand-name">TURNED UP IN THE KITCHEN</div>
+    <div class="recipe-tag">MAINS &nbsp;•&nbsp; RECIPE 01</div>
+  </div>
+
+</div>
+
+<!-- SOCIAL CARD -->
+<h2 class="section-label">Square Social Card — Instagram / App Format</h2>
+
+<div class="social-card">
+  <div class="social-hero">
+    <div class="social-big-title">THAI<br>PEANUT<br>CHICKEN</div>
+    <div class="social-subtitle">TURNED UP IN THE KITCHEN</div>
+    <div class="social-macros">
+      <div class="macro-pill"><div class="dot dot-p"></div>42g Protein</div>
+      <div class="macro-pill"><div class="dot dot-f"></div>22g Fat</div>
+      <div class="macro-pill"><div class="dot dot-c"></div>12g Carbs</div>
+    </div>
+  </div>
+
+  <div class="social-bottom">
+    <div class="quick-steps">
+      <div class="quick-step">
+        <span class="qs-icon">🥜</span>
+        <div class="qs-text">Whisk Sauce</div>
+      </div>
+      <div class="quick-step">
+        <span class="qs-icon">🍗</span>
+        <div class="qs-text">Shred Chicken</div>
+      </div>
+      <div class="quick-step">
+        <span class="qs-icon">🥗</span>
+        <div class="qs-text">Toss & Serve</div>
+      </div>
+    </div>
+
+    <div class="social-footer">
+      <div class="social-brand">TURNED UP IN THE KITCHEN</div>
+      <div class="social-cals">395 CAL / SERVING</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TUF — 6 Exercise Pattern Thumbnails</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#111;font-family:'Barlow Condensed',sans-serif;padding:30px 20px 60px;display:flex;flex-direction:column;align-items:center;gap:0}
+h1{font-family:'Bebas Neue',sans-serif;font-size:28px;color:#C8973A;letter-spacing:4px;text-align:center;margin-bottom:6px}
+p.sub{font-size:11px;color:#555;letter-spacing:2px;text-align:center;margin-bottom:32px}
+.grid{display:grid;grid-template-columns:repeat(2,640px);gap:20px;max-width:1320px}
+
+/* ── THUMBNAIL BASE ── */
+.thumb{
+  width:640px;height:360px;
+  position:relative;overflow:hidden;
+  border-radius:10px;
+  cursor:pointer;
+  transition:transform .2s,box-shadow .2s;
+}
+.thumb:hover{transform:scale(1.02);box-shadow:0 20px 60px rgba(0,0,0,.8)}
+
+/* backgrounds */
+.bg-push  {background:linear-gradient(135deg,#8B0000 0%,#3a0000 45%,#0d0d0d 100%)}
+.bg-pull  {background:linear-gradient(135deg,#0d0d0d 0%,#1a0000 50%,#8B0000 100%)}
+.bg-squat {background:linear-gradient(160deg,#5a0000 0%,#0d0d0d 55%,#1a1a1a 100%)}
+.bg-hinge {background:linear-gradient(135deg,#0d0d0d 0%,#2a0000 40%,#8B0000 100%)}
+.bg-carry {background:linear-gradient(160deg,#8B0000 0%,#1a0000 50%,#0d0d0d 100%)}
+.bg-core  {background:linear-gradient(135deg,#1a0000 0%,#0d0d0d 45%,#3a0000 100%)}
+
+/* diagonal slash */
+.slash{
+  position:absolute;top:0;right:0;
+  width:55%;height:100%;
+  clip-path:polygon(18% 0,100% 0,100% 100%,0% 100%);
+  opacity:.18;
+}
+.slash-r{background:#FF2222}
+.slash-g{background:#C8973A}
+
+/* grid texture overlay */
+.thumb::before{
+  content:'';position:absolute;inset:0;z-index:1;
+  background:repeating-linear-gradient(45deg,transparent,transparent 40px,rgba(255,255,255,.018) 40px,rgba(255,255,255,.018) 41px);
+}
+
+/* glow orb */
+.orb{
+  position:absolute;border-radius:50%;
+  filter:blur(60px);opacity:.25;z-index:0;
+}
+
+/* pattern number */
+.pat-num{
+  position:absolute;top:18px;left:20px;z-index:10;
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:800;font-size:11px;letter-spacing:3px;
+  color:rgba(255,255,255,.5);
+}
+.pat-badge{
+  position:absolute;top:14px;right:18px;z-index:10;
+  background:rgba(200,151,58,.15);
+  border:1px solid rgba(200,151,58,.4);
+  color:#C8973A;
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:800;font-size:10px;letter-spacing:2px;
+  padding:4px 12px;border-radius:20px;
+}
+
+/* main title */
+.main-title{
+  position:absolute;z-index:10;
+  font-family:'Bebas Neue',sans-serif;
+  color:#fff;
+  line-height:.88;
+  letter-spacing:2px;
+  text-shadow:4px 4px 0 rgba(0,0,0,.5),0 0 40px rgba(139,0,0,.6);
+}
+
+/* sub label */
+.sub-label{
+  position:absolute;z-index:10;
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:800;font-size:13px;
+  letter-spacing:4px;color:rgba(255,255,255,.55);
+}
+
+/* gold accent line */
+.gold-line{
+  position:absolute;z-index:10;
+  height:3px;
+  background:linear-gradient(90deg,#C8973A,rgba(200,151,58,.1));
+  border-radius:2px;
+}
+
+/* exercise name pill */
+.ex-pill{
+  position:absolute;z-index:10;
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:800;font-size:11px;letter-spacing:2px;
+  background:rgba(139,0,0,.5);
+  border:1px solid rgba(255,60,60,.3);
+  color:#FF8A8A;
+  padding:5px 14px;border-radius:6px;
+}
+
+/* shield watermark */
+.shield{
+  position:absolute;z-index:2;
+  font-size:220px;
+  opacity:.06;
+  color:#fff;
+  line-height:1;
+  user-select:none;
+}
+
+/* brand footer */
+.brand-bar{
+  position:absolute;bottom:0;left:0;right:0;z-index:10;
+  height:38px;
+  background:rgba(139,0,0,.9);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;
+  border-top:2px solid rgba(200,151,58,.3);
+}
+.brand-name{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:15px;color:#fff;letter-spacing:3px;
+}
+.brand-right{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;font-size:10px;
+  color:#C8973A;letter-spacing:2px;
+}
+
+/* motion lines */
+.lines{position:absolute;z-index:3;opacity:.12}
+.lines span{
+  display:block;height:2px;
+  background:linear-gradient(90deg,transparent,#fff,transparent);
+  border-radius:1px;margin-bottom:8px;
+}
+
+/* canva link */
+.canva-link{
+  display:block;margin-top:8px;text-align:center;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:10px;letter-spacing:2px;color:#555;
+  text-decoration:none;
+}
+.canva-link.saved{color:#C8973A}
+.thumb-wrap{display:flex;flex-direction:column}
+</style>
+</head>
+<body>
+
+<h1>TURNED UP FITNESS — EXERCISE PATTERN THUMBNAILS</h1>
+<p class="sub">6 PATTERNS · YOUTUBE / SOCIAL / APP READY · 1280×720</p>
+
+<div class="grid">
+
+<!-- ── 01 PUSH ── -->
+<div class="thumb-wrap">
+<div class="thumb bg-push">
+  <div class="slash slash-r"></div>
+  <div class="orb" style="width:300px;height:300px;background:#8B0000;top:-80px;right:-60px"></div>
+  <div class="shield" style="right:-30px;top:-30px">🛡</div>
+  <div class="lines" style="top:80px;left:0;right:0">
+    <span style="width:60%;margin-left:20%"></span>
+    <span style="width:45%;margin-left:28%"></span>
+    <span style="width:30%;margin-left:35%"></span>
+  </div>
+  <div class="pat-num">TURNED UP FITNESS · EXERCISE SERIES</div>
+  <div class="pat-badge">PATTERN 01</div>
+  <div class="sub-label" style="left:28px;top:52px">MOVEMENT PATTERN</div>
+  <div class="gold-line" style="left:28px;top:72px;width:160px"></div>
+  <div class="main-title" style="left:20px;top:80px;font-size:158px">PUSH</div>
+  <div class="ex-pill" style="left:28px;bottom:56px">PUSH-UP PROGRESSION</div>
+  <div class="brand-bar">
+    <span class="brand-name">TURNED UP FITNESS</span>
+    <span class="brand-right">40+ OPTIMIZED · BEGINNER SERIES</span>
+  </div>
+</div>
+<a class="canva-link saved" href="https://www.canva.com/d/rYo9UZW4zz38yfE" target="_blank">✅ SAVED TO CANVA → Edit here</a>
+</div>
+
+<!-- ── 02 PULL ── -->
+<div class="thumb-wrap">
+<div class="thumb bg-pull">
+  <div class="slash slash-r" style="clip-path:polygon(0 0,82% 0,100% 100%,0% 100%);right:auto;left:0;opacity:.15"></div>
+  <div class="orb" style="width:280px;height:280px;background:#8B0000;bottom:-60px;left:-40px"></div>
+  <div class="shield" style="left:-20px;bottom:-40px">🛡</div>
+  <div class="lines" style="top:100px;left:0;right:0">
+    <span style="width:55%;margin-left:25%"></span>
+    <span style="width:40%;margin-left:32%"></span>
+  </div>
+  <div class="pat-num">TURNED UP FITNESS · EXERCISE SERIES</div>
+  <div class="pat-badge">PATTERN 02</div>
+  <div class="sub-label" style="right:28px;top:52px;text-align:right">MOVEMENT PATTERN</div>
+  <div class="gold-line" style="right:28px;top:72px;width:160px;background:linear-gradient(270deg,#C8973A,rgba(200,151,58,.1))"></div>
+  <div class="main-title" style="right:16px;top:80px;font-size:158px;text-align:right">PULL</div>
+  <div class="ex-pill" style="right:28px;bottom:56px">ASSISTED ROW</div>
+  <div class="brand-bar">
+    <span class="brand-name">TURNED UP FITNESS</span>
+    <span class="brand-right">40+ OPTIMIZED · BEGINNER SERIES</span>
+  </div>
+</div>
+<a class="canva-link saved" href="https://www.canva.com/d/gSwoIi9H7FuL9Ym" target="_blank">✅ SAVED TO CANVA → Edit here</a>
+</div>
+
+<!-- ── 03 SQUAT ── -->
+<div class="thumb-wrap">
+<div class="thumb bg-squat">
+  <div class="slash slash-g" style="opacity:.1"></div>
+  <div class="orb" style="width:320px;height:320px;background:#C8973A;top:-100px;right:-80px"></div>
+  <div class="shield" style="right:-10px;top:-20px">🛡</div>
+  <div class="pat-num">TURNED UP FITNESS · EXERCISE SERIES</div>
+  <div class="pat-badge" style="background:rgba(200,151,58,.2);border-color:rgba(200,151,58,.5)">PATTERN 03</div>
+  <div class="sub-label" style="left:28px;top:52px">MOVEMENT PATTERN</div>
+  <div class="gold-line" style="left:28px;top:72px;width:185px"></div>
+  <div class="main-title" style="left:14px;top:72px;font-size:138px">SQUAT</div>
+  <div class="ex-pill" style="left:28px;bottom:56px">BOX SQUAT</div>
+  <div class="brand-bar">
+    <span class="brand-name">TURNED UP FITNESS</span>
+    <span class="brand-right">40+ OPTIMIZED · BEGINNER SERIES</span>
+  </div>
+</div>
+<a class="canva-link saved" href="https://www.canva.com/d/8wnJcE4FhBf_Pcg" target="_blank">✅ SAVED TO CANVA → Edit here</a>
+</div>
+
+<!-- ── 04 HINGE ── -->
+<div class="thumb-wrap">
+<div class="thumb bg-hinge">
+  <div class="slash slash-r" style="opacity:.2"></div>
+  <div class="orb" style="width:260px;height:260px;background:#8B0000;bottom:-50px;right:100px"></div>
+  <div class="shield" style="left:50%;top:-30px;transform:translateX(-50%)">🛡</div>
+  <div class="pat-num">TURNED UP FITNESS · EXERCISE SERIES</div>
+  <div class="pat-badge">PATTERN 04</div>
+  <div class="sub-label" style="left:28px;top:52px">MOVEMENT PATTERN</div>
+  <div class="gold-line" style="left:28px;top:72px;width:175px"></div>
+  <div class="main-title" style="left:14px;top:72px;font-size:142px">HINGE</div>
+  <div class="ex-pill" style="left:28px;bottom:56px">GLUTE BRIDGE</div>
+  <div class="brand-bar">
+    <span class="brand-name">TURNED UP FITNESS</span>
+    <span class="brand-right">40+ OPTIMIZED · BEGINNER SERIES</span>
+  </div>
+</div>
+<a class="canva-link" href="#" target="_blank" style="color:#555">⏳ CANVA VERSION COMING — Upload logo to add mascot</a>
+</div>
+
+<!-- ── 05 CARRY ── -->
+<div class="thumb-wrap">
+<div class="thumb bg-carry">
+  <div class="slash slash-r" style="clip-path:polygon(0 0,100% 0,100% 100%,15% 100%);opacity:.15"></div>
+  <div class="orb" style="width:350px;height:350px;background:#8B0000;top:-120px;left:-80px"></div>
+  <div class="shield" style="right:10px;bottom:-20px">🛡</div>
+  <div class="lines" style="top:120px;left:0;right:0">
+    <span style="width:70%;margin-left:15%"></span>
+    <span style="width:55%;margin-left:22%"></span>
+    <span style="width:40%;margin-left:30%"></span>
+  </div>
+  <div class="pat-num">TURNED UP FITNESS · EXERCISE SERIES</div>
+  <div class="pat-badge">PATTERN 05</div>
+  <div class="sub-label" style="left:28px;top:52px">MOVEMENT PATTERN</div>
+  <div class="gold-line" style="left:28px;top:72px;width:160px"></div>
+  <div class="main-title" style="left:14px;top:72px;font-size:140px">CARRY</div>
+  <div class="ex-pill" style="left:28px;bottom:56px">FARMER CARRY</div>
+  <div class="brand-bar">
+    <span class="brand-name">TURNED UP FITNESS</span>
+    <span class="brand-right">40+ OPTIMIZED · BEGINNER SERIES</span>
+  </div>
+</div>
+<a class="canva-link" href="#" style="color:#555">⏳ CANVA VERSION COMING — Upload logo to add mascot</a>
+</div>
+
+<!-- ── 06 CORE ── -->
+<div class="thumb-wrap">
+<div class="thumb bg-core">
+  <div class="slash slash-r" style="opacity:.22"></div>
+  <div class="orb" style="width:300px;height:300px;background:#C8973A;bottom:-80px;right:-60px"></div>
+  <div class="shield" style="right:-20px;top:-10px">🛡</div>
+  <div class="pat-num">TURNED UP FITNESS · EXERCISE SERIES</div>
+  <div class="pat-badge" style="background:rgba(200,151,58,.2);border-color:rgba(200,151,58,.5)">PATTERN 06</div>
+  <div class="sub-label" style="left:28px;top:52px">MOVEMENT PATTERN</div>
+  <div class="gold-line" style="left:28px;top:72px;width:145px"></div>
+  <div class="main-title" style="left:14px;top:72px;font-size:155px">CORE</div>
+  <div class="ex-pill" style="left:28px;bottom:56px">MODIFIED PLANK</div>
+  <div class="brand-bar">
+    <span class="brand-name">TURNED UP FITNESS</span>
+    <span class="brand-right">40+ OPTIMIZED · BEGINNER SERIES</span>
+  </div>
+</div>
+<a class="canva-link" href="#" style="color:#555">⏳ CANVA VERSION COMING — Upload logo to add mascot</a>
+</div>
+
+</div><!-- /grid -->
+
+<div style="margin-top:40px;background:#141414;border:1px solid #222;border-radius:12px;padding:20px 28px;max-width:900px;text-align:center">
+  <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:#C8973A;letter-spacing:3px;margin-bottom:10px">NEXT STEP — ADD YOUR MASCOT</div>
+  <div style="font-size:11px;color:#666;line-height:1.8;letter-spacing:.5px">
+    Open any Canva link above → click the image area → upload your black panther logo (white, red, or black jersey) →
+    resize to fit the right side of each thumbnail → done.<br>
+    The HINGE, CARRY & CORE Canva versions will generate once the rate limit resets (~1 hour).
+  </div>
+</div>
+
+</body>
+</html>

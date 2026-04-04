@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TUF Admin — Exercise Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#080808; --bg2:#0e0e0e; --bg3:#141414; --bg4:#1c1c1c;
+    --red:#8B0000; --red-hi:#b30000;
+    --gold:#C8973A; --gold-lo:#7a5a1e;
+    --white:#f2f2f2; --gray:#888; --dim:#333;
+    --ok:#4caf50; --warn:#C8973A; --danger:#b30000;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background:var(--bg); color:var(--white);
+    font-family:'Barlow Condensed', sans-serif;
+    font-size:14px; min-height:100vh; display:flex;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width:200px; background:var(--bg2); border-right:1px solid #1a1a1a;
+    display:flex; flex-direction:column; position:fixed;
+    top:0; bottom:0; left:0; z-index:100; overflow-y:auto;
+  }
+
+  .sidebar-logo { padding:22px 18px 16px; border-bottom:1px solid #1a1a1a; }
+  .logo-mark { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:3px; color:var(--white); }
+  .logo-mark span { color:var(--gold); }
+  .logo-sub { font-size:9px; letter-spacing:3px; color:var(--gray); text-transform:uppercase; margin-top:2px; }
+  .sidebar-tag { margin:8px 18px 0; font-size:9px; letter-spacing:2px; color:var(--red-hi); background:rgba(139,0,0,0.12); border:1px solid rgba(139,0,0,0.3); padding:3px 8px; display:inline-block; text-transform:uppercase; }
+
+  .nav-section { padding:14px 0 4px; }
+  .nav-label { font-size:8px; letter-spacing:4px; color:var(--dim); text-transform:uppercase; padding:0 18px 6px; }
+  .nav-item { display:flex; align-items:center; gap:8px; padding:9px 18px; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--gray); cursor:pointer; border-left:2px solid transparent; transition:all 0.15s; }
+  .nav-item:hover { color:var(--white); background:rgba(255,255,255,0.02); }
+  .nav-item.active { color:var(--gold); border-left-color:var(--gold); background:rgba(200,151,58,0.05); }
+
+  .sidebar-footer { margin-top:auto; padding:14px 18px; border-top:1px solid #1a1a1a; font-size:10px; color:var(--dim); letter-spacing:1px; line-height:1.7; text-transform:uppercase; }
+
+  /* ── MAIN ── */
+  .main { margin-left:200px; flex:1; display:flex; flex-direction:column; min-height:100vh; }
+
+  .topbar { position:sticky; top:0; background:rgba(8,8,8,0.96); backdrop-filter:blur(8px); border-bottom:1px solid #1a1a1a; padding:12px 32px; display:flex; align-items:center; justify-content:space-between; z-index:50; }
+  .topbar-title { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:5px; color:var(--white); }
+  .topbar-title span { color:var(--gold); }
+  .topbar-right { display:flex; align-items:center; gap:12px; }
+
+  .btn { padding:7px 16px; font-family:'Bebas Neue',sans-serif; font-size:14px; letter-spacing:3px; cursor:pointer; transition:all 0.15s; border:none; }
+  .btn-gold { background:var(--gold); color:var(--bg); }
+  .btn-gold:hover { opacity:0.85; }
+  .btn-red { background:var(--red); color:var(--white); }
+  .btn-red:hover { background:var(--red-hi); }
+  .btn-ghost { background:transparent; color:var(--gray); border:1px solid var(--dim); font-family:'Barlow Condensed',sans-serif; font-size:11px; letter-spacing:2px; text-transform:uppercase; }
+  .btn-ghost:hover { border-color:var(--white); color:var(--white); }
+
+  .live-dot { width:7px; height:7px; background:var(--ok); border-radius:50%; animation:pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(1.4)} }
+
+  /* ── CONTENT ── */
+  .content { padding:28px 32px; flex:1; }
+
+  /* ── KPI ROW ── */
+  .kpi-row { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px; }
+
+  .kpi-card { background:var(--bg3); border:1px solid #1e1e1e; padding:18px; position:relative; overflow:hidden; transition:border-color 0.2s; }
+  .kpi-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:var(--gold); transform:scaleX(0); transform-origin:left; transition:transform 0.3s; }
+  .kpi-card:hover::before { transform:scaleX(1); }
+  .kpi-label { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--gray); margin-bottom:8px; }
+  .kpi-value { font-family:'Bebas Neue',sans-serif; font-size:40px; letter-spacing:2px; color:var(--white); line-height:1; }
+  .kpi-value.gold { color:var(--gold); }
+  .kpi-value.ok { color:var(--ok); }
+  .kpi-sub { font-size:11px; color:var(--gray); margin-top:4px; letter-spacing:0.5px; }
+
+  /* ── PANEL ── */
+  .panel { display:none; }
+  .panel.active { display:block; animation:fadeUp 0.2s ease; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ── CARD ── */
+  .card { background:var(--bg3); border:1px solid #1e1e1e; padding:20px; margin-bottom:16px; }
+  .card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid #1e1e1e; }
+  .card-title { font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:3px; color:var(--white); }
+  .card-title span { color:var(--gold); }
+
+  /* ── TABLE ── */
+  .data-table { width:100%; border-collapse:collapse; }
+  .data-table th { font-size:8px; letter-spacing:3px; text-transform:uppercase; color:var(--gray); text-align:left; padding:8px 10px; border-bottom:1px solid #1e1e1e; background:var(--bg4); font-weight:500; white-space:nowrap; }
+  .data-table td { padding:10px 10px; font-size:12px; border-bottom:1px solid #111; color:var(--white); vertical-align:middle; }
+  .data-table tr:last-child td { border-bottom:none; }
+  .data-table tr:hover td { background:rgba(255,255,255,0.015); }
+
+  /* ── BADGES ── */
+  .badge { font-size:8px; letter-spacing:2px; text-transform:uppercase; padding:3px 7px; font-weight:700; white-space:nowrap; }
+  .badge-gold { background:rgba(200,151,58,0.12); color:var(--gold); border:1px solid rgba(200,151,58,0.3); }
+  .badge-green { background:rgba(76,175,80,0.1); color:var(--ok); border:1px solid rgba(76,175,80,0.3); }
+  .badge-red { background:rgba(139,0,0,0.15); color:#ff5555; border:1px solid rgba(139,0,0,0.4); }
+  .badge-gray { background:rgba(255,255,255,0.05); color:var(--gray); border:1px solid #333; }
+
+  /* ── LEVEL DOTS ── */
+  .level-dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:5px; }
+  .level-b { background:var(--ok); }
+  .level-i { background:var(--gold); }
+  .level-a { background:var(--red-hi); }
+
+  /* ── INLINE EDIT ── */
+  .edit-row { background:rgba(200,151,58,0.04) !important; border:1px solid rgba(200,151,58,0.2) !important; }
+  .edit-row td { padding:8px 10px !important; }
+
+  .admin-input { background:var(--bg4); border:1px solid #2a2a2a; color:var(--white); padding:6px 10px; font-family:'Barlow Condensed',sans-serif; font-size:12px; width:100%; outline:none; transition:border-color 0.15s; }
+  .admin-input:focus { border-color:var(--gold); }
+
+  .admin-select { background:var(--bg4); border:1px solid #2a2a2a; color:var(--white); padding:6px 10px; font-family:'Barlow Condensed',sans-serif; font-size:12px; outline:none; cursor:pointer; }
+
+  /* ── ACTION BTNS ── */
+  .action-btn { background:transparent; border:1px solid var(--dim); color:var(--gray); padding:4px 10px; font-size:10px; letter-spacing:1px; text-transform:uppercase; cursor:pointer; transition:all 0.15s; font-family:'Barlow Condensed',sans-serif; }
+  .action-btn:hover { border-color:var(--gold); color:var(--gold); }
+  .action-btn.danger:hover { border-color:var(--red-hi); color:#ff5555; }
+  .action-btn.save { background:var(--gold); border-color:var(--gold); color:var(--bg); }
+
+  /* ── TOAST ── */
+  .toast { position:fixed; bottom:24px; right:24px; background:var(--bg3); border:1px solid var(--gold); border-left:3px solid var(--gold); padding:12px 18px; font-size:12px; color:var(--white); letter-spacing:0.5px; z-index:999; opacity:0; transform:translateY(8px); transition:all 0.25s; pointer-events:none; }
+  .toast.show { opacity:1; transform:translateY(0); }
+
+  /* ── STATS GRID ── */
+  .stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:16px; }
+  .stat-tile { background:var(--bg4); padding:14px; text-align:center; }
+  .stat-tile-val { font-family:'Bebas Neue',sans-serif; font-size:32px; color:var(--gold); letter-spacing:2px; }
+  .stat-tile-lbl { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--gray); margin-top:2px; }
+
+  /* ── BAR CHART ── */
+  .bar-chart { display:flex; flex-direction:column; gap:7px; }
+  .bar-row { display:flex; align-items:center; gap:10px; }
+  .bar-label { font-size:11px; color:var(--gray); width:80px; flex-shrink:0; text-transform:uppercase; letter-spacing:0.5px; }
+  .bar-track { flex:1; height:5px; background:#1e1e1e; }
+  .bar-fill { height:100%; background:var(--gold); transition:width 0.8s ease; }
+  .bar-val { font-size:11px; color:var(--gray); width:28px; text-align:right; }
+
+  /* ── VIDEO STATUS ── */
+  .video-status { display:flex; align-items:center; gap:6px; }
+  .video-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+  .video-dot.live { background:var(--ok); box-shadow:0 0 6px var(--ok); }
+  .video-dot.pending { background:var(--dim); }
+
+  /* ── FILTER ROW ── */
+  .filter-row { display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap; align-items:center; }
+  .filter-tag { padding:5px 12px; border:1px solid var(--dim); color:var(--gray); font-size:10px; letter-spacing:2px; text-transform:uppercase; cursor:pointer; transition:all 0.15s; }
+  .filter-tag.active { border-color:var(--gold); color:var(--gold); background:rgba(200,151,58,0.06); }
+  .filter-tag:hover { border-color:var(--gray); color:var(--white); }
+
+  /* ── SYNC STRIP ── */
+  .sync-strip { background:rgba(76,175,80,0.05); border:1px solid rgba(76,175,80,0.2); padding:10px 14px; margin-bottom:16px; display:flex; align-items:center; justify-content:space-between; font-size:11px; color:var(--gray); letter-spacing:0.5px; }
+  .sync-strip strong { color:var(--ok); }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width:4px; }
+  ::-webkit-scrollbar-track { background:var(--bg); }
+  ::-webkit-scrollbar-thumb { background:#333; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">TUF<span>.</span></div>
+    <div class="logo-sub">Admin · Exercise Mgr</div>
+    <div class="sidebar-tag">MOVE PILLAR</div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Overview</div>
+    <div class="nav-item active" onclick="showPanel('overview',this)">📊 Dashboard</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Content</div>
+    <div class="nav-item" onclick="showPanel('exercises',this)">🏋️ Exercises</div>
+    <div class="nav-item" onclick="showPanel('videos',this)">🎬 Video Queue</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">System</div>
+    <div class="nav-item" onclick="showPanel('data',this)">💾 Data Export</div>
+  </div>
+
+  <div class="sidebar-footer">
+    Marc · Founder<br>
+    Coach Taylor Hawks<br>
+    TurnedUp Fitness LLC
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-title">EXERCISE <span>MANAGER</span></div>
+    <div class="topbar-right">
+      <div class="live-dot"></div>
+      <span style="font-size:10px;letter-spacing:2px;color:var(--gray);text-transform:uppercase;">Live Data</span>
+      <button class="btn btn-ghost" onclick="resetToDefaults()">Reset to Defaults</button>
+      <button class="btn btn-gold" onclick="showPanel('exercises', document.querySelector('.nav-item:nth-child(2)'))">+ Add Exercise</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══ OVERVIEW PANEL ══ -->
+    <div id="panel-overview" class="panel active">
+
+      <div class="kpi-row" id="kpiRow"></div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+
+        <!-- BY MUSCLE GROUP -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">BY MUSCLE <span>GROUP</span></div>
+          </div>
+          <div class="bar-chart" id="muscleBarChart"></div>
+        </div>
+
+        <!-- BY LEVEL -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">BY <span>LEVEL</span></div>
+          </div>
+          <div class="stats-grid" id="levelStats"></div>
+          <div style="margin-top:14px;">
+            <div class="card-title" style="font-size:12px;letter-spacing:2px;margin-bottom:10px;color:var(--gray)">VIDEO COVERAGE</div>
+            <div id="videoCoverage"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RECENT EXERCISES -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">EXERCISE <span>LIBRARY OVERVIEW</span></div>
+          <button class="action-btn" onclick="showPanel('exercises', document.querySelectorAll('.nav-item')[1])">Manage All →</button>
+        </div>
+        <table class="data-table" id="overviewTable"></table>
+      </div>
+
+    </div>
+
+    <!-- ══ EXERCISES PANEL ══ -->
+    <div id="panel-exercises" class="panel">
+
+      <div class="sync-strip">
+        <span>Connected to <strong>TUF_DATA.js</strong> · Changes sync to member app via localStorage</span>
+        <span id="lastSaved" style="color:var(--dim)">No changes yet</span>
+      </div>
+
+      <div class="filter-row" id="filterRow">
+        <span style="font-size:10px;letter-spacing:2px;color:var(--gray);text-transform:uppercase;">Filter:</span>
+        <div class="filter-tag active" data-filter="all" onclick="filterExercises('all',this)">All</div>
+        <div class="filter-tag" data-filter="chest" onclick="filterExercises('chest',this)">Chest</div>
+        <div class="filter-tag" data-filter="back" onclick="filterExercises('back',this)">Back</div>
+        <div class="filter-tag" data-filter="shoulders" onclick="filterExercises('shoulders',this)">Shoulders</div>
+        <div class="filter-tag" data-filter="arms" onclick="filterExercises('arms',this)">Arms</div>
+        <div class="filter-tag" data-filter="legs" onclick="filterExercises('legs',this)">Legs</div>
+        <div class="filter-tag" data-filter="glutes" onclick="filterExercises('glutes',this)">Glutes</div>
+        <div class="filter-tag" data-filter="core" onclick="filterExercises('core',this)">Core</div>
+        <div class="filter-tag" data-filter="cardio" onclick="filterExercises('cardio',this)">Cardio</div>
+      </div>
+
+      <div class="card" style="padding:0;">
+        <table class="data-table" id="exerciseTable"></table>
+      </div>
+
+    </div>
+
+    <!-- ══ VIDEO QUEUE PANEL ══ -->
+    <div id="panel-videos" class="panel">
+
+      <div class="sync-strip">
+        <span>Add YouTube URLs below · Changes instantly reflected in member app</span>
+        <span id="videoCount" style="color:var(--gold)"></span>
+      </div>
+
+      <div class="card" style="padding:0;">
+        <table class="data-table" id="videoTable"></table>
+      </div>
+
+    </div>
+
+    <!-- ══ DATA PANEL ══ -->
+    <div id="panel-data" class="panel">
+      <div class="card">
+        <div class="card-header"><div class="card-title">DATA <span>EXPORT</span></div></div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div style="font-size:12px;color:var(--gray);line-height:1.6;">
+            Export the current exercise data — including any admin changes — as a JSON file. Use this to back up edits or seed a future database.
+          </div>
+          <div style="display:flex;gap:10px;margin-top:8px;">
+            <button class="btn btn-gold" onclick="exportJSON()">Export JSON</button>
+            <button class="btn btn-ghost" onclick="copyJSON()">Copy to Clipboard</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div class="card-title">STORAGE <span>STATUS</span></div></div>
+        <div id="storageStatus" style="font-size:12px;color:var(--gray);line-height:2;"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- Load shared data layer -->
+<script src="TUF_DATA.js"></script>
+
+<script>
+  // ── PANEL NAVIGATION ──
+  function showPanel(id, navEl) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('panel-' + id).classList.add('active');
+    if (navEl) navEl.classList.add('active');
+
+    if (id === 'overview') buildOverview();
+    if (id === 'exercises') buildExerciseTable();
+    if (id === 'videos') buildVideoTable();
+    if (id === 'data') buildDataPanel();
+  }
+
+  // ── TOAST ──
+  function toast(msg, type='ok') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.borderLeftColor = type === 'ok' ? 'var(--ok)' : type === 'warn' ? 'var(--gold)' : 'var(--red-hi)';
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2600);
+  }
+
+  // ── BUILD OVERVIEW ──
+  function buildOverview() {
+    const stats = TUF_DATA.getStats();
+    const total = stats.total;
+    const withVideo = stats.withVideo;
+    const published = TUF_DATA.exercises.filter(e => e.published).length;
+    const unpublished = TUF_DATA.exercises.length - published;
+
+    // KPIs
+    document.getElementById('kpiRow').innerHTML = `
+      <div class="kpi-card"><div class="kpi-label">Total Exercises</div><div class="kpi-value gold">${total}</div><div class="kpi-sub">Across 8 muscle groups</div></div>
+      <div class="kpi-card"><div class="kpi-label">Videos Live</div><div class="kpi-value ok">${withVideo}</div><div class="kpi-sub">${total - withVideo} still needed</div></div>
+      <div class="kpi-card"><div class="kpi-label">Published</div><div class="kpi-value">${published}</div><div class="kpi-sub">${unpublished} unpublished</div></div>
+      <div class="kpi-card"><div class="kpi-label">Video Coverage</div><div class="kpi-value" style="color:${withVideo/total > 0.5 ? 'var(--ok)' : 'var(--warn)'}">${Math.round(withVideo/total*100)}%</div><div class="kpi-sub">Target: 100%</div></div>
+    `;
+
+    // Muscle bar chart
+    const maxCount = Math.max(...Object.values(stats.byMuscle));
+    document.getElementById('muscleBarChart').innerHTML = Object.entries(stats.byMuscle).map(([muscle, count]) => `
+      <div class="bar-row">
+        <div class="bar-label">${TUF_DATA.muscleGroups[muscle].icon} ${muscle}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${(count/maxCount*100)}%"></div></div>
+        <div class="bar-val">${count}</div>
+      </div>
+    `).join('');
+
+    // Level stats
+    document.getElementById('levelStats').innerHTML = `
+      <div class="stat-tile"><div class="stat-tile-val" style="color:var(--ok)">${stats.byLevel.B}</div><div class="stat-tile-lbl">Beginner</div></div>
+      <div class="stat-tile"><div class="stat-tile-val" style="color:var(--gold)">${stats.byLevel.I}</div><div class="stat-tile-lbl">Intermediate</div></div>
+      <div class="stat-tile"><div class="stat-tile-val" style="color:var(--red-hi)">${stats.byLevel.A}</div><div class="stat-tile-lbl">Advanced</div></div>
+    `;
+
+    // Video coverage bar
+    document.getElementById('videoCoverage').innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+        <span style="font-size:11px;color:var(--gray);letter-spacing:1px;">YouTube Videos</span>
+        <span style="font-size:11px;color:var(--gold);font-weight:600;">${withVideo} / ${total}</span>
+      </div>
+      <div class="bar-track" style="height:8px;"><div class="bar-fill" style="width:${Math.round(withVideo/total*100)}%;background:${withVideo/total > 0.5 ? 'var(--ok)' : 'var(--gold)'}"></div></div>
+    `;
+
+    // Overview table
+    document.getElementById('overviewTable').innerHTML = `
+      <thead><tr>
+        <th>Exercise</th><th>Muscle</th><th>Level</th><th>Equipment</th><th>Video</th><th>Status</th>
+      </tr></thead>
+      <tbody>
+        ${TUF_DATA.exercises.slice(0,10).map(ex => `
+          <tr>
+            <td><strong>${ex.name}</strong></td>
+            <td style="color:var(--gray)">${TUF_DATA.muscleGroups[ex.muscle].icon} ${ex.muscle}</td>
+            <td><span class="level-dot level-${ex.level.toLowerCase()}"></span>${{B:'Beginner',I:'Intermediate',A:'Advanced'}[ex.level]}</td>
+            <td style="color:var(--gray);font-size:11px">${ex.equipment}</td>
+            <td>
+              <div class="video-status">
+                <div class="video-dot ${ex.video.type ? 'live' : 'pending'}"></div>
+                <span style="font-size:11px;color:var(--gray)">${ex.video.type ? 'Live' : 'Pending'}</span>
+              </div>
+            </td>
+            <td><span class="badge ${ex.published ? 'badge-green' : 'badge-gray'}">${ex.published ? 'Published' : 'Draft'}</span></td>
+          </tr>
+        `).join('')}
+      </tbody>
+    `;
+  }
+
+  // ── BUILD EXERCISE TABLE ──
+  let currentFilter = 'all';
+
+  function buildExerciseTable(filter) {
+    if (filter) currentFilter = filter;
+    const exercises = currentFilter === 'all'
+      ? TUF_DATA.exercises
+      : TUF_DATA.exercises.filter(e => e.muscle === currentFilter);
+
+    document.getElementById('exerciseTable').innerHTML = `
+      <thead><tr>
+        <th>ID</th><th>Name</th><th>Muscle</th><th>Level</th><th>Equipment</th>
+        <th>Video</th><th>Published</th><th>Actions</th>
+      </tr></thead>
+      <tbody id="exTableBody">
+        ${exercises.map(ex => buildExRow(ex)).join('')}
+      </tbody>
+    `;
+  }
+
+  function buildExRow(ex) {
+    return `
+      <tr id="row-${ex.id}">
+        <td style="font-size:10px;color:var(--dim);font-family:monospace">${ex.id}</td>
+        <td><strong>${ex.name}</strong></td>
+        <td style="color:var(--gray)">${TUF_DATA.muscleGroups[ex.muscle].icon} ${ex.muscle}</td>
+        <td><span class="level-dot level-${ex.level.toLowerCase()}"></span>${{B:'Beginner',I:'Intermediate',A:'Advanced'}[ex.level]}</td>
+        <td style="font-size:11px;color:var(--gray)">${ex.equipment}</td>
+        <td>
+          <div class="video-status">
+            <div class="video-dot ${ex.video.type ? 'live' : 'pending'}"></div>
+            <span style="font-size:11px;color:var(--gray)">${ex.video.type ? 'YouTube' : 'None'}</span>
+          </div>
+        </td>
+        <td>
+          <span class="badge ${ex.published ? 'badge-green' : 'badge-gray'}" style="cursor:pointer" onclick="togglePublish('${ex.id}')">
+            ${ex.published ? 'Published' : 'Draft'}
+          </span>
+        </td>
+        <td>
+          <div style="display:flex;gap:6px;">
+            <button class="action-btn" onclick="editVideoInline('${ex.id}')">Video</button>
+            <button class="action-btn danger" onclick="togglePublish('${ex.id}')">${ex.published ? 'Unpublish' : 'Publish'}</button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }
+
+  function filterExercises(filter, btn) {
+    currentFilter = filter;
+    document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    buildExerciseTable(filter);
+  }
+
+  // ── INLINE VIDEO EDIT ──
+  function editVideoInline(id) {
+    const ex = TUF_DATA.getById(id);
+    const row = document.getElementById('row-' + id);
+    row.classList.add('edit-row');
+    row.innerHTML = `
+      <td colspan="5" style="padding:12px 10px;">
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="font-size:11px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">Edit Video · ${ex.name}</div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <select class="admin-select" id="vtype-${id}">
+              <option value="" ${!ex.video.type ? 'selected' : ''}>No Video</option>
+              <option value="youtube" ${ex.video.type === 'youtube' ? 'selected' : ''}>YouTube</option>
+              <option value="local" ${ex.video.type === 'local' ? 'selected' : ''}>Local</option>
+            </select>
+            <input class="admin-input" id="vurl-${id}" placeholder="YouTube embed URL or local path" value="${ex.video.url || ''}" style="flex:1"/>
+          </div>
+          <div style="font-size:10px;color:var(--dim);">Example: https://www.youtube.com/embed/VIDEO_ID</div>
+        </div>
+      </td>
+      <td colspan="3" style="padding:12px 10px;vertical-align:top;">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="action-btn save" onclick="saveVideo('${id}')">Save</button>
+          <button class="action-btn" onclick="buildExerciseTable()">Cancel</button>
+        </div>
+      </td>
+    `;
+  }
+
+  function saveVideo(id) {
+    const type = document.getElementById('vtype-' + id).value || null;
+    const url = document.getElementById('vurl-' + id).value.trim() || null;
+    TUF_DATA.updateVideo(id, type, url);
+    updateLastSaved();
+    buildExerciseTable();
+    toast('Video saved · Member app updated ✓');
+    notifyMemberApp();
+  }
+
+  // ── TOGGLE PUBLISH ──
+  function togglePublish(id) {
+    const ex = TUF_DATA.getById(id);
+    const newState = TUF_DATA.togglePublish(id);
+    updateLastSaved();
+    buildExerciseTable();
+    toast(`${ex.name} ${newState ? 'published' : 'unpublished'} ✓`);
+    notifyMemberApp();
+  }
+
+  // ── VIDEO TABLE ──
+  function buildVideoTable() {
+    const withVideo = TUF_DATA.exercises.filter(e => e.video.type);
+    const pending = TUF_DATA.exercises.filter(e => !e.video.type);
+    document.getElementById('videoCount').textContent = `${withVideo.length} live · ${pending.length} pending`;
+
+    document.getElementById('videoTable').innerHTML = `
+      <thead><tr>
+        <th>Exercise</th><th>Muscle</th><th>Level</th><th>Current URL</th><th>Status</th><th>Action</th>
+      </tr></thead>
+      <tbody>
+        ${TUF_DATA.exercises.map(ex => `
+          <tr id="vrow-${ex.id}">
+            <td><strong>${ex.name}</strong></td>
+            <td style="color:var(--gray);font-size:11px">${TUF_DATA.muscleGroups[ex.muscle].icon} ${ex.muscle}</td>
+            <td><span class="level-dot level-${ex.level.toLowerCase()}"></span>${{B:'B',I:'I',A:'A'}[ex.level]}</td>
+            <td style="font-size:10px;color:var(--dim);font-family:monospace;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+              ${ex.video.url || '—'}
+            </td>
+            <td>
+              <div class="video-status">
+                <div class="video-dot ${ex.video.type ? 'live' : 'pending'}"></div>
+                <span style="font-size:11px;color:${ex.video.type ? 'var(--ok)' : 'var(--dim)'}">${ex.video.type ? 'Live' : 'Pending'}</span>
+              </div>
+            </td>
+            <td><button class="action-btn" onclick="quickVideoEdit('${ex.id}')">Edit URL</button></td>
+          </tr>
+        `).join('')}
+      </tbody>
+    `;
+  }
+
+  function quickVideoEdit(id) {
+    const ex = TUF_DATA.getById(id);
+    const row = document.getElementById('vrow-' + id);
+    row.classList.add('edit-row');
+    row.innerHTML = `
+      <td colspan="4" style="padding:10px;">
+        <input class="admin-input" id="qurl-${id}" placeholder="https://www.youtube.com/embed/..." value="${ex.video.url || ''}" />
+      </td>
+      <td colspan="2" style="padding:10px;">
+        <div style="display:flex;gap:6px;">
+          <button class="action-btn save" onclick="quickSaveVideo('${id}')">Save</button>
+          <button class="action-btn" onclick="buildVideoTable()">Cancel</button>
+        </div>
+      </td>
+    `;
+    document.getElementById('qurl-' + id).focus();
+  }
+
+  function quickSaveVideo(id) {
+    const url = document.getElementById('qurl-' + id).value.trim();
+    const type = url ? 'youtube' : null;
+    TUF_DATA.updateVideo(id, type, url || null);
+    updateLastSaved();
+    buildVideoTable();
+    toast('Video URL saved · Synced to member app ✓');
+    notifyMemberApp();
+  }
+
+  // ── DATA PANEL ──
+  function buildDataPanel() {
+    const lastSaved = localStorage.getItem('TUF_LAST_SAVED');
+    const overrideCount = (() => { try { const s = localStorage.getItem('TUF_EXERCISES'); return s ? JSON.parse(s).length : 0; } catch(e) { return 0; } })();
+
+    document.getElementById('storageStatus').innerHTML = `
+      <div>Total exercises in data layer: <strong style="color:var(--gold)">${TUF_DATA.exercises.length}</strong></div>
+      <div>localStorage overrides active: <strong style="color:var(--gold)">${overrideCount}</strong></div>
+      <div>Last save: <strong style="color:var(--ok)">${lastSaved ? new Date(lastSaved).toLocaleString() : 'Never'}</strong></div>
+      <div>Member app sync: <strong style="color:var(--ok)">Via localStorage storage events</strong></div>
+    `;
+  }
+
+  // ── EXPORT ──
+  function exportJSON() {
+    const data = JSON.stringify({ exercises: TUF_DATA.exercises, meta: TUF_DATA.meta }, null, 2);
+    const blob = new Blob([data], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'TUF_exercises_export_' + new Date().toISOString().split('T')[0] + '.json';
+    a.click();
+    toast('Exported TUF_exercises.json ✓');
+  }
+
+  function copyJSON() {
+    const data = JSON.stringify({ exercises: TUF_DATA.exercises }, null, 2);
+    navigator.clipboard.writeText(data).then(() => toast('Copied to clipboard ✓'));
+  }
+
+  // ── RESET ──
+  function resetToDefaults() {
+    if (!confirm('Reset all admin changes? This clears localStorage overrides and restores defaults.')) return;
+    localStorage.removeItem('TUF_EXERCISES');
+    localStorage.removeItem('TUF_LAST_SAVED');
+    location.reload();
+  }
+
+  // ── HELPERS ──
+  function updateLastSaved() {
+    const el = document.getElementById('lastSaved');
+    if (el) el.innerHTML = `<strong style="color:var(--ok)">Saved ${new Date().toLocaleTimeString()}</strong>`;
+  }
+
+  function notifyMemberApp() {
+    // Forces storage event in member app window if open
+    localStorage.setItem('TUF_ADMIN_PING', Date.now().toString());
+  }
+
+  // ── INIT ──
+  // Reload any persisted admin changes before first render
+  TUF_DATA.loadFromStorage();
+  buildOverview();
+</script>
+
+</body>
+</html>

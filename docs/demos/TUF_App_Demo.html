@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Turned Up Fitness — App Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,800;1,700&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#8B0000;--red2:#A31515;--red3:#C41E1E;
+  --gold:#C8973A;--gold2:#8A6420;
+  --black:#080808;--d1:#0D0D0D;--d2:#141414;--d3:#1C1C1C;--d4:#242424;
+  --border:rgba(255,255,255,0.07);
+  --text:#E8E8E8;--muted:#777;
+  --blue:#3A7BD5;--yellow:#F5C518;--orange:#E8651A;--green:#2DAA4F;
+  --nav:60px;--tabs:56px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--black);font-family:'Barlow',sans-serif;color:var(--text);overflow-x:hidden}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:var(--red)}
+
+/* ─── NAV ─── */
+.nav{position:fixed;top:0;left:0;right:0;height:var(--nav);background:rgba(8,8,8,.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:900;display:flex;align-items:center;padding:0 18px;gap:12px}
+.nav-mark{width:36px;height:36px;background:var(--red);border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:16px;color:#fff;position:relative;overflow:hidden;flex-shrink:0;cursor:pointer}
+.nav-mark::after{content:'';position:absolute;top:0;right:-8px;width:22px;height:100%;background:rgba(0,0,0,.22);transform:skewX(-12deg)}
+.nav-titles{display:flex;flex-direction:column;line-height:1;cursor:pointer}
+.nav-t1{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:#fff}
+.nav-t2{font-family:'Barlow Condensed',sans-serif;font-size:8px;letter-spacing:3px;color:var(--gold);font-weight:700}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.badge-premium{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#000;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:8px;letter-spacing:2px;padding:3px 9px;border-radius:10px}
+.avatar{width:32px;height:32px;background:linear-gradient(135deg,var(--red),var(--red2));border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:14px;color:#fff;cursor:pointer;flex-shrink:0}
+
+/* ─── TABS ─── */
+.tabs{position:fixed;top:var(--nav);left:0;right:0;height:var(--tabs);background:rgba(10,10,10,.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:899;display:flex;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:1;min-width:70px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:none;background:transparent;cursor:pointer;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:9px;letter-spacing:1.5px;border-bottom:2px solid transparent;transition:all .2s;position:relative}
+.tab .ti{font-size:18px}
+.tab:hover{color:#fff;background:rgba(255,255,255,.03)}
+.tab.on{color:#fff;border-bottom-color:var(--red)}
+.tab.prem::after{content:'★';position:absolute;top:6px;right:8px;font-size:8px;color:var(--gold)}
+
+/* ─── SCREENS ─── */
+.wrap{margin-top:calc(var(--nav) + var(--tabs));min-height:calc(100vh - var(--nav) - var(--tabs))}
+.screen{display:none;animation:fi .25s ease}
+.screen.on{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ─── SHARED ─── */
+.page{max-width:860px;margin:0 auto;padding:20px 16px 60px}
+.hero-band{padding:30px 20px 24px;position:relative;overflow:hidden;border-bottom:2px solid var(--red)}
+.hero-band::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 45px,rgba(255,255,255,.013) 45px,rgba(255,255,255,.013) 46px)}
+.hero-band::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--red),transparent)}
+.eyebrow{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:9px;letter-spacing:4px;color:var(--gold);margin-bottom:6px;position:relative}
+.h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(34px,6vw,50px);color:#fff;line-height:.92;letter-spacing:2px;position:relative}
+.hsub{font-size:12px;color:#888;margin-top:8px;position:relative;line-height:1.5}
+.hstats{display:flex;gap:12px;margin-top:16px;position:relative;flex-wrap:wrap}
+.hstat{background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:8px 14px;text-align:center}
+.hstat-n{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--gold);line-height:1}
+.hstat-l{font-family:'Barlow Condensed',sans-serif;font-size:8px;letter-spacing:2px;color:#555;margin-top:2px}
+.sec-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:11px;letter-spacing:3px;color:var(--gold);margin-bottom:12px;padding-bottom:5px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.sec-title .sec-right{margin-left:auto}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.card{background:var(--d2);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:transform .2s,box-shadow .2s,border-color .2s;cursor:pointer}
+.card:hover{transform:translateY(-3px);box-shadow:0 10px 40px rgba(0,0,0,.6);border-color:rgba(200,151,58,.2)}
+.tag{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:8px;letter-spacing:2px;padding:3px 8px;border-radius:8px;display:inline-block}
+.tag-r{background:rgba(139,0,0,.3);color:#FF7070;border:1px solid rgba(139,0,0,.4)}
+.tag-g{background:rgba(200,151,58,.2);color:var(--gold);border:1px solid rgba(200,151,58,.3)}
+.tag-b{background:rgba(58,123,213,.2);color:#7EB5FF;border:1px solid rgba(58,123,213,.3)}
+.tag-v{background:rgba(45,170,79,.2);color:#6EE68A;border:1px solid rgba(45,170,79,.3)}
+.btn{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:10px;letter-spacing:2px;border:none;cursor:pointer;padding:9px 18px;border-radius:8px;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn-r{background:var(--red);color:#fff}.btn-r:hover{background:var(--red3)}
+.btn-g{background:var(--gold);color:#000}.btn-g:hover{background:#d4a840}
+.btn-o{background:transparent;color:#fff;border:1px solid var(--border)}.btn-o:hover{border-color:var(--red);color:var(--red)}
+.btn-sm{padding:5px 12px;font-size:9px}
+.btn-full{width:100%;justify-content:center}
+.divider{height:1px;background:var(--border);margin:20px 0}
+.progress-bar{background:var(--d4);border-radius:3px;height:5px;overflow:hidden}
+.progress-fill{height:100%;border-radius:3px;transition:width .6s ease}
+
+/* ════ HOME ════ */
+.greet{background:linear-gradient(135deg,#180000,var(--d1),#001a0a);padding:24px 20px;border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.greet::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 40px,rgba(255,255,255,.01) 40px,rgba(255,255,255,.01) 41px)}
+.greet-name{font-family:'Bebas Neue',sans-serif;font-size:28px;color:#fff;position:relative}
+.greet-name span{color:var(--gold)}
+.greet-date{font-size:11px;color:var(--muted);position:relative;margin-top:3px}
+.streaks{display:flex;gap:10px;padding:14px 16px;background:var(--d2);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.streaks::-webkit-scrollbar{display:none}
+.streak{background:var(--d3);border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0;min-width:80px}
+.streak-i{font-size:20px}
+.streak-v{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gold);line-height:1}
+.streak-l{font-family:'Barlow Condensed',sans-serif;font-size:8px;letter-spacing:2px;color:var(--muted)}
+.today-card{background:linear-gradient(135deg,var(--red),#4a0000);border-radius:14px;padding:18px;position:relative;overflow:hidden;cursor:pointer;transition:transform .2s;margin-bottom:14px}
+.today-card:hover{transform:scale(1.01)}
+.today-card::before{content:'';position:absolute;top:-30px;right:-30px;width:110px;height:110px;background:rgba(255,255,255,.05);border-radius:50%}
+.today-card::after{content:'';position:absolute;bottom:-20px;left:-20px;width:80px;height:80px;background:rgba(255,255,255,.03);border-radius:50%}
+.tc-pre{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:800;letter-spacing:3px;color:rgba(255,255,255,.55);margin-bottom:5px;position:relative}
+.tc-title{font-family:'Bebas Neue',sans-serif;font-size:26px;color:#fff;line-height:1;position:relative}
+.tc-meta{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;position:relative}
+.tc-meta span{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:600;color:rgba(255,255,255,.65);background:rgba(0,0,0,.3);padding:3px 9px;border-radius:10px}
+.tc-go{position:absolute;right:18px;top:50%;transform:translateY(-50%);width:42px;height:42px;background:rgba(255,255,255,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px}
+.nutr-card{background:linear-gradient(135deg,#061a0e,var(--d2));border:1px solid rgba(45,170,79,.2);border-radius:14px;padding:16px;cursor:pointer;transition:transform .2s;margin-bottom:14px}
+.nutr-card:hover{transform:scale(1.01)}
+.nc-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.nc-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:.5px;color:#6EE68A}
+.nc-sub{font-size:10px;color:var(--muted);margin-top:2px}
+.nc-macros{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.nc-mac{background:rgba(0,0,0,.3);border-radius:8px;padding:8px;text-align:center}
+.nc-val{font-family:'Bebas Neue',sans-serif;font-size:20px;line-height:1}
+.nc-lbl{font-family:'Barlow Condensed',sans-serif;font-size:8px;letter-spacing:1.5px;color:var(--muted);margin-top:1px}
+.quick-recipes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.qr-card{background:var(--d2);border:1px solid var(--border);border-radius:10px;padding:12px;cursor:pointer;transition:all .2s;text-align:center}
+.qr-card:hover{border-color:rgba(200,151,58,.3);background:var(--d3)}
+.qr-icon{font-size:24px;margin-bottom:6px}
+.qr-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;color:#fff;line-height:1.2}
+.qr-cal{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--gold);margin-top:3px}
+
+/* ════ WORKOUTS ════ */
+.movement-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mv-card{background:var(--d2);border:1px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.mv-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--red)}
+.mv-card:hover{border-color:var(--red);transform:translateX(2px);box-shadow:-3px 0 20px rgba(139,0,0,.25)}
+.mv-icon{font-size:24px;margin-bottom:8px}
+.mv-name{font-family:'Bebas Neue',sans-serif;font-size:19px;color:#fff;letter-spacing:1px}
+.mv-desc{font-size:10px;color:var(--muted);margin-top:3px;line-height:1.4}
+.mv-exs{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+.mv-ex{font-family:'Barlow Condensed',sans-serif;font-size:8px;font-weight:700;letter-spacing:1px;background:rgba(139,0,0,.2);border:1px solid rgba(139,0,0,.3);color:#FF8A8A;padding:2px 7px;border-radius:5px}
+.week-card{background:var(--d2);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.week-head{background:var(--red);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.week-head-t{font-family:'Bebas Neue',sans-serif;font-size:17px;color:#fff;letter-spacing:1px}
+.week-day{display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border);gap:12px;cursor:pointer;transition:background .2s}
+.week-day:last-child{border-bottom:none}
+.week-day:hover{background:rgba(255,255,255,.03)}
+.wd-n{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--red);width:24px;flex-shrink:0}
+.wd-inf{flex:1}
+.wd-nm{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;color:#fff}
+.wd-ds{font-size:10px;color:var(--muted);margin-top:2px}
+.wd-st{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px}
+.wd-st.done{background:rgba(45,170,79,.2);border-color:var(--green)}
+.cond-card{background:linear-gradient(135deg,#0d1a2a,var(--d2));border:1px solid rgba(58,123,213,.25);border-radius:12px;padding:16px}
+.cond-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12px;letter-spacing:2px;color:#7EB5FF;margin-bottom:10px}
+.cond-tags{display:flex;flex-wrap:wrap;gap:8px}
+.cond-tag{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:9px;letter-spacing:1.5px;background:rgba(58,123,213,.15);border:1px solid rgba(58,123,213,.3);color:#7EB5FF;padding:5px 12px;border-radius:20px;cursor:pointer;transition:all .2s}
+.cond-tag:hover,.cond-tag.on{background:rgba(58,123,213,.3);color:#fff}
+
+/* ════ NUTRITION (PREMIUM) ════ */
+.premium-banner{background:linear-gradient(135deg,#1a1000,var(--d2));border:1px solid rgba(200,151,58,.35);border-radius:14px;padding:18px;text-align:center;margin-bottom:18px}
+.pb-icon{font-size:36px;margin-bottom:8px}
+.pb-title{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--gold);letter-spacing:2px}
+.pb-desc{font-size:11px;color:#888;margin-top:6px;line-height:1.6}
+.macro-legend{display:flex;gap:16px;flex-wrap:wrap;background:var(--d2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:14px}
+.ml-item{display:flex;align-items:center;gap:5px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;color:#ccc}
+.ml-dot{width:9px;height:9px;border-radius:50%}
+.filter-row{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;margin-bottom:16px}
+.filter-row::-webkit-scrollbar{display:none}
+.fil{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:9px;letter-spacing:2px;background:var(--d3);border:1px solid var(--border);color:var(--muted);padding:6px 14px;border-radius:20px;cursor:pointer;white-space:nowrap;transition:all .2s}
+.fil:hover,.fil.on{background:var(--red);border-color:var(--red);color:#fff}
+.recipe-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.rc{background:var(--d2);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .2s}
+.rc:hover{border-color:rgba(200,151,58,.3);transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.5)}
+.rc-hero{padding:14px 14px 10px;border-bottom:1px solid var(--border)}
+.rc-cat{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;color:var(--muted);display:flex;align-items:center;gap:5px}
+.rc-cat-dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+.rc-title{font-family:'Bebas Neue',sans-serif;font-size:20px;color:#fff;line-height:1;margin-top:5px;letter-spacing:.5px}
+.rc-bar{height:4px;border-radius:2px;display:flex;overflow:hidden;background:var(--d4);margin-top:8px}
+.rc-foot{background:var(--d3);padding:8px 12px;display:flex;justify-content:space-between;align-items:center}
+.rc-cal{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--gold)}
+.rc-cal-l{font-family:'Barlow Condensed',sans-serif;font-size:8px;color:var(--muted)}
+.rc-macs{display:flex;gap:6px}
+.rc-m{font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;display:flex;align-items:center;gap:3px}
+.rc-mdot{width:6px;height:6px;border-radius:50%}
+.meal-plan-card{background:linear-gradient(135deg,#071a12,var(--d2));border:1px solid rgba(45,170,79,.2);border-radius:12px;padding:16px;margin-bottom:14px}
+.mp-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12px;letter-spacing:2px;color:#6EE68A;margin-bottom:12px}
+.mp-day{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.mp-day:last-child{border-bottom:none}
+.mp-day-n{font-family:'Bebas Neue',sans-serif;font-size:13px;color:var(--muted);width:32px;flex-shrink:0}
+.mp-meals{flex:1}
+.mp-meal{font-size:11px;color:#ccc;padding:1px 0}
+.mp-meal span{color:var(--gold);font-weight:600}
+
+/* ════ PROGRESS ════ */
+.week-dots{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:18px}
+.wdot{aspect-ratio:1;border-radius:8px;background:var(--d3);border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;transition:all .2s}
+.wdot.done{background:rgba(45,170,79,.2);border-color:var(--green)}
+.wdot.today{border-color:var(--gold);box-shadow:0 0 10px rgba(200,151,58,.2)}
+.wdot-l{font-family:'Barlow Condensed',sans-serif;font-size:8px;letter-spacing:1px;color:var(--muted)}
+.wdot-i{font-size:13px}
+.stat-g{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.stat-c{background:var(--d2);border:1px solid var(--border);border-radius:12px;padding:16px}
+.stat-l{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:2px;color:var(--muted);margin-bottom:5px}
+.stat-v{font-family:'Bebas Neue',sans-serif;font-size:36px;color:#fff;line-height:1}
+.stat-v small{font-size:14px;color:var(--muted)}
+.stat-ch{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;margin-top:4px}
+.up{color:var(--green)}.dn{color:#FF6B6B}
+.chart-bar-wrap{background:var(--d2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px}
+.chart-bars{display:flex;align-items:flex-end;gap:6px;height:80px;margin-top:12px}
+.cbar{flex:1;border-radius:4px 4px 0 0;min-height:4px;transition:height .6s ease;cursor:pointer}
+.cbar:hover{filter:brightness(1.2)}
+.cbar-l{font-family:'Barlow Condensed',sans-serif;font-size:8px;letter-spacing:1px;color:var(--muted);text-align:center;margin-top:4px}
+.milestone-list{display:flex;flex-direction:column;gap:8px}
+.milestone{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--d2);border:1px solid var(--border);border-radius:10px}
+.ms-icon{font-size:20px;width:36px;text-align:center;flex-shrink:0}
+.ms-info{flex:1}
+.ms-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;color:#fff}
+.ms-date{font-size:10px;color:var(--muted);margin-top:1px}
+.ms-check{font-size:16px}
+
+/* ════ PROFILE ════ */
+.prof-hero{background:linear-gradient(135deg,#1a0000,var(--d1));padding:28px 20px;display:flex;align-items:center;gap:18px;border-bottom:2px solid var(--red)}
+.prof-av{width:68px;height:68px;background:linear-gradient(135deg,var(--red),var(--red2));border-radius:50%;border:3px solid var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:28px;color:#fff;flex-shrink:0}
+.prof-name{font-family:'Bebas Neue',sans-serif;font-size:24px;color:#fff;letter-spacing:1px}
+.prof-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.prof-badge{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#000;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:8px;letter-spacing:2px;padding:3px 10px;border-radius:10px;margin-top:7px}
+.settings{display:flex;flex-direction:column;gap:6px}
+.si{display:flex;align-items:center;gap:12px;padding:14px;background:var(--d2);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:all .2s}
+.si:hover{background:var(--d3);border-color:rgba(255,255,255,.1)}
+.si-ic{width:34px;height:34px;background:var(--d3);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.si-t{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;color:#fff}
+.si-d{font-size:10px;color:var(--muted);margin-top:1px}
+.si-arr{color:var(--muted);font-size:14px;margin-left:auto}
+.health-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.hc{background:var(--d2);border:1px solid var(--border);border-radius:10px;padding:14px}
+.hc-label{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:2px;color:var(--muted);margin-bottom:4px}
+.hc-val{font-family:'Bebas Neue',sans-serif;font-size:24px;color:#fff}
+.hc-sub{font-size:10px;color:var(--muted);margin-top:2px}
+
+/* ════ MODAL ════ */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:1000;align-items:flex-end;backdrop-filter:blur(6px)}
+.overlay.on{display:flex;animation:fi .2s ease}
+.sheet{background:var(--d2);border-radius:20px 20px 0 0;width:100%;max-height:88vh;overflow-y:auto;padding-bottom:36px;animation:su .3s ease}
+@keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.sheet-handle{width:38px;height:4px;background:var(--d4);border-radius:2px;margin:12px auto 0}
+.sheet-head{padding:16px 20px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.sheet-title{font-family:'Bebas Neue',sans-serif;font-size:22px;color:#fff;letter-spacing:1px}
+.sheet-close{width:30px;height:30px;border-radius:50%;background:var(--d3);border:1px solid var(--border);color:#fff;font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.sheet-body{padding:20px}
+.exercise-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.exercise-item:last-child{border-bottom:none}
+.ex-n{font-family:'Bebas Neue',sans-serif;font-size:15px;color:var(--red);width:22px;flex-shrink:0}
+.ex-inf{flex:1}
+.ex-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:#fff}
+.ex-sets{font-size:10px;color:var(--muted);margin-top:2px}
+.ex-dots{display:flex;gap:5px;margin-left:auto}
+.ex-dot{width:8px;height:8px;border-radius:50%;background:var(--d4);border:1px solid var(--border);cursor:pointer;transition:all .2s}
+.ex-dot.done{background:var(--green);border-color:var(--green)}
+.recipe-detail-macro-bar{height:8px;border-radius:4px;display:flex;overflow:hidden;margin:10px 0}
+.rdm-p{background:var(--blue)}
+.rdm-f{background:var(--yellow)}
+.rdm-c{background:var(--orange)}
+.nutr-table{width:100%;border-collapse:collapse;margin-top:10px}
+.nutr-table tr{border-bottom:1px solid var(--border)}
+.nutr-table td{padding:7px 0;font-size:11px}
+.nutr-table td:first-child{color:var(--muted)}
+.nutr-table td:last-child{text-align:right;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;color:#fff}
+.step-list{display:flex;flex-direction:column;gap:10px;margin:12px 0}
+.step-item{display:flex;gap:10px;background:var(--d3);border-radius:10px;padding:10px 12px;border-left:3px solid var(--red)}
+.step-num{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--red);line-height:1;flex-shrink:0;width:20px}
+.step-text-wrap .step-t{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;letter-spacing:1.5px;color:var(--gold);margin-bottom:2px}
+.step-text-wrap .step-d{font-size:10px;color:#bbb;line-height:1.45}
+.tip-box{background:#1a1200;border:1px solid var(--gold);border-radius:8px;padding:10px 14px;margin-top:12px;display:flex;gap:8px}
+.tip-l{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:8px;letter-spacing:2px;color:var(--gold);white-space:nowrap;flex-shrink:0;padding-top:1px}
+.tip-d{font-size:10px;color:#D4B870;line-height:1.5}
+.sci-box{background:#07152a;border:1px solid var(--blue);border-radius:8px;padding:10px 14px;margin-top:8px;display:flex;gap:8px}
+.sci-l{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:8px;letter-spacing:2px;color:var(--blue);white-space:nowrap;flex-shrink:0;padding-top:1px}
+.sci-d{font-size:10px;color:#9BB8D4;line-height:1.5}
+@media(max-width:600px){.g2,.movement-grid,.stat-g,.health-cards,.g3{grid-template-columns:1fr}.nc-macros{grid-template-columns:1fr 1fr}.quick-recipes{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════ NAV ═══════════════════════ -->
+<nav class="nav">
+  <div class="nav-mark" onclick="showTab('home')">TUF</div>
+  <div class="nav-titles" onclick="showTab('home')">
+    <span class="nav-t1">TURNED UP FITNESS</span>
+    <span class="nav-t2">40+ OPTIMIZED</span>
+  </div>
+  <div class="nav-right">
+    <span class="badge-premium">⭐ PREMIUM</span>
+    <div class="avatar" onclick="showTab('profile')">M</div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════ TABS ═══════════════════════ -->
+<div class="tabs">
+  <button class="tab on" id="tab-home" onclick="showTab('home')"><span class="ti">🏠</span>HOME</button>
+  <button class="tab" id="tab-workouts" onclick="showTab('workouts')"><span class="ti">💪</span>WORKOUTS</button>
+  <button class="tab prem" id="tab-nutrition" onclick="showTab('nutrition')"><span class="ti">🍽</span>NUTRITION</button>
+  <button class="tab" id="tab-progress" onclick="showTab('progress')"><span class="ti">📈</span>PROGRESS</button>
+  <button class="tab" id="tab-profile" onclick="showTab('profile')"><span class="ti">👤</span>PROFILE</button>
+</div>
+
+<div class="wrap">
+
+<!-- ═══════════════════════════════════════════════════
+     HOME
+═══════════════════════════════════════════════════ -->
+<div class="screen on" id="screen-home">
+  <div class="greet">
+    <div class="greet-name">GOOD MORNING, <span>MARC</span> 💪</div>
+    <div class="greet-date">Monday, March 23 · Week 2 of 4 · Day 8</div>
+  </div>
+  <div class="streaks">
+    <div class="streak"><div class="streak-i">🔥</div><div class="streak-v">7</div><div class="streak-l">STREAK</div></div>
+    <div class="streak"><div class="streak-i">💪</div><div class="streak-v">14</div><div class="streak-l">WORKOUTS</div></div>
+    <div class="streak"><div class="streak-i">🍽</div><div class="streak-v">92%</div><div class="streak-l">NUTRITION</div></div>
+    <div class="streak"><div class="streak-i">⚡</div><div class="streak-v">2</div><div class="streak-l">LBS LOST</div></div>
+    <div class="streak"><div class="streak-i">😴</div><div class="streak-v">7.2h</div><div class="streak-l">AVG SLEEP</div></div>
+  </div>
+  <div class="page">
+    <div style="margin-bottom:20px">
+      <div class="sec-title">💪 TODAY'S WORKOUT</div>
+      <div class="today-card" onclick="openWorkoutModal('Push + Core Circuit','Day 8 · Week 2','35 MIN','6 EXERCISES')">
+        <div class="tc-pre">DAY 8 · WEEK 2 · INTERMEDIATE</div>
+        <div class="tc-title">PUSH + CORE<br>CIRCUIT</div>
+        <div class="tc-meta"><span>⏱ 35 MIN</span><span>🏋 6 EXERCISES</span><span>🔥 BURN ~280 CAL</span></div>
+        <div class="tc-go">▶</div>
+      </div>
+    </div>
+    <div style="margin-bottom:20px">
+      <div class="sec-title">🍽 TODAY'S NUTRITION <span class="sec-right"><span class="tag tag-g">PREMIUM</span></span></div>
+      <div class="nutr-card" onclick="showTab('nutrition')">
+        <div class="nc-head">
+          <div><div class="nc-title">🥜 SUGGESTED: THAI PEANUT CHICKEN</div><div class="nc-sub">Tap to browse all 43 recipes in the TUTK library →</div></div>
+          <span class="tag tag-g">TUTK</span>
+        </div>
+        <div class="nc-macros">
+          <div class="nc-mac"><div class="nc-val" style="color:var(--blue)">42g</div><div class="nc-lbl">PROTEIN</div></div>
+          <div class="nc-mac"><div class="nc-val" style="color:var(--yellow)">22g</div><div class="nc-lbl">FAT</div></div>
+          <div class="nc-mac"><div class="nc-val" style="color:var(--orange)">12g</div><div class="nc-lbl">CARBS</div></div>
+          <div class="nc-mac"><div class="nc-val" style="color:var(--gold)">395</div><div class="nc-lbl">CALORIES</div></div>
+        </div>
+      </div>
+      <div class="quick-recipes">
+        <div class="qr-card" onclick="openRecipeModal('Protein Pancakes',320,30,8,28,'BREAKFAST','Grease skillet with PAM and bring to medium heat. Mix all ingredients together in bowl or puree in food processor. Cook on skillet about 2 minutes, flip and leave on heat until firm.')"><div class="qr-icon">🥞</div><div class="qr-name">PROTEIN PANCAKES</div><div class="qr-cal">320 CAL</div></div>
+        <div class="qr-card" onclick="openRecipeModal('Garlic Shrimp',340,32,8,32,'MAINS','Combine salt, garlic, tomato, vinegar and basil. Toss shrimp in mixture to coat. Heat greased skillet to medium and pour mixture on. Cook until shrimp is pink. Lay atop ½ cup white rice.')"><div class="qr-icon">🍤</div><div class="qr-name">GARLIC SHRIMP</div><div class="qr-cal">340 CAL</div></div>
+        <div class="qr-card" onclick="openRecipeModal('Blueberry Pie Smoothie',220,26,2,24,'SHAKES','Add all ingredients to blender. Blend until smooth and creamy. Pour into glass and serve immediately. The spinach is completely undetectable in flavor.')"><div class="qr-icon">🫐</div><div class="qr-name">BLUEBERRY SHAKE</div><div class="qr-cal">220 CAL</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="sec-title">📊 THIS WEEK AT A GLANCE</div>
+      <div class="week-dots">
+        <div class="wdot done"><div class="wdot-i">✅</div><div class="wdot-l">MON</div></div>
+        <div class="wdot done"><div class="wdot-i">✅</div><div class="wdot-l">TUE</div></div>
+        <div class="wdot done"><div class="wdot-i">✅</div><div class="wdot-l">WED</div></div>
+        <div class="wdot done"><div class="wdot-i">✅</div><div class="wdot-l">THU</div></div>
+        <div class="wdot today"><div class="wdot-i">▶</div><div class="wdot-l">FRI</div></div>
+        <div class="wdot"><div class="wdot-i">·</div><div class="wdot-l">SAT</div></div>
+        <div class="wdot"><div class="wdot-i">·</div><div class="wdot-l">SUN</div></div>
+      </div>
+      <div class="g2">
+        <button class="btn btn-r btn-full" onclick="showTab('workouts')">💪 START WORKOUT</button>
+        <button class="btn btn-g btn-full" onclick="showTab('nutrition')">🍽 VIEW RECIPES</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     WORKOUTS
+═══════════════════════════════════════════════════ -->
+<div class="screen" id="screen-workouts">
+  <div class="hero-band" style="background:linear-gradient(135deg,#3a0000,var(--d1))">
+    <div class="eyebrow">TURNED UP FITNESS · WORKOUT MODULE</div>
+    <div class="h1">BEGINNER<br>EXERCISE LIBRARY</div>
+    <div class="hsub">6 Core Movement Patterns · 40+ Optimized · 4-Week Progressions</div>
+    <div class="hstats">
+      <div class="hstat"><div class="hstat-n">6</div><div class="hstat-l">PATTERNS</div></div>
+      <div class="hstat"><div class="hstat-n">4</div><div class="hstat-l">WEEK PLAN</div></div>
+      <div class="hstat"><div class="hstat-n">3</div><div class="hstat-l">MODS</div></div>
+    </div>
+  </div>
+  <div class="page">
+
+    <!-- 4-Week Program -->
+    <div style="margin-bottom:24px">
+      <div class="sec-title">📅 YOUR 4-WEEK PROGRAM</div>
+      <div class="week-card">
+        <div class="week-head"><span class="week-head-t">WEEK 2 — BUILDING PHASE</span><span class="tag tag-g">IN PROGRESS</span></div>
+        <div class="week-day" onclick="openWorkoutModal('Upper Body Push','Day 8 · Push Pattern','30 MIN','5 EXERCISES')"><div class="wd-n">8</div><div class="wd-inf"><div class="wd-nm">UPPER BODY PUSH</div><div class="wd-ds">Chest · Shoulders · Triceps · Core</div></div><div class="wd-st done">✓</div></div>
+        <div class="week-day" onclick="openWorkoutModal('Lower Body Pull','Day 9 · Hinge + Squat','35 MIN','6 EXERCISES')"><div class="wd-n">9</div><div class="wd-inf"><div class="wd-nm">LOWER BODY PULL</div><div class="wd-ds">Hamstrings · Glutes · Hip Hinge</div></div><div class="wd-st done">✓</div></div>
+        <div class="week-day" onclick="openWorkoutModal('Active Recovery','Day 10 · Carry + Core','25 MIN','4 EXERCISES')"><div class="wd-n">10</div><div class="wd-inf"><div class="wd-nm">ACTIVE RECOVERY</div><div class="wd-ds">Carry Patterns · Core Stability</div></div><div class="wd-st done">✓</div></div>
+        <div class="week-day" onclick="openWorkoutModal('Full Body Circuit','Day 11 · All Patterns','40 MIN','7 EXERCISES')"><div class="wd-n">11</div><div class="wd-inf"><div class="wd-nm">FULL BODY CIRCUIT</div><div class="wd-ds">All 6 Patterns · Circuit Format</div></div><div class="wd-st done">✓</div></div>
+        <div class="week-day" onclick="openWorkoutModal('Push + Core Circuit','Day 12 · Push + Core','35 MIN','6 EXERCISES')" style="border-left:2px solid var(--gold)"><div class="wd-n" style="color:var(--gold)">12</div><div class="wd-inf"><div class="wd-nm" style="color:var(--gold)">PUSH + CORE — TODAY</div><div class="wd-ds">Modified push patterns · Core strength</div></div><div class="wd-st today" style="border-color:var(--gold)">▶</div></div>
+        <div class="week-day" onclick="openWorkoutModal('Pull Day','Day 13 · Pull Pattern','30 MIN','5 EXERCISES')"><div class="wd-n">13</div><div class="wd-inf"><div class="wd-nm">PULL DAY</div><div class="wd-ds">Back · Biceps · Rear Delts</div></div><div class="wd-st">·</div></div>
+        <div class="week-day"><div class="wd-n">14</div><div class="wd-inf"><div class="wd-nm">REST & RECOVERY</div><div class="wd-ds">Active stretching · Walking recommended</div></div><div class="wd-st">😴</div></div>
+      </div>
+    </div>
+
+    <!-- 6 Movement Patterns -->
+    <div style="margin-bottom:24px">
+      <div class="sec-title">🏋 6 CORE MOVEMENT PATTERNS</div>
+      <div class="movement-grid">
+        <div class="mv-card" onclick="openMovementModal('PUSH','Chest, shoulders, triceps. Foundation of upper body pushing strength.','Wall Push-Up','Incline Push-Up','Floor Push-Up','Pike Push-Up','Push-Up Plus')">
+          <div class="mv-icon">🔼</div>
+          <div class="mv-name">PUSH</div>
+          <div class="mv-desc">Chest · Shoulders · Triceps</div>
+          <div class="mv-exs"><span class="mv-ex">WALL PUSH-UP</span><span class="mv-ex">INCLINE</span><span class="mv-ex">FLOOR</span></div>
+        </div>
+        <div class="mv-card" onclick="openMovementModal('PULL','Back, biceps, rear delts. Critical for posture correction in 40+ adults.','Door Row','Resistance Band Row','Table Row','Band Pull-Apart','Face Pull')">
+          <div class="mv-icon">🔽</div>
+          <div class="mv-name">PULL</div>
+          <div class="mv-desc">Back · Biceps · Rear Delts</div>
+          <div class="mv-exs"><span class="mv-ex">DOOR ROW</span><span class="mv-ex">BAND ROW</span><span class="mv-ex">TABLE ROW</span></div>
+        </div>
+        <div class="mv-card" onclick="openMovementModal('SQUAT','Quads, glutes, hamstrings. The most functional movement pattern for daily life.','Chair Squat','Box Squat','Goblet Squat','Split Squat','Bulgarian Split')">
+          <div class="mv-icon">⬇️</div>
+          <div class="mv-name">SQUAT</div>
+          <div class="mv-desc">Quads · Glutes · Hamstrings</div>
+          <div class="mv-exs"><span class="mv-ex">CHAIR SQUAT</span><span class="mv-ex">BOX SQUAT</span><span class="mv-ex">GOBLET</span></div>
+        </div>
+        <div class="mv-card" onclick="openMovementModal('HINGE','Posterior chain, glutes, lower back. Protects the spine and builds power.','Hip Hinge','Romanian Deadlift','Good Morning','Kettlebell Swing','Single Leg RDL')">
+          <div class="mv-icon">↩️</div>
+          <div class="mv-name">HINGE</div>
+          <div class="mv-desc">Glutes · Hamstrings · Lower Back</div>
+          <div class="mv-exs"><span class="mv-ex">HIP HINGE</span><span class="mv-ex">RDL</span><span class="mv-ex">GOOD MORNING</span></div>
+        </div>
+        <div class="mv-card" onclick="openMovementModal('CARRY','Full body stability, grip, core. The most underrated pattern for 40+ fitness.','Suitcase Carry','Farmers Walk','Waiter Carry','Rack Carry','Bear Hug Carry')">
+          <div class="mv-icon">🏋</div>
+          <div class="mv-name">CARRY</div>
+          <div class="mv-desc">Full Body · Grip · Core Stability</div>
+          <div class="mv-exs"><span class="mv-ex">SUITCASE</span><span class="mv-ex">FARMERS</span><span class="mv-ex">WAITER</span></div>
+        </div>
+        <div class="mv-card" onclick="openMovementModal('CORE','Deep stabilizers, anti-rotation, bracing. Not crunches — true core stability.','Dead Bug','Bird Dog','Plank','Pallof Press','McGill Curl')">
+          <div class="mv-icon">🔵</div>
+          <div class="mv-name">CORE</div>
+          <div class="mv-desc">Stabilizers · Anti-Rotation · Bracing</div>
+          <div class="mv-exs"><span class="mv-ex">DEAD BUG</span><span class="mv-ex">BIRD DOG</span><span class="mv-ex">PLANK</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Health Condition Modifications -->
+    <div style="margin-bottom:20px">
+      <div class="sec-title">🩺 HEALTH CONDITION MODIFICATIONS</div>
+      <div class="cond-card">
+        <div class="cond-title">🔬 SELECT YOUR CONDITION FOR SAFE SUBSTITUTIONS</div>
+        <div class="cond-tags">
+          <div class="cond-tag" onclick="openConditionModal('Bad Knees')">🦵 BAD KNEES</div>
+          <div class="cond-tag" onclick="openConditionModal('Lower Back Pain')">🔙 LOWER BACK PAIN</div>
+          <div class="cond-tag" onclick="openConditionModal('Shoulder Issues')">💪 SHOULDER ISSUES</div>
+          <div class="cond-tag" onclick="openConditionModal('High Blood Pressure')">❤️ HIGH BLOOD PRESSURE</div>
+          <div class="cond-tag" onclick="openConditionModal('Diabetes Type 2')">🩸 TYPE 2 DIABETES</div>
+          <div class="cond-tag" onclick="openConditionModal('Obesity / High BMI')">⚖️ HIGH BMI</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-r btn-full" onclick="openWorkoutModal('Push + Core Circuit','Today · Day 12','35 MIN','6 EXERCISES')">▶ START TODAY'S WORKOUT</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     NUTRITION (PREMIUM — TUTK)
+═══════════════════════════════════════════════════ -->
+<div class="screen" id="screen-nutrition">
+  <div class="hero-band" style="background:linear-gradient(135deg,#061a0e,var(--d1))">
+    <div class="eyebrow">TURNED UP IN THE KITCHEN · PREMIUM MODULE</div>
+    <div class="h1">RECIPE<br>LIBRARY</div>
+    <div class="hsub">43 Recipes · Macro-coded · 40+ Optimized Nutrition · Engineered to complement your workouts</div>
+    <div class="hstats">
+      <div class="hstat"><div class="hstat-n">43</div><div class="hstat-l">RECIPES</div></div>
+      <div class="hstat"><div class="hstat-n">11</div><div class="hstat-l">BREAKFAST</div></div>
+      <div class="hstat"><div class="hstat-n">25</div><div class="hstat-l">MAINS</div></div>
+      <div class="hstat"><div class="hstat-n">7</div><div class="hstat-l">SHAKES+DRESS</div></div>
+    </div>
+  </div>
+  <div class="page">
+
+    <div class="premium-banner">
+      <div class="pb-icon">⭐</div>
+      <div class="pb-title">TURNED UP IN THE KITCHEN</div>
+      <div class="pb-desc">Your premium nutrition module is active. Every recipe is macro-coded, calorie-counted, and paired with a 40+ science note explaining exactly why this food works for your body.</div>
+    </div>
+
+    <div class="macro-legend">
+      <div class="ml-item"><div class="ml-dot" style="background:var(--blue)"></div>PROTEIN</div>
+      <div class="ml-item"><div class="ml-dot" style="background:var(--yellow)"></div>FAT</div>
+      <div class="ml-item"><div class="ml-dot" style="background:var(--orange)"></div>CARBS</div>
+      <div class="ml-item"><div class="ml-dot" style="background:var(--green)"></div>VEGETABLE</div>
+    </div>
+
+    <div class="filter-row">
+      <div class="fil on" onclick="filterRecipes('ALL',this)">ALL 43</div>
+      <div class="fil" onclick="filterRecipes('BREAKFAST',this)">🍳 BREAKFAST</div>
+      <div class="fil" onclick="filterRecipes('MAINS',this)">🍗 MAINS</div>
+      <div class="fil" onclick="filterRecipes('SHAKES',this)">🥤 SHAKES</div>
+      <div class="fil" onclick="filterRecipes('DRESSINGS',this)">🥗 DRESSINGS</div>
+      <div class="fil" onclick="filterRecipes('HIGH_PROTEIN',this)">💪 HIGH PROTEIN</div>
+      <div class="fil" onclick="filterRecipes('LOW_CARB',this)">⚡ LOW CARB</div>
+    </div>
+
+    <!-- MEAL PLAN -->
+    <div style="margin-bottom:20px">
+      <div class="sec-title">📅 THIS WEEK'S MEAL PLAN</div>
+      <div class="meal-plan-card">
+        <div class="mp-title">🗓 WEEK 2 — MEAL PLAN</div>
+        <div class="mp-day"><div class="mp-day-n">MON</div><div class="mp-meals"><div class="mp-meal">B: <span>Protein Pancakes</span> · L: <span>Chicken Veggie Stir Fry</span> · D: <span>Thai Peanut Chicken</span></div></div></div>
+        <div class="mp-day"><div class="mp-day-n">TUE</div><div class="mp-meals"><div class="mp-meal">B: <span>Sweet Egg Scramble</span> · L: <span>Turkey Tacos</span> · D: <span>Garlic Shrimp</span></div></div></div>
+        <div class="mp-day"><div class="mp-day-n">WED</div><div class="mp-meals"><div class="mp-meal">B: <span>Blueberry Overnight Oats</span> · L: <span>Quinoa Chicken Salad</span> · D: <span>Crispy Chicken & Brussel</span></div></div></div>
+        <div class="mp-day"><div class="mp-day-n">THU</div><div class="mp-meals"><div class="mp-meal">B: <span>Egg White McMuffins</span> · L: <span>Avocado Tuna Salad</span> · D: <span>Thai Beef Salad</span></div></div></div>
+        <div class="mp-day"><div class="mp-day-n">FRI</div><div class="mp-meals"><div class="mp-meal">B: <span>Cauliflower Breakfast Pizza</span> · L: <span>Honey Mustard Chicken Salad</span> · D: <span>Lemon Butter Asparagus</span></div></div></div>
+        <div class="mp-day"><div class="mp-day-n">SAT</div><div class="mp-meals"><div class="mp-meal">B: <span>Guilt Free French Toast</span> · L: <span>Shrimp & Avocado Stuffed Salad</span> · D: <span>Healthy Holiday Comfort</span></div></div></div>
+        <div class="mp-day"><div class="mp-day-n">SUN</div><div class="mp-meals"><div class="mp-meal">Flexible day — choose any 3 recipes from the library</div></div></div>
+      </div>
+    </div>
+
+    <!-- Recipe Cards Grid -->
+    <div class="sec-title">🍳 ALL RECIPES</div>
+    <div class="recipe-grid" id="recipe-grid">
+      <!-- Breakfast -->
+      <div class="rc" data-cat="BREAKFAST" onclick="openRecipeModal('Sweet Egg Scramble',280,30,4,22,'BREAKFAST','Grease skillet with cooking spray and bring to medium heat. Whisk egg whites, protein powder, vanilla and cinnamon. Pour onto skillet. Once halfway set, add berries and scramble until fully cooked.')"><div class="rc-hero"><div class="rc-cat"><div class="rc-cat-dot" style="background:#3A7BD5"></div>BREAKFAST</div><div class="rc-title">SWEET EGG SCRAMBLE</div><div class="rc-bar"><div style="background:var(--blue);width:75%"></div><div style="background:var(--orange);width:10%"></div><div style="background:var(--yellow);width:15%"></div></div></div><div class="rc-foot"><div><div class="rc-cal">280</div><div class="rc-cal-l">CALORIES</div></div><div class="rc-macs"><div class="rc-m"><div class="rc-mdot" style="background:var(--blue)"></div>30g P</div><div class="rc-m"><div class="rc-mdot" style="background:var(--yellow)"></div>4g F</div><div class="rc-m"><div class="rc-mdot" style="background:var(--orange)"></div>22g C</div></div></div></div>
+
+      <div class="rc" data-cat="BREAKFAST" onclick="openRecipeModal('Egg White Omelet',260,28,2,30,'BREAKFAST','Microwave sweet potato. Sauté spinach on greased skillet. Add egg whites on top of spinach, flip halfway, cook until set. Top with pico de gallo. Top sweet potato with cinnamon and stevia.')"><div class="rc-hero"><div class="rc-cat"><div class="rc-cat-dot" style="background:#3A7BD5"></div>BREAKFAST</div><div class="rc-title">EGG WHITE OMELET</div><div class="rc-bar"><div style="background:var(--blue);width:47%"></div><div style="background:var(--orange);width:50%"></div><div style="background:var(--yellow);width:3%"></div></div></div><div class="rc-foot"><div><div class="rc-cal">260</div><div class="rc-cal-l">CALORIES</div></div><div class="rc-macs"><div class="rc-m"><div class="rc-mdot" style="background:var(--blue)"></div>28g P</div><div class="rc-m"><div class="rc-mdot" style="background:var(--yellow)"></div>2g F</div><div class="rc-m"><div class="rc-mdot" style="background:var(--orange)"></div>30g C</div></div></div></div>
+
+      <div class="rc" data-cat="BREAKFAST" onclick="openRecipeModal('Protein Pancakes',320,30,8,28,'BREAKFAST','Mix oatmeal, cottage cheese, egg whites, stevia and cinnamon in a bowl or food processor. Cook on greased skillet 2 min per side until firm. Top with Walden Farms Pancake Syrup.')"><div class="rc-hero"><div class="rc-cat"><div class="rc-cat-dot" style="background:#3A7BD5"></div>BREAKFAST</div><div class="rc-title">PROTEIN PANCAKES</div><div class="rc-bar"><div style="background:var(--blue);width:45%"></div><div style="background:var(--yellow);width:12%"></div><div style="background:var(--orange);width:43%"></div></div></div><div class="rc-foot"><div><div class="rc-cal">320</div><div class="rc-cal-l">CALORIES</div></div><div class="rc-macs"><div class="rc-m"><div class="rc-mdot" style="background:var(--blue)"></div>30g P</div><div class="rc-m"><div class="rc-mdot" style="background:var(--yellow)"></div>8g F</div><div class="rc-m"><div class="rc-mdot" style="background:var(--orange)"></div>28g C</div></div></div></div>
+
+      <div class="rc" data-cat="BREAKFAST" onclick="openRecipeModal('Blueberry Overnight Oats',295,24,3,40,'BREAKFAST','Mix Greek yogurt with vanilla and stevia. Microwave oats with water until cooked. In overnight jar, put oatmeal at the bottom, add frozen berries, top with Greek yogurt. Refrigerate overnight.')"><div class="rc-hero"><div class="rc-cat"><div class="rc-cat-dot" style="background:#3A7BD5"></div>BREAKFAST</div><div class="rc-title">BLUEBERRY OVERNIGHT OATS</div><div class="rc-bar"><div style="background:var(--blue);width:36%"></div><div style="background:var(--orange);width:59%"></div><div style="background:var(--yellow);width:5%"></div></div></div><div class="rc-foot"><div><div class="rc-cal">295</div><div class="rc-cal-l">CALORIES</div></div><div class="rc-macs"><div class="rc-m"><div class="rc-mdot" style="background:var(--blue)"></div>24g P</div><div class="rc-m"><div class="rc-mdot" style="background:var(--yellow)"></div>3g F</div><div class="rc-m"><div class="rc-mdot" style="background:var(--orange)"></div>40g C</div></div></div></div>
+
+      <div class="rc" data-cat="BREAKFAST" onclick="openRecipeModal('Guilt Free French Toast',300,28,4,36,'BREAKFAST','Lightly toast Ezekiel bread. Whisk egg whites with vanilla, cinnamon and salt. Soak bread in egg mixture. Cook on greased skillet at medium heat, flip until eggs are fully cooked. Top with Walden Farms Syrup.')"><div class="rc-hero"><div class="rc-cat"><div class="rc-cat-dot" style="background:#3A7BD5"></div>BREAKFAST</div><div class="rc-title">GUILT FREE FRENCH TOAST</div><div class="rc-bar"><div style="background:var(--blue);width:41%"></div><div style="background:var(--orange);width:53%"></div><div style="background:var(--yellow);width:6%"></div></div></div><div class="rc-foot"><div><div class="rc-cal">300</div><div class="rc-cal-l">CALORIES</div></div><div class="rc-macs"><div class="rc-m"><div class="rc-mdot" style="background:var(--blue)"></div>28g P</div><div class="rc-m"><div class="rc-mdot" style="background:var(--yellow)"></div>4g F</div><div class="rc-m"><div class="rc-mdot" style="background:var(--orange)"></div>36g C</div></div></div></div>
+
+      <div class="rc" data-cat="BREAKFAST" onclick="openRecipeModal('Savory Turkey Bake',310,34,8,22,'BREAKFAST','Combine all ingredients in mixing bowl and whisk. Pour evenly into 2-3 muffin tins or a single oven-safe dish. Bake at 350°F for 8-10 minutes until cooked through. Serve with hot sauce.')"><div class="rc-hero"><div class="rc-cat"><div class="rc-cat-dot" style="background:#3A7BD5"></div>BREAKFAST</div><div class="rc-title">SAVORY TURKEY BAKE</div><div class="rc-bar"><div style="background:var(--blue);width:53%"></div><div style="background:var(--yellow);width:12%"></div><div style="background:var(--orange);width:35%"></div></div></div><div class="rc-foot"><div><div class="rc-cal">310</div><div class="rc-cal-l">CALORIES</div></div><div class="rc-macs"><div class="rc-m"><div class="rc-mdot" style="background:var(--blue)"></div>34g P</div><div class="rc-m"><div class="rc-mdot" style="background:var(--yellow)"></div>8g F</div><div class="rc-m"><div class="rc-mdot" style="background:var(--orange)"></div>22g C</div></div></div></div>
+
+      <div class="rc" data-cat="BREAKFAST" onclick="openRecipeModal('Blueberry Cheesecake Bowl',250,28,5,22,'BREAKFAST','Puree cottage cheese with protein powder and stevia in food processor. Fold in frozen berries and serve immediately. For thicker consistency place in freezer 10-15 minutes.')"><div class="rc-hero"><div class="rc-cat"><div class="rc-cat-dot" style="background:#3A7BD5"></div>BREAKFAST</div><div class="rc-title">BLUEBERRY CHEESECAKE BOWL</div><div class="rc-bar"><div style="background:var(--blue);width:51%"></div><div style="background:var(--yellow);width:9%"></div><div style="background:var(--orange);width:40%"></div></div></div><div class="rc-foot"><div><div class="rc-cal">250</div><div class="rc-cal-l">CALORIES</div></div><div class="rc-macs"><div class="rc-m"><div class="rc-mdot" style="background:var(--blue)"></div>28g P</div><div class="rc-m"><div class="rc-mdot" style="background:var(--yellow)"></div>5g F</div><div class="rc-m"><div class="rc-mdot" style="background:var(--orange)"></div>22g C</div></div></div></div>
+
+      <div class="rc" data-cat="BREAKFAST" onclick="openRecipeModal('Cauliflower Breakfast Pizza',270,24,5,28,'BREAKFAST','Steam cauliflower 5 minutes. Mix with ground oats, egg whites, oregano and salt. Cook on greased skillet with lid on for 4-5 minutes, flip and cook until firm. Top with sliced tomato.')"><div class="rc-hero"><div class="rc-cat"><div class="rc-cat-dot" style="background:#3A7BD5"></div>BREAKFAST</div><div class="rc-title">CAULIFLOWER BREAKFAST PIZZA</div><div class="rc-bar"><div style="background:var(--blue);width:42%"></div><div style="background:var(--yellow);width:9%"></div><div style="background:var(--orange);width:49%"></div></div></div><div class="rc-foot"><div><div class="rc-cal">270</div><div class="rc-cal-l">CALORIES</div></div><div class="rc-macs"><div class="rc-m"><div class="rc-mdot" style="background:var(--blue)"></div>24g P</div><div class="rc-m"><div class="rc-mdot" style="background:var(--yellow)"></div>5g F</div><div class="rc-m"><div class="rc-mdot" style="background:var(--orange)"></div>28g C</div></div></div></div>
+
+      <!-- MAINS -->
+      <div class="rc" data-cat="MAINS" onclick="openRecipeModal('Thai Peanut Chicken',395,42,22,12,'MAINS','Microwave peanut butter slightly. Whisk with Braggs soy, lemon juice, rice vinegar and cayenne until thick. Shred cooked chicken. Toss chicken and mixed veggies in peanut sauce. Top with salt, green onion or sesame seeds.')"><div class="rc-hero"><div class="rc-cat"><div class="rc-cat-dot" style="background:var(--red)"></div>MAINS</div><div class="rc-title">THAI PEANUT CHICKEN</div><div class="rc-bar"><div style="background:var(--blue);width:55%"></div><div style="background:var(--yellow);width:29%"></div><div style="background:var(--orange);width:16%"></div></div></div><div class="rc-foot"><div><div class="rc-cal">395</div><div class="rc-cal-l">CALORIES</div></div><div class="rc-macs"><div class="rc-m"><div class="rc-mdot" style="background:var(--blue)"></div>42g P</div><div class="rc-m"><div class="rc-mdot" style="background:var(--yellow)"></div>22g F</div><div class="rc-m"><div class="rc-mdot" style="background:var(--orange)"></div>12g C</div></div></div></div>
+
+      <div class="rc" data-cat="MAINS" onclick="openRecipeModal('Garlic Shrimp',340,32,8,32,'MAINS','Combine salt, garlic, tomato, vinegar and basil. Toss shrimp in mixture. Heat greased skillet to medium, pour mixture on and cook until shrimp is fully pink. Lay atop half cup of white rice.')"><div class="rc-hero"><div class="rc-cat"><div class="rc-cat-dot" style="background:var(--red)"></div>MAINS</div><div class="rc-title">GARLIC SHRIMP</div><div class="rc-bar"><div style="background:var(--blue);width:44%"></div><div style="background:var(--yellow);width:11%"></div><div style="background:var(--orange);width:45%"></div></div></div><div class="rc-foot"><div><div class="rc-cal">340</div><div class="rc-cal-l">CALORIES</div></div><div class="rc-macs"><div class="rc-m"><div class="rc-mdot" style="background:var(--blue)"></div>32g P</div><div class="rc-m"><div class="rc-mdot" style="background:var(--yellow)"></div>8g F</div><div class="rc-m"><div class="rc-mdot" style="background:var(--orange)"></div>32g C</div></div></div></div>
+
+      <div class="rc" data-cat="MAINS" onclick="openRecipeModal('Chicken Veggie Stir Fry',370,42,8,30,'MAINS','Chop veggies. Sauté in Braggs amino acid with garlic powder, onion powder and red pepper flakes 3-4 minutes. Add shredded chicken and rice. Mix until fully coated in sauce. Remove from heat and serve.')"><div class="rc-hero"><div class="rc-cat"><div class="rc-cat-dot" style="background:var(--red)"></div>MAINS</div><div class="rc-title">CHICKEN VEGGIE STIR FRY</div><div class="rc-bar"><div style="background:var(--blue);width:53%"></div><div style="background:var(--yellow);width:10%"></div><div style="background:var(--orange);width:37%"></div></div></div><div class="rc-foot"><div><div class="rc-cal">370</div><div class="rc-cal-l">CALORIES</div></div><div class="rc-macs"><div class="rc-m"><div class="rc-mdot" style="background:var(--blue)"></div>42g P</div><div class="rc-m"><div class="rc-mdot" style="background:var(--yellow)"></div>8g F</div><div class="rc-m"><div class="rc-mdot" style="background:var(--orange)"></div>30g C</div></div></div></div>
+
+      <div class="rc" data-cat="MAINS" onclick="openRecipeModal('Turkey Tacos',360,40,10,24,'MAINS','Sauté turkey with garlic powder, cayenne, onion powder, and chili powder until fully cooked. Add pico de gallo and continue sautéing. Serve over wild rice in romaine lettuce shells with hot sauce.')"><div class="rc-hero"><div class="rc-cat"><div class="rc-cat-dot" style="background:var(--red)"></div>MAINS</div><div class="rc-title">TURKEY TACOS</div><div class="rc-bar"><div style="background:var(--blue);width:54%"></div><div style="background:var(--yellow);width:13%"></div><div style="background:var(--orange);width:33%"></div></div></div><div class="rc-foot"><div><div class="rc-cal">360</div><div class="rc-cal-l">CALORIES</div></div><div class="rc-macs"><div class="rc-m"><div class="rc-mdot" style="background:var(--blue)"></div>40g P</div><div class="rc-m"><div class="rc-mdot" style="background:var(--yellow)"></div>10g F</div><div class="rc-m"><div class="rc-mdot" style="background:var(--orange)"></div>24g C</div></div></div></div>
+
+      <div class="rc" data-cat="MAINS" onclick="openRecipeModal('Avocado Tuna Salad',340,36,16,12,'MAINS','Mash avocado in bowl. Add tuna and diced tomato. Stir in lime juice and chili powder until combined. Top generously with sriracha and serve immediately.')"><div class="rc-hero"><div class="rc-cat"><div class="rc-cat-dot" style="background:var(--red)"></div>MAINS</div><div class="rc-title">AVOCADO TUNA SALAD</div><div class="rc-bar"><div style="background:var(--blue);width:55%"></div><div style="background:var(--yellow);width:25%"></div><div style="background:var(--orange);width:20%"></div></div></div><div class="rc-foot"><div><div class="rc-cal">340</div><div class="rc-cal-l">CALORIES</div></div><div class="rc-macs"><div class="rc-m"><div class="rc-mdot" style="background:var(--blue)"></div>36g P</div><div class="rc-m"><div class="rc-mdot" style="background:var(--yellow)"></div>16g F</div><div class="rc-m"><div class="rc-mdot" style="background:var(--orange)"></div>12g C</div></div></div></div>
+
+      <div class="rc" data-cat="MAINS" onclick="openRecipeModal('Seared Scallops with Sprouts',310,32,12,14,'MAINS','Heat oil in skillet over medium-high until shimmering. Add brussels sprouts, season with salt and pepper, stir continuously 5-6 minutes. Stir in vinegar, scrape brown bits. Sear scallops 2 min per side.')"><div class="rc-hero"><div class="rc-cat"><div class="rc-cat-dot" style="background:var(--red)"></div>MAINS</div><div class="rc-title">SEARED SCALLOPS WITH SPROUTS</div><div class="rc-bar"><div style="background:var(--blue);width:55%"></div><div style="background:var(--yellow);width:21%"></div><div style="background:var(--orange);width:24%"></div></div></div><div class="rc-foot"><div><div class="rc-cal">310</div><div class="rc-cal-l">CALORIES</div></div><div class="rc-macs"><div class="rc-m"><div class="rc-mdot" style="background:var(--blue)"></div>32g P</div><div class="rc-m"><div class="rc-mdot" style="background:var(--yellow)"></div>12g F</div><div class="rc-m"><div class="rc-mdot" style="background:var(--orange)"></div>14g C</div></div></div></div>
+
+      <div class="rc" data-cat="MAINS" onclick="openRecipeModal('Lean Stuffed Pepper',320,38,10,16,'MAINS','Sauté all veggies and spices in coconut oil 5-10 minutes until tender. Add turkey. Seed green pepper, cut in half, fill each half with the meat mixture. Bake at 350°F for 25-30 minutes.')"><div class="rc-hero"><div class="rc-cat"><div class="rc-cat-dot" style="background:var(--red)"></div>MAINS</div><div class="rc-title">LEAN STUFFED PEPPER</div><div class="rc-bar"><div style="background:var(--blue);width:59%"></div><div style="background:var(--yellow);width:15%"></div><div style="background:var(--orange);width:26%"></div></div></div><div class="rc-foot"><div><div class="rc-cal">320</div><div class="rc-cal-l">CALORIES</div></div><div class="rc-macs"><div class="rc-m"><div class="rc-mdot" style="background:var(--blue)"></div>38g P</div><div class="rc-m"><div class="rc-mdot" style="background:var(--yellow)"></div>10g F</div><div class="rc-m"><div class="rc-mdot" style="background:var(--orange)"></div>16g C</div></div></div></div>
+
+      <div class="rc" data-cat="MAINS" onclick="openRecipeModal('Crispy Chicken & Brussel',340,40,16,8,'MAINS','Toss brussels in 1 tbsp coconut oil and garlic powder. Heat skillet to medium-high, add remaining oil, fry thinly sliced chicken until crispy. Add sprouts, sauté on medium-low, finish with lemon juice.')"><div class="rc-hero"><div class="rc-cat"><div class="rc-cat-dot" style="background:var(--red)"></div>MAINS</div><div class="rc-title">CRISPY CHICKEN & BRUSSEL</div><div class="rc-bar"><div style="background:var(--blue);width:62%"></div><div style="background:var(--yellow);width:25%"></div><div style="background:var(--orange);width:13%"></div></div></div><div class="rc-foot"><div><div class="rc-cal">340</div><div class="rc-cal-l">CALORIES</div></div><div class="rc-macs"><div class="rc-m"><div class="rc-mdot" style="background:var(--blue)"></div>40g P</div><div class="rc-m"><div class="rc-mdot" style="background:var(--yellow)"></div>16g F</div><div class="rc-m"><div class="rc-mdot" style="background:var(--orange)"></div>8g C</div></div></div></div>
+
+      <div class="rc" data-cat="MAINS" onclick="openRecipeModal('Quinoa Chicken Salad',410,48,10,32,'MAINS','Toss chicken, quinoa, garbanzo beans, kale and red onion together. Mix lemon juice, zest, white wine vinegar, cumin, salt and pepper for dressing. Pour over salad and toss until evenly coated.')"><div class="rc-hero"><div class="rc-cat"><div class="rc-cat-dot" style="background:var(--red)"></div>MAINS</div><div class="rc-title">QUINOA CHICKEN SALAD</div><div class="rc-bar"><div style="background:var(--blue);width:53%"></div><div style="background:var(--yellow);width:11%"></div><div style="background:var(--orange);width:36%"></div></div></div><div class="rc-foot"><div><div class="rc-cal">410</div><div class="rc-cal-l">CALORIES</div></div><div class="rc-macs"><div class="rc-m"><div class="rc-mdot" style="background:var(--blue)"></div>48g P</div><div class="rc-m"><div class="rc-mdot" style="background:var(--yellow)"></div>10g F</div><div class="rc-m"><div class="rc-mdot" style="background:var(--orange)"></div>32g C</div></div></div></div>
+
+      <div class="rc" data-cat="MAINS" onclick="openRecipeModal('Sweet Summer Salad',310,36,8,20,'MAINS','In a large bowl, toss spinach, cherry tomatoes, and mixed berries. Top with sliced or diced cooked chicken. Drizzle with Apple Cider Vinaigrette and serve immediately.')"><div class="rc-hero"><div class="rc-cat"><div class="rc-cat-dot" style="background:var(--red)"></div>MAINS</div><div class="rc-title">SWEET SUMMER SALAD</div><div class="rc-bar"><div style="background:var(--blue);width:56%"></div><div style="background:var(--yellow);width:12%"></div><div style="background:var(--orange);width:32%"></div></div></div><div class="rc-foot"><div><div class="rc-cal">310</div><div class="rc-cal-l">CALORIES</div></div><div class="rc-macs"><div class="rc-m"><div class="rc-mdot" style="background:var(--blue)"></div>36g P</div><div class="rc-m"><div class="rc-mdot" style="background:var(--yellow)"></div>8g F</div><div class="rc-m"><div class="rc-mdot" style="background:var(--orange)"></div>20g C</div></div></div></div>
+
+      <div class="rc" data-cat="MAINS" onclick="openRecipeModal('Thai Beef Salad',380,40,16,14,'MAINS','Marinate steak in soy sauce, fish sauce and lime juice. Cook 2-3 min per side to desired texture and let rest. Combine all vegetables in bowl. Thinly slice steak across the grain and place on top.')"><div class="rc-hero"><div class="rc-cat"><div class="rc-cat-dot" style="background:var(--red)"></div>MAINS</div><div class="rc-title">THAI BEEF SALAD</div><div class="rc-bar"><div style="background:var(--blue);width:57%"></div><div style="background:var(--yellow);width:23%"></div><div style="background:var(--orange);width:20%"></div></div></div><div class="rc-foot"><div><div class="rc-cal">380</div><div class="rc-cal-l">CALORIES</div></div><div class="rc-macs"><div class="rc-m"><div class="rc-mdot" style="background:var(--blue)"></div>40g P</div><div class="rc-m"><div class="rc-mdot" style="background:var(--yellow)"></div>16g F</div><div class="rc-m"><div class="rc-mdot" style="background:var(--orange)"></div>14g C</div></div></div></div>
+
+      <div class="rc" data-cat="MAINS" onclick="openRecipeModal('Healthy Fried Rice',355,36,8,36,'MAINS','Spray skillet with PAM, bring to medium heat, scramble egg whites. Add rice and mixed veggies and continue mixing. Add shredded chicken and spices last. Sauté in Braggs Soy Sauce Alternative and serve.')"><div class="rc-hero"><div class="rc-cat"><div class="rc-cat-dot" style="background:var(--red)"></div>MAINS</div><div class="rc-title">HEALTHY FRIED RICE</div><div class="rc-bar"><div style="background:var(--blue);width:45%"></div><div style="background:var(--yellow);width:10%"></div><div style="background:var(--orange);width:45%"></div></div></div><div class="rc-foot"><div><div class="rc-cal">355</div><div class="rc-cal-l">CALORIES</div></div><div class="rc-macs"><div class="rc-m"><div class="rc-mdot" style="background:var(--blue)"></div>36g P</div><div class="rc-m"><div class="rc-mdot" style="background:var(--yellow)"></div>8g F</div><div class="rc-m"><div class="rc-mdot" style="background:var(--orange)"></div>36g C</div></div></div></div>
+
+      <!-- SHAKES -->
+      <div class="rc" data-cat="SHAKES" onclick="openRecipeModal('Blueberry Pie Smoothie',220,26,2,24,'SHAKES','Add vanilla protein, spinach, frozen berries, cold water, vanilla, stevia and cinnamon to blender. Blend until smooth and creamy. Pour into glass and serve immediately. Spinach flavor is completely undetectable.')"><div class="rc-hero"><div class="rc-cat"><div class="rc-cat-dot" style="background:var(--green)"></div>SHAKES</div><div class="rc-title">BLUEBERRY PIE SMOOTHIE</div><div class="rc-bar"><div style="background:var(--blue);width:50%"></div><div style="background:var(--orange);width:46%"></div><div style="background:var(--yellow);width:4%"></div></div></div><div class="rc-foot"><div><div class="rc-cal">220</div><div class="rc-cal-l">CALORIES</div></div><div class="rc-macs"><div class="rc-m"><div class="rc-mdot" style="background:var(--blue)"></div>26g P</div><div class="rc-m"><div class="rc-mdot" style="background:var(--yellow)"></div>2g F</div><div class="rc-m"><div class="rc-mdot" style="background:var(--orange)"></div>24g C</div></div></div></div>
+
+      <div class="rc" data-cat="SHAKES" onclick="openRecipeModal('PB Sandwich Shake',310,36,12,14,'SHAKES','Combine strawberry or chocolate protein powder, smooth peanut butter, water and ice in blender. Blend 30-45 seconds until smooth and frothy. Pour and enjoy. This genuinely tastes like a dessert.')"><div class="rc-hero"><div class="rc-cat"><div class="rc-cat-dot" style="background:var(--green)"></div>SHAKES</div><div class="rc-title">PB SANDWICH SHAKE</div><div class="rc-bar"><div style="background:var(--blue);width:58%"></div><div style="background:var(--yellow);width:19%"></div><div style="background:var(--orange);width:23%"></div></div></div><div class="rc-foot"><div><div class="rc-cal">310</div><div class="rc-cal-l">CALORIES</div></div><div class="rc-macs"><div class="rc-m"><div class="rc-mdot" style="background:var(--blue)"></div>36g P</div><div class="rc-m"><div class="rc-mdot" style="background:var(--yellow)"></div>12g F</div><div class="rc-m"><div class="rc-mdot" style="background:var(--orange)"></div>14g C</div></div></div></div>
+
+      <div class="rc" data-cat="SHAKES" onclick="openRecipeModal('Cake For Breakfast',260,28,4,28,'SHAKES','Combine vanilla protein, ground dry oats, vanilla, stevia, salt and water in blender with ice. Blend until smooth and thick. Pour into glass and add sprinkles on top for the full experience.')"><div class="rc-hero"><div class="rc-cat"><div class="rc-cat-dot" style="background:var(--green)"></div>SHAKES</div><div class="rc-title">CAKE FOR BREAKFAST</div><div class="rc-bar"><div style="background:var(--blue);width:47%"></div><div style="background:var(--yellow);width:7%"></div><div style="background:var(--orange);width:46%"></div></div></div><div class="rc-foot"><div><div class="rc-cal">260</div><div class="rc-cal-l">CALORIES</div></div><div class="rc-macs"><div class="rc-m"><div class="rc-mdot" style="background:var(--blue)"></div>28g P</div><div class="rc-m"><div class="rc-mdot" style="background:var(--yellow)"></div>4g F</div><div class="rc-m"><div class="rc-mdot" style="background:var(--orange)"></div>28g C</div></div></div></div>
+
+      <!-- DRESSINGS -->
+      <div class="rc" data-cat="DRESSINGS" onclick="openRecipeModal('Balsamic Vinegar Dressing',20,0,0,5,'DRESSINGS','Add water, balsamic vinegar, stevia, onion salt, garlic powder and dried mustard to a jar. Shake vigorously until thoroughly combined. Refrigerate and shake again before each use. 20 calories per serving.')"><div class="rc-hero"><div class="rc-cat"><div class="rc-cat-dot" style="background:var(--gold)"></div>DRESSINGS</div><div class="rc-title">BALSAMIC VINEGAR DRESSING</div><div class="rc-bar"><div style="background:var(--orange);width:100%"></div></div></div><div class="rc-foot"><div><div class="rc-cal">20</div><div class="rc-cal-l">CALORIES</div></div><div class="rc-macs"><div class="rc-m"><div class="rc-mdot" style="background:var(--orange)"></div>5g C</div></div></div></div>
+
+      <div class="rc" data-cat="DRESSINGS" onclick="openRecipeModal('Honey Mustard Dressing',35,1,1,7,'DRESSINGS','Combine 1 cup balsamic vinegar, quarter cup yellow or spicy mustard, and 3 stevia packets in a bowl. Whisk until smooth and stevia is fully dissolved. Toss directly into salad and serve.')"><div class="rc-hero"><div class="rc-cat"><div class="rc-cat-dot" style="background:var(--gold)"></div>DRESSINGS</div><div class="rc-title">HONEY MUSTARD DRESSING</div><div class="rc-bar"><div style="background:var(--orange);width:100%"></div></div></div><div class="rc-foot"><div><div class="rc-cal">35</div><div class="rc-cal-l">CALORIES</div></div><div class="rc-macs"><div class="rc-m"><div class="rc-mdot" style="background:var(--orange)"></div>7g C</div></div></div></div>
+
+    </div><!-- /recipe-grid -->
+  </div><!-- /page -->
+</div><!-- /screen-nutrition -->
+
+<!-- ═══════════════════════════════════════════
+     PROGRESS
+═══════════════════════════════════════════ -->
+<div class="screen" id="screen-progress">
+  <div class="hero-band" style="background:linear-gradient(135deg,#001a2a,var(--d1))">
+    <div class="eyebrow">TURNED UP FITNESS · PROGRESS TRACKER</div>
+    <div class="h1">YOUR<br>PROGRESS</div>
+    <div class="hsub">Week 2 of 4 · 14 workouts completed · 7-day streak active</div>
+    <div class="hstats">
+      <div class="hstat"><div class="hstat-n">14</div><div class="hstat-l">WORKOUTS</div></div>
+      <div class="hstat"><div class="hstat-n">7</div><div class="hstat-l">DAY STREAK</div></div>
+      <div class="hstat"><div class="hstat-n">2 lbs</div><div class="hstat-l">LOST</div></div>
+    </div>
+  </div>
+  <div class="page">
+
+    <!-- Weekly calendar -->
+    <div style="margin-bottom:22px">
+      <div class="sec-title">📅 THIS WEEK</div>
+      <div class="week-dots">
+        <div class="wdot done"><div class="wdot-i">✅</div><div class="wdot-l">MON</div></div>
+        <div class="wdot done"><div class="wdot-i">✅</div><div class="wdot-l">TUE</div></div>
+        <div class="wdot done"><div class="wdot-i">✅</div><div class="wdot-l">WED</div></div>
+        <div class="wdot done"><div class="wdot-i">✅</div><div class="wdot-l">THU</div></div>
+        <div class="wdot today"><div class="wdot-i">▶</div><div class="wdot-l">FRI</div></div>
+        <div class="wdot"><div class="wdot-i">·</div><div class="wdot-l">SAT</div></div>
+        <div class="wdot"><div class="wdot-i">·</div><div class="wdot-l">SUN</div></div>
+      </div>
+    </div>
+
+    <!-- Stats grid -->
+    <div class="stat-g">
+      <div class="stat-c"><div class="stat-l">WORKOUTS DONE</div><div class="stat-v">14<small> / 28</small></div><div class="progress-bar" style="margin-top:8px"><div class="progress-fill" style="background:var(--red);width:50%"></div></div><div class="stat-ch up">↑ On pace for 28 this month</div></div>
+      <div class="stat-c"><div class="stat-l">WEIGHT</div><div class="stat-v">193<small> lbs</small></div><div class="progress-bar" style="margin-top:8px"><div class="progress-fill" style="background:var(--green);width:40%"></div></div><div class="stat-ch up">↓ 2 lbs from start</div></div>
+      <div class="stat-c"><div class="stat-l">NUTRITION SCORE</div><div class="stat-v">92<small>%</small></div><div class="progress-bar" style="margin-top:8px"><div class="progress-fill" style="background:var(--gold);width:92%"></div></div><div class="stat-ch up">↑ 8pts from last week</div></div>
+      <div class="stat-c"><div class="stat-l">PUSH PROGRESS</div><div class="stat-v">3<small>×10</small></div><div class="progress-bar" style="margin-top:8px"><div class="progress-fill" style="background:var(--blue);width:75%"></div></div><div class="stat-ch up">↑ Ready to advance</div></div>
+    </div>
+
+    <!-- Weekly volume chart -->
+    <div class="chart-bar-wrap" style="margin-bottom:18px">
+      <div class="sec-title" style="margin-bottom:0">📊 WEEKLY WORKOUT VOLUME</div>
+      <div class="chart-bars">
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1"><div class="cbar" style="background:var(--red);height:55px;width:100%"></div><div class="cbar-l">W1</div></div>
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1"><div class="cbar" style="background:var(--gold);height:72px;width:100%"></div><div class="cbar-l">W2</div></div>
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1"><div class="cbar" style="background:var(--d4);height:40px;width:100%;opacity:.4"></div><div class="cbar-l">W3</div></div>
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1"><div class="cbar" style="background:var(--d4);height:40px;width:100%;opacity:.4"></div><div class="cbar-l">W4</div></div>
+      </div>
+    </div>
+
+    <!-- Movement Pattern Progress -->
+    <div style="margin-bottom:22px">
+      <div class="sec-title">💪 MOVEMENT PATTERN PROGRESS</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="stat-c"><div style="display:flex;justify-content:space-between;margin-bottom:6px"><div class="stat-l">🔼 PUSH — Incline Push-Up</div><span class="tag tag-g">ADVANCING</span></div><div class="progress-bar"><div class="progress-fill" style="background:var(--red);width:80%"></div></div><div style="font-size:10px;color:var(--muted);margin-top:4px">3×10 at incline · Ready for floor push-up</div></div>
+        <div class="stat-c"><div style="display:flex;justify-content:space-between;margin-bottom:6px"><div class="stat-l">🔽 PULL — Assisted Row</div><span class="tag tag-b">IN PROGRESS</span></div><div class="progress-bar"><div class="progress-fill" style="background:var(--blue);width:60%"></div></div><div style="font-size:10px;color:var(--muted);margin-top:4px">3×8 with band · Reducing resistance</div></div>
+        <div class="stat-c"><div style="display:flex;justify-content:space-between;margin-bottom:6px"><div class="stat-l">⬇️ SQUAT — Box Squat</div><span class="tag tag-g">ADVANCING</span></div><div class="progress-bar"><div class="progress-fill" style="background:var(--green);width:85%"></div></div><div style="font-size:10px;color:var(--muted);margin-top:4px">3×12 with control · Lowering box next week</div></div>
+        <div class="stat-c"><div style="display:flex;justify-content:space-between;margin-bottom:6px"><div class="stat-l">↩️ HINGE — Glute Bridge</div><span class="tag tag-g">ADVANCING</span></div><div class="progress-bar"><div class="progress-fill" style="background:var(--gold);width:90%"></div></div><div style="font-size:10px;color:var(--muted);margin-top:4px">3×15 bodyweight · Adding load next week</div></div>
+        <div class="stat-c"><div style="display:flex;justify-content:space-between;margin-bottom:6px"><div class="stat-l">🏋 CARRY — Farmer Carry</div><span class="tag tag-b">IN PROGRESS</span></div><div class="progress-bar"><div class="progress-fill" style="background:var(--blue);width:55%"></div></div><div style="font-size:10px;color:var(--muted);margin-top:4px">45 sec · Building to 60 sec</div></div>
+        <div class="stat-c"><div style="display:flex;justify-content:space-between;margin-bottom:6px"><div class="stat-l">🔵 CORE — Modified Plank</div><span class="tag tag-g">ADVANCING</span></div><div class="progress-bar"><div class="progress-fill" style="background:var(--red);width:75%"></div></div><div style="font-size:10px;color:var(--muted);margin-top:4px">35 sec hold · Building to 45 sec</div></div>
+      </div>
+    </div>
+
+    <!-- Milestones -->
+    <div>
+      <div class="sec-title">🏆 MILESTONES</div>
+      <div class="milestone-list">
+        <div class="milestone"><div class="ms-icon">🔥</div><div class="ms-info"><div class="ms-title">7-Day Workout Streak</div><div class="ms-date">Achieved today · March 23</div></div><div class="ms-check">✅</div></div>
+        <div class="milestone"><div class="ms-icon">💪</div><div class="ms-info"><div class="ms-title">First Full Push-Up</div><div class="ms-date">Achieved · March 19</div></div><div class="ms-check">✅</div></div>
+        <div class="milestone"><div class="ms-icon">🥗</div><div class="ms-info"><div class="ms-title">7 Days Nutrition Logged</div><div class="ms-date">Achieved · March 20</div></div><div class="ms-check">✅</div></div>
+        <div class="milestone"><div class="ms-icon">⚖️</div><div class="ms-info"><div class="ms-title">First 2 lbs Lost</div><div class="ms-date">Achieved · March 21</div></div><div class="ms-check">✅</div></div>
+        <div class="milestone" style="opacity:.4"><div class="ms-icon">🏅</div><div class="ms-info"><div class="ms-title">Complete 4-Week Program</div><div class="ms-date">14 days remaining</div></div><div class="ms-check">⬜</div></div>
+        <div class="milestone" style="opacity:.4"><div class="ms-icon">🌟</div><div class="ms-info"><div class="ms-title">Advance to Intermediate</div><div class="ms-date">Complete all 6 patterns with 3×10</div></div><div class="ms-check">⬜</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PROFILE
+═══════════════════════════════════════════ -->
+<div class="screen" id="screen-profile">
+  <div class="prof-hero">
+    <div class="prof-av">M</div>
+    <div>
+      <div class="prof-name">MARC</div>
+      <div class="prof-sub">Member since Jan 2026 · Georgia, USA</div>
+      <div class="prof-badge">⭐ PREMIUM MEMBER · TUTK UNLOCKED</div>
+    </div>
+  </div>
+  <div class="page">
+
+    <!-- Health Stats -->
+    <div style="margin-bottom:22px">
+      <div class="sec-title">❤️ HEALTH PROFILE</div>
+      <div class="health-cards">
+        <div class="hc"><div class="hc-label">CURRENT WEIGHT</div><div class="hc-val">193 lbs</div><div class="hc-sub">Goal: 185 lbs</div></div>
+        <div class="hc"><div class="hc-label">AGE RANGE</div><div class="hc-val">40+</div><div class="hc-sub">Optimized programming</div></div>
+        <div class="hc"><div class="hc-label">FITNESS LEVEL</div><div class="hc-val">BEG+</div><div class="hc-sub">Advancing to intermediate</div></div>
+        <div class="hc"><div class="hc-label">PROGRAM WEEK</div><div class="hc-val">2 / 4</div><div class="hc-sub">Building phase</div></div>
+      </div>
+    </div>
+
+    <!-- Plan summary -->
+    <div style="margin-bottom:22px">
+      <div class="sec-title">📦 YOUR PLAN</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="background:linear-gradient(135deg,#1a0000,var(--d2));border:1px solid rgba(139,0,0,.3);border-radius:12px;padding:14px;display:flex;justify-content:space-between;align-items:center">
+          <div><div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;color:#fff">💪 TURNED UP FITNESS</div><div style="font-size:10px;color:var(--muted);margin-top:2px">Workout module · Beginner library · 4-week program</div></div><span class="tag tag-v">ACTIVE</span>
+        </div>
+        <div style="background:linear-gradient(135deg,#061a0e,var(--d2));border:1px solid rgba(45,170,79,.3);border-radius:12px;padding:14px;display:flex;justify-content:space-between;align-items:center">
+          <div><div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;color:#fff">🍽 TURNED UP IN THE KITCHEN</div><div style="font-size:10px;color:var(--muted);margin-top:2px">Premium nutrition · 43 recipes · Macro tracking</div></div><span class="tag tag-g">PREMIUM</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div>
+      <div class="sec-title">⚙️ SETTINGS</div>
+      <div class="settings">
+        <div class="si" onclick="alert('Notifications: On')"><div class="si-ic">🔔</div><div><div class="si-t">Notifications</div><div class="si-d">Workout reminders · Meal suggestions</div></div><div class="si-arr">›</div></div>
+        <div class="si" onclick="alert('Health conditions saved: Lower Back Pain awareness mode active')"><div class="si-ic">🩺</div><div><div class="si-t">Health Conditions</div><div class="si-d">Customize exercise modifications</div></div><div class="si-arr">›</div></div>
+        <div class="si" onclick="alert('Goals: Lose 8 lbs · Build strength baseline · Complete 4-week program')"><div class="si-ic">🎯</div><div><div class="si-t">My Goals</div><div class="si-d">Weight · Strength · Nutrition targets</div></div><div class="si-arr">›</div></div>
+        <div class="si" onclick="showTab('nutrition')"><div class="si-ic">🍽</div><div><div class="si-t">TUTK Recipe Library</div><div class="si-d">43 recipes · Premium nutrition module</div></div><div class="si-arr">›</div></div>
+        <div class="si" onclick="alert('Connected: Apple Health · Syncing steps, sleep, heart rate')"><div class="si-ic">❤️</div><div><div class="si-t">Apple Health Sync</div><div class="si-d">Steps · Sleep · Heart rate</div></div><div class="si-arr">›</div></div>
+        <div class="si" onclick="alert('Version 2.4.1 — All systems operational')"><div class="si-ic">ℹ️</div><div><div class="si-t">App Info</div><div class="si-d">v2.4.1 · Turned Up Fitness LLC</div></div><div class="si-arr">›</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<!-- ═══════════════════════════════════════════
+     MODALS
+═══════════════════════════════════════════ -->
+
+<!-- Workout Modal -->
+<div class="overlay" id="overlay-workout" onclick="closeModal('workout')">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="sheet-head">
+      <div class="sheet-title" id="wm-title">PUSH + CORE CIRCUIT</div>
+      <div class="sheet-close" onclick="closeModal('workout')">✕</div>
+    </div>
+    <div class="sheet-body">
+      <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap" id="wm-meta"></div>
+      <div class="sec-title">🏋 EXERCISES</div>
+      <div id="wm-exercises"></div>
+      <div style="margin-top:20px;display:flex;gap:10px">
+        <button class="btn btn-r" style="flex:1" onclick="alert('Workout started! Track your sets and reps below.')">▶ START WORKOUT</button>
+        <button class="btn btn-o btn-sm" onclick="closeModal('workout')">BACK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Movement Pattern Modal -->
+<div class="overlay" id="overlay-movement" onclick="closeModal('movement')">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="sheet-head">
+      <div class="sheet-title" id="mm-title">PUSH PATTERN</div>
+      <div class="sheet-close" onclick="closeModal('movement')">✕</div>
+    </div>
+    <div class="sheet-body" id="mm-body"></div>
+  </div>
+</div>
+
+<!-- Condition Modal -->
+<div class="overlay" id="overlay-condition" onclick="closeModal('condition')">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="sheet-head">
+      <div class="sheet-title" id="cm-title">MODIFICATIONS</div>
+      <div class="sheet-close" onclick="closeModal('condition')">✕</div>
+    </div>
+    <div class="sheet-body" id="cm-body"></div>
+  </div>
+</div>
+
+<!-- Recipe Modal -->
+<div class="overlay" id="overlay-recipe" onclick="closeModal('recipe')">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="sheet-head">
+      <div class="sheet-title" id="rm-title">RECIPE</div>
+      <div class="sheet-close" onclick="closeModal('recipe')">✕</div>
+    </div>
+    <div class="sheet-body" id="rm-body"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+//  REAL EXERCISE DATA FROM UPLOADED FILES
+// ═══════════════════════════════════════════
+// ─── VIDEO SOURCES ────────────────────────────────────────────
+// Source 1 (NOW — Placeholder): Curated public YouTube demos
+//   No API key needed. Free. Swap IDs when your AI videos are ready.
+// Source 2 (UPGRADE PATH): Your own YouTube channel videos
+//   Just replace videoId with your own YouTube video ID per exercise.
+// Source 3 (FUTURE — AI Videos): Drop your HeyGen/Synthesia exports
+//   Upload to YouTube, replace IDs below — zero other code changes needed.
+
+// ── YOUR VIDEOS — @turnedupfitness ──────────────────────────
+// Video 1: GRTvb5cWNdI — mapped as primary demo
+// Add more as you send them — just drop the YouTube URL here
+// Format: 'PATTERN': { videoId: 'ID_FROM_URL', title: 'Your title' }
+
+const YOUR_CHANNEL = 'https://youtube.com/@turnedupfitness';
+
+const EXERCISE_VIDEOS = {
+  'PUSH':  { videoId: 'GRTvb5cWNdI', title: 'Turned Up Fitness — Exercise Demo', yours: true },
+  'PULL':  { videoId: 'GRTvb5cWNdI', title: 'Turned Up Fitness — Exercise Demo', yours: true },
+  'SQUAT': { videoId: 'GRTvb5cWNdI', title: 'Turned Up Fitness — Exercise Demo', yours: true },
+  'HINGE': { videoId: 'GRTvb5cWNdI', title: 'Turned Up Fitness — Exercise Demo', yours: true },
+  'CARRY': { videoId: 'GRTvb5cWNdI', title: 'Turned Up Fitness — Exercise Demo', yours: true },
+  'CORE':  { videoId: 'GRTvb5cWNdI', title: 'Turned Up Fitness — Exercise Demo', yours: true },
+};
+// ── TO SWAP INDIVIDUAL VIDEOS as you record them: ───────────
+// Just replace the videoId for that pattern with the new YouTube ID
+// e.g. 'PUSH': { videoId: 'YOUR_NEW_ID', title: 'Push-Up Demo', yours: true }
+
+const EXERCISES = [
+  {
+    id:'E1', pattern:'PUSH', name:'Push-Up Progression',
+    standard:'Hands shoulder-width, knees on ground, core tight, lower chest to ground, elbows at 45 degrees.',
+    mods:{
+      'Shoulder Issues':'Use incline push-ups (hands on bench or wall). Reduces shoulder stress.',
+      'Lower Back Pain':'Ensure hips stay level with shoulders. Engage core throughout.',
+      'Bad Knees':'N/A — this exercise is safe for knee conditions.'
+    },
+    progression:'Advance to feet once form is solid for 3 sets of 10 reps.',
+    sets:'3', reps:'8–10', rest:'60 sec'
+  },
+  {
+    id:'E2', pattern:'PULL', name:'Assisted Row',
+    standard:'Band-assisted or machine row. Chest to bar, elbows tucked, squeeze shoulder blades.',
+    mods:{
+      'Lower Back Pain':'Keep torso upright. Avoid excessive forward lean. Reduce range if back rounds.',
+      'Shoulder Issues':'Use neutral grip (palms facing each other). Reduces rotator cuff stress.',
+      'Bad Knees':'N/A — this exercise is safe for knee conditions.'
+    },
+    progression:'Reduce band assistance gradually or increase reps before adding weight.',
+    sets:'3', reps:'8–10', rest:'60 sec'
+  },
+  {
+    id:'E3', pattern:'SQUAT', name:'Box Squat',
+    standard:'Feet shoulder-width, descend to box, stand back up. Knees track over toes, chest up.',
+    mods:{
+      'Bad Knees':'Reduce depth (box higher). Widen stance slightly. Slower descent. Or use Goblet Squat — light weight at chest shifts load to hips, reduces knee stress.',
+      'Lower Back Pain':'Keep chest upright. Engage core. Avoid excessive forward lean. Weight in heels.',
+      'Shoulder Issues':'N/A — this exercise is safe for shoulder conditions.'
+    },
+    progression:'Master bodyweight before adding load.',
+    sets:'3', reps:'10–12', rest:'90 sec'
+  },
+  {
+    id:'E4', pattern:'HINGE', name:'Glute Bridge',
+    standard:'Lie on back, knees bent, feet flat. Drive hips up, squeeze glutes at top, lower controlled.',
+    mods:{
+      'Lower Back Pain':'Start here before deadlifts. Glute bridges are safer. Focus on hip extension without spinal extension.',
+      'Bad Knees':'Reduces knee involvement significantly. Safe progression. Can add light weight across hips.',
+      'Shoulder Issues':'N/A — this exercise is safe for shoulder conditions.'
+    },
+    progression:'Master bodyweight before adding load.',
+    sets:'3', reps:'12–15', rest:'60 sec'
+  },
+  {
+    id:'E5', pattern:'CARRY', name:'Farmer Carry',
+    standard:'Light dumbbells or household items. Walk upright, shoulders packed, core engaged. 30–60 seconds.',
+    mods:{
+      'Lower Back Pain':'Start with lighter load. Focus on posture. Reduce distance if needed.',
+      'Shoulder Issues':'Single-arm carries (offset load). Builds anti-rotation strength. Alternate sides.',
+      'Bad Knees':'N/A — this exercise is safe for knee conditions.'
+    },
+    progression:'Increase duration before increasing load.',
+    sets:'3', reps:'30–60 sec', rest:'90 sec'
+  },
+  {
+    id:'E6', pattern:'CORE', name:'Plank (Modified)',
+    standard:'On forearms and knees, hips level, core tight. Hold 20–40 seconds.',
+    mods:{
+      'Lower Back Pain':'Stay on knees. Keep hips level — no sagging. Shorter holds (15–20 seconds) if needed.',
+      'Shoulder Issues':'Use forearm plank instead of hands. Reduces shoulder stress.',
+      'Bad Knees':'N/A — this exercise is safe for knee conditions.'
+    },
+    progression:'Increase hold duration in 5–10 second increments.',
+    sets:'3', reps:'20–40 sec hold', rest:'45 sec'
+  }
+];
+
+const WORKOUT_DAYS = {
+  'Push + Core Circuit':    [EXERCISES[0], EXERCISES[5]],
+  'Upper Body Push':        [EXERCISES[0], EXERCISES[5]],
+  'Lower Body Pull':        [EXERCISES[3], EXERCISES[1]],
+  'Active Recovery':        [EXERCISES[4], EXERCISES[5]],
+  'Full Body Circuit':      EXERCISES,
+  'Push + Core — TODAY':    [EXERCISES[0], EXERCISES[5]],
+  'Pull Day':               [EXERCISES[1], EXERCISES[5]],
+  'Lower Body Pull Hinge':  [EXERCISES[2], EXERCISES[3]],
+};
+
+const CONDITIONS = {
+  'Bad Knees': {
+    icon:'🦵', color:'#FF8A8A',
+    desc:'Exercises are modified to protect knee joints while maintaining strength and mobility.',
+    mods: EXERCISES.map(e => ({name: e.name, pattern: e.pattern, mod: e.mods['Bad Knees']}))
+  },
+  'Lower Back Pain': {
+    icon:'🔙', color:'#FFB347',
+    desc:'Modifications focus on neutral spine, core bracing, and avoiding loaded flexion.',
+    mods: EXERCISES.map(e => ({name: e.name, pattern: e.pattern, mod: e.mods['Lower Back Pain']}))
+  },
+  'Shoulder Issues': {
+    icon:'💪', color:'#87CEEB',
+    desc:'Modifications reduce shoulder stress while maintaining upper body training volume.',
+    mods: EXERCISES.map(e => ({name: e.name, pattern: e.pattern, mod: e.mods['Shoulder Issues']}))
+  },
+  'High Blood Pressure': {
+    icon:'❤️', color:'#FF6B6B',
+    desc:'Avoid breath-holding (Valsalva). Maintain steady breathing throughout all exercises. Reduce intensity by 20% and monitor heart rate.',
+    mods: EXERCISES.map(e => ({name: e.name, pattern: e.pattern, mod: 'Breathe continuously. Never hold breath. Keep heart rate in moderate zone.'}))
+  },
+  'Diabetes Type 2': {
+    icon:'🩸', color:'#90EE90',
+    desc:'Exercise timing around meals is important. Check blood sugar before and after. Keep fast-acting glucose nearby.',
+    mods: EXERCISES.map(e => ({name: e.name, pattern: e.pattern, mod: 'All exercises are suitable. Monitor blood sugar before and after sessions.'}))
+  },
+  'Obesity / High BMI': {
+    icon:'⚖️', color:'#DDA0DD',
+    desc:'All exercises begin with zero or minimal load. Chair-assisted versions available for all standing movements. Focus on form over intensity.',
+    mods: EXERCISES.map(e => ({name: e.name, pattern: e.pattern, mod: 'Begin with zero load. Use chair or wall support as needed. Prioritize form over range of motion.'}))
+  }
+};
+
+// ═══════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════
+function showTab(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  document.getElementById('screen-' + id).classList.add('on');
+  document.getElementById('tab-' + id).classList.add('on');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+// ═══════════════════════════════════════════
+//  MODALS
+// ═══════════════════════════════════════════
+function closeModal(id) {
+  document.getElementById('overlay-' + id).classList.remove('on');
+}
+
+function openWorkoutModal(title, meta, time, exCount) {
+  document.getElementById('wm-title').textContent = title;
+  const metaDiv = document.getElementById('wm-meta');
+  metaDiv.innerHTML = `<span class="tag tag-r">${meta}</span><span class="tag tag-b">⏱ ${time}</span><span class="tag tag-g">${exCount}</span>`;
+
+  const exKey = Object.keys(WORKOUT_DAYS).find(k => title.includes(k.split(' ')[0]) && title.includes(k.split(' ')[1] || '')) || Object.keys(WORKOUT_DAYS)[0];
+  const exList = WORKOUT_DAYS[title] || WORKOUT_DAYS['Full Body Circuit'];
+
+  let html = '';
+  exList.forEach((ex, i) => {
+    const vid = EXERCISE_VIDEOS[ex.pattern];
+    const vidThumb = vid ? `
+      <div style="width:70px;height:48px;border-radius:6px;overflow:hidden;flex-shrink:0;cursor:pointer;position:relative;border:1px solid rgba(255,255,255,.08)"
+           onclick="event.stopPropagation();document.getElementById('inline-video-${ex.id}').style.display='block';this.style.display='none'">
+        <img src="https://img.youtube.com/vi/${vid.videoId}/mqdefault.jpg"
+             style="width:100%;height:100%;object-fit:cover" loading="lazy">
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.4)">
+          <span style="font-size:16px">▶</span>
+        </div>
+      </div>
+      <div id="inline-video-${ex.id}" style="display:none;width:70px;height:48px;border-radius:6px;overflow:hidden;flex-shrink:0">
+        <iframe src="https://www.youtube.com/embed/${vid.videoId}?autoplay=1&rel=0&modestbranding=1"
+          style="width:100%;height:100%;border:none"
+          allow="autoplay;encrypted-media" loading="lazy"></iframe>
+      </div>` : '';
+    const dots = Array.from({length:3}, (_,d) =>
+      `<div class="ex-dot" onclick="this.classList.toggle('done')" title="Set ${d+1}"></div>`
+    ).join('');
+    html += `<div class="exercise-item">
+      <div class="ex-n">${String(i+1).padStart(2,'0')}</div>
+      ${vidThumb}
+      <div class="ex-inf">
+        <div class="ex-name">${ex.name}</div>
+        <div class="ex-sets">${ex.pattern} · ${ex.sets} sets × ${ex.reps} · Rest ${ex.rest}</div>
+        <div class="ex-sets" style="color:#888;margin-top:2px">${ex.standard.substring(0,65)}…</div>
+      </div>
+      <div class="ex-dots">${dots}</div>
+    </div>`;
+  });
+
+  document.getElementById('wm-exercises').innerHTML = html;
+  document.getElementById('overlay-workout').classList.add('on');
+}
+
+function openMovementModal(patternName, desc, ...exercises) {
+  document.getElementById('mm-title').textContent = patternName + ' PATTERN';
+  const ex = EXERCISES.find(e => e.pattern === patternName) || EXERCISES[0];
+  const vid = EXERCISE_VIDEOS[patternName];
+
+  // ── VIDEO PLAYER ──────────────────────────────────────
+  const videoBlock = vid ? `
+    <div style="margin-bottom:16px">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:10px;letter-spacing:3px;color:var(--gold);margin-bottom:8px;display:flex;align-items:center;gap:6px">
+        ▶ EXERCISE DEMO VIDEO
+        <span style="font-size:8px;color:var(--gold);font-weight:700;letter-spacing:1px">@TURNEDUPFITNESS</span>
+      </div>
+      <div style="position:relative;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.08);background:#000">
+        <iframe
+          src="https://www.youtube.com/embed/${vid.videoId}?rel=0&modestbranding=1&color=red&cc_load_policy=0"
+          style="width:100%;aspect-ratio:16/9;border:none;display:block"
+          allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture"
+          allowfullscreen
+          loading="lazy"
+          title="${vid.title}">
+        </iframe>
+      </div>
+      <div style="font-size:10px;color:var(--muted);margin-top:6px;padding:0 2px;display:flex;justify-content:space-between;align-items:center">
+        <span>${vid.title}</span>
+        <span style="color:rgba(200,151,58,.8);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:9px;letter-spacing:1px">@TURNEDUPFITNESS · YouTube</span>
+      </div>
+    </div>` : '';
+
+  let html = videoBlock + `
+    <div style="background:var(--d3);border-radius:10px;padding:14px;margin-bottom:16px">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:10px;letter-spacing:2px;color:var(--gold);margin-bottom:6px">PRIMARY EXERCISE</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:#fff;letter-spacing:1px">${ex.name}</div>
+      <div style="font-size:11px;color:#ccc;margin-top:6px;line-height:1.5">${ex.standard}</div>
+    </div>
+    <div class="sec-title">📋 SETS & REPS</div>
+    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+      <span class="tag tag-r">${ex.sets} SETS</span>
+      <span class="tag tag-b">${ex.reps} REPS</span>
+      <span class="tag tag-g">REST ${ex.rest}</span>
+    </div>
+    <div class="sec-title">🔄 PROGRESSIONS IN THIS PATTERN</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px">
+      ${exercises.map(e => `<span class="tag tag-r">${e}</span>`).join('')}
+    </div>
+    <div class="sec-title">🩺 MODIFICATIONS</div>`;
+
+  Object.entries(ex.mods).forEach(([cond, mod]) => {
+    if (mod === 'N/A — this exercise is safe for knee conditions.' || mod.startsWith('N/A')) return;
+    html += `<div style="background:var(--d3);border-left:3px solid var(--blue);border-radius:8px;padding:12px;margin-bottom:8px">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;letter-spacing:1.5px;color:#7EB5FF;margin-bottom:4px">${cond.toUpperCase()}</div>
+      <div style="font-size:11px;color:#ccc;line-height:1.5">${mod}</div>
+    </div>`;
+  });
+
+  html += `<div style="background:#1a1200;border:1px solid var(--gold);border-radius:8px;padding:12px;margin-top:8px">
+    <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:9px;letter-spacing:2px;color:var(--gold);margin-bottom:4px">📈 PROGRESSION CUE</div>
+    <div style="font-size:11px;color:#D4B870;line-height:1.5">${ex.progression}</div>
+  </div>`;
+
+  document.getElementById('mm-body').innerHTML = html;
+  document.getElementById('overlay-movement').classList.add('on');
+}
+
+function openConditionModal(condition) {
+  const data = CONDITIONS[condition];
+  if (!data) return;
+  document.getElementById('cm-title').textContent = data.icon + ' ' + condition.toUpperCase();
+
+  let html = `<div style="background:var(--d3);border-radius:10px;padding:14px;margin-bottom:16px;border-left:3px solid ${data.color}">
+    <div style="font-size:12px;color:#ccc;line-height:1.6">${data.desc}</div>
+  </div>
+  <div class="sec-title">🏋 EXERCISE MODIFICATIONS</div>`;
+
+  data.mods.forEach(m => {
+    const isNA = m.mod.startsWith('N/A');
+    html += `<div style="display:flex;align-items:flex-start;gap:10px;padding:11px 0;border-bottom:1px solid var(--border)">
+      <div style="flex-shrink:0">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:9px;letter-spacing:1.5px;color:var(--gold)">${m.pattern}</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;color:#fff;margin-top:1px">${m.name}</div>
+      </div>
+      <div style="flex:1;font-size:10px;color:${isNA ? 'var(--muted)' : '#ccc'};line-height:1.5;padding-top:2px">${m.mod}</div>
+    </div>`;
+  });
+
+  html += `<div style="margin-top:16px"><button class="btn btn-r btn-full" onclick="showTab('workouts');closeModal('condition')">VIEW FULL WORKOUT PROGRAM</button></div>`;
+
+  document.getElementById('cm-body').innerHTML = html;
+  document.getElementById('overlay-condition').classList.add('on');
+}
+
+const RECIPE_TIPS = {
+  'Thai Peanut Chicken':'Add sriracha or chili oil for extra heat. Great over cauliflower rice for a lower-carb option.',
+  'Garlic Shrimp':'Fresh minced garlic from a bulb is significantly more potent than jarred — worth the extra 2 minutes.',
+  'Protein Pancakes':'For fluffier pancakes, let the batter rest 2 minutes before cooking.',
+  'Blueberry Pie Smoothie':'The spinach is completely undetectable in flavor — do not skip it. Free vegetables.',
+  'Turkey Tacos':'Wild rice has significantly more protein and fiber than white rice — do not substitute.',
+  'Chicken Veggie Stir Fry':'Tear chicken into irregular pieces rather than cutting — creates better sauce adhesion.',
+  'Blueberry Overnight Oats':'Add chia seeds for extra omega-3s and a thicker, more satisfying texture.',
+};
+const RECIPE_SCI = {
+  'Thai Peanut Chicken':'Peanut butter\'s monounsaturated fats support joint lubrication — critical after 40. Lean protein helps maintain muscle mass as metabolism slows.',
+  'Garlic Shrimp':'Garlic\'s allicin compound has been clinically shown to support healthy blood pressure and reduce LDL cholesterol — two key cardiovascular markers to manage after 40.',
+  'Protein Pancakes':'The oat and egg white combo creates a low-glycemic, high-protein breakfast that supports both muscle maintenance and stable blood sugar — two priorities after 40.',
+  'Blueberry Pie Smoothie':'Blueberries are among the highest antioxidant foods available, providing anthocyanins that cross the blood-brain barrier and directly support cognitive function.',
+  'Turkey Tacos':'Using romaine lettuce as a taco shell eliminates empty carbs while adding vitamin K, which supports bone density — a key concern for active 40+ adults.',
+  'Chicken Veggie Stir Fry':'Snap peas and broccoli provide sulforaphane that supports anti-inflammatory pathways — increasingly important after 40.',
+  'Blueberry Overnight Oats':'Greek yogurt\'s probiotics support gut health, which directly impacts nutrient absorption — a key factor as digestive efficiency naturally declines after 40.',
+};
+
+function openRecipeModal(name, cal, prot, fat, carbs, cat, directions) {
+  document.getElementById('rm-title').textContent = name.toUpperCase();
+  const total = prot + fat + carbs;
+  const pp = Math.round(prot/total*100);
+  const fp = Math.round(fat/total*100);
+  const cp = 100 - pp - fp;
+  const tip = RECIPE_TIPS[name] || 'Prep ingredients ahead of time to make this a quick weeknight meal.';
+  const sci = RECIPE_SCI[name] || 'This recipe is optimized for 40+ nutrition — high protein, strategic fats, and complex carbohydrates for sustained energy.';
+  const catColors = {BREAKFAST:'var(--blue)',MAINS:'var(--red)',SHAKES:'var(--green)',DRESSINGS:'var(--gold)'};
+
+  const html = `
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+      <span class="tag" style="background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.1);color:#ccc">${cat}</span>
+      <span class="tag tag-g">🔥 ${cal} CAL</span>
+    </div>
+    <div class="recipe-detail-macro-bar">
+      <div class="rdm-p" style="width:${pp}%"></div>
+      <div class="rdm-f" style="width:${fp}%"></div>
+      <div class="rdm-c" style="width:${cp}%"></div>
+    </div>
+    <div style="display:flex;gap:12px;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:4px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px"><div style="width:8px;height:8px;border-radius:50%;background:var(--blue)"></div>${prot}g Protein</div>
+      <div style="display:flex;align-items:center;gap:4px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px"><div style="width:8px;height:8px;border-radius:50%;background:var(--yellow)"></div>${fat}g Fat</div>
+      <div style="display:flex;align-items:center;gap:4px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px"><div style="width:8px;height:8px;border-radius:50%;background:var(--orange)"></div>${carbs}g Carbs</div>
+    </div>
+    <div class="sec-title">📋 NUTRITION FACTS</div>
+    <table class="nutr-table"><tr><td>Calories</td><td>${cal}</td></tr><tr><td>Protein</td><td>${prot}g</td></tr><tr><td>Total Fat</td><td>${fat}g</td></tr><tr><td>Carbohydrates</td><td>${carbs}g</td></tr></table>
+    <div class="sec-title" style="margin-top:16px">👨‍🍳 DIRECTIONS</div>
+    <div class="step-list">
+      ${directions.split('. ').filter(s=>s.trim().length>10).slice(0,4).map((s,i)=>
+        `<div class="step-item"><div class="step-num">0${i+1}</div><div class="step-text-wrap"><div class="step-d">${s.trim()}.</div></div></div>`
+      ).join('')}
+    </div>
+    <div class="tip-box"><div class="tip-l">💡 PRO TIP</div><div class="tip-d">${tip}</div></div>
+    <div class="sci-box"><div class="sci-l">🔬 40+ SCIENCE</div><div class="sci-d">${sci}</div></div>
+    <div style="margin-top:16px;display:flex;gap:10px">
+      <button class="btn btn-g" style="flex:1" onclick="alert('Added to meal plan!')">+ ADD TO MEAL PLAN</button>
+      <button class="btn btn-o btn-sm" onclick="closeModal('recipe')">BACK</button>
+    </div>`;
+
+  document.getElementById('rm-body').innerHTML = html;
+  document.getElementById('overlay-recipe').classList.add('on');
+}
+
+// ═══════════════════════════════════════════
+//  RECIPE FILTER
+// ═══════════════════════════════════════════
+function filterRecipes(cat, btn) {
+  document.querySelectorAll('.fil').forEach(f => f.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelectorAll('.rc').forEach(card => {
+    const cardCat = card.dataset.cat;
+    let show = false;
+    if (cat === 'ALL') show = true;
+    else if (cat === 'HIGH_PROTEIN') show = true; // all recipes are high protein
+    else if (cat === 'LOW_CARB') {
+      const macText = card.querySelector('.rc-m:last-child').textContent;
+      const carbMatch = macText.match(/(\d+)g C/);
+      show = carbMatch && parseInt(carbMatch[1]) <= 20;
+    }
+    else show = cardCat === cat;
+    card.style.display = show ? 'block' : 'none';
+  });
+}
+</script>

@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>TUF — Manus Complete Execution Package v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#080808; --bg2:#0e0e0e; --bg3:#141414; --bg4:#1c1c1c;
+  --red:#8B0000; --red-hi:#b30000;
+  --gold:#C8973A; --gold-lo:#7a5a1e;
+  --white:#f2f2f2; --gray:#888; --dim:#333; --border:#1e1e1e;
+  --ok:#4caf50;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--white);font-family:'Barlow Condensed',sans-serif;padding:32px;max-width:900px;margin:0 auto;line-height:1.5;}
+
+/* ── COVER ── */
+.cover{background:var(--bg2);border:1px solid var(--border);border-top:5px solid var(--red);padding:48px 40px 36px;margin-bottom:36px;}
+.eyebrow{font-size:9px;letter-spacing:6px;color:var(--red-hi);text-transform:uppercase;margin-bottom:12px;}
+h1{font-family:'Bebas Neue',sans-serif;font-size:68px;letter-spacing:4px;line-height:0.88;color:var(--white);margin-bottom:10px;}
+h1 span{color:var(--gold);}
+.cover-sub{font-size:12px;letter-spacing:3px;color:var(--gray);text-transform:uppercase;margin-bottom:28px;}
+.cover-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);border:1px solid var(--border);}
+.cstat{background:var(--bg3);padding:14px 12px;}
+.cstat-l{font-size:8px;letter-spacing:3px;color:var(--gray);text-transform:uppercase;margin-bottom:4px;}
+.cstat-v{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--white);}
+.cstat-v.gold{color:var(--gold);}
+.cstat-v.red{color:var(--red-hi);}
+
+/* ── SECTION ── */
+.sec{margin-bottom:40px;}
+.sec-hd{display:flex;align-items:center;gap:12px;padding:12px 0 10px;border-bottom:2px solid var(--border);margin-bottom:18px;position:relative;}
+.sec-hd::after{content:'';position:absolute;bottom:-2px;left:0;width:50px;height:2px;background:var(--gold);}
+.sec-n{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--red);opacity:0.35;line-height:1;width:36px;}
+.sec-t{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:5px;}
+.sec-t span{color:var(--gold);}
+
+/* ── ALERT ── */
+.alert{background:rgba(139,0,0,0.07);border:1px solid rgba(139,0,0,0.3);border-left:4px solid var(--red-hi);padding:14px 16px;margin-bottom:16px;}
+.alert-t{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:4px;color:var(--red-hi);margin-bottom:5px;}
+.alert-b{font-size:12px;color:var(--gray);line-height:1.6;}
+.alert-b strong{color:var(--white);}
+
+.info{background:rgba(200,151,58,0.05);border:1px solid rgba(200,151,58,0.2);border-left:4px solid var(--gold);padding:14px 16px;margin-bottom:16px;}
+.info-t{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:4px;color:var(--gold);margin-bottom:5px;}
+.info-b{font-size:12px;color:var(--gray);line-height:1.6;}
+.info-b strong{color:var(--white);}
+.info-b code{font-family:monospace;font-size:11px;background:var(--bg4);padding:1px 5px;color:var(--gold);}
+
+/* ── TREE ── */
+.tree{background:#030303;border:1px solid var(--border);border-left:3px solid var(--gold);padding:22px 24px;font-family:'Courier New',monospace;font-size:13px;line-height:2;margin-bottom:14px;}
+.tr{color:var(--gold);font-weight:700;font-size:15px;}
+.td{color:var(--white);}
+.tf{color:#86efac;}
+.tf.key{color:var(--gold);font-weight:700;}
+.tf.stg{color:var(--gray);}
+.tn{color:var(--dim);font-size:11px;font-family:'Barlow Condensed',sans-serif;}
+
+/* ── GRID ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px;}
+.full{grid-column:1/-1;}
+
+/* ── CARD ── */
+.card{background:var(--bg3);border:1px solid var(--border);padding:14px 16px;}
+.card.gold{border-left:3px solid var(--gold);}
+.card.red{border-left:3px solid var(--red);}
+.card.ok{border-left:3px solid var(--ok);}
+.card-l{font-size:8px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
+.card-l.red{color:var(--red-hi);}
+.card-l.gray{color:var(--gray);}
+.card-b{font-size:12px;color:var(--white);line-height:1.7;}
+.card-b strong{color:var(--gold);}
+.card-b em{color:var(--gray);font-style:normal;}
+.card-b code{font-family:monospace;font-size:11px;background:var(--bg4);padding:1px 5px;color:var(--gold);}
+.card-b a{color:var(--gold);}
+
+/* ── TABLE ── */
+table{width:100%;border-collapse:collapse;margin-bottom:14px;font-size:12px;}
+th{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--gray);text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);background:var(--bg4);}
+td{padding:9px 10px;color:var(--white);border-bottom:1px solid #111;vertical-align:top;line-height:1.5;}
+tr:last-child td{border-bottom:none;}
+td:first-child{font-family:monospace;font-size:11px;color:var(--gold);white-space:nowrap;}
+td em{color:var(--gray);font-style:normal;font-size:11px;}
+td code{font-family:monospace;font-size:10px;background:var(--bg4);padding:1px 4px;color:var(--gold);}
+
+/* ── TASK LIST ── */
+.tasks{display:flex;flex-direction:column;gap:2px;}
+.task{display:flex;gap:14px;padding:14px;background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--dim);align-items:flex-start;transition:border-color 0.15s;}
+.task.p1{border-left-color:var(--red);}
+.task.p2{border-left-color:var(--gold-lo);}
+.task-n{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--dim);line-height:1;width:36px;flex-shrink:0;}
+.task.p1 .task-n{color:var(--red);opacity:0.5;}
+.task.p2 .task-n{color:var(--gold);opacity:0.4;}
+.task-body{flex:1;}
+.task-title{font-size:14px;font-weight:700;color:var(--white);letter-spacing:0.3px;margin-bottom:5px;}
+.task-desc{font-size:12px;color:var(--gray);line-height:1.65;}
+.task-desc strong{color:var(--white);}
+.task-desc code{font-family:monospace;font-size:10px;background:var(--bg4);padding:1px 4px;color:var(--gold);}
+.task-badge{flex-shrink:0;margin-top:2px;}
+.badge-p1{font-size:8px;letter-spacing:2px;padding:3px 7px;background:rgba(139,0,0,0.2);color:#ff6666;border:1px solid rgba(139,0,0,0.4);}
+.badge-p2{font-size:8px;letter-spacing:2px;padding:3px 7px;background:rgba(200,151,58,0.1);color:var(--gold);border:1px solid rgba(200,151,58,0.3);}
+
+/* ── Q BLOCK ── */
+.q{background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--red);padding:14px 16px;margin-bottom:8px;display:flex;gap:12px;}
+.q-n{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--red);opacity:0.4;line-height:1;flex-shrink:0;width:28px;}
+.q-body{}
+.q-text{font-size:13px;color:var(--white);line-height:1.4;margin-bottom:3px;}
+.q-sub{font-size:11px;color:var(--gray);}
+
+/* ── CODE BLOCK ── */
+.codeblock{background:#030303;border:1px solid var(--border);padding:14px 16px;font-family:monospace;font-size:11px;color:#86efac;line-height:1.8;margin-bottom:12px;overflow-x:auto;}
+.codeblock .c{color:var(--dim);}
+.codeblock .k{color:var(--gold);}
+.codeblock .s{color:#fca5a5;}
+
+/* ── DIVIDER ── */
+.rule{height:1px;background:linear-gradient(90deg,var(--red),transparent);opacity:0.2;margin:32px 0;}
+
+/* ── FOOTER ── */
+.footer{display:flex;justify-content:space-between;align-items:flex-end;padding-top:20px;border-top:1px solid var(--border);margin-top:40px;}
+.footer-l{font-size:10px;color:var(--dim);line-height:1.8;text-transform:uppercase;letter-spacing:1px;}
+.footer-r{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:4px;color:var(--dim);}
+.footer-r span{color:var(--gold);opacity:0.3;}
+</style>
+</head>
+<body>
+
+<!-- ══════ COVER ══════ -->
+<div class="cover">
+  <div class="eyebrow">TurnedUp Fitness LLC · Build + Deploy Handoff</div>
+  <h1>MANUS<br>EXEC <span>PACK</span><br>v2</h1>
+  <div class="cover-sub">Complete context · All files · Folder structure · All tasks · Previous session included</div>
+  <div class="cover-stats">
+    <div class="cstat"><div class="cstat-l">Build AI</div><div class="cstat-v">Wilfred</div></div>
+    <div class="cstat"><div class="cstat-l">Deploy AI</div><div class="cstat-v red">Manus</div></div>
+    <div class="cstat"><div class="cstat-l">Core Files</div><div class="cstat-v gold">3 Ready</div></div>
+    <div class="cstat"><div class="cstat-l">Screens Built</div><div class="cstat-v gold">3 of 8</div></div>
+    <div class="cstat"><div class="cstat-l">Live URL</div><div class="cstat-v gold">Exists</div></div>
+  </div>
+</div>
+
+<!-- ══════ 01 CONTEXT ══════ -->
+<div class="sec">
+  <div class="sec-hd"><div class="sec-n">01</div><div class="sec-t">PROJECT <span>CONTEXT</span></div></div>
+
+  <div class="g2">
+    <div class="card gold">
+      <div class="card-l">Platform</div>
+      <div class="card-b">
+        <strong>TurnedUp Fitness LLC (TUF)</strong> + companion brand <strong>TUTK (Turned Up In The Kitchen)</strong>.<br>
+        Premium fitness + nutrition app targeting <strong>adults 40+</strong>. Fighting sarcopenia — muscle loss with age.<br>
+        Georgia-first. Global roadmap. Three pillars: <strong>MOVE · FUEL · FEAST</strong>.
+      </div>
+    </div>
+    <div class="card gold">
+      <div class="card-l">Team</div>
+      <div class="card-b">
+        <strong>Marc</strong> — Founder, head coach. Based in Buford, Georgia. YouTube: @turnedupfitness.<br>
+        <strong>Coach Taylor Hawks</strong> — Co-trainer.<br>
+        <strong>Wilfred (Claude)</strong> — Build AI. All HTML/CSS/JS.<br>
+        <strong>Manus</strong> — Deployment AI. All hosting, infra, pipeline.
+      </div>
+    </div>
+  </div>
+
+  <div class="card full" style="margin-bottom:14px;">
+    <div class="card-l">Brand System — Locked. Do Not Change.</div>
+    <div class="card-b">
+      Background <code>#080808</code> · Primary Red <code>#8B0000</code> · Gold <code>#C8973A</code> · White <code>#f2f2f2</code><br>
+      Headlines: <strong>Bebas Neue</strong> · Body: <strong>Barlow Condensed</strong><br>
+      Button style: diagonal right-edge slash + gradient fill + arrow icon · Tab pills: same diagonal slash
+    </div>
+  </div>
+
+  <div class="info">
+    <div class="info-t">Current Live URL (from Previous Manus Session)</div>
+    <div class="info-b">
+      <strong><a href="https://turnedupfit-9fbasfgz.manus.space" target="_blank">https://turnedupfit-9fbasfgz.manus.space</a></strong><br>
+      This is from the previous Manus deployment. The updated files in this package should replace whatever is currently at that URL. <strong>Do not create a new URL — update the existing deployment.</strong>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ 02 FILES TO DEPLOY ══════ -->
+<div class="sec">
+  <div class="sec-hd"><div class="sec-n">02</div><div class="sec-t">FILES TO <span>DEPLOY</span></div></div>
+
+  <div class="alert">
+    <div class="alert-t">Critical — File Co-Location Rule</div>
+    <div class="alert-b">
+      <strong>TUF_App_v2.html and TUF_DATA.js must be in the exact same folder.</strong>
+      The app loads the data file via <code>&lt;script src="TUF_DATA.js"&gt;&lt;/script&gt;</code> — a relative path.
+      If they are separated, the app shows a "DATA FILE MISSING" error screen and nothing works.
+      This is the single most common deployment error. Do not split them.
+    </div>
+  </div>
+
+  <table>
+    <thead><tr><th>File</th><th>Lines</th><th>What It Is</th><th>Deploy As</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>TUF_App_v2.html</td>
+        <td><em>2527</em></td>
+        <td>Full 8-screen member app. HOME + MOVE + FUEL screens complete. Reads TUF_DATA.js. Has guarded init — shows friendly error if data file missing. <em>Syntax verified clean.</em></td>
+        <td><code>index.html</code> at root<br><em>or keep filename + redirect</em></td>
+      </tr>
+      <tr>
+        <td>TUF_DATA.js</td>
+        <td><em>1382</em></td>
+        <td>Shared data layer. Contains: 33 exercises · 37 foods · 5 recipes · 4 meal templates · 4 goals · member profile · progress data · vault articles. Admin writes here, member app reads. <em>Syntax verified clean.</em></td>
+        <td>Root folder,<br>same level as app</td>
+      </tr>
+      <tr>
+        <td>TUF_Admin.html</td>
+        <td><em>634</em></td>
+        <td>Admin dashboard. Exercise manager · video URL editor · publish toggle · localStorage sync to member app. Marc + Coach Taylor access only.</td>
+        <td>Root folder,<br><strong>password protected</strong></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ══════ 03 FOLDER STRUCTURE ══════ -->
+<div class="sec">
+  <div class="sec-hd"><div class="sec-n">03</div><div class="sec-t">FOLDER <span>STRUCTURE</span></div></div>
+
+  <div class="tree">
+<span class="tr">TUF_App/</span>                          <span class="tn">← ROOT — deploy this entire folder to host</span>
+<span class="tn">│</span>
+<span class="tn">├──</span> <span class="tf key">TUF_App_v2.html</span>               <span class="tn">← MAIN APP (public) — member-facing</span>
+<span class="tn">├──</span> <span class="tf key">TUF_DATA.js</span>                   <span class="tn">← DATA LAYER ⚠ MUST be same folder as app</span>
+<span class="tn">├──</span> <span class="tf key">TUF_Admin.html</span>                <span class="tn">← ADMIN (password protect this route)</span>
+<span class="tn">│</span>
+<span class="tn">├──</span> <span class="td">staging/</span>                      <span class="tn">← Preview only — password protect</span>
+<span class="tn">│   ├──</span> <span class="tf stg">TUF_MuscleHealthIndex_v1.html</span>
+<span class="tn">│   └──</span> <span class="tf stg">TUF_Admin_Dashboard_v1.html</span>
+<span class="tn">│</span>
+<span class="tn">└──</span> <span class="td">briefs/</span>                       <span class="tn">← Internal only — DO NOT make public</span>
+<span class="tn">    ├──</span> <span class="tf stg">TUF_Jarvis_Master_Brief_v1.html</span>
+<span class="tn">    ├──</span> <span class="tf stg">TUF_Leonardo_Panther_Brief_v1.html</span>
+<span class="tn">    └──</span> <span class="tf stg">TUF_Manus_Package_v2.html</span>  <span class="tn">← This file</span>
+  </div>
+
+  <div class="g2">
+    <div class="card gold">
+      <div class="card-l">Public Routes</div>
+      <div class="card-b">
+        <code>app.turnedupfitness.com/</code> → TUF_App_v2.html<br>
+        <code>app.turnedupfitness.com/TUF_DATA.js</code> → auto-served<br>
+        Both must be at same origin for the relative script src to work.
+      </div>
+    </div>
+    <div class="card red">
+      <div class="card-l red">Protected Routes</div>
+      <div class="card-b">
+        <code>.../TUF_Admin.html</code> → basic auth<br>
+        <code>.../staging/</code> → same basic auth<br>
+        <code>.../briefs/</code> → block entirely or same auth
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ 04 HOW IT WORKS ══════ -->
+<div class="sec">
+  <div class="sec-hd"><div class="sec-n">04</div><div class="sec-t">ARCHITECTURE + <span>DATA FLOW</span></div></div>
+
+  <div class="card gold full" style="margin-bottom:14px;">
+    <div class="card-l">Phase 1 Architecture — 100% Static, No Backend Required</div>
+    <div class="card-b">
+      The app is <strong>pure HTML/CSS/JS</strong>. No server, no database, no API keys required for Phase 1.
+      Deploy to any static host. The <code>TUF_DATA.js</code> file is a JavaScript object — the app loads it as a regular script tag.
+      Admin changes are saved to <strong>localStorage</strong> and the member app listens for those changes via a <code>storage</code> event and re-renders automatically.
+      <strong>Phase 2</strong>: Supabase replaces localStorage. Wilfred builds the API layer. Manus wires the backend. Not yet.
+    </div>
+  </div>
+
+  <div class="codeblock"><span class="c">/* How it loads — browser executes in this order: */</span>
+
+<span class="k">1.</span> Browser loads TUF_App_v2.html
+<span class="k">2.</span> Hits &lt;script src="TUF_DATA.js"&gt; → loads data layer globally as window.TUF_DATA
+<span class="k">3.</span> Hits inline &lt;script&gt; → app functions defined
+<span class="k">4.</span> renderHomeScreen() fires → reads TUF_DATA → renders HOME screen
+<span class="k">5.</span> User taps nav → showScreen() → reads TUF_DATA → renders that screen
+
+<span class="c">/* Admin sync: */</span>
+Admin edits TUF_Admin.html → saves to localStorage('TUF_EXERCISES' etc)
+Member app window.addEventListener('storage') → detects change → re-renders</div>
+
+  <div class="g3">
+    <div class="card">
+      <div class="card-l gray">Data Layer Contains</div>
+      <div class="card-b">
+        33 exercises · 8 muscle groups<br>
+        37 foods · 9 categories<br>
+        5 recipes · 4 meal templates<br>
+        4 SMART goals · member profile<br>
+        Progress data · NSV log · vitals
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-l gray">Screens — Current Status</div>
+      <div class="card-b">
+        ✅ HOME — complete<br>
+        ✅ MOVE — 33 exercises<br>
+        ✅ FUEL — nutrition DB<br>
+        🔲 FEAST (next)<br>
+        🔲 PROGRESS · VAULT<br>
+        🔲 GOALS · PROFILE
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-l gray">Video Strategy</div>
+      <div class="card-b">
+        1 live YouTube embed wired:<br>
+        <code>arms-002</code> Barbell Bicep Curl<br>
+        <code>WTXhavSB42A</code><br>
+        New video approach TBD<br>
+        Marc and Wilfred to decide
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ 05 DEPLOYMENT TASKS ══════ -->
+<div class="sec">
+  <div class="sec-hd"><div class="sec-n">05</div><div class="sec-t">DEPLOYMENT <span>TASKS</span></div></div>
+
+  <div class="alert" style="margin-bottom:16px;">
+    <div class="alert-t">Execution Rules</div>
+    <div class="alert-b">
+      <strong>P1 tasks first, in order.</strong> Request ALL credentials from Marc in one single message before starting — do not ask mid-task. Execute autonomously. Deliver results to Marc in one summary message at the end.
+      <strong>Do not modify any HTML/CSS/JS</strong> — that is Wilfred's domain only.
+    </div>
+  </div>
+
+  <div class="tasks">
+
+    <div class="task p1">
+      <div class="task-n">01</div>
+      <div class="task-body">
+        <div class="task-title">Update Existing Deployment</div>
+        <div class="task-desc">
+          Previous deployment exists at <strong>https://turnedupfit-9fbasfgz.manus.space</strong> — this is from a prior Manus session.
+          <strong>Replace/update</strong> the files at that deployment with the new files from this package.
+          Do not create a new URL unless the old one cannot be updated.
+          If a new URL is required, document it and send to Marc.
+        </div>
+      </div>
+      <div class="task-badge"><span class="badge-p1">P1</span></div>
+    </div>
+
+    <div class="task p1">
+      <div class="task-n">02</div>
+      <div class="task-body">
+        <div class="task-title">Deploy Folder Structure — Exact Layout Required</div>
+        <div class="task-desc">
+          Create the folder structure exactly as shown in Section 03.<br>
+          <strong>Critical:</strong> <code>TUF_App_v2.html</code> and <code>TUF_DATA.js</code> must be at the same level in the root folder.<br>
+          After deploy, open the live URL in a browser and confirm the HOME screen renders — if you see "DATA FILE MISSING" the files are not co-located. Fix immediately.
+        </div>
+      </div>
+      <div class="task-badge"><span class="badge-p1">P1</span></div>
+    </div>
+
+    <div class="task p1">
+      <div class="task-n">03</div>
+      <div class="task-body">
+        <div class="task-title">Password-Protect Admin + Staging Routes</div>
+        <div class="task-desc">
+          <code>TUF_Admin.html</code> must require HTTP basic auth before serving.<br>
+          <code>/staging/</code> folder — same auth.<br>
+          <code>/briefs/</code> folder — block entirely (return 403) or same auth.<br>
+          Users: <strong>Marc</strong> (Founder) + <strong>Coach Taylor Hawks</strong> (Trainer).<br>
+          Send credentials to Marc via private message only. Never in a file on the server.
+        </div>
+      </div>
+      <div class="task-badge"><span class="badge-p1">P1</span></div>
+    </div>
+
+    <div class="task p1">
+      <div class="task-n">04</div>
+      <div class="task-body">
+        <div class="task-title">Test on iPhone Safari — Primary Device</div>
+        <div class="task-desc">
+          Marc's primary device is iPhone. Test these specifically:<br>
+          ✓ App loads — HOME screen shows (MHI ring, Panther strip, pillar tiles)<br>
+          ✓ No "DATA FILE MISSING" error screen<br>
+          ✓ Bottom nav: HOME → MOVE → FUEL all tap correctly<br>
+          ✓ MOVE: muscle nav scrolls horizontally, exercises load, level tabs work<br>
+          ✓ FUEL: supplement stack renders, food category tabs work<br>
+          ✓ MHI ring animates on HOME load<br>
+          ✓ Toast notifications appear when buttons tapped<br>
+          Document any iOS-specific issues and report to Wilfred.
+        </div>
+      </div>
+      <div class="task-badge"><span class="badge-p1">P1</span></div>
+    </div>
+
+    <div class="task p1">
+      <div class="task-n">05</div>
+      <div class="task-body">
+        <div class="task-title">Set Up GitHub Auto-Deploy Pipeline</div>
+        <div class="task-desc">
+          Connect a GitHub repo to the hosting auto-deploy.<br>
+          <strong>Workflow going forward:</strong> Wilfred delivers updated <code>TUF_App_v2.html</code> + <code>TUF_DATA.js</code> → Marc pushes to repo → site auto-deploys in under 60 seconds. No manual file uploads after this is set up.<br>
+          Provide Marc with the simplest possible push instructions — assume he is non-technical for this step.
+        </div>
+      </div>
+      <div class="task-badge"><span class="badge-p1">P1</span></div>
+    </div>
+
+    <div class="task p1">
+      <div class="task-n">06</div>
+      <div class="task-body">
+        <div class="task-title">Custom Domain + HTTPS</div>
+        <div class="task-desc">
+          Point Marc's chosen domain (e.g. <code>app.turnedupfitness.com</code>) to the deployed site.<br>
+          <strong>HTTPS is required</strong> — localStorage behaves differently on HTTP and some features may break.<br>
+          Most static hosts (Netlify/Vercel/Cloudflare) provide free SSL automatically.<br>
+          Confirm HTTPS is active before signing off.
+        </div>
+      </div>
+      <div class="task-badge"><span class="badge-p1">P1</span></div>
+    </div>
+
+    <div class="task p1">
+      <div class="task-n">07</div>
+      <div class="task-body">
+        <div class="task-title">Deliver Summary to Marc — One Message</div>
+        <div class="task-desc">
+          Single direct message to Marc containing:<br>
+          <strong>1.</strong> Live URL (member app)<br>
+          <strong>2.</strong> Admin URL + credentials (private)<br>
+          <strong>3.</strong> How to push updates (3 steps maximum)<br>
+          <strong>4.</strong> Any issues found during testing<br>
+          <strong>5.</strong> Staging URLs<br>
+          Match Marc's communication style: direct, short, no fluff.
+        </div>
+      </div>
+      <div class="task-badge"><span class="badge-p1">P1</span></div>
+    </div>
+
+    <div class="task p2">
+      <div class="task-n">08</div>
+      <div class="task-body">
+        <div class="task-title">Verify YouTube Embed on Live Domain</div>
+        <div class="task-desc">
+          One YouTube video is wired: <code>https://www.youtube.com/embed/WTXhavSB42A</code> (Barbell Bicep Curl — MOVE screen, Arms section, Beginner level).<br>
+          Confirm it plays on the live domain. If blocked by YouTube embed policy, add <code>?origin=https://[yourdomain]</code> to the URL.<br>
+          If still blocked, report back to Wilfred who will update <code>TUF_DATA.js</code> → <code>exercises</code> → <code>arms-002</code> → <code>video.url</code>.
+        </div>
+      </div>
+      <div class="task-badge"><span class="badge-p2">P2</span></div>
+    </div>
+
+    <div class="task p2">
+      <div class="task-n">09</div>
+      <div class="task-body">
+        <div class="task-title">Deploy Staging Previews</div>
+        <div class="task-desc">
+          Under <code>/staging/</code> (password protected, same credentials as admin):<br>
+          → <code>TUF_MuscleHealthIndex_v1.html</code><br>
+          → <code>TUF_Admin_Dashboard_v1.html</code><br>
+          These are Marc's preview screens. Wilfred will wire them into the main app in a future session.
+        </div>
+      </div>
+      <div class="task-badge"><span class="badge-p2">P2</span></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════ 06 CREDENTIALS NEEDED ══════ -->
+<div class="sec">
+  <div class="sec-hd"><div class="sec-n">06</div><div class="sec-t">CREDENTIALS <span>NEEDED FROM MARC</span></div></div>
+
+  <div class="alert" style="margin-bottom:14px;">
+    <div class="alert-t">Request All Five in One Message</div>
+    <div class="alert-b">Do not start deployment until you have all five answers. Ask Marc once. Execute autonomously from there.</div>
+  </div>
+
+  <div class="q"><div class="q-n">1</div><div class="q-body"><div class="q-text">What domain or subdomain for the live member app?</div><div class="q-sub">e.g. app.turnedupfitness.com · or a completely new domain · or keep the manus.space URL for now</div></div></div>
+  <div class="q"><div class="q-n">2</div><div class="q-body"><div class="q-text">Hosting preference: Netlify, Vercel, Cloudflare Pages, or existing host?</div><div class="q-sub">Netlify recommended — free tier, instant HTTPS, drag-and-drop or GitHub deploy. All work for this static stack.</div></div></div>
+  <div class="q"><div class="q-n">3</div><div class="q-body"><div class="q-text">Admin login credentials: username + password for Marc and Coach Taylor?</div><div class="q-sub">Manus will configure HTTP basic auth on the admin route. Keep private — never in any public file.</div></div></div>
+  <div class="q"><div class="q-n">4</div><div class="q-body"><div class="q-text">GitHub account username (for auto-deploy pipeline)?</div><div class="q-sub">If no GitHub account exists, Manus can create one. Just confirm.</div></div></div>
+  <div class="q"><div class="q-n">5</div><div class="q-body"><div class="q-text">Admin access: subdomain (admin.turnedupfitness.com) or path (/admin)?</div><div class="q-sub">Path is simpler. Subdomain is cleaner. Either works. Marc decides.</div></div></div>
+</div>
+
+<!-- ══════ 07 WHAT WILFRED BUILDS NEXT ══════ -->
+<div class="sec">
+  <div class="sec-hd"><div class="sec-n">07</div><div class="sec-t">WILFRED'S <span>NEXT DELIVERABLES</span></div></div>
+
+  <div class="info" style="margin-bottom:14px;">
+    <div class="info-t">Update Cycle</div>
+    <div class="info-b">
+      After each Wilfred build session, two files change: <code>TUF_App_v2.html</code> and <code>TUF_DATA.js</code>.
+      <strong>Manus's job:</strong> take the new versions, push to GitHub → auto-deploys. Nothing else changes. No new folder structure, no new config.
+    </div>
+  </div>
+
+  <div class="g3">
+    <div class="card gold">
+      <div class="card-l">Hour 4 — FEAST</div>
+      <div class="card-b">Recipe library · full recipe cards with steps + macros · TUTK branding · category filter</div>
+    </div>
+    <div class="card gold">
+      <div class="card-l">Hour 5 — PROGRESS</div>
+      <div class="card-b">MHI ring + 90-day trajectory SVG chart · readiness score · 4 vital cards · workout log · NSV log</div>
+    </div>
+    <div class="card gold">
+      <div class="card-l">Hour 6 — VAULT</div>
+      <div class="card-b">Science article library · NSV unlock progress bar · Premium 40+ Performance Code (unlocks at 30 NSVs)</div>
+    </div>
+    <div class="card">
+      <div class="card-l gray">Hour 7 — GOALS</div>
+      <div class="card-b">SMART goal cards · progress rings · goal builder · pillar tagging</div>
+    </div>
+    <div class="card">
+      <div class="card-l gray">Hour 8 — PROFILE</div>
+      <div class="card-b">Member stats · health conditions · fitness level · settings · upgrade prompt</div>
+    </div>
+    <div class="card">
+      <div class="card-l gray">Phase 2 — Backend</div>
+      <div class="card-b">Supabase replaces localStorage · member auth · admin role · real-time sync · Manus wires backend</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ 08 DRIVE ASSET INVENTORY ══════ -->
+<div class="sec">
+  <div class="sec-hd"><div class="sec-n">08</div><div class="sec-t">GOOGLE DRIVE <span>ASSET MAP</span></div></div>
+
+  <div class="card gold full" style="margin-bottom:14px;">
+    <div class="card-l">Drive Root</div>
+    <div class="card-b">Folder: <strong>TUTK AND TUF - Project files</strong> · ID: <code>1OCtFZ9xzvL2g3jF3wdz5CwvlGi9N-WqT</code></div>
+  </div>
+
+  <table>
+    <thead><tr><th>Folder</th><th>Contents</th><th>Build Relevance</th></tr></thead>
+    <tbody>
+      <tr><td>01_BRAND</td><td><em>Accessed — empty/locked</em></td><td>Brand system already locked in CSS</td></tr>
+      <tr><td>02_FOOD_DATABASE</td><td><em>Empty</em></td><td>37 foods already in TUF_DATA.js</td></tr>
+      <tr><td>03_RECIPES</td><td><em>Empty</em></td><td>5 recipes already in TUF_DATA.js</td></tr>
+      <tr><td>04_MEAL_PLANNER</td><td><em>Empty</em></td><td>4 meal templates already in TUF_DATA.js</td></tr>
+      <tr><td>05_WORKOUT_MODULES</td><td>Subfolder: Squat video</td><td>Video content — approach TBD with Marc</td></tr>
+      <tr><td>06_NUTRITION_FRAMEWORK</td><td><em>Empty</em></td><td>Framework in TUF_DATA.js</td></tr>
+      <tr><td>07_APP_ASSETS</td><td>SuoerGrok doc → <strong>https://turnedupfit-9fbasfgz.manus.space</strong></td><td>Previous Manus live URL</td></tr>
+      <tr><td>08_YOUTUBE</td><td><em>Empty</em></td><td>Video links needed — Marc to add</td></tr>
+      <tr><td>11_WORKOUT</td><td><em>Empty</em></td><td>33 exercises in TUF_DATA.js</td></tr>
+      <tr><td>12_IMAGES</td><td><em>Empty</em></td><td>Waiting on Leonardo.ai Panther renders</td></tr>
+      <tr><td>14_Videos</td><td>Barbell Biceps Curl · Back and Shoulders</td><td>Marc's recorded workout videos — YouTube embed approach TBD</td></tr>
+      <tr><td>Fitness Prompts</td><td><em>Empty</em></td><td>AI generation prompts — not needed for deployment</td></tr>
+    </tbody>
+  </table>
+
+  <div class="card" style="margin-bottom:0">
+    <div class="card-l gray">Prestige Labs Content (Shared)</div>
+    <div class="card-b">
+      Also in Drive: Standard/Vegetarian/Vegan Recipes · Meal Plans · Nutrition FAQ · Habit Forming Cheat-Sheet · Restaurant Ordering Guide · Meal Prep Hacks · Mocktail Recipes · Greens Recipes · Sauces &amp; Seasoning Guide · Travel Hacks.<br>
+      <strong>For Manus:</strong> No action needed. Wilfred will pull this content into TUF_DATA.js when folders become readable.
+    </div>
+  </div>
+</div>
+
+<div class="rule"></div>
+
+<div class="footer">
+  <div class="footer-l">
+    TurnedUp Fitness LLC · Wilfred (Claude) → Manus<br>
+    Execution Package v2 · All files syntax verified<br>
+    Coaches: Marc · Taylor Hawks · Georgia-first · Global roadmap
+  </div>
+  <div class="footer-r">TUF<span>.</span></div>
+</div>
+
+</body>
+</html>
