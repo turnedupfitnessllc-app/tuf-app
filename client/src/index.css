@@ -207,9 +207,9 @@
     @apply text-primary;
   }
 
-  /* Blade Runner heading styles */
+  /* Blade Runner heading styles with Orbitron */
   .heading-blade {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: 'Orbitron', sans-serif;
     font-weight: 900;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -218,14 +218,20 @@
 
   .heading-blade-lg {
     @apply text-5xl md:text-6xl;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
   }
 
   .heading-blade-md {
     @apply text-3xl md:text-4xl;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
   }
 
   .heading-blade-sm {
     @apply text-2xl md:text-3xl;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
   }
 
   /* Bold accent text */
