@@ -200,15 +200,15 @@
 
   /* Color-blocked text utilities */
   .text-black {
-    @apply text-black;
+    @apply text-foreground;
   }
   
-  .dark .text-black {
-    @apply text-white;
-  }
-
   .text-red {
     @apply text-primary;
+  }
+  
+  .dark .text-red {
+    @apply text-[#FF5252];
   }
 
   /* Blade Runner heading styles with Orbitron */
