@@ -3,9 +3,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* TUF Design System — LOCKED v2 */
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;500;600;700&display=swap');
-
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -46,133 +43,54 @@
 }
 
 :root {
-  /* TUF Color System */
-  --tuf-bg: #080808;
-  --tuf-bg2: #0e0e0e;
-  --tuf-bg3: #141414;
-  --tuf-bg4: #1c1c1c;
-  --tuf-bg5: #242424;
-  --tuf-border: #1e1e1e;
-  --tuf-border-lo: #1a1a1a;
-  --tuf-border-hi: #2a2a2a;
-  --tuf-red: #8B0000;
-  --tuf-red-hi: #b30000;
-  --tuf-red-dark: #c0392b;
-  --tuf-red-glow: rgba(139, 0, 0, 0.35);
-  --tuf-red-fade: rgba(139, 0, 0, 0.08);
-  --tuf-red-mid: rgba(139, 0, 0, 0.18);
-  --tuf-gold: #C8973A;
-  --tuf-gold-lo: #7a5a1e;
-  --tuf-gold-hi: #e0a840;
-  --tuf-gold-bright: #f0b850;
-  --tuf-gold-fade: rgba(200, 151, 58, 0.08);
-  --tuf-gold-glow: rgba(200, 151, 58, 0.28);
-  --tuf-gold-border: rgba(200, 151, 58, 0.3);
-  --tuf-white: #f2f2f2;
-  --tuf-white-lo: rgba(242, 242, 242, 0.06);
-  --tuf-gray: #888888;
-  --tuf-gray-lo: #555555;
-  --tuf-dim: #333333;
-  --tuf-ok: #4caf50;
-  --tuf-ok-fade: rgba(76, 175, 80, 0.1);
-  --tuf-ok-border: rgba(76, 175, 80, 0.3);
-  --tuf-warn: #C8973A;
-  --tuf-danger: #b30000;
-  --tuf-blue: #4A90D9;
-  --tuf-accent-move: #C8973A;
-  --tuf-accent-fuel: #4caf50;
-  --tuf-accent-feast: #f97316;
-  --tuf-feast-dark: #c2510a;
-  --tuf-vault-purple: #a78bfa;
-
-  --primary: var(--color-blue-700);
-  --primary-foreground: var(--color-blue-50);
-  --sidebar-primary: var(--color-blue-600);
-  --sidebar-primary-foreground: var(--color-blue-50);
-  --chart-1: var(--color-blue-300);
-  --chart-2: var(--color-blue-500);
-  --chart-3: var(--color-blue-600);
-  --chart-4: var(--color-blue-700);
-  --chart-5: var(--color-blue-800);
-  --radius: 0.65rem;
-  --background: var(--tuf-bg);
-  --foreground: var(--tuf-white);
-  --card: var(--tuf-bg3);
-  --card-foreground: var(--tuf-white);
-  --popover: var(--tuf-bg3);
-  --popover-foreground: var(--tuf-white);
-  --secondary: var(--tuf-bg4);
-  --secondary-foreground: var(--tuf-gray);
-  --muted: var(--tuf-bg5);
-  --muted-foreground: var(--tuf-gray-lo);
-  --accent: var(--tuf-gold);
-  --accent-foreground: var(--tuf-bg);
-  --destructive: var(--tuf-red);
-  --destructive-foreground: var(--tuf-white);
-  --border: var(--tuf-border);
-  --input: var(--tuf-bg4);
-  --ring: oklch(0.623 0.214 259.815);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.235 0.015 65);
-  --sidebar-accent: oklch(0.967 0.001 286.375);
-  --sidebar-accent-foreground: oklch(0.141 0.005 285.823);
-  --sidebar-border: oklch(0.92 0.004 286.32);
-  --sidebar-ring: oklch(0.623 0.214 259.815);
-}
-
-.dark {
-  /* Dark theme is default for TUF */
-  --primary: var(--color-blue-700);
-  --primary-foreground: var(--color-blue-50);
-  --sidebar-primary: var(--color-blue-500);
-  --sidebar-primary-foreground: var(--color-blue-50);
-  --background: var(--tuf-bg);
-  --foreground: var(--tuf-white);
-  --card: var(--tuf-bg3);
-  --card-foreground: var(--tuf-white);
-  --popover: var(--tuf-bg3);
-  --popover-foreground: var(--tuf-white);
-  --secondary: var(--tuf-bg4);
-  --secondary-foreground: var(--tuf-gray);
-  --muted: var(--tuf-bg5);
-  --muted-foreground: var(--tuf-gray-lo);
-  --accent: var(--tuf-gold);
-  --accent-foreground: var(--tuf-bg);
-  --destructive: var(--tuf-red);
-  --destructive-foreground: var(--tuf-white);
-  --border: var(--tuf-border);
-  --input: var(--tuf-bg4);
-  --ring: oklch(0.488 0.243 264.376);
-  --chart-1: var(--color-blue-300);
-  --chart-2: var(--color-blue-500);
-  --chart-3: var(--color-blue-600);
-  --chart-4: var(--color-blue-700);
-  --chart-5: var(--color-blue-800);
-  --sidebar: var(--tuf-bg2);
-  --sidebar-foreground: var(--tuf-white);
-  --sidebar-accent: var(--tuf-gold);
-  --sidebar-accent-foreground: var(--tuf-bg);
-  --sidebar-border: var(--tuf-border);
-  --sidebar-ring: var(--tuf-gold-glow);
+  /* Apple-inspired color system */
+  --primary: #C0392B;        /* TUF Red */
+  --primary-foreground: #fff;
+  --accent: #F5A623;         /* TUF Gold */
+  --accent-foreground: #0D0D0D;
+  --sidebar-primary: #C0392B;
+  --sidebar-primary-foreground: #fff;
+  --chart-1: #FF6B6B;
+  --chart-2: #F5A623;
+  --chart-3: #4ECDC4;
+  --chart-4: #45B7D1;
+  --chart-5: #96CEB4;
+  --radius: 0.75rem;
+  
+  /* Dark mode base */
+  --background: oklch(0.08 0 0);           /* Deep black #0D0D0D */
+  --foreground: oklch(0.98 0 0);           /* Off-white */
+  --card: oklch(0.12 0 0);                 /* Slightly lighter black */
+  --card-foreground: oklch(0.98 0 0);
+  --popover: oklch(0.12 0 0);
+  --popover-foreground: oklch(0.98 0 0);
+  --secondary: oklch(0.15 0 0);            /* Subtle gray */
+  --secondary-foreground: oklch(0.85 0 0);
+  --muted: oklch(0.20 0 0);
+  --muted-foreground: oklch(0.70 0 0);
+  --destructive: #FF3B30;
+  --destructive-foreground: oklch(0.98 0 0);
+  --border: oklch(0.20 0 0);
+  --input: oklch(0.15 0 0);
+  --ring: #C0392B;
+  --sidebar: oklch(0.12 0 0);
+  --sidebar-foreground: oklch(0.98 0 0);
+  --sidebar-accent: #F5A623;
+  --sidebar-accent-foreground: #0D0D0D;
+  --sidebar-border: oklch(0.20 0 0);
+  --sidebar-ring: #C0392B;
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+  
   body {
-    @apply bg-background text-foreground font-sans;
-    font-family: 'Barlow Condensed', 'Trebuchet MS', sans-serif;
-    max-width: 480px;
-    margin: 0 auto;
-    min-height: 100vh;
-    overflow-x: hidden;
-    padding-bottom: 72px;
+    @apply bg-background text-foreground;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
   }
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Bebas Neue', sans-serif;
-    letter-spacing: 0.1em;
-  }
+  
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
   [type="button"]:not(:disabled),
@@ -184,28 +102,53 @@
   input[type="radio"]:not(:disabled) {
     @apply cursor-pointer;
   }
+
+  /* Apple-smooth transitions */
+  * {
+    @apply transition-all duration-300 ease-out;
+  }
+
+  /* Typography hierarchy */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl font-bold;
+  }
+
+  h2 {
+    @apply text-3xl md:text-4xl font-bold;
+  }
+
+  h3 {
+    @apply text-2xl md:text-3xl font-semibold;
+  }
 }
 
 @layer components {
-  /**
-   * Custom container utility that centers content and adds responsive padding.
-   *
-   * This overrides Tailwind's default container behavior to:
-   * - Auto-center content (mx-auto)
-   * - Add responsive horizontal padding
-   * - Set max-width for large screens
-   *
-   * Usage: <div className="container">...</div>
-   *
-   * For custom widths, use max-w-* utilities directly:
-   * <div className="max-w-6xl mx-auto px-4">...</div>
-   */
+  /* Container with responsive padding */
   .container {
     width: 100%;
     margin-left: auto;
     margin-right: auto;
-    padding-left: 1rem; /* 16px - mobile padding */
+    padding-left: 1rem;
     padding-right: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .container {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container {
+      padding-left: 2rem;
+      padding-right: 2rem;
+      max-width: 1280px;
+    }
   }
 
   .flex {
@@ -213,202 +156,124 @@
     min-width: 0;
   }
 
-  @media (min-width: 640px) {
-    .container {
-      padding-left: 1.5rem; /* 24px - tablet padding */
-      padding-right: 1.5rem;
+  /* Apple-inspired glass card */
+  .card-glass {
+    @apply bg-card/40 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-card/50 transition-all duration-300;
+  }
+
+  /* Premium button with smooth hover */
+  .btn-premium {
+    @apply px-6 py-3 rounded-xl font-semibold text-sm tracking-wide;
+    @apply bg-gradient-to-r from-primary to-red-600;
+    @apply text-white shadow-lg hover:shadow-xl;
+    @apply hover:scale-105 active:scale-95;
+    @apply transition-all duration-300 ease-out;
+  }
+
+  .btn-premium-secondary {
+    @apply px-6 py-3 rounded-xl font-semibold text-sm tracking-wide;
+    @apply bg-secondary/50 border border-white/10;
+    @apply text-foreground hover:bg-secondary;
+    @apply hover:scale-105 active:scale-95;
+    @apply transition-all duration-300 ease-out;
+  }
+
+  /* Smooth stat card */
+  .stat-card {
+    @apply card-glass flex flex-col items-start;
+    @apply group cursor-pointer;
+  }
+
+  .stat-card:hover {
+    @apply border-primary/50;
+  }
+
+  /* Gradient text */
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
+  }
+
+  /* Smooth divider */
+  .divider-smooth {
+    @apply h-px bg-gradient-to-r from-transparent via-white/10 to-transparent;
+  }
+
+  /* Apple-style badge */
+  .badge-apple {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold;
+    @apply bg-primary/10 text-primary border border-primary/20;
+  }
+
+  /* Smooth skeleton loader */
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
     }
   }
 
-  @media (min-width: 1024px) {
-    .container {
-      padding-left: 2rem; /* 32px - desktop padding */
-      padding-right: 2rem;
-      max-width: 1280px; /* Standard content width */
+  .skeleton {
+    @apply bg-secondary rounded-lg;
+    background: linear-gradient(90deg, var(--secondary) 25%, rgba(255,255,255,0.1) 50%, var(--secondary) 75%);
+    background-size: 1000px 100%;
+    animation: shimmer 2s infinite;
+  }
+
+  /* Smooth focus ring */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 focus:ring-offset-background;
+  }
+
+  /* Premium input */
+  .input-premium {
+    @apply w-full px-4 py-3 rounded-xl;
+    @apply bg-secondary/50 border border-white/10;
+    @apply text-foreground placeholder-muted-foreground;
+    @apply focus:bg-secondary focus:border-primary/50;
+    @apply transition-all duration-300;
+  }
+
+  /* Smooth hover lift effect */
+  .hover-lift {
+    @apply hover:-translate-y-1 hover:shadow-lg transition-all duration-300;
+  }
+
+  /* Apple-style header */
+  .header-apple {
+    @apply sticky top-0 z-50 backdrop-blur-xl bg-background/80 border-b border-white/10;
+  }
+
+  /* Smooth fade in animation */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
-}
-/* TUF Button System */
-.tuf-btn {
-  display: block;
-  width: calc(100% - 28px);
-  margin: 0 14px 12px;
-  padding: 13px 48px 13px 20px;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 16px;
-  letter-spacing: 4px;
-  text-align: left;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  position: relative;
-  text-transform: uppercase;
-  overflow: hidden;
-  clip-path: polygon(0% 0%, calc(100% - 20px) 0%, 100% 50%, calc(100% - 20px) 100%, 0% 100%);
-}
 
-.tuf-btn::after {
-  content: '›';
-  position: absolute;
-  right: 22px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 22px;
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 300;
-  line-height: 1;
-  transition: right 0.2s ease;
-  opacity: 0.8;
-}
+  .fade-in {
+    animation: fadeIn 0.5s ease-out;
+  }
 
-.tuf-btn:hover::after {
-  right: 16px;
-  opacity: 1;
-}
+  /* Smooth scale animation */
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
 
-.tuf-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -75%;
-  width: 50%;
-  height: 100%;
-  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.08), transparent);
-  transform: skewX(-20deg);
-  transition: left 0.4s ease;
-}
-
-.tuf-btn:hover::before {
-  left: 125%;
-}
-
-.tuf-btn.primary {
-  background: linear-gradient(90deg, var(--tuf-red) 0%, var(--tuf-red-hi) 60%, var(--tuf-red-dark) 100%);
-  color: var(--tuf-white);
-  box-shadow: 0 2px 12px var(--tuf-red-glow);
-}
-
-.tuf-btn.primary:hover {
-  background: linear-gradient(90deg, var(--tuf-red-hi) 0%, var(--tuf-red-dark) 60%, #e74c3c 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 20px var(--tuf-red-glow);
-}
-
-.tuf-btn.primary:active {
-  transform: translateY(0);
-  box-shadow: none;
-}
-
-.tuf-btn.gold {
-  background: linear-gradient(90deg, var(--tuf-gold-lo) 0%, var(--tuf-gold) 60%, var(--tuf-gold-hi) 100%);
-  color: var(--tuf-bg);
-  box-shadow: 0 2px 12px var(--tuf-gold-glow);
-}
-
-.tuf-btn.gold::after {
-  color: var(--tuf-bg);
-}
-
-.tuf-btn.gold:hover {
-  background: linear-gradient(90deg, var(--tuf-gold) 0%, var(--tuf-gold-hi) 60%, var(--tuf-gold-bright) 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 20px var(--tuf-gold-glow);
-}
-
-/* TUF Card */
-.tuf-card {
-  background: var(--tuf-bg3);
-  border: 1px solid var(--tuf-border);
-  margin: 0 14px 12px;
-  padding: 16px;
-  position: relative;
-  overflow: hidden;
-}
-
-.tuf-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: var(--tuf-gold);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.3s;
-}
-
-.tuf-card:hover::before {
-  transform: scaleX(1);
-}
-
-.tuf-card.gold-border {
-  border-left: 3px solid var(--tuf-gold);
-}
-
-.tuf-card.red-border {
-  border-left: 3px solid var(--tuf-red);
-}
-
-.tuf-card.ok-border {
-  border-left: 3px solid var(--tuf-ok);
-}
-
-/* TUF Badge */
-.tuf-badge {
-  font-size: 8px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  padding: 3px 8px;
-  display: inline-block;
-}
-
-.badge-gold {
-  background: rgba(200, 151, 58, 0.12);
-  color: var(--tuf-gold);
-  border: 1px solid rgba(200, 151, 58, 0.3);
-}
-
-.badge-green {
-  background: rgba(76, 175, 80, 0.1);
-  color: var(--tuf-ok);
-  border: 1px solid rgba(76, 175, 80, 0.3);
-}
-
-.badge-red {
-  background: rgba(139, 0, 0, 0.15);
-  color: #ff5555;
-  border: 1px solid rgba(139, 0, 0, 0.4);
-}
-
-.badge-gray {
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--tuf-gray);
-  border: 1px solid var(--tuf-dim);
-}
-
-/* Progress bar */
-.progress-bar {
-  height: 5px;
-  background: var(--tuf-bg5);
-  margin-top: 8px;
-  border-radius: 1px;
-}
-
-.progress-fill {
-  height: 100%;
-  transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-  border-radius: 1px;
-}
-
-.progress-fill.gold {
-  background: var(--tuf-gold);
-}
-
-.progress-fill.ok {
-  background: var(--tuf-ok);
-}
-
-.progress-fill.red {
-  background: var(--tuf-red-hi);
+  .scale-in {
+    animation: scaleIn 0.3s ease-out;
+  }
 }

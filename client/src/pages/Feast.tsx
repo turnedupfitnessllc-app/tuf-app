@@ -11,13 +11,13 @@ interface RecipeDetailProps {
 
 function RecipeDetail({ recipe, onClose }: RecipeDetailProps) {
   return (
-    <div className="fixed inset-0 bg-black/70 z-50 flex items-end md:items-center justify-center p-4">
-      <div className="w-full md:w-2/3 lg:w-1/2 max-h-[90vh] overflow-y-auto bg-card border border-border rounded-t-2xl md:rounded-2xl">
+    <div className="fixed inset-0 bg-black/70 z-50 flex items-end md:items-center justify-center p-4 fade-in">
+      <div className="w-full md:w-2/3 lg:w-1/2 max-h-[90vh] overflow-y-auto card-glass rounded-t-2xl md:rounded-2xl scale-in">
         <div className="p-6 md:p-8">
           {/* Header */}
           <div className="flex justify-between items-start mb-6">
             <div>
-              <span className="inline-block px-3 py-1 bg-primary/20 text-primary text-xs font-semibold rounded-full mb-3">
+              <span className="badge-apple mb-3">
                 {recipe.category}
               </span>
               <h2 className="text-2xl md:text-3xl font-bold text-foreground">{recipe.name}</h2>

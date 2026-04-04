@@ -132,25 +132,28 @@ export default function Move() {
 
       <main className="pb-24">
         {/* Hero Section */}
-        <section className="bg-gradient-to-b from-card to-background px-4 py-8 border-b border-border">
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-headline mb-2">MOVE</h1>
-            <p className="text-muted-foreground">33 exercises • Progressive difficulty • Strength focus</p>
+        <section className="px-4 py-12 md:py-16">
+          <div className="max-w-4xl mx-auto fade-in">
+            <p className="text-sm font-semibold text-accent tracking-wide mb-2">TODAY'S WORKOUT</p>
+            <h1 className="text-5xl md:text-6xl font-bold mb-2">
+              <span className="text-gradient">MOVE</span>
+            </h1>
+            <p className="text-lg text-muted-foreground">33 exercises • Progressive difficulty • Strength focus</p>
           </div>
         </section>
 
         {/* Muscle Group Filter */}
-        <section className="px-4 py-6 border-b border-border sticky top-0 bg-background z-10">
+        <section className="px-4 py-6 sticky top-20 z-40 bg-background/80 backdrop-blur-xl border-b border-white/10">
           <div className="max-w-4xl mx-auto">
             <div className="flex gap-2 overflow-x-auto pb-2">
               {muscleGroups.map(group => (
                 <button
                   key={group}
                   onClick={() => setSelectedMuscle(group)}
-                  className={`px-4 py-2 rounded-full font-semibold text-sm whitespace-nowrap transition-all duration-200 ${
+                  className={`px-4 py-2 rounded-lg font-semibold text-sm whitespace-nowrap transition-all ${
                     selectedMuscle === group
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-secondary text-foreground hover:bg-opacity-80'
+                      ? 'bg-primary text-white'
+                      : 'bg-secondary/50 text-muted-foreground hover:bg-secondary'
                   }`}
                 >
                   {group}
@@ -163,19 +166,19 @@ export default function Move() {
         {/* Exercise List */}
         <section className="px-4 py-6">
           <div className="max-w-4xl mx-auto space-y-4">
-            {filteredExercises.map(exercise => (
-              <div key={exercise.id} className="card-tuf">
+            {filteredExercises.map((exercise, idx) => (
+              <div key={exercise.id} className="card-glass group hover-lift scale-in" style={{ animationDelay: `${idx * 50}ms` }}>
                 <button
                   onClick={() => setExpandedId(expandedId === exercise.id ? null : exercise.id)}
                   className="w-full text-left"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
-                      <h3 className="text-lg font-bold mb-1">{exercise.name}</h3>
+                      <h3 className="text-lg font-bold mb-1 group-hover:text-primary transition-colors">{exercise.name}</h3>
                       <p className="text-sm text-muted-foreground">{exercise.muscleGroup}</p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className={`text-xs font-semibold px-3 py-1 rounded-full ${getDifficultyColor(exercise.difficulty)}`}>
+                      <span className={`text-xs font-semibold px-3 py-1 rounded-lg badge-apple`}>
                         {exercise.difficulty}
                       </span>
                       <ChevronDown
@@ -207,7 +210,7 @@ export default function Move() {
 
                 {/* Expanded Content */}
                 {expandedId === exercise.id && (
-                  <div className="mt-4 pt-4 border-t border-border space-y-4 animate-in fade-in duration-200">
+                  <div className="mt-4 pt-4 border-t border-white/10 space-y-4 fade-in">
                     <div>
                       <h4 className="text-label text-primary mb-2">DESCRIPTION</h4>
                       <p className="text-sm text-foreground">{exercise.description}</p>
