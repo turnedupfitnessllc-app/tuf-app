@@ -13,6 +13,7 @@ import Feast from "./pages/Feast";
 import Vault from "./pages/Vault";
 import JarvisChat from "./pages/JarvisChat";
 import Progress from "./pages/Progress";
+import ComponentShowcase from "./pages/ComponentShowcase";
 
 function Router() {
   return (
@@ -26,6 +27,7 @@ function Router() {
         <Route path={"/vault"} component={Vault} />
         <Route path={"/jarvis"} component={JarvisChat} />
         <Route path={"/progress"} component={Progress} />
+        <Route path={"/showcase"} component={ComponentShowcase} />
         <Route path={"/404"} component={NotFound} />
         {/* Final fallback route */}
         <Route component={NotFound} />
