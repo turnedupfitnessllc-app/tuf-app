@@ -120,7 +120,7 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Space Mono', monospace;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
@@ -201,6 +201,10 @@
   /* Color-blocked text utilities */
   .text-black {
     @apply text-black;
+  }
+  
+  .dark .text-black {
+    @apply text-white;
   }
 
   .text-red {
