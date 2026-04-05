@@ -1,5 +1,5 @@
 /**
- * Enhanced JARVIS API — Claude AI Integration with PopHIVE
+ * Enhanced JARVIS API — OpenAI-compatible AI Integration with PopHIVE
  * Handles fitness coaching with evidence-based health data from PopHIVE
  * 
  * Design: "AI that grows with you"
@@ -9,10 +9,17 @@
  * - PopHIVE-powered health data integration
  */
 
-import Anthropic from "@anthropic-ai/sdk";
+import OpenAI from "openai";
 import * as popHiveService from "./pophive-service.js";
 
-const client = new Anthropic();
+// OpenAI-compatible client (supports Manus proxy and standard OpenAI)
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY || "",
+  baseURL: process.env.OPENAI_BASE_URL || undefined,
+});
+
+// Use a capable model available through the proxy
+const AI_MODEL = process.env.AI_MODEL || "gpt-4.1-mini";
 
 interface Message {
   id: string;
@@ -160,7 +167,7 @@ Always be encouraging, practical, and science-backed.`;
       }
     }
 
-    // Add sarcopenia context for 40+ users
+    // Add sarcopenia context for 50+ users
     if (userProfile.age && userProfile.age >= 50) {
       try {
         const sarcopeniaContext = await popHiveService.getSarcopeniaContext(userProfile.age);
@@ -201,7 +208,7 @@ function getAgeGroup(age: number): string {
 export async function generateJarvisResponse(request: JarvisRequest): Promise<JarvisResponse> {
   try {
     // Build conversation history for context
-    const messages = request.conversationHistory?.map((msg) => ({
+    const messages: OpenAI.Chat.ChatCompletionMessageParam[] = request.conversationHistory?.map((msg) => ({
       role: msg.role as "user" | "assistant",
       content: msg.content,
     })) || [];
@@ -215,24 +222,21 @@ export async function generateJarvisResponse(request: JarvisRequest): Promise<Ja
     // Build enhanced system prompt with PopHIVE data
     const systemPrompt = await buildEnhancedSystemPrompt(request.userProfile);
 
-    // Call Claude API
-    const response = await client.messages.create({
-      model: "claude-3-5-sonnet-20241022",
+    // Call AI API (OpenAI-compatible)
+    const response = await client.chat.completions.create({
+      model: AI_MODEL,
       max_tokens: 1024,
-      system: systemPrompt,
-      messages: messages,
+      messages: [
+        { role: "system", content: systemPrompt },
+        ...messages,
+      ],
     });
 
-    // Extract text response
-    const textContent = response.content.find((block: { type: string }) => block.type === "text") as
-      | { type: "text"; text: string }
-      | undefined;
+    const responseText = response.choices[0]?.message?.content || "";
 
-    if (!textContent || textContent.type !== "text") {
-      throw new Error("No text response from Claude");
+    if (!responseText) {
+      throw new Error("No text response from AI");
     }
-
-    const responseText = textContent.text;
 
     // Parse suggestions and action items from response
     const suggestions = extractSuggestions(responseText);
