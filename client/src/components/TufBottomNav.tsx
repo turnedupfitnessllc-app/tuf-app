@@ -1,9 +1,8 @@
 /**
- * TUF Bottom Navigation Component
- * Design System: Fixed bottom nav with pillar icons
- * Gold accent for active state, red top border
+ * TUF Bottom Navigation — Panther UX System
+ * 5 screens: Home · Assess · Train · Correct · Profile
+ * "Assess → Correct → Perform → Evolve"
  */
-
 import { useLocation } from "wouter";
 
 interface NavItem {
@@ -11,15 +10,14 @@ interface NavItem {
   icon: string;
   label: string;
   path: string;
-  color: string;
 }
 
 const navItems: NavItem[] = [
-  { id: "home", icon: "🏠", label: "HOME", path: "/", color: "gold" },
-  { id: "move", icon: "💪", label: "MOVE", path: "/move", color: "gold" },
-  { id: "fuel", icon: "🥗", label: "FUEL", path: "/fuel", color: "green" },
-  { id: "feast", icon: "🍽️", label: "FEAST", path: "/feast", color: "orange" },
-  { id: "vault", icon: "📊", label: "VAULT", path: "/vault", color: "purple" },
+  { id: "home",    icon: "🏠", label: "HOME",    path: "/" },
+  { id: "assess",  icon: "🧠", label: "ASSESS",  path: "/assess" },
+  { id: "train",   icon: "🔥", label: "TRAIN",   path: "/train" },
+  { id: "correct", icon: "⚡", label: "CORRECT", path: "/correct" },
+  { id: "profile", icon: "🐆", label: "EVOLVE",  path: "/profile" },
 ];
 
 export function TufBottomNav() {
@@ -27,29 +25,32 @@ export function TufBottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] bg-background border-t-2 border-primary flex z-50"
-      style={{ boxShadow: "0 -4px 24px rgba(0,0,0,0.7)" }}
+      className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] bg-background border-t border-border flex z-50"
+      style={{ boxShadow: "0 -4px 32px rgba(0,0,0,0.12)" }}
     >
       {navItems.map((item) => {
-        const isActive = location === item.path;
+        const isActive =
+          item.path === "/"
+            ? location === "/"
+            : location.startsWith(item.path);
+
         return (
           <a
             key={item.id}
             href={item.path}
-            className={`flex-1 py-2 px-1 border-t-2 border-transparent -mt-0.5 flex flex-col items-center gap-0.5 cursor-pointer transition-all ${
-              isActive ? "text-accent border-t-accent" : "text-muted-foreground"
+            className={`flex-1 py-3 px-1 flex flex-col items-center gap-0.5 cursor-pointer transition-all relative ${
+              isActive ? "text-primary" : "text-muted-foreground"
             }`}
-            style={
-              isActive
-                ? {
-                    background: "linear-gradient(180deg, rgba(245,166,35,0.06) 0%, transparent 100%)",
-                    filter: "drop-shadow(0 0 6px rgba(245,166,35,0.5))",
-                  }
-                : {}
-            }
           >
-            <span className="text-xl leading-none">{item.icon}</span>
-            <span className="text-xs uppercase tracking-wider font-bold font-barlow">{item.label}</span>
+            {isActive && (
+              <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary rounded-full" />
+            )}
+            <span className={`text-xl leading-none transition-transform ${isActive ? 'scale-110' : 'scale-100'}`}>
+              {item.icon}
+            </span>
+            <span className={`text-[10px] uppercase tracking-wider font-black ${isActive ? 'text-primary' : 'text-muted-foreground'}`}>
+              {item.label}
+            </span>
           </a>
         );
       })}

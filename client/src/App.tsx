@@ -6,43 +6,57 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { TufHeader } from "./components/TufHeader";
 import { TufBottomNav } from "./components/TufBottomNav";
+
+// Core Panther UX System screens
 import Home from "./pages/Home";
+import Assess from "./pages/Assess";
+import Train from "./pages/Train";
+import Correct from "./pages/Correct";
+import Profile from "./pages/Profile";
+
+// Feature screens
+import JarvisChat from "./pages/JarvisChat";
+import LiveCoaching from "./pages/LiveCoaching";
+
+// Legacy screens (still accessible via Profile quick links)
 import Move from "./pages/Move";
 import Fuel from "./pages/Fuel";
 import Feast from "./pages/Feast";
 import Vault from "./pages/Vault";
-import JarvisChat from "./pages/JarvisChat";
 import Progress from "./pages/Progress";
 import ComponentShowcase from "./pages/ComponentShowcase";
-import LiveCoaching from "./pages/LiveCoaching";
 
 function Router() {
   return (
     <>
       <TufHeader />
       <Switch>
+        {/* ── Panther UX System ─────────────────────────────── */}
         <Route path={"/"} component={Home} />
+        <Route path={"/assess"} component={Assess} />
+        <Route path={"/train"} component={Train} />
+        <Route path={"/correct"} component={Correct} />
+        <Route path={"/profile"} component={Profile} />
+
+        {/* ── Feature screens ───────────────────────────────── */}
+        <Route path={"/jarvis"} component={JarvisChat} />
+        <Route path={"/live"} component={LiveCoaching} />
+
+        {/* ── Legacy screens ────────────────────────────────── */}
         <Route path={"/move"} component={Move} />
         <Route path={"/fuel"} component={Fuel} />
         <Route path={"/feast"} component={Feast} />
         <Route path={"/vault"} component={Vault} />
-        <Route path={"/jarvis"} component={JarvisChat} />
-        <Route path={"/live"} component={LiveCoaching} />
         <Route path={"/progress"} component={Progress} />
         <Route path={"/showcase"} component={ComponentShowcase} />
+
         <Route path={"/404"} component={NotFound} />
-        {/* Final fallback route */}
         <Route component={NotFound} />
       </Switch>
       <TufBottomNav />
     </>
   );
 }
-
-// NOTE: About Theme
-// - First choose a default theme according to your design style (dark or light bg), than change color palette in index.css
-//   to keep consistent foreground/background color across components
-// - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
 
 function App() {
   return (
