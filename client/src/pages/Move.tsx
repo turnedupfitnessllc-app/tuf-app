@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Play } from 'lucide-react';
+import { AngleButton } from '@/components/ui/angle-button';
 
 interface Exercise {
   id: string;
@@ -100,9 +101,14 @@ export default function Move() {
                     <p className="text-xs text-muted-foreground font-bold mb-1">SETS</p>
                     <p className="font-bold text-primary">{exercise.sets}</p>
                   </div>
-                  <button className="ml-auto px-4 py-2 bg-primary text-primary-foreground rounded font-bold hover:bg-primary/90 transition-colors">
+                  <AngleButton 
+                    variant="apply-now" 
+                    size="sm"
+                    icon={<Play className="w-4 h-4" />}
+                    className="ml-auto"
+                  >
                     START
-                  </button>
+                  </AngleButton>
                 </div>
               </div>
             ))}

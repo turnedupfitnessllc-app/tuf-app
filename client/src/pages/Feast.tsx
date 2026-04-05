@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { TufHeader } from "@/components/TufHeader";
 import { TufBottomNav } from "@/components/TufBottomNav";
-import { ChevronDown, Clock, Flame, Droplets } from "lucide-react";
+import { ChevronDown, Clock, Flame, Droplets, Plus } from "lucide-react";
+import { AngleButton } from "@/components/ui/angle-button";
 import { TUTK_RECIPES } from "@/lib/tutk-recipes";
 
 interface RecipeDetailProps {
@@ -93,9 +94,14 @@ function RecipeDetail({ recipe, onClose }: RecipeDetailProps) {
           )}
 
           {/* Action Button */}
-          <button className="btn-accent w-full">
+          <AngleButton 
+            variant="download" 
+            size="lg"
+            icon={<Plus className="w-5 h-5" />}
+            className="w-full"
+          >
             Add to Meal Plan
-          </button>
+          </AngleButton>
         </div>
       </div>
     </div>

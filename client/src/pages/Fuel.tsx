@@ -4,6 +4,8 @@
  */
 
 import { TUF_DATA } from "@/lib/tuf-data";
+import { Plus } from 'lucide-react';
+import { AngleButton } from '@/components/ui/angle-button';
 
 export default function Fuel() {
   const nutrition = TUF_DATA.nutrition;
@@ -94,7 +96,14 @@ export default function Fuel() {
 
       {/* CTA */}
       <section className="px-4 py-6">
-        <button className="tuf-btn primary">LOG MEAL</button>
+        <AngleButton 
+          variant="book-now" 
+          size="lg"
+          icon={<Plus className="w-5 h-5" />}
+          className="w-full"
+        >
+          LOG MEAL
+        </AngleButton>
       </section>
     </div>
   );

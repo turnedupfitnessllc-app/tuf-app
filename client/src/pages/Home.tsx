@@ -1,5 +1,6 @@
 import { useLocation } from 'wouter';
-import { Flame, TrendingUp, Zap, Trophy } from 'lucide-react';
+import { Flame, TrendingUp, Zap, Trophy, ArrowRight } from 'lucide-react';
+import { AngleButton } from '@/components/ui/angle-button';
 
 export default function Home() {
   const [, navigate] = useLocation();
@@ -117,6 +118,29 @@ export default function Home() {
               <div className="text-2xl font-bold text-primary mb-1">12</div>
               <p className="text-xs text-muted-foreground font-bold">PRS</p>
             </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="bg-gradient-to-r from-primary to-red-700 rounded-lg p-8 text-center">
+          <h2 className="heading-blade-md text-white mb-3">Ready to Transform?</h2>
+          <p className="text-white/90 mb-6">Get personalized coaching from JARVIS and track your progress</p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <AngleButton 
+              variant="learn-more" 
+              size="lg"
+              icon={<ArrowRight className="w-5 h-5" />}
+              onClick={() => navigate('/jarvis')}
+            >
+              Ask JARVIS
+            </AngleButton>
+            <AngleButton 
+              variant="buy-now" 
+              size="lg"
+              onClick={() => navigate('/move')}
+            >
+              Start Workout
+            </AngleButton>
           </div>
         </section>
       </main>
