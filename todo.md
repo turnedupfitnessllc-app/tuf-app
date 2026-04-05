@@ -6,3 +6,6 @@
 - [ ] Add streaming support to JARVIS chat interface
 - [ ] Add ANTHROPIC_API_KEY to TUF App environment
 - [ ] "Powered by Grok" card in JARVIS section linking to Grok Explorer
+
+## Banner Refinement
+- [ ] Minimize Powered by Grok banner — compact subtle badge, does not compete with TUF branding

@@ -170,24 +170,16 @@ export default function JarvisChat() {
         </Card>
       </div>
 
-      {/* Powered by Grok Banner */}
-      <div className="mt-4 rounded-lg border border-border bg-gradient-to-r from-black to-gray-900 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
-            G
-          </div>
-          <div>
-            <p className="text-white font-semibold text-sm">Powered by Grok AI</p>
-            <p className="text-gray-400 text-xs">JARVIS uses xAI’s Grok reasoning model for evidence-based fitness coaching</p>
-          </div>
-        </div>
+      {/* Powered by Grok — minimal attribution */}
+      <div className="mt-3 flex items-center justify-center gap-1.5">
+        <span className="text-[10px] text-muted-foreground/50">AI powered by</span>
         <a
           href="https://grok-demo.manus.space"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex-shrink-0 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold rounded transition-colors whitespace-nowrap"
+          className="text-[10px] text-muted-foreground/60 hover:text-muted-foreground transition-colors font-medium"
         >
-          Explore Grok API →
+          Grok xAI
         </a>
       </div>
     </div>
