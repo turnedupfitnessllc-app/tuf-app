@@ -8,4 +8,27 @@
 - [ ] "Powered by Grok" card in JARVIS section linking to Grok Explorer
 
 ## Banner Refinement
-- [ ] Minimize Powered by Grok banner — compact subtle badge, does not compete with TUF branding
+- [x] Minimize Powered by Grok banner — compact subtle badge, does not compete with TUF branding
+
+## JARVIS Alive — Phase 1 (Full Build)
+- [ ] Upload JARVIS videos to CDN
+- [ ] Dark theme variant — cinematic black/orange gym aesthetic
+- [ ] Light theme variant — clean premium white/orange
+- [ ] Theme toggle so users can switch between dark and light
+- [ ] JARVIS video avatar integrated into chat page (idle loop + action clips)
+- [ ] Real Grok AI streaming responses (grok-4.20-reasoning)
+- [ ] JARVIS onboarding — 3 questions on first visit to build user profile
+- [ ] Store user profile in database for personalized context
+- [ ] Voice input (Web Speech API mic button)
+- [ ] Voice output (TTS — JARVIS speaks responses)
+- [ ] Jotform survey for theme feedback collection
+
+## OLD JARVIS Alive — Phase 1
+- [ ] Wire real Grok AI (grok-4.20-reasoning) streaming responses into JARVIS
+- [ ] JARVIS system prompt with TUF fitness coaching persona and PopHIVE health context
+- [ ] Data gathering — JARVIS asks onboarding questions (age, goals, health conditions, fitness level)
+- [ ] Store user profile in database for personalized context on every message
+- [ ] JARVIS video avatar — animated idle and speaking states
+- [ ] Voice input — microphone button with speech-to-text (Web Speech API)
+- [ ] Voice output — JARVIS speaks responses aloud (text-to-speech)
+- [ ] Push/pull toggle between text and voice modes

@@ -164,4 +164,72 @@ function checkQuickResponse(message: string, fitnessLevel?: FitnessLevel): strin
   return null;
 }
 
+
+/**
+ * POST /api/jarvis/stream
+ * Streaming SSE endpoint — proxies Grok API with real-time token delivery
+ */
+router.post("/stream", async (req: Request, res: Response) => {
+  const { message, systemPrompt, history = [] } = req.body;
+  if (!message) return res.status(400).json({ error: "message required" });
+
+  const apiKey  = process.env.XAI_API_KEY;
+  const baseUrl = process.env.OPENAI_BASE_URL || "https://api.x.ai/v1";
+  if (!apiKey) return res.status(500).json({ error: "XAI_API_KEY not configured" });
+
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+  res.flushHeaders();
+
+  const messages = [
+    { role: "system", content: systemPrompt || "You are JARVIS, an elite AI fitness coach for Turned Up Fitness. Be intense, motivating, and direct." },
+    ...history,
+    { role: "user", content: message },
+  ];
+
+  try {
+    const response = await fetch(`${baseUrl}/chat/completions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: process.env.OPENAI_MODEL || "grok-3-mini",
+        messages,
+        stream: true,
+        max_tokens: 300,
+        temperature: 0.8,
+      }),
+    });
+
+    if (!response.ok) {
+      const err = await response.text();
+      res.write(`data: ${JSON.stringify({ error: err })}\n\n`);
+      return res.end();
+    }
+
+    const reader = response.body!.getReader();
+    const decoder = new TextDecoder();
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      const chunk = decoder.decode(value);
+      const lines = chunk.split("\n");
+      for (const line of lines) {
+        if (line.startsWith("data: ")) {
+          res.write(line + "\n\n");
+        }
+      }
+    }
+    res.write("data: [DONE]\n\n");
+    res.end();
+  } catch (error) {
+    console.error("Stream error:", error);
+    res.write(`data: ${JSON.stringify({ error: "Stream failed" })}\n\n`);
+    res.end();
+  }
+});
+
 export default router;
