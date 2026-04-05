@@ -169,9 +169,21 @@ export default function JarvisChat() {
     setIsStreaming(true);
     setVideoState("ready");
 
-    const systemPrompt = `You are JARVIS — the elite AI fitness coach for Turned Up Fitness (TUF). You are embodied as a powerful black panther wearing TUF gear. You are intense, motivating, direct, and knowledgeable. User profile: Name: ${profile.name || "unknown"}, Goal: ${profile.goal || "general fitness"}, Health conditions: ${profile.conditions || "none"}. Keep responses concise (2-4 sentences), punchy, and motivating. Be specific and powerful.`;
+    // Build message history for Claude (last 8 exchanges)
+    const history = messages.slice(-8).map(m => ({
+      role: m.role === "user" ? "user" as const : "assistant" as const,
+      content: m.content,
+    }));
+    // Add current user message
+    const claudeMessages = [...history, { role: "user" as const, content: text }];
 
-    const history = messages.slice(-8).map(m => ({ role: m.role === "user" ? "user" : "assistant", content: m.content }));
+    // Build memberData from onboarding profile
+    const memberData = {
+      name: profile.name,
+      goals: profile.goal,
+      conditions: profile.conditions,
+    };
+
     const jarvisId = (Date.now() + 1).toString();
     setMessages(prev => [...prev, { id: jarvisId, role: "jarvis", content: "", timestamp: new Date() }]);
 
@@ -180,7 +192,7 @@ export default function JarvisChat() {
       const res = await fetch("/api/jarvis/stream", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text, systemPrompt, history }),
+        body: JSON.stringify({ messages: claudeMessages, memberData }),
         signal: abortRef.current.signal,
       });
       if (!res.ok) throw new Error("Stream failed");
