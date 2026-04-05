@@ -44,15 +44,39 @@ RESPONSE FORMAT FOR LIVE COACHING:
 - One correction or one encouragement per response
 - No lists, no headers — just direct coaching voice`;
 
+// ─── Exercise Form Standards (TUF Coaching Baselines) ───────────────────────
+const EXERCISE_STANDARDS: Record<string, string> = {
+  squat: "Feet shoulder-width, toes 15-30° out. Knees track over toes (not caving in = valgus). Neutral spine, chest tall. Hip crease below parallel at depth. Common LCS compensations: knee valgus, forward trunk lean, heel rise.",
+  deadlift: "Hip hinge pattern. Neutral spine throughout — no rounding lumbar or thoracic. Bar stays close to body. Hips and shoulders rise at same rate. Glutes drive lockout. Common faults: lumbar flexion, bar drift, early hip rise.",
+  "push-up": "Rigid plank — no hip sag or pike. Hands under shoulders. Elbows 45° from body. Chest to floor. Common UCS compensations: head forward, shoulder elevation, scapular winging.",
+  lunge: "Front shin vertical, knee not past toe. Rear knee 1-2 inches from floor. Torso upright, no forward lean. Hips square — no rotation. Common LCS fault: hip drop (Trendelenburg), forward trunk lean.",
+  "hip hinge": "Soft knee bend. Hinge at hip — not squat. Neutral spine. Hamstring stretch felt. Glutes drive return. Common fault: squatting the hinge, lumbar flexion.",
+  "glute bridge": "Feet flat, hip-width. Drive through heels. Full hip extension at top — no lumbar hyperextension. Glutes squeezed hard at top. Common fault: hamstring dominance, lumbar arch instead of glute drive.",
+  plank: "Neutral spine — no hip sag or pike. Head neutral, not forward. Glutes and core braced. Scapulae flat — no winging. Common UCS fault: head forward, shoulder elevation.",
+};
+
 // ─── fal.ai Vision Analysis ──────────────────────────────────────────────────
 async function analyzeFrameWithFal(imageBase64: string, exerciseContext?: string): Promise<string> {
   const falKey = process.env.FAL_KEY;
   if (!falKey) throw new Error("FAL_KEY not configured");
 
-  // Use fal.ai's fast image understanding model
-  const prompt = exerciseContext
-    ? `Analyze this exercise frame. The person is doing: ${exerciseContext}. Describe their form, body position, alignment, and any visible issues in 2-3 sentences. Be specific about joint angles, spine position, and muscle engagement.`
-    : `Analyze this exercise/movement frame. Describe what exercise is being performed, the person's form, body position, alignment, and any visible issues in 2-3 sentences. Be specific about joint angles, spine position, and muscle engagement.`;
+  const standard = exerciseContext
+    ? EXERCISE_STANDARDS[exerciseContext.toLowerCase()] || null
+    : null;
+
+  const prompt = standard
+    ? `You are a biomechanics analyst. The person is performing: ${exerciseContext}.
+
+CORRECT FORM STANDARD:
+${standard}
+
+Analyze this frame against that standard. Identify:
+1. What they are doing correctly
+2. Any compensation patterns or form breaks you see
+3. The single most critical issue (if any)
+
+Be specific: joint angles, spine position, alignment. 2-3 sentences.`
+    : `Analyze this exercise frame. Describe the movement being performed, body position, joint alignment, and any visible compensation patterns or form breaks. Be specific. 2-3 sentences.`;
 
   const response = await fetch("https://fal.run/fal-ai/any-llm/vision", {
     method: "POST",
