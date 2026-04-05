@@ -3,12 +3,46 @@ import { Send, Mic, MicOff, Volume2, VolumeX, Zap, ChevronRight } from "lucide-r
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+const CDN = "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR";
 const JARVIS_VIDEOS = {
-  idle:        "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/jarvis_idle_420b45a0.mp4",
-  stomp:       "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/jarvis_stomp_061292f0.mp4",
-  ready:       "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/jarvis_ready_22d685b1.mp4",
-  materialize: "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/jarvis_materialize_4799f0eb.mp4",
-};
+  // Original states
+  idle:            `${CDN}/jarvis_idle_420b45a0.mp4`,
+  stomp:           `${CDN}/jarvis_stomp_061292f0.mp4`,
+  ready:           `${CDN}/jarvis_ready_22d685b1.mp4`,
+  materialize:     `${CDN}/jarvis_materialize_4799f0eb.mp4`,
+  // New movement states
+  idleFlex:        `${CDN}/jarvis-idle-flex_ba34833b.mp4`,
+  squat:           `${CDN}/jarvis-squat_29894acb.mp4`,
+  martialArts:     `${CDN}/jarvis-martial-arts_e0b5e10f.mp4`,
+  sprintStance:    `${CDN}/jarvis-sprint-stance_a110b221.mp4`,
+  highKnees:       `${CDN}/jarvis-high-knees_39ea0db8.mp4`,
+  walkForward:     `${CDN}/jarvis-walk-forward_7a4d2ac5.mp4`,
+  powerPose:       `${CDN}/jarvis-power-pose_05e6e1f9.mp4`,
+  lungeStretch:    `${CDN}/jarvis-lunge-stretch_5b0b7c7f.mp4`,
+  squatLungeFlex:  `${CDN}/jarvis-squat-lunge-flex_96c7bdc9.mp4`,
+  snarl:           `${CDN}/jarvis-snarl_d63dad14.mp4`,
+  roar:            `${CDN}/jarvis-roar_c3a368a6.mp4`,
+  combatStance:    `${CDN}/jarvis-combat-stance_aae0a723.mp4`,
+  runKickFlex:     `${CDN}/jarvis-run-kick-flex_e7629990.mp4`,
+  strengthMontage: `${CDN}/jarvis-strength-montage_89d7eee5.mp4`,
+} as const;
+
+// Pick a contextual response video based on the user's message keywords
+function pickResponseVideo(msg: string): keyof typeof JARVIS_VIDEOS {
+  const m = msg.toLowerCase();
+  if (/squat|leg|quad|glute|lower body/.test(m))           return "squat";
+  if (/cardio|run|sprint|hiit|endurance|fast/.test(m))     return "sprintStance";
+  if (/jump|explosive|power|plyometric|high knee/.test(m)) return "highKnees";
+  if (/stretch|flex|mobility|recovery|yoga/.test(m))       return "lungeStretch";
+  if (/fight|combat|martial|kick|punch/.test(m))           return "martialArts";
+  if (/strength|lift|deadlift|bench|barbell|dumbbell/.test(m)) return "strengthMontage";
+  if (/motivat|hype|pump|let.s go|fire|push/.test(m))     return "roar";
+  if (/walk|move|start|begin|warm/.test(m))                return "walkForward";
+  if (/pose|show|look|body/.test(m))                       return "powerPose";
+  if (/full body|circuit|combo|total/.test(m))             return "squatLungeFlex";
+  const defaults = ["stomp", "idleFlex", "combatStance", "runKickFlex", "snarl"] as const;
+  return defaults[Math.floor(Math.random() * defaults.length)];
+}
 
 const ONBOARDING = [
   { key: "name",       q: "What's your name? I'll personalize everything for you." },
@@ -18,7 +52,7 @@ const ONBOARDING = [
 
 type Message = { id: string; role: "user" | "jarvis"; content: string; timestamp: Date };
 type Profile = { name?: string; goal?: string; conditions?: string };
-type VideoState = "idle" | "stomp" | "ready" | "materialize";
+type VideoState = keyof typeof JARVIS_VIDEOS;
 
 export default function JarvisChat() {
   const [messages, setMessages]         = useState<Message[]>([]);
@@ -171,7 +205,7 @@ export default function JarvisChat() {
         }
       }
       if (voiceEnabled && fullText) speakText(fullText);
-      setVideoState("stomp");
+      setVideoState(pickResponseVideo(text));
     } catch (err: any) {
       if (err.name !== "AbortError") {
         setMessages(prev => prev.map(m => m.id === jarvisId ? { ...m, content: "Connection issue. Try again." } : m));
