@@ -32,3 +32,12 @@
 - [ ] Voice input — microphone button with speech-to-text (Web Speech API)
 - [ ] Voice output — JARVIS speaks responses aloud (text-to-speech)
 - [ ] Push/pull toggle between text and voice modes
+
+## JARVIS Motion Generation — Kling AI Phase 1
+- [ ] Set up fal.ai API key secret in TUF App
+- [ ] Extract best JARVIS still frame from panther video for motion reference image
+- [ ] Build server-side /api/jarvis/motion endpoint calling Kling v3 motion control
+- [ ] Motion keyword mapper — detect topic in JARVIS response and select matching reference video
+- [ ] Update JARVIS chat UI to trigger motion generation asynchronously while streaming response
+- [ ] Display generated motion clip when ready, fallback to pre-recorded clips if generation fails
+- [ ] Commit and push all changes to GitHub

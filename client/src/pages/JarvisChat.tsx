@@ -60,6 +60,8 @@ export default function JarvisChat() {
   const [isLoading, setIsLoading]       = useState(false);
   const [isStreaming, setIsStreaming]   = useState(false);
   const [videoState, setVideoState]     = useState<VideoState>("materialize");
+  const [generatedVideoUrl, setGeneratedVideoUrl] = useState<string | null>(null);
+  const [isGeneratingMotion, setIsGeneratingMotion] = useState(false);
   const [isListening, setIsListening]   = useState(false);
   const [isSpeaking, setIsSpeaking]     = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(false);
@@ -205,7 +207,26 @@ export default function JarvisChat() {
         }
       }
       if (voiceEnabled && fullText) speakText(fullText);
+      // Play fallback pre-recorded clip immediately for responsiveness
       setVideoState(pickResponseVideo(text));
+      // Asynchronously generate a brand-new Kling AI motion clip in the background
+      if (fullText) {
+        setIsGeneratingMotion(true);
+        setGeneratedVideoUrl(null);
+        fetch("/api/jarvis/motion", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ responseText: fullText }),
+        })
+          .then(r => r.json())
+          .then((result: { success: boolean; videoUrl?: string }) => {
+            if (result.success && result.videoUrl) {
+              setGeneratedVideoUrl(result.videoUrl);
+            }
+          })
+          .catch(() => {})
+          .finally(() => setIsGeneratingMotion(false));
+      }
     } catch (err: any) {
       if (err.name !== "AbortError") {
         setMessages(prev => prev.map(m => m.id === jarvisId ? { ...m, content: "Connection issue. Try again." } : m));
@@ -218,8 +239,8 @@ export default function JarvisChat() {
 
   const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); sendMessage(input); };
 
-  const statusLabel = isStreaming ? "RESPONDING" : isSpeaking ? "SPEAKING" : isListening ? "LISTENING" : "READY";
-  const statusColor = isStreaming ? "bg-primary glow-pulse" : isSpeaking ? "bg-accent glow-pulse" : "bg-green-400";
+  const statusLabel = isGeneratingMotion ? "GENERATING MOTION" : isStreaming ? "RESPONDING" : isSpeaking ? "SPEAKING" : isListening ? "LISTENING" : "READY";
+  const statusColor = isGeneratingMotion ? "bg-yellow-400 glow-pulse" : isStreaming ? "bg-primary glow-pulse" : isSpeaking ? "bg-accent glow-pulse" : "bg-green-400";
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -242,6 +263,38 @@ export default function JarvisChat() {
             <p className="text-[10px] text-white/60 font-mono tracking-widest">AI COACH · TURNED UP FITNESS</p>
           </div>
         </div>
+
+        {/* Generated Motion Preview — shows new Kling AI clip when ready */}
+        {(isGeneratingMotion || generatedVideoUrl) && (
+          <div className="mb-4 rounded-xl overflow-hidden border border-yellow-500/30 bg-black/40 backdrop-blur-sm">
+            <div className="flex items-center gap-2 px-3 py-2 border-b border-yellow-500/20">
+              <div className={`w-1.5 h-1.5 rounded-full ${isGeneratingMotion ? 'bg-yellow-400 animate-pulse' : 'bg-green-400'}`} />
+              <span className="text-[9px] font-mono tracking-widest text-yellow-400/80">
+                {isGeneratingMotion ? 'GENERATING NEW MOTION...' : '✦ AI-GENERATED MOVEMENT READY'}
+              </span>
+            </div>
+            {generatedVideoUrl ? (
+              <video
+                key={generatedVideoUrl}
+                src={generatedVideoUrl}
+                className="w-full"
+                style={{ maxHeight: '220px', objectFit: 'cover' }}
+                autoPlay
+                loop
+                muted
+                playsInline
+                controls
+              />
+            ) : (
+              <div className="flex items-center justify-center py-8">
+                <div className="text-center">
+                  <div className="w-6 h-6 border-2 border-yellow-400/60 border-t-yellow-400 rounded-full animate-spin mx-auto mb-2" />
+                  <p className="text-[9px] font-mono text-yellow-400/60 tracking-widest">KLING AI RENDERING...</p>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Chat */}
         <div className="card-jarvis flex flex-col overflow-hidden" style={{ minHeight: "280px", maxHeight: "380px" }}>

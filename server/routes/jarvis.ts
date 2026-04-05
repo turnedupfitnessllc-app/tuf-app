@@ -232,4 +232,28 @@ router.post("/stream", async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * POST /api/jarvis/motion
+ * Generates a new JARVIS movement video using Kling AI Motion Control via fal.ai.
+ * Accepts the JARVIS response text, picks the best motion reference, and returns
+ * a generated video URL. Falls back to a pre-recorded clip if generation fails.
+ */
+router.post("/motion", async (req: Request, res: Response) => {
+  const { responseText } = req.body as { responseText: string };
+  if (!responseText) {
+    return res.status(400).json({ error: "responseText required" });
+  }
+  try {
+    const { generateJarvisMotion } = await import("../motion-service.js");
+    const result = await generateJarvisMotion(responseText);
+    res.json(result);
+  } catch (error) {
+    console.error("[Motion endpoint] error:", error);
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
 export default router;
