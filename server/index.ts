@@ -2,6 +2,7 @@ import express from "express";
 import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
+import jarvisRouter from "./routes/jarvis.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -9,6 +10,22 @@ const __dirname = path.dirname(__filename);
 async function startServer() {
   const app = express();
   const server = createServer(app);
+
+  // Middleware
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
+
+  // API Routes
+  app.use("/api/jarvis", jarvisRouter);
+
+  // Health check endpoint
+  app.get("/api/health", (_req, res) => {
+    res.json({
+      status: "ok",
+      service: "TUF App Server",
+      timestamp: new Date().toISOString(),
+    });
+  });
 
   // Serve static files from dist/public in production
   const staticPath =
@@ -27,6 +44,7 @@ async function startServer() {
 
   server.listen(port, () => {
     console.log(`Server running on http://localhost:${port}/`);
+    console.log(`API available at http://localhost:${port}/api/`);
   });
 }
 

@@ -1,10 +1,10 @@
 /**
  * JARVIS API Routes
- * Express endpoints for AI fitness coaching
+ * Express endpoints for AI fitness coaching with PopHIVE integration
  */
 
 import { Router, Request, Response } from "express";
-import { generateJarvisResponse, QUICK_RESPONSES } from "../jarvis-api";
+import { generateJarvisResponse, QUICK_RESPONSES } from "../jarvis-api-enhanced.js";
 
 const router = Router();
 
@@ -20,15 +20,18 @@ interface JarvisRequestBody {
   }>;
   userProfile?: {
     age?: number;
+    gender?: string;
     fitnessLevel?: FitnessLevel;
     goals?: string[];
     injuries?: string[];
+    healthConditions?: string[];
+    location?: string;
   };
 }
 
 /**
  * POST /api/jarvis
- * Generate JARVIS response to user message
+ * Generate JARVIS response to user message with PopHIVE health data
  */
 router.post("/", async (req: Request<{}, {}, JarvisRequestBody>, res: Response) => {
   try {
@@ -53,7 +56,7 @@ router.post("/", async (req: Request<{}, {}, JarvisRequestBody>, res: Response) 
       timestamp: new Date(msg.timestamp),
     }));
 
-    // Generate response using Claude
+    // Generate response using enhanced Claude with PopHIVE data
     const jarvisResponse = await generateJarvisResponse({
       message,
       conversationHistory: history,
@@ -64,6 +67,7 @@ router.post("/", async (req: Request<{}, {}, JarvisRequestBody>, res: Response) 
       response: jarvisResponse.response,
       suggestions: jarvisResponse.suggestions,
       actionItems: jarvisResponse.actionItems,
+      healthInsights: jarvisResponse.healthInsights,
       isQuick: false,
     });
   } catch (error) {
@@ -84,7 +88,7 @@ router.post("/quick", (req: Request<{}, {}, { topic: string; level?: string }>, 
 
   const topicKey = topic as keyof typeof QUICK_RESPONSES;
   const topicData = QUICK_RESPONSES[topicKey];
-  
+
   if (!topicData || typeof topicData === "string") {
     return res.status(404).json({ error: "Quick response not found" });
   }
@@ -103,6 +107,18 @@ router.post("/quick", (req: Request<{}, {}, { topic: string; level?: string }>, 
  * Verify API is working
  */
 router.post("/health-check", (req: Request, res: Response) => {
+  res.json({
+    status: "ok",
+    service: "JARVIS",
+    timestamp: new Date().toISOString(),
+  });
+});
+
+/**
+ * GET /api/jarvis/health-check
+ * Verify API is working (GET endpoint)
+ */
+router.get("/health-check", (req: Request, res: Response) => {
   res.json({
     status: "ok",
     service: "JARVIS",
