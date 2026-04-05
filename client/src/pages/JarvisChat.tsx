@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
+import { Link } from "wouter";
 import { Send, Mic, MicOff, Volume2, VolumeX, Zap, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -358,6 +359,19 @@ export default function JarvisChat() {
             </div>
           ))}
         </div>
+
+        <Link href="/live">
+          <div className="mt-3 card-exec p-3 flex items-center justify-between cursor-pointer hover:border-primary/50 transition-colors">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">📷</span>
+              <div>
+                <p className="text-xs font-bold tracking-wider uppercase">Live Coaching</p>
+                <p className="text-[10px] text-muted-foreground">Camera · JARVIS · Voice</p>
+              </div>
+            </div>
+            <ChevronRight className="w-4 h-4 text-muted-foreground" />
+          </div>
+        </Link>
 
         <div className="mt-3 flex items-center justify-center gap-1">
           <span className="text-[10px] text-muted-foreground/40 font-mono">AI powered by</span>

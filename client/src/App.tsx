@@ -14,6 +14,7 @@ import Vault from "./pages/Vault";
 import JarvisChat from "./pages/JarvisChat";
 import Progress from "./pages/Progress";
 import ComponentShowcase from "./pages/ComponentShowcase";
+import LiveCoaching from "./pages/LiveCoaching";
 
 function Router() {
   return (
@@ -26,6 +27,7 @@ function Router() {
         <Route path={"/feast"} component={Feast} />
         <Route path={"/vault"} component={Vault} />
         <Route path={"/jarvis"} component={JarvisChat} />
+        <Route path={"/live"} component={LiveCoaching} />
         <Route path={"/progress"} component={Progress} />
         <Route path={"/showcase"} component={ComponentShowcase} />
         <Route path={"/404"} component={NotFound} />

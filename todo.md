@@ -41,3 +41,16 @@
 - [ ] Update JARVIS chat UI to trigger motion generation asynchronously while streaming response
 - [ ] Display generated motion clip when ready, fallback to pre-recorded clips if generation fails
 - [ ] Commit and push all changes to GitHub
+
+## Live Coaching Pipeline — Real-Time AI Vision
+- [ ] Build camera capture module (getUserMedia, canvas frame every 3s, base64 JPEG)
+- [ ] Build /api/live-coach/analyze endpoint: fal.ai vision → movement description
+- [ ] Build /api/live-coach/coach endpoint: Claude Sonnet 4.5 → coaching cue from movement
+- [ ] Build /api/live-coach/speak endpoint: ElevenLabs TTS → audio stream
+- [ ] Build LiveCoach.tsx page: camera feed + JARVIS overlay + real-time coaching cues
+- [ ] Wire Claude JARVIS system prompt (NASM framework) into live coaching
+- [ ] Add ANTHROPIC_API_KEY secret
+- [ ] Add ELEVENLABS_API_KEY secret
+- [ ] Integrate Claude-designed JarvisChat.tsx (clean chat UI with memberData)
+- [ ] Update server/routes/jarvis.ts with Claude Sonnet 4.5 backend
+- [ ] Commit and push all changes to GitHub

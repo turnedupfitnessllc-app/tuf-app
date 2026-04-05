@@ -3,6 +3,7 @@ import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
 import jarvisRouter from "./routes/jarvis.js";
+import coachingRouter from "./routes/coaching.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -17,6 +18,7 @@ async function startServer() {
 
   // API Routes
   app.use("/api/jarvis", jarvisRouter);
+  app.use("/api/coaching", coachingRouter);
 
   // Health check endpoint
   app.get("/api/health", (_req, res) => {
