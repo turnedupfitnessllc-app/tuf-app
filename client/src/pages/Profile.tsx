@@ -240,6 +240,7 @@ export default function Profile() {
         {/* ── Quick Links ───────────────────────────────────────────── */}
         <div className="space-y-2">
           {[
+            { label: 'Body Composition', icon: '📏', path: '/body-comp' },
             { label: 'JARVIS Chat', icon: '🐆', path: '/jarvis' },
             { label: 'Live Coaching', icon: '📷', path: '/live' },
             { label: 'Nutrition (FUEL)', icon: '🥗', path: '/fuel' },

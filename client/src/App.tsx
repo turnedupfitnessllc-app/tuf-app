@@ -17,6 +17,7 @@ import Profile from "./pages/Profile";
 // Feature screens
 import JarvisChat from "./pages/JarvisChat";
 import LiveCoaching from "./pages/LiveCoaching";
+import BodyComposition from "./pages/BodyComposition";
 
 // Legacy screens (still accessible via Profile quick links)
 import Move from "./pages/Move";
@@ -41,6 +42,7 @@ function Router() {
         {/* ── Feature screens ───────────────────────────────── */}
         <Route path={"/jarvis"} component={JarvisChat} />
         <Route path={"/live"} component={LiveCoaching} />
+        <Route path={"/body-comp"} component={BodyComposition} />
 
         {/* ── Legacy screens ────────────────────────────────── */}
         <Route path={"/move"} component={Move} />

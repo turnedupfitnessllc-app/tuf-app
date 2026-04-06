@@ -54,3 +54,18 @@
 - [ ] Integrate Claude-designed JarvisChat.tsx (clean chat UI with memberData)
 - [ ] Update server/routes/jarvis.ts with Claude Sonnet 4.5 backend
 - [ ] Commit and push all changes to GitHub
+
+## Home Screen — Real Data Integration
+- [x] useProgress hook (localStorage scores, streak, sessions)
+- [x] Home.tsx live scores from hook
+- [x] Dynamic JARVIS greeting (time of day + name)
+- [x] Today's corrective plan card (from last Assess)
+- [x] Streak tracking card
+- [x] Score increments when Correct session completes
+
+## Body Composition Tracker
+- [x] BodyComposition.tsx page — BMI, body fat %, 9 measurements form
+- [x] U.S. Navy body fat % calculation (neck + waist + hips)
+- [x] Measurement history chart (last 20 entries)
+- [x] Wire into Profile screen as a tab
+- [x] useBodyComp hook for localStorage persistence
