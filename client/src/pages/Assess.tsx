@@ -133,7 +133,7 @@ export default function Assess() {
           <p className="text-xs font-black tracking-widest text-muted-foreground mb-1">STEP 1 OF 4</p>
           <h1
             className="font-black leading-none"
-            style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '2.2rem', letterSpacing: '0.06em' }}
+            style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '2.2rem', letterSpacing: '0.06em' }}
           >
             ASSESS <span className="text-primary">YOUR MOVEMENT</span>
           </h1>
@@ -163,7 +163,7 @@ export default function Assess() {
                   📷
                 </div>
                 <div className="flex-1">
-                  <p className="font-black text-base" style={{ fontFamily: "'Bebas Neue', sans-serif", letterSpacing: '0.08em' }}>GUIDED ASSESSMENT</p>
+                  <p className="font-black text-base" style={{ fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: '0.08em' }}>GUIDED ASSESSMENT</p>
                   <p className="text-white/70 text-sm">Camera-based movement screen</p>
                 </div>
                 <span className="text-white/50 text-xl">›</span>
@@ -181,7 +181,7 @@ export default function Assess() {
                   ⚡
                 </div>
                 <div className="flex-1">
-                  <p className="font-black text-base text-white" style={{ fontFamily: "'Bebas Neue', sans-serif", letterSpacing: '0.08em' }}>QUICK SELECT</p>
+                  <p className="font-black text-base text-white" style={{ fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: '0.08em' }}>QUICK SELECT</p>
                   <p className="text-muted-foreground text-sm">Tell me what's bothering you</p>
                 </div>
                 <span className="text-muted-foreground text-xl">›</span>
@@ -262,7 +262,7 @@ export default function Assess() {
                   }}
                 >
                   <span className="text-3xl">{issue.icon}</span>
-                  <p className="text-xs font-black tracking-wide text-white leading-tight" style={{ fontFamily: "'Bebas Neue', sans-serif", letterSpacing: '0.06em' }}>
+                  <p className="text-xs font-black tracking-wide text-white leading-tight" style={{ fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: '0.06em' }}>
                     {issue.label}
                   </p>
                 </button>
@@ -293,7 +293,7 @@ export default function Assess() {
               <div className="flex items-center gap-3 mb-3">
                 <span className="text-3xl">{selectedIssue.icon}</span>
                 <div>
-                  <p className="font-black text-sm text-white" style={{ fontFamily: "'Bebas Neue', sans-serif", letterSpacing: '0.06em' }}>{selectedIssue.label}</p>
+                  <p className="font-black text-sm text-white" style={{ fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: '0.06em' }}>{selectedIssue.label}</p>
                   <p className="text-xs text-primary font-bold mt-0.5">{selectedIssue.pattern}</p>
                 </div>
               </div>
@@ -326,7 +326,7 @@ export default function Assess() {
               style={{
                 background: 'linear-gradient(135deg, #FF4500, #DC2626)',
                 boxShadow: '0 4px 24px rgba(255,69,0,0.35)',
-                fontFamily: "'Bebas Neue', sans-serif",
+                fontFamily: "'Barlow Condensed', sans-serif",
                 fontSize: '1.1rem',
                 letterSpacing: '0.1em',
               }}

@@ -282,4 +282,78 @@ router.post("/health-check", (_req: Request, res: Response) => {
   });
 });
 
+// ─── POST /api/jarvis/chain — TUF Prompt Chain System v1.0 ──────────────────
+// 4-turn chain: Base Task → Strip Generic → Marc's Voice (TUF DNA) → Deploy Ready
+// Based on TUFPromptChainSystemv1.pdf
+router.post("/chain", async (req: Request, res: Response) => {
+  const { task, memberData, profile }: {
+    task: string;
+    memberData?: MemberData;
+    profile?: Record<string, string>;
+  } = req.body;
+
+  if (!task) return res.status(400).json({ error: "task is required" });
+
+  let anthropic: Anthropic;
+  try {
+    anthropic = getAnthropicClient();
+  } catch {
+    return res.status(500).json({ error: "ANTHROPIC_API_KEY not configured" });
+  }
+
+  const member = memberData || (profile ? profileToMemberData(profile) : null);
+  const memberCtx = member ? `\n\n${buildMemberContext(member)}` : "";
+
+  async function callClaude(systemPrompt: string, messages: ClaudeMessage[]): Promise<string> {
+    const resp = await anthropic.messages.create({
+      model: "claude-sonnet-4-5",
+      max_tokens: 1024,
+      system: systemPrompt,
+      messages,
+    });
+    return resp.content[0].type === "text" ? resp.content[0].text : "";
+  }
+
+  try {
+    // ── TURN 1: BASE TASK — Raw draft, no constraints ─────────────────────────
+    const turn1System = `You are a fitness coaching AI. Write a direct coaching response to the task given. No constraints yet — just draft it naturally.${memberCtx}`;
+    const turn1 = await callClaude(turn1System, [{ role: "user", content: task }]);
+
+    // ── TURN 2: STRIP GENERIC — Kill chatbot voice ────────────────────────────
+    const turn2System = `You are an editor for a premium fitness coaching brand. Strip everything that sounds like a generic fitness app. Remove motivational clichés, hand-holding language, or anything that could have come from a stock chatbot. The coach does not encourage — he cuts through. Rewrite with that edge.`;
+    const turn2 = await callClaude(turn2System, [
+      { role: "user", content: `Original draft:\n\n${turn1}\n\nStrip the generic. Keep the substance.` }
+    ]);
+
+    // ── TURN 3: MARC'S VOICE / TUF DNA ───────────────────────────────────────
+    const turn3System = `${PANTHER_SYSTEM_PROMPT}${memberCtx}\n\nYour task: Run the following coaching message through Marc's voice. Former Marine. NASM Corrective Exercise Coach. Speaks to adults 40+ who are done with excuses. Apply the NASM Corrective Exercise Continuum where relevant — Inhibit, Lengthen, Activate, Integrate. Address the root pattern, not the symptom. No generic fitness language.`;
+    const turn3 = await callClaude(turn3System, [
+      { role: "user", content: `Refined draft:\n\n${turn2}\n\nApply TUF DNA and Marc's voice.` }
+    ]);
+
+    // ── TURN 4: DEPLOY READY — Format for the TUF app ────────────────────────
+    const turn4System = `You are a TUF app content formatter. Format the coaching message for the Panther AI response block. Output exactly this structure, with each section labeled:\n\nHEADLINE: [4-6 punchy words, all caps, no punctuation]\n\nCOACHING: [3-5 sharp sentences max. No fluff. Direct.]\n\nDIRECTIVE: [One clear action step. Start with a verb.]`;
+    const turn4 = await callClaude(turn4System, [
+      { role: "user", content: `TUF-voice draft:\n\n${turn3}\n\nFormat for the app.` }
+    ]);
+
+    // Parse the structured output
+    const headlineMatch = turn4.match(/HEADLINE:\s*([^\n]+)/i);
+    const coachingMatch = turn4.match(/COACHING:\s*([\s\S]+?)(?=DIRECTIVE:|$)/i);
+    const directiveMatch = turn4.match(/DIRECTIVE:\s*([^\n]+(?:\n[^\n]+)*)/i);
+
+    return res.json({
+      headline: headlineMatch?.[1]?.trim() || "",
+      coaching: coachingMatch?.[1]?.trim() || "",
+      directive: directiveMatch?.[1]?.trim() || "",
+      raw: turn4,
+      chain: { turn1, turn2, turn3, turn4 },
+    });
+  } catch (error: any) {
+    console.error("[JARVIS/chain] Error:", error);
+    if (error?.status === 401) return res.status(401).json({ error: "Invalid API key" });
+    return res.status(500).json({ error: "Chain failed", fallback: getFallback() });
+  }
+});
+
 export default router;

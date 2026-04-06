@@ -142,7 +142,7 @@ export default function Fuel() {
       {/* Header */}
       <section className="px-4 pt-6 pb-4 border-b border-border">
         <div className="text-xs tracking-widest uppercase text-muted-foreground mb-1">Nutrition</div>
-        <h1 className="font-bebas text-3xl tracking-wider text-foreground">
+        <h1 className="font-barlow-condensed text-3xl tracking-wider text-foreground">
           <span className="text-primary">FUEL</span>
         </h1>
 
@@ -195,7 +195,7 @@ export default function Fuel() {
                     />
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <div className="font-bebas text-lg text-accent tracking-wider">0</div>
+                    <div className="font-barlow-condensed text-lg text-accent tracking-wider">0</div>
                     <div className="text-xs text-muted-foreground">g</div>
                   </div>
                 </div>
@@ -203,36 +203,36 @@ export default function Fuel() {
                 <div className="flex-1">
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-xs text-muted-foreground">Protein</span>
-                    <span className="font-bebas text-sm text-accent">{targets.protein}g</span>
+                    <span className="font-barlow-condensed text-sm text-accent">{targets.protein}g</span>
                   </div>
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-xs text-muted-foreground">Carbs</span>
-                    <span className="font-bebas text-sm text-accent">{targets.carbs}g</span>
+                    <span className="font-barlow-condensed text-sm text-accent">{targets.carbs}g</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-xs text-muted-foreground">Fat</span>
-                    <span className="font-bebas text-sm text-accent">{targets.fat}g</span>
+                    <span className="font-barlow-condensed text-sm text-accent">{targets.fat}g</span>
                   </div>
                 </div>
               </div>
 
               <div className="border-t border-border pt-3 text-center">
                 <div className="text-xs text-muted-foreground mb-1">Daily Calorie Target</div>
-                <div className="font-bebas text-2xl text-accent tracking-wider">{targets.calories}</div>
+                <div className="font-barlow-condensed text-2xl text-accent tracking-wider">{targets.calories}</div>
               </div>
             </div>
           </section>
 
           {/* Meals */}
           <section className="px-4 py-4">
-            <div className="font-bebas text-lg tracking-wider text-foreground border-l-4 border-l-primary pl-3 mb-4">
+            <div className="font-barlow-condensed text-lg tracking-wider text-foreground border-l-4 border-l-primary pl-3 mb-4">
               TODAY'S <span className="text-primary">MEALS</span>
             </div>
 
             {nutrition.meals.map((meal) => (
               <div key={meal.id} className="tuf-card ok-border mb-3">
                 <div className="flex items-center justify-between mb-2">
-                  <div className="font-bebas text-sm tracking-wider text-foreground">{meal.name}</div>
+                  <div className="font-barlow-condensed text-sm tracking-wider text-foreground">{meal.name}</div>
                   <div className="text-xs text-muted-foreground">{meal.time}</div>
                 </div>
                 <div className="progress-bar">
@@ -300,7 +300,7 @@ export default function Fuel() {
 
           {/* Selected day */}
           <div className="tuf-card ok-border">
-            <div className="font-bebas text-lg tracking-wider mb-3">
+            <div className="font-barlow-condensed text-lg tracking-wider mb-3">
               {MEAL_PLAN_WEEK[selectedDay].day.toUpperCase()}
             </div>
             <div className="space-y-3">
@@ -335,7 +335,7 @@ export default function Fuel() {
               <div className="flex items-center gap-3 mb-2">
                 <span className="text-2xl">{p.icon}</span>
                 <div>
-                  <p className="font-bebas text-base tracking-wider">{p.title}</p>
+                  <p className="font-barlow-condensed text-base tracking-wider">{p.title}</p>
                   <p className={`text-xs font-bold ${p.accent}`}>{p.rule}</p>
                 </div>
               </div>
@@ -345,7 +345,7 @@ export default function Fuel() {
 
           {/* Supplement stack */}
           <div className="tuf-card gold-border">
-            <div className="font-bebas text-base tracking-wider border-l-4 border-l-primary pl-3 mb-3">
+            <div className="font-barlow-condensed text-base tracking-wider border-l-4 border-l-primary pl-3 mb-3">
               SUPPLEMENT STACK
             </div>
             <div className="space-y-2 text-sm text-foreground/70">

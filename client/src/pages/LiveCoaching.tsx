@@ -258,7 +258,7 @@ export default function LiveCoaching() {
             </button>
           </Link>
           <div>
-            <h1 className="font-bold text-sm" style={{ fontFamily: "Orbitron, sans-serif" }}>
+            <h1 className="font-bold text-sm" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>
               LIVE COACHING
             </h1>
             <p className="text-xs text-muted-foreground">Camera · JARVIS · Voice</p>
@@ -383,7 +383,7 @@ export default function LiveCoaching() {
             />
             {/* JARVIS label */}
             <div className="absolute top-2 left-2 bg-black/60 rounded-lg px-2 py-0.5">
-              <p className="text-[10px] text-white font-mono" style={{ fontFamily: "Orbitron, sans-serif" }}>
+              <p className="text-[10px] text-white font-mono" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>
                 JARVIS
               </p>
             </div>
@@ -465,7 +465,7 @@ export default function LiveCoaching() {
               ? "bg-red-600 hover:bg-red-700 text-white"
               : "bg-primary text-white"
           }`}
-          style={{ fontFamily: "Orbitron, sans-serif" }}
+          style={{ fontFamily: "'Barlow Condensed', sans-serif" }}
         >
           {coachingActive ? (
             <><Activity className="w-4 h-4 mr-2 animate-pulse" /> STOP COACHING</>

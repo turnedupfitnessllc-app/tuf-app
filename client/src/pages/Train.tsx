@@ -255,7 +255,7 @@ export default function Train() {
               <div className="text-5xl mb-3 drop-shadow-lg">{selectedProgram.icon}</div>
               <h1
                 className="text-3xl font-black text-white leading-none mb-1"
-                style={{ fontFamily: "'Bebas Neue', sans-serif", letterSpacing: '0.06em' }}
+                style={{ fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: '0.06em' }}
               >
                 {selectedProgram.name}
               </h1>
@@ -354,7 +354,7 @@ export default function Train() {
             style={{
               background: `linear-gradient(135deg, ${selectedProgram.accent}, #FF4500)`,
               boxShadow: `0 4px 24px ${selectedProgram.glow}`,
-              fontFamily: "'Bebas Neue', sans-serif",
+              fontFamily: "'Barlow Condensed', sans-serif",
               fontSize: '1.1rem',
               letterSpacing: '0.1em',
             }}
@@ -378,7 +378,7 @@ export default function Train() {
           <p className="text-xs font-black tracking-widest text-muted-foreground mb-1">STEP 3 OF 4</p>
           <h1
             className="font-black leading-none"
-            style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '2.4rem', letterSpacing: '0.06em' }}
+            style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '2.4rem', letterSpacing: '0.06em' }}
           >
             TRAIN <span className="text-primary">WITH PURPOSE</span>
           </h1>
@@ -409,7 +409,7 @@ export default function Train() {
                 <div className="text-5xl mb-3 drop-shadow-lg">{featured.icon}</div>
                 <h2
                   className="text-white font-black leading-none mb-1"
-                  style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '1.9rem', letterSpacing: '0.06em' }}
+                  style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '1.9rem', letterSpacing: '0.06em' }}
                 >
                   {featured.name}
                 </h2>
@@ -463,7 +463,7 @@ export default function Train() {
                     <div className="flex-1 min-w-0">
                       <h3
                         className="text-white font-black leading-none truncate"
-                        style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '1.15rem', letterSpacing: '0.06em' }}
+                        style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '1.15rem', letterSpacing: '0.06em' }}
                       >
                         {program.name}
                       </h3>
@@ -511,7 +511,7 @@ export default function Train() {
             <div className="flex-1 text-left">
               <p
                 className="font-black text-sm tracking-widest text-white"
-                style={{ fontFamily: "'Bebas Neue', sans-serif", letterSpacing: '0.1em' }}
+                style={{ fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: '0.1em' }}
               >
                 LIVE FORM CHECK
               </p>

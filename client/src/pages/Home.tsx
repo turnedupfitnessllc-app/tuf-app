@@ -119,7 +119,7 @@ export default function Home() {
           </p>
           <h1
             className="font-black leading-none mt-0.5"
-            style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '2.2rem', letterSpacing: '0.06em' }}
+            style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '2.2rem', letterSpacing: '0.06em' }}
           >
             TURNED UP <span className="text-primary">FITNESS</span>
           </h1>
@@ -262,7 +262,7 @@ export default function Home() {
               <div className="flex-1">
                 <p
                   className="font-black text-base"
-                  style={{ fontFamily: "'Bebas Neue', sans-serif", letterSpacing: '0.08em' }}
+                  style={{ fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: '0.08em' }}
                 >
                   ASSESS YOUR MOVEMENT
                 </p>
@@ -285,7 +285,7 @@ export default function Home() {
               <div className="flex-1">
                 <p
                   className="font-black text-base"
-                  style={{ fontFamily: "'Bebas Neue', sans-serif", letterSpacing: '0.08em' }}
+                  style={{ fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: '0.08em' }}
                 >
                   START CORRECTIVES
                 </p>
@@ -318,7 +318,7 @@ export default function Home() {
                 <span className="text-2xl">{icon}</span>
                 <p
                   className="font-black text-sm text-white"
-                  style={{ fontFamily: "'Bebas Neue', sans-serif", letterSpacing: '0.08em' }}
+                  style={{ fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: '0.08em' }}
                 >
                   {label}
                 </p>

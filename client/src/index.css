@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Orbitron:wght@400;700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+/* Fonts loaded via index.html — Barlow Condensed (Option C) + Inter (Option A) */
 @import "tailwindcss";
 @import "tw-animate-css";
 @custom-variant dark (&:is(.dark *));
@@ -111,12 +111,12 @@
 }
 @layer base {
   * { @apply border-border outline-ring/50; }
-  body { @apply bg-background text-foreground; font-family: 'Space Mono', monospace; }
+  body { @apply bg-background text-foreground; font-family: 'Barlow', sans-serif; font-weight: 400; }
   button:not(:disabled),[role="button"]:not([aria-disabled="true"]),[type="button"]:not(:disabled),[type="submit"]:not(:disabled),[type="reset"]:not(:disabled),a[href],select:not(:disabled),input[type="checkbox"]:not(:disabled),input[type="radio"]:not(:disabled) { @apply cursor-pointer; }
-  h1,h2,h3,h4,h5,h6 { font-family: 'Bebas Neue', sans-serif; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
-  h1 { @apply text-4xl md:text-5xl font-bold; letter-spacing: 0.08em; }
-  h2 { @apply text-3xl md:text-4xl font-bold; letter-spacing: 0.06em; }
-  h3 { @apply text-2xl md:text-3xl font-bold; letter-spacing: 0.05em; }
+  h1,h2,h3,h4,h5,h6 { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; letter-spacing: 0.03em; text-transform: uppercase; }
+  h1 { @apply text-4xl md:text-5xl; letter-spacing: 0.04em; }
+  h2 { @apply text-3xl md:text-4xl; letter-spacing: 0.03em; }
+  h3 { @apply text-2xl md:text-3xl; letter-spacing: 0.02em; }
 }
 @layer components {
   .header-exec { @apply sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border; }
@@ -129,10 +129,12 @@
   .text-gradient { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
   .text-black { @apply text-foreground; }
   .text-red { @apply text-primary; }
-  .heading-blade { font-family: 'Orbitron', sans-serif; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; line-height: 1.1; }
-  .heading-blade-lg { @apply text-5xl md:text-6xl; font-family: 'Orbitron', sans-serif; font-weight: 900; }
-  .heading-blade-md { @apply text-3xl md:text-4xl; font-family: 'Orbitron', sans-serif; font-weight: 900; }
-  .heading-blade-sm { @apply text-2xl md:text-3xl; font-family: 'Orbitron', sans-serif; font-weight: 700; }
+  .heading-blade { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1.05; }
+  .heading-blade-lg { @apply text-5xl md:text-6xl; font-family: 'Barlow Condensed', sans-serif; font-weight: 900; }
+  .heading-blade-md { @apply text-3xl md:text-4xl; font-family: 'Barlow Condensed', sans-serif; font-weight: 900; }
+  .heading-blade-sm { @apply text-2xl md:text-3xl; font-family: 'Barlow Condensed', sans-serif; font-weight: 800; }
+  .font-barlow { font-family: 'Barlow', sans-serif; }
+  .font-barlow-condensed { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; letter-spacing: 0.03em; }
   .text-bold-accent { font-weight: 700; letter-spacing: 0.05em; }
   .btn-glow { @apply bg-primary text-primary-foreground font-bold rounded-xl px-6 py-3 transition-all duration-200; }
   .btn-glow:hover { box-shadow: 0 0 20px rgba(255,69,0,0.5); transform: translateY(-1px); }
