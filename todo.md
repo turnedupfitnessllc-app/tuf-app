@@ -69,3 +69,35 @@
 - [x] Measurement history chart (last 20 entries)
 - [x] Wire into Profile screen as a tab
 - [x] useBodyComp hook for localStorage persistence
+
+## Feature Sprint — Tasks 1-5
+
+### 1. Onboarding Flow
+- [x] Onboarding.tsx — 3-step flow: Name → Goal → Primary Issue
+- [x] First-launch detection (localStorage flag)
+- [x] Pre-load corrective plan from selected issue
+- [x] Wire JARVIS greeting to use entered name
+- [x] Skip/back navigation between steps
+
+### 2. Expanded Exercise Library
+- [ ] 25+ corrective exercises with full NASM 4-phase progressions
+- [ ] Cover all 8 compensation patterns from Assess screen
+- [ ] Each exercise: sets, reps, hold time, coaching cue, NASM phase tag
+- [ ] Update EXERCISE_STANDARDS in coaching.ts with new exercises
+
+### 3. More Workout Programs
+- [ ] Upper Body Day program (corrective warm-up + push/pull strength)
+- [ ] Mobility Flow program (full-body corrective sequence)
+- [ ] 40+ Recovery Day program (low-impact, joint-friendly)
+
+### 4. Import TUF Programs from Drive
+- [ ] Download and parse Maximum Overdrive program
+- [ ] Download and parse Ass-Assassination 6-week program
+- [ ] Structure both as week-by-week workout cards in Train screen
+
+### 5. FUEL Section
+- [ ] Fuel.tsx page — recipe browser with categories
+- [ ] Import recipe book content from Drive
+- [ ] Shopping list viewer (4 diet types)
+- [ ] Restaurant guide viewer
+- [ ] Wire FUEL nav item to new page

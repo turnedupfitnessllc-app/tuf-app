@@ -1,7 +1,7 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
-import { Route, Switch } from "wouter";
+import { Route, Switch, Redirect } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { TufHeader } from "./components/TufHeader";
@@ -13,6 +13,9 @@ import Assess from "./pages/Assess";
 import Train from "./pages/Train";
 import Correct from "./pages/Correct";
 import Profile from "./pages/Profile";
+
+// Onboarding
+import Onboarding from "./pages/Onboarding";
 
 // Feature screens
 import JarvisChat from "./pages/JarvisChat";
@@ -28,12 +31,18 @@ import Progress from "./pages/Progress";
 import ComponentShowcase from "./pages/ComponentShowcase";
 
 function Router() {
+  // First-launch detection — show onboarding if not yet completed
+  const isOnboarded = localStorage.getItem("tuf_onboarded") === "true";
+
   return (
     <>
       <TufHeader />
       <Switch>
+        {/* ── Onboarding ────────────────────────────────────── */}
+        <Route path={"/onboarding"} component={Onboarding} />
+
         {/* ── Panther UX System ─────────────────────────────── */}
-        <Route path={"/"} component={Home} />
+        <Route path={"/"} component={() => !isOnboarded ? <Redirect to="/onboarding" /> : <Home />} />
         <Route path={"/assess"} component={Assess} />
         <Route path={"/train"} component={Train} />
         <Route path={"/correct"} component={Correct} />
