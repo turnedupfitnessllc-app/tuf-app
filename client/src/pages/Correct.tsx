@@ -6,6 +6,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useLocation } from 'wouter';
 import { PantherAvatar } from '@/components/PantherAvatar';
+import { useProgress } from '@/hooks/useProgress';
 
 interface Exercise {
   id: string;
@@ -157,6 +158,8 @@ export default function Correct() {
   const [voiceEnabled, setVoiceEnabled] = useState(false);
   const [showComplete, setShowComplete] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const { completeSession } = useProgress();
+  const sessionStartRef = useRef(Date.now());
 
   const currentExercise = EXERCISE_LIBRARY[exerciseIds[currentIdx]] || EXERCISE_LIBRARY['glute-bridge'];
 
@@ -204,6 +207,10 @@ export default function Correct() {
             setCurrentIdx(i => i + 1);
             setCurrentSet(1);
           } else {
+            // Record session completion with phases for score calculation
+            const phases = exerciseIds.map(id => EXERCISE_LIBRARY[id]?.phase ?? 'ACTIVATE') as Array<'INHIBIT' | 'LENGTHEN' | 'ACTIVATE' | 'INTEGRATE'>;
+            const durationMinutes = Math.round((Date.now() - sessionStartRef.current) / 60000) || 15;
+            completeSession(phases, durationMinutes);
             setShowComplete(true);
           }
           return 0;
@@ -224,6 +231,9 @@ export default function Correct() {
       setCurrentIdx(i => i + 1);
       setCurrentSet(1);
     } else {
+      const phases = exerciseIds.map(id => EXERCISE_LIBRARY[id]?.phase ?? 'ACTIVATE') as Array<'INHIBIT' | 'LENGTHEN' | 'ACTIVATE' | 'INTEGRATE'>;
+      const durationMinutes = Math.round((Date.now() - sessionStartRef.current) / 60000) || 15;
+      completeSession(phases, durationMinutes);
       setShowComplete(true);
     }
   };
