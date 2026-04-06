@@ -548,7 +548,7 @@ export default function Correct() {
 
   if (showComplete) {
     return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center pb-24 px-4">
+      <div className="min-h-screen bg-[#080808] flex flex-col items-center justify-center pb-24 px-4">
         <div className="text-center">
           {/* Claw slash animation */}
           <div className="text-7xl mb-4 animate-bounce">🐆</div>
@@ -577,7 +577,7 @@ export default function Correct() {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <div className="min-h-screen bg-[#080808] pb-24">
       <main className="max-w-[480px] mx-auto px-4 pt-6">
 
         {/* ── Progress Dots ─────────────────────────────────────────── */}

@@ -138,7 +138,7 @@ export default function Fuel() {
   const [selectedDay, setSelectedDay] = useState(todayIndex);
 
   return (
-    <div className="min-h-screen bg-background text-foreground pb-20">
+    <div className="min-h-screen bg-[#080808] text-foreground pb-20">
       {/* Header */}
       <section className="px-4 pt-6 pb-4 border-b border-border">
         <div className="text-xs tracking-widest uppercase text-muted-foreground mb-1">Nutrition</div>

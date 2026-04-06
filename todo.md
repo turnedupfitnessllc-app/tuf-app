@@ -101,3 +101,9 @@
 - [ ] Shopping list viewer (4 diet types)
 - [ ] Restaurant guide viewer
 - [ ] Wire FUEL nav item to new page
+
+## CSS Premium Upgrade + Jotform Survey
+- [ ] Dark premium CSS upgrade — Train page gradient cards, hierarchy, texture
+- [ ] Carry CSS improvements to Home, Correct, Assess, Fuel screens
+- [ ] Global CSS tokens — glow shadows, gradient utilities, card depth
+- [ ] Jotform tester feedback survey (via MCP)

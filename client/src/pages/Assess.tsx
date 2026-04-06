@@ -125,13 +125,16 @@ export default function Assess() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <div className="min-h-screen bg-[#080808] pb-24">
       <main className="max-w-[480px] mx-auto px-4 pt-6">
 
         {/* ── Header ────────────────────────────────────────────────── */}
         <div className="mb-6">
           <p className="text-xs font-black tracking-widest text-muted-foreground mb-1">STEP 1 OF 4</p>
-          <h1 className="text-2xl font-black tracking-tight text-foreground">
+          <h1
+            className="font-black leading-none"
+            style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '2.2rem', letterSpacing: '0.06em' }}
+          >
             ASSESS <span className="text-primary">YOUR MOVEMENT</span>
           </h1>
           <p className="text-sm text-muted-foreground mt-1">Find the weakness. Fix it at the root.</p>
@@ -150,27 +153,35 @@ export default function Assess() {
             <div className="grid grid-cols-1 gap-3">
               <button
                 onClick={() => setMode('guided')}
-                className="w-full flex items-center gap-4 p-5 rounded-2xl bg-foreground text-background shadow-lg hover:shadow-xl active:scale-[0.98] transition-all text-left"
+                className="w-full flex items-center gap-4 p-5 rounded-2xl text-white active:scale-[0.98] transition-all text-left"
+                style={{
+                  background: 'linear-gradient(135deg, #FF4500, #DC2626)',
+                  boxShadow: '0 4px 24px rgba(255,69,0,0.35)',
+                }}
               >
-                <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-2xl flex-shrink-0">
+                <div className="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center text-2xl flex-shrink-0">
                   📷
                 </div>
                 <div className="flex-1">
-                  <p className="font-black text-base tracking-wide">GUIDED ASSESSMENT</p>
-                  <p className="text-background/70 text-sm">Camera-based movement screen</p>
+                  <p className="font-black text-base" style={{ fontFamily: "'Bebas Neue', sans-serif", letterSpacing: '0.08em' }}>GUIDED ASSESSMENT</p>
+                  <p className="text-white/70 text-sm">Camera-based movement screen</p>
                 </div>
-                <span className="text-background/40 text-xl">›</span>
+                <span className="text-white/50 text-xl">›</span>
               </button>
 
               <button
                 onClick={() => setMode('quick')}
-                className="w-full flex items-center gap-4 p-5 rounded-2xl border-2 border-primary bg-primary/5 hover:bg-primary/10 active:scale-[0.98] transition-all text-left"
+                className="w-full flex items-center gap-4 p-5 rounded-2xl active:scale-[0.98] transition-all text-left"
+                style={{
+                  background: 'rgba(255,69,0,0.08)',
+                  border: '1.5px solid rgba(255,69,0,0.35)',
+                }}
               >
-                <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center text-2xl flex-shrink-0">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0" style={{ background: 'rgba(255,69,0,0.15)' }}>
                   ⚡
                 </div>
                 <div className="flex-1">
-                  <p className="font-black text-base tracking-wide text-foreground">QUICK SELECT</p>
+                  <p className="font-black text-base text-white" style={{ fontFamily: "'Bebas Neue', sans-serif", letterSpacing: '0.08em' }}>QUICK SELECT</p>
                   <p className="text-muted-foreground text-sm">Tell me what's bothering you</p>
                 </div>
                 <span className="text-muted-foreground text-xl">›</span>
@@ -198,16 +209,21 @@ export default function Assess() {
                 <button
                   key={test.id}
                   onClick={() => navigate('/live')}
-                  className="w-full flex items-center gap-4 p-5 rounded-2xl border-2 border-border bg-card hover:border-primary/40 active:scale-[0.98] transition-all text-left"
+                  className="w-full flex items-center gap-4 p-5 rounded-2xl active:scale-[0.98] transition-all text-left"
+                  style={{
+                    background: 'rgba(255,255,255,0.03)',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                  }}
                 >
-                  <div className="w-12 h-12 rounded-xl bg-secondary flex items-center justify-center text-2xl flex-shrink-0">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0" style={{ background: 'rgba(255,69,0,0.12)' }}>
                     {test.icon}
                   </div>
                   <div className="flex-1">
-                    <p className="font-black text-sm tracking-wide text-foreground">{test.label}</p>
+                    <p className="font-black text-sm tracking-wide text-white">{test.label}</p>
                     <p className="text-xs text-muted-foreground mt-0.5">{test.description}</p>
                     {test.cameraRequired && (
-                      <span className="inline-block mt-1 text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                      <span className="inline-block mt-1 text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: 'rgba(255,69,0,0.15)', color: '#FF4500' }}>
                         CAMERA REQUIRED
                       </span>
                     )}
@@ -238,10 +254,15 @@ export default function Assess() {
                 <button
                   key={issue.id}
                   onClick={() => handleQuickSelect(issue)}
-                  className="flex flex-col items-center gap-2 p-4 rounded-2xl border-2 border-border bg-card hover:border-primary hover:bg-primary/5 active:scale-[0.97] transition-all text-center"
+                  className="flex flex-col items-center gap-2 p-4 rounded-2xl active:scale-[0.97] transition-all text-center"
+                  style={{
+                    background: 'rgba(255,255,255,0.03)',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                  }}
                 >
                   <span className="text-3xl">{issue.icon}</span>
-                  <p className="text-xs font-black tracking-wide text-foreground leading-tight">
+                  <p className="text-xs font-black tracking-wide text-white leading-tight" style={{ fontFamily: "'Bebas Neue', sans-serif", letterSpacing: '0.06em' }}>
                     {issue.label}
                   </p>
                 </button>
@@ -261,11 +282,18 @@ export default function Assess() {
               />
             </div>
 
-            <div className="rounded-2xl border-2 border-primary/30 bg-primary/5 p-5 mb-4">
+            <div
+              className="p-5 rounded-2xl mb-4"
+              style={{
+                background: 'rgba(255,69,0,0.08)',
+                border: '1px solid rgba(255,69,0,0.25)',
+                boxShadow: '0 4px 24px rgba(255,69,0,0.12)',
+              }}
+            >
               <div className="flex items-center gap-3 mb-3">
                 <span className="text-3xl">{selectedIssue.icon}</span>
                 <div>
-                  <p className="font-black text-sm tracking-wide text-foreground">{selectedIssue.label}</p>
+                  <p className="font-black text-sm text-white" style={{ fontFamily: "'Bebas Neue', sans-serif", letterSpacing: '0.06em' }}>{selectedIssue.label}</p>
                   <p className="text-xs text-primary font-bold mt-0.5">{selectedIssue.pattern}</p>
                 </div>
               </div>
@@ -277,11 +305,15 @@ export default function Assess() {
             <div className="space-y-2 mb-6">
               <p className="text-xs font-black tracking-widest text-muted-foreground">YOUR CORRECTIVE PLAN</p>
               {selectedIssue.correctives.map((ex, i) => (
-                <div key={ex} className="flex items-center gap-3 p-3 rounded-xl bg-card border border-border">
+                <div
+                  key={ex}
+                  className="flex items-center gap-3 p-3 rounded-xl"
+                  style={{ background: 'rgba(255,69,0,0.05)', border: '1px solid rgba(255,69,0,0.15)' }}
+                >
                   <span className="w-6 h-6 rounded-full bg-primary text-white text-xs font-black flex items-center justify-center flex-shrink-0">
                     {i + 1}
                   </span>
-                  <p className="text-sm font-bold text-foreground capitalize">
+                  <p className="text-sm font-bold text-white capitalize">
                     {ex.replace(/-/g, ' ')}
                   </p>
                 </div>
@@ -290,14 +322,22 @@ export default function Assess() {
 
             <button
               onClick={handleStartCorrectives}
-              className="w-full py-4 rounded-2xl bg-primary text-white font-black text-base tracking-wide shadow-lg hover:shadow-xl active:scale-[0.98] transition-all"
+              className="w-full py-4 rounded-2xl text-white font-black active:scale-[0.98] transition-all"
+              style={{
+                background: 'linear-gradient(135deg, #FF4500, #DC2626)',
+                boxShadow: '0 4px 24px rgba(255,69,0,0.35)',
+                fontFamily: "'Bebas Neue', sans-serif",
+                fontSize: '1.1rem',
+                letterSpacing: '0.1em',
+              }}
             >
-              START CORRECTIVES →
+              START CORRECTIVES
             </button>
 
             <button
               onClick={() => setMode('quick')}
-              className="w-full mt-3 py-3 rounded-2xl border-2 border-border text-muted-foreground font-bold text-sm hover:border-foreground transition-colors"
+              className="w-full mt-3 py-3 rounded-2xl font-bold text-sm text-muted-foreground transition-colors"
+              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)' }}
             >
               Select Different Issue
             </button>

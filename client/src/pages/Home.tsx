@@ -109,7 +109,7 @@ export default function Home() {
   const isNewUser = progress.sessionsCompleted === 0;
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <div className="min-h-screen bg-[#080808] pb-24">
       <main className="max-w-[480px] mx-auto px-4 pt-6">
 
         {/* ── Greeting ──────────────────────────────────────────────── */}
@@ -117,13 +117,23 @@ export default function Home() {
           <p className="text-sm text-muted-foreground font-bold">
             {greeting}{userName ? `, ${userName}` : ""}.
           </p>
-          <h1 className="text-2xl font-black tracking-tight text-foreground mt-0.5">
+          <h1
+            className="font-black leading-none mt-0.5"
+            style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '2.2rem', letterSpacing: '0.06em' }}
+          >
             TURNED UP <span className="text-primary">FITNESS</span>
           </h1>
         </div>
 
         {/* ── Panther + Stage ───────────────────────────────────────── */}
-        <div className="flex flex-col items-center mb-6 py-4 rounded-2xl bg-card border border-border">
+        <div
+          className="flex flex-col items-center mb-6 py-5 rounded-3xl"
+          style={{
+            background: 'rgba(255,255,255,0.03)',
+            border: '1px solid rgba(255,255,255,0.07)',
+            boxShadow: '0 4px 32px rgba(255,69,0,0.08), 0 1px 4px rgba(0,0,0,0.4)',
+          }}
+        >
           <PantherAvatar
             state={progress.streakDays >= 3 ? "active" : "idle"}
             size="lg"
@@ -143,14 +153,27 @@ export default function Home() {
 
         {/* ── Score Bars ────────────────────────────────────────────── */}
         {!isNewUser ? (
-          <div className="p-4 rounded-2xl bg-card border border-border mb-4 space-y-3">
+          <div
+            className="p-4 rounded-2xl mb-4 space-y-3"
+            style={{
+              background: 'rgba(255,255,255,0.03)',
+              border: '1px solid rgba(255,255,255,0.07)',
+              boxShadow: '0 2px 12px rgba(0,0,0,0.3)',
+            }}
+          >
             <ScoreBar label="MOBILITY" value={progress.mobility} color="bg-blue-500" delay={0} />
             <ScoreBar label="STRENGTH" value={progress.strength} color="bg-primary" delay={100} />
             <ScoreBar label="STABILITY" value={progress.stability} color="bg-emerald-500" delay={200} />
           </div>
         ) : (
-          <div className="p-4 rounded-2xl bg-primary/5 border border-primary/20 mb-4">
-            <p className="text-sm font-black text-foreground">Start your first assessment</p>
+          <div
+            className="p-4 rounded-2xl mb-4"
+            style={{
+              background: 'rgba(255,69,0,0.06)',
+              border: '1px solid rgba(255,69,0,0.2)',
+            }}
+          >
+            <p className="text-sm font-black text-white">Start your first assessment</p>
             <p className="text-xs text-muted-foreground mt-1">
               JARVIS will identify your compensation patterns and build your corrective plan.
             </p>
@@ -159,10 +182,17 @@ export default function Home() {
 
         {/* ── Streak Card ───────────────────────────────────────────── */}
         {progress.streakDays > 0 && (
-          <div className="flex items-center gap-3 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 mb-4">
+          <div
+            className="flex items-center gap-3 p-4 rounded-2xl mb-4"
+            style={{
+              background: 'rgba(245,166,35,0.08)',
+              border: '1px solid rgba(245,166,35,0.2)',
+              boxShadow: '0 2px 16px rgba(245,166,35,0.08)',
+            }}
+          >
             <span className="text-2xl">🔥</span>
             <div>
-              <p className="font-black text-sm text-foreground">
+              <p className="font-black text-sm text-white">
                 {progress.streakDays} Day Streak
               </p>
               <p className="text-xs text-muted-foreground">
@@ -180,20 +210,32 @@ export default function Home() {
             </p>
             <button
               onClick={() => navigate("/correct")}
-              className="w-full text-left p-4 rounded-2xl bg-card border border-border hover:border-primary/40 active:scale-[0.98] transition-all"
+              className="w-full text-left p-4 rounded-2xl active:scale-[0.98] transition-all"
+              style={{
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+              }}
             >
               <div className="flex items-center justify-between mb-2">
-                <p className="font-black text-sm text-foreground">{lastPlan.issueLabel}</p>
+                <p className="font-black text-sm text-white">{lastPlan.issueLabel}</p>
                 <span className="text-xs font-bold text-primary">START →</span>
               </div>
               <div className="flex flex-wrap gap-1">
                 {lastPlan.correctives.map((ex) => (
-                  <span key={ex} className="text-xs px-2 py-0.5 rounded-full bg-secondary text-muted-foreground capitalize">
+                  <span
+                    key={ex}
+                    className="text-xs px-2 py-0.5 rounded-full capitalize"
+                    style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.6)' }}
+                  >
                     {ex.replace(/-/g, " ")}
                   </span>
                 ))}
                 {(lastPlan.correctives.length < (JSON.parse(localStorage.getItem("tuf_correctives") || "{}").issue?.correctives?.length || 0)) && (
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-secondary text-muted-foreground">
+                  <span
+                    className="text-xs px-2 py-0.5 rounded-full"
+                    style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.6)' }}
+                  >
                     +more
                   </span>
                 )}
@@ -204,78 +246,85 @@ export default function Home() {
 
         {/* ── Action Cards ──────────────────────────────────────────── */}
         <div className="space-y-3">
-          {/* Primary CTA — changes based on user state */}
+          {/* Primary CTA */}
           {isNewUser ? (
             <button
               onClick={() => navigate("/assess")}
-              className="w-full flex items-center gap-4 p-5 rounded-2xl bg-foreground text-background shadow-lg hover:shadow-xl active:scale-[0.98] transition-all text-left"
+              className="w-full flex items-center gap-4 p-5 rounded-2xl text-white active:scale-[0.98] transition-all text-left"
+              style={{
+                background: 'linear-gradient(135deg, #FF4500, #DC2626)',
+                boxShadow: '0 4px 24px rgba(255,69,0,0.35)',
+              }}
             >
-              <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-2xl flex-shrink-0">
+              <div className="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center text-2xl flex-shrink-0">
                 🧠
               </div>
               <div className="flex-1">
-                <p className="font-black text-base tracking-wide">ASSESS YOUR MOVEMENT</p>
-                <p className="text-background/70 text-sm">Find your weakness. Fix it at the root.</p>
+                <p
+                  className="font-black text-base"
+                  style={{ fontFamily: "'Bebas Neue', sans-serif", letterSpacing: '0.08em' }}
+                >
+                  ASSESS YOUR MOVEMENT
+                </p>
+                <p className="text-white/70 text-sm">Find your weakness. Fix it at the root.</p>
               </div>
-              <span className="text-background/40 text-xl">›</span>
+              <span className="text-white/50 text-xl">›</span>
             </button>
           ) : (
             <button
               onClick={() => navigate("/correct")}
-              className="w-full flex items-center gap-4 p-5 rounded-2xl bg-foreground text-background shadow-lg hover:shadow-xl active:scale-[0.98] transition-all text-left"
+              className="w-full flex items-center gap-4 p-5 rounded-2xl text-white active:scale-[0.98] transition-all text-left"
+              style={{
+                background: 'linear-gradient(135deg, #FF4500, #DC2626)',
+                boxShadow: '0 4px 24px rgba(255,69,0,0.35)',
+              }}
             >
-              <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-2xl flex-shrink-0">
+              <div className="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center text-2xl flex-shrink-0">
                 ⚡
               </div>
               <div className="flex-1">
-                <p className="font-black text-base tracking-wide">START CORRECTIVES</p>
-                <p className="text-background/70 text-sm">
+                <p
+                  className="font-black text-base"
+                  style={{ fontFamily: "'Bebas Neue', sans-serif", letterSpacing: '0.08em' }}
+                >
+                  START CORRECTIVES
+                </p>
+                <p className="text-white/70 text-sm">
                   {lastPlan ? lastPlan.issueLabel : "Continue your plan"}
                 </p>
               </div>
-              <span className="text-background/40 text-xl">›</span>
+              <span className="text-white/50 text-xl">›</span>
             </button>
           )}
 
           {/* Secondary cards */}
           <div className="grid grid-cols-2 gap-3">
-            <button
-              onClick={() => navigate("/train")}
-              className="flex flex-col gap-2 p-4 rounded-2xl border-2 border-border bg-card hover:border-primary/40 active:scale-[0.97] transition-all text-left"
-            >
-              <span className="text-2xl">🔥</span>
-              <p className="font-black text-sm tracking-wide text-foreground">TRAIN</p>
-              <p className="text-xs text-muted-foreground">3 programs ready</p>
-            </button>
-
-            <button
-              onClick={() => navigate("/jarvis")}
-              className="flex flex-col gap-2 p-4 rounded-2xl border-2 border-border bg-card hover:border-primary/40 active:scale-[0.97] transition-all text-left"
-            >
-              <span className="text-2xl">🐆</span>
-              <p className="font-black text-sm tracking-wide text-foreground">JARVIS</p>
-              <p className="text-xs text-muted-foreground">Ask anything</p>
-            </button>
-
-            <button
-              onClick={() => navigate("/live")}
-              className="flex flex-col gap-2 p-4 rounded-2xl border-2 border-border bg-card hover:border-primary/40 active:scale-[0.97] transition-all text-left"
-            >
-              <span className="text-2xl">📷</span>
-              <p className="font-black text-sm tracking-wide text-foreground">LIVE FORM</p>
-              <p className="text-xs text-muted-foreground">Camera coaching</p>
-            </button>
-
-            <button
-              onClick={() => navigate("/assess")}
-              className="flex flex-col gap-2 p-4 rounded-2xl border-2 border-border bg-card hover:border-primary/40 active:scale-[0.97] transition-all text-left"
-            >
-              <span className="text-2xl">🧠</span>
-              <p className="font-black text-sm tracking-wide text-foreground">ASSESS</p>
-              <p className="text-xs text-muted-foreground">
-                {isNewUser ? "Start here" : "Reassess"}
-              </p>
-            </button>
+            {[
+              { path: '/train', icon: '🔥', label: 'TRAIN', sub: '8 programs ready' },
+              { path: '/jarvis', icon: '🐆', label: 'JARVIS', sub: 'Ask anything' },
+              { path: '/live', icon: '📷', label: 'LIVE FORM', sub: 'Camera coaching' },
+              { path: '/assess', icon: '🧠', label: 'ASSESS', sub: isNewUser ? 'Start here' : 'Reassess' },
+            ].map(({ path, icon, label, sub }) => (
+              <button
+                key={path}
+                onClick={() => navigate(path)}
+                className="flex flex-col gap-2 p-4 rounded-2xl active:scale-[0.97] transition-all text-left"
+                style={{
+                  background: 'rgba(255,255,255,0.03)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                }}
+              >
+                <span className="text-2xl">{icon}</span>
+                <p
+                  className="font-black text-sm text-white"
+                  style={{ fontFamily: "'Bebas Neue', sans-serif", letterSpacing: '0.08em' }}
+                >
+                  {label}
+                </p>
+                <p className="text-xs text-muted-foreground">{sub}</p>
+              </button>
+            ))}
           </div>
         </div>
 
