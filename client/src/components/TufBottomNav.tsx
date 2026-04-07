@@ -21,7 +21,7 @@ const navItems: NavItem[] = [
 ];
 
 export function TufBottomNav() {
-  const [location] = useLocation();
+  const [location, navigate] = useLocation();
 
   return (
     <nav
@@ -35,9 +35,9 @@ export function TufBottomNav() {
             : location.startsWith(item.path);
 
         return (
-          <a
+          <button
             key={item.id}
-            href={item.path}
+            onClick={() => navigate(item.path)}
             className={`flex-1 py-3 px-1 flex flex-col items-center gap-0.5 cursor-pointer transition-all relative ${
               isActive ? "text-primary" : "text-muted-foreground"
             }`}
@@ -51,7 +51,7 @@ export function TufBottomNav() {
             <span className={`text-[10px] uppercase tracking-wider font-black ${isActive ? 'text-primary' : 'text-muted-foreground'}`}>
               {item.label}
             </span>
-          </a>
+          </button>
         );
       })}
     </nav>

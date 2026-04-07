@@ -870,7 +870,7 @@ export const getRecipesByCondition = (condition: string) =>
 export const getRecipesByTag = (tag: string) =>
   tutkRecipes.filter(r => r.tags.includes(tag));
 
-export const allTags = [...new Set(tutkRecipes.flatMap(r => r.tags))].sort();
+export const allTags = Array.from(new Set(tutkRecipes.flatMap(r => r.tags))).sort();
 
 export const categoryLabels: Record<RecipeCategory, string> = {
   mains: 'Mains',

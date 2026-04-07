@@ -1,8 +1,18 @@
+import { useState, useEffect } from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Moon, Sun } from 'lucide-react';
 
 export function TufHeader() {
   const { theme, toggleTheme } = useTheme();
+
+  // Fix 4: read user's name initial from localStorage instead of hardcoded 'A'
+  const [initial, setInitial] = useState("A");
+  useEffect(() => {
+    try {
+      const p = JSON.parse(localStorage.getItem("tuf_profile") || "{}");
+      if (p.name) setInitial(p.name.trim()[0].toUpperCase());
+    } catch {}
+  }, []);
 
   return (
     <header className="header-exec">
@@ -34,7 +44,7 @@ export function TufHeader() {
 
           {/* Avatar */}
           <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold cursor-pointer hover:shadow-lg transition-shadow">
-            A
+            {initial}
           </div>
         </div>
       </div>

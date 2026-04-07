@@ -47,6 +47,52 @@ const DEFAULT_VOICE_SETTINGS = {
   use_speaker_boost: true, // Per report: ON — enhances clarity for coaching delivery
 };
 
+// ─── Shared TTS helper ──────────────────────────────────────────────────────
+async function synthesizeSpeech(
+  text: string,
+  voiceKey: keyof typeof TUF_VOICES = "panther",
+  res: Response,
+  stability?: number,
+  similarity_boost?: number
+) {
+  if (!ELEVENLABS_API_KEY) {
+    return res.status(500).json({ error: "ElevenLabs API key not configured" });
+  }
+  const trimmedText = text.slice(0, 500);
+  const voice = TUF_VOICES[voiceKey] || TUF_VOICES.panther;
+  const voiceSettings = {
+    ...DEFAULT_VOICE_SETTINGS,
+    ...(stability !== undefined && { stability }),
+    ...(similarity_boost !== undefined && { similarity_boost }),
+  };
+  const response = await fetch(
+    `${ELEVENLABS_BASE}/text-to-speech/${voice.id}`,
+    {
+      method: "POST",
+      headers: {
+        "xi-api-key": ELEVENLABS_API_KEY,
+        "Content-Type": "application/json",
+        Accept: "audio/mpeg",
+      },
+      body: JSON.stringify({
+        text: trimmedText,
+        model_id: DEFAULT_MODEL,
+        voice_settings: voiceSettings,
+      }),
+    }
+  );
+  if (!response.ok) {
+    const errText = await response.text();
+    console.error("[Voice] ElevenLabs error:", response.status, errText);
+    return res.status(response.status).json({ error: "TTS generation failed", detail: errText });
+  }
+  res.setHeader("Content-Type", "audio/mpeg");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("X-Voice-Name", voice.name);
+  const audioBuffer = await response.arrayBuffer();
+  res.send(Buffer.from(audioBuffer));
+}
+
 // ─── POST /api/voice/speak ────────────────────────────────────────────────────
 // Convert text to speech — returns audio/mpeg stream
 router.post("/speak", async (req: Request, res: Response) => {
@@ -66,52 +112,7 @@ router.post("/speak", async (req: Request, res: Response) => {
     if (!text || typeof text !== "string") {
       return res.status(400).json({ error: "text is required" });
     }
-
-    if (!ELEVENLABS_API_KEY) {
-      return res.status(500).json({ error: "ElevenLabs API key not configured" });
-    }
-
-    // Trim text to 500 chars max for coaching cues (keeps latency low)
-    const trimmedText = text.slice(0, 500);
-
-    const voice = TUF_VOICES[voiceKey] || TUF_VOICES.panther;
-
-    const voiceSettings = {
-      ...DEFAULT_VOICE_SETTINGS,
-      ...(stability !== undefined && { stability }),
-      ...(similarity_boost !== undefined && { similarity_boost }),
-    };
-
-    const response = await fetch(
-      `${ELEVENLABS_BASE}/text-to-speech/${voice.id}`,
-      {
-        method: "POST",
-        headers: {
-          "xi-api-key": ELEVENLABS_API_KEY,
-          "Content-Type": "application/json",
-          Accept: "audio/mpeg",
-        },
-        body: JSON.stringify({
-          text: trimmedText,
-          model_id: DEFAULT_MODEL,
-          voice_settings: voiceSettings,
-        }),
-      }
-    );
-
-    if (!response.ok) {
-      const errText = await response.text();
-      console.error("[Voice] ElevenLabs error:", response.status, errText);
-      return res.status(response.status).json({ error: "TTS generation failed", detail: errText });
-    }
-
-    // Stream the audio back to the client
-    res.setHeader("Content-Type", "audio/mpeg");
-    res.setHeader("Cache-Control", "no-cache");
-    res.setHeader("X-Voice-Name", voice.name);
-
-    const audioBuffer = await response.arrayBuffer();
-    res.send(Buffer.from(audioBuffer));
+    await synthesizeSpeech(text, voiceKey, res, stability, similarity_boost);
   } catch (err) {
     console.error("[Voice] Error:", err);
     res.status(500).json({ error: "Voice synthesis failed" });
@@ -144,13 +145,8 @@ router.post("/cue", async (req: Request, res: Response) => {
     }
     spokenText += " Let's go.";
 
-    // Reuse the speak endpoint logic
-    req.body = { text: spokenText, voiceKey };
-    return router.handle(
-      { ...req, url: "/speak", path: "/speak" } as Request,
-      res,
-      () => {}
-    );
+    // Reuse the shared TTS helper
+    await synthesizeSpeech(spokenText, voiceKey, res);
   } catch (err) {
     console.error("[Voice Cue] Error:", err);
     res.status(500).json({ error: "Voice cue generation failed" });

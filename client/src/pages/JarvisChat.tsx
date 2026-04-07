@@ -67,7 +67,9 @@ export default function JarvisChat() {
   const [isSpeaking, setIsSpeaking]     = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(false);
   const [profile, setProfile]           = useState<Profile>({});
-  const [onboardStep, setOnboardStep]   = useState<number | null>(0);
+  // Fix 3: skip JARVIS onboarding if user already completed main Onboarding.tsx flow
+  const isAlreadyOnboarded = localStorage.getItem("tuf_onboarded") === "true";
+  const [onboardStep, setOnboardStep]   = useState<number | null>(isAlreadyOnboarded ? null : 0);
 
   const videoRef       = useRef<HTMLVideoElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);

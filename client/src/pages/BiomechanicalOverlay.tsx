@@ -594,7 +594,7 @@ export default function BiomechanicalOverlay() {
             </span>
           </div>
 
-          <div className="divide-y" style={{ divideColor: "rgba(255,255,255,0.04)" }}>
+          <div className="divide-y" style={{ borderColor: "rgba(255,255,255,0.04)" }}>
             {syndromes.map((syndrome) => {
               const isRelevant =
                 syndrome.name.includes("UPPER") ? scanMode !== "LOWER" : scanMode !== "UPPER";
@@ -653,7 +653,7 @@ export default function BiomechanicalOverlay() {
               LIVE JOINT ANGLES
             </span>
           </div>
-          <div className="grid grid-cols-2 divide-x divide-y" style={{ divideColor: "rgba(255,255,255,0.06)" }}>
+          <div className="grid grid-cols-2 divide-x divide-y" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
             {[
               { label: "NECK", value: angles.neck },
               { label: "SHOULDER", value: angles.shoulder },
@@ -711,7 +711,7 @@ export default function BiomechanicalOverlay() {
               NASM CORRECTIVE CONTINUUM
             </span>
           </div>
-          <div className="divide-y" style={{ divideColor: "rgba(255,255,255,0.04)" }}>
+          <div className="divide-y" style={{ borderColor: "rgba(255,255,255,0.04)" }}>
             {NASM_STEPS.map((step) => (
               <div
                 key={step.num}

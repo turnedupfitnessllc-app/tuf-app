@@ -93,7 +93,7 @@ export default function Home() {
   }, []);
 
   // Load last corrective plan
-  const [lastPlan, setLastPlan] = useState<{ issueLabel: string; correctives: string[] } | null>(null);
+  const [lastPlan, setLastPlan] = useState<{ issueLabel: string; correctives: string[]; totalCount: number } | null>(null);
   useEffect(() => {
     try {
       const stored = JSON.parse(localStorage.getItem("tuf_correctives") || "{}");
@@ -101,6 +101,7 @@ export default function Home() {
         setLastPlan({
           issueLabel: stored.issue.label || "Corrective Plan",
           correctives: stored.issue.correctives.slice(0, 3),
+          totalCount: stored.issue.correctives.length,
         });
       }
     } catch {}
@@ -246,7 +247,7 @@ export default function Home() {
                     {ex.replace(/-/g, " ")}
                   </span>
                 ))}
-                {(lastPlan.correctives.length < (JSON.parse(localStorage.getItem("tuf_correctives") || "{}").issue?.correctives?.length || 0)) && (
+                {lastPlan.correctives.length < lastPlan.totalCount && (
                   <span
                     className="text-xs px-2 py-0.5 rounded-full"
                     style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.6)' }}
