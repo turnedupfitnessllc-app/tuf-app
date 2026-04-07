@@ -449,6 +449,27 @@ export default function Correct() {
   const [voiceEnabled, setVoiceEnabled] = useState(false);
   const [showComplete, setShowComplete] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // ElevenLabs TTS — speak exercise cues
+  const speakCue = useCallback(async (text: string) => {
+    if (!voiceEnabled) return;
+    if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
+    try {
+      const res = await fetch('/api/voice/speak', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: text.slice(0, 300), voiceKey: 'panther' }),
+      });
+      if (!res.ok) return;
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      audioRef.current = audio;
+      audio.onended = () => { URL.revokeObjectURL(url); audioRef.current = null; };
+      await audio.play();
+    } catch {}
+  }, [voiceEnabled]);
   const { completeSession } = useProgress();
   const sessionStartRef = useRef(Date.now());
 
@@ -514,11 +535,17 @@ export default function Correct() {
   const handleStart = () => {
     setExerciseState('active');
     startTimer();
+    // Speak the first coaching cue
+    const cue = currentExercise.cues[0];
+    if (cue) speakCue(`${currentExercise.name}. ${cue}`);
   };
 
   const handleNext = () => {
     stopTimer();
     if (currentIdx < exerciseIds.length - 1) {
+      const nextId = exerciseIds[currentIdx + 1];
+      const nextEx = EXERCISE_LIBRARY[nextId];
+      if (nextEx) speakCue(`Next up. ${nextEx.name}. ${nextEx.cues[0] ?? ''}`);
       setCurrentIdx(i => i + 1);
       setCurrentSet(1);
     } else {

@@ -102,17 +102,49 @@ export default function JarvisChat() {
     }
   }, [videoState]);
 
-  const speakText = useCallback((text: string) => {
-    if (!voiceEnabled || !window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-    const utt = new SpeechSynthesisUtterance(text.slice(0, 300));
-    utt.rate = 0.9; utt.pitch = 0.8; utt.volume = 1;
-    const voices = window.speechSynthesis.getVoices();
-    const deep = voices.find(v => /male|daniel|alex|david/i.test(v.name));
-    if (deep) utt.voice = deep;
-    utt.onstart = () => setIsSpeaking(true);
-    utt.onend   = () => setIsSpeaking(false);
-    window.speechSynthesis.speak(utt);
+  // ElevenLabs TTS — Panther's real voice
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const speakText = useCallback(async (text: string) => {
+    if (!voiceEnabled) return;
+    // Stop any currently playing audio
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
+    setIsSpeaking(true);
+    try {
+      const res = await fetch("/api/voice/speak", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: text.slice(0, 500), voiceKey: "panther" }),
+      });
+      if (!res.ok) throw new Error("TTS failed");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      audioRef.current = audio;
+      audio.onended = () => {
+        setIsSpeaking(false);
+        URL.revokeObjectURL(url);
+        audioRef.current = null;
+      };
+      audio.onerror = () => {
+        setIsSpeaking(false);
+        audioRef.current = null;
+      };
+      await audio.play();
+    } catch {
+      // Fallback to browser TTS if ElevenLabs fails
+      if (window.speechSynthesis) {
+        const utt = new SpeechSynthesisUtterance(text.slice(0, 300));
+        utt.rate = 0.9; utt.pitch = 0.8; utt.volume = 1;
+        utt.onend = () => setIsSpeaking(false);
+        window.speechSynthesis.speak(utt);
+      } else {
+        setIsSpeaking(false);
+      }
+    }
   }, [voiceEnabled]);
 
   const startListening = useCallback(() => {
