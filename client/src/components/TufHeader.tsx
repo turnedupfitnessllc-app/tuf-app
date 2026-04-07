@@ -7,14 +7,12 @@ export function TufHeader() {
   return (
     <header className="header-exec">
       <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-        {/* Brand — UP logo from Panther chest */}
+        {/* Brand */}
         <div className="flex items-center gap-2">
-          <img
-            src="https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/tuf-up-logo-crop_dc03c5c7.png"
-            alt="Turned Up Fitness"
-            className="h-10 w-auto object-contain"
-            style={{ filter: 'drop-shadow(0 0 8px rgba(255,69,0,0.6))' }}
-          />
+          <div className="text-2xl font-bold">
+            <span className="text-foreground">TUF</span>
+            <span className="text-gradient ml-1">MOVE</span>
+          </div>
         </div>
 
         {/* Right section */}
