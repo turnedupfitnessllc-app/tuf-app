@@ -125,29 +125,44 @@ export default function Home() {
           </h1>
         </div>
 
-        {/* ── Panther + Stage ───────────────────────────────────────── */}
+        {/* ── Panther Hero ──────────────────────────────────────────── */}
         <div
-          className="flex flex-col items-center mb-6 py-5 rounded-3xl"
+          className="relative mb-6 rounded-3xl overflow-hidden"
           style={{
-            background: 'rgba(255,255,255,0.03)',
-            border: '1px solid rgba(255,255,255,0.07)',
-            boxShadow: '0 4px 32px rgba(255,69,0,0.08), 0 1px 4px rgba(0,0,0,0.4)',
+            boxShadow: '0 0 60px rgba(255,69,0,0.35), 0 0 120px rgba(220,38,38,0.15), 0 4px 32px rgba(0,0,0,0.6)',
+            border: '1px solid rgba(255,69,0,0.25)',
           }}
         >
-          <PantherAvatar
-            state={progress.streakDays >= 3 ? "active" : "idle"}
-            size="lg"
-            message={quip}
+          {/* Panther UP image */}
+          <img
+            src="https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/panther-up_950a85bd.png"
+            alt="Panther — Turned Up Fitness"
+            className="w-full object-cover"
+            style={{ maxHeight: '380px', objectPosition: 'top' }}
           />
-          <div className="mt-3 text-center">
-            <p className={`text-sm font-black tracking-widest ${STAGE_COLORS[stage]}`}>
+          {/* Red glow overlay at bottom */}
+          <div
+            className="absolute inset-x-0 bottom-0 h-32"
+            style={{ background: 'linear-gradient(to top, rgba(8,8,8,0.95) 0%, rgba(8,8,8,0.5) 50%, transparent 100%)' }}
+          />
+          {/* Stage badge */}
+          <div className="absolute bottom-4 inset-x-0 flex flex-col items-center">
+            <p className={`text-sm font-black tracking-widest ${STAGE_COLORS[stage]}`}
+              style={{ fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: '0.15em' }}>
               {stage.toUpperCase()}
             </p>
             {!isNewUser && (
-              <p className="text-xs text-muted-foreground mt-0.5">
-                {totalScore} / 300 points
-              </p>
+              <p className="text-xs text-muted-foreground mt-0.5">{totalScore} / 300 points</p>
             )}
+          </div>
+          {/* Quip overlay */}
+          <div className="absolute top-4 inset-x-4">
+            <div
+              className="px-3 py-2 rounded-xl"
+              style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.08)' }}
+            >
+              <p className="text-xs text-white leading-snug">🐆 {quip}</p>
+            </div>
           </div>
         </div>
 
