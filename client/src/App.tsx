@@ -18,6 +18,7 @@ import Profile from "./pages/Profile";
 import Onboarding from "./pages/Onboarding";
 
 // Feature screens
+import Goals from "./pages/Goals";
 import JarvisChat from "./pages/JarvisChat";
 import LiveCoaching from "./pages/LiveCoaching";
 import BodyComposition from "./pages/BodyComposition";
@@ -46,6 +47,7 @@ function Router() {
         <Route path={"/assess"} component={Assess} />
         <Route path={"/train"} component={Train} />
         <Route path={"/correct"} component={Correct} />
+        <Route path={"/goals"} component={Goals} />
         <Route path={"/profile"} component={Profile} />
 
         {/* ── Feature screens ───────────────────────────────── */}

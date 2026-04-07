@@ -38,13 +38,13 @@ export const TUF_VOICES = {
   },
 };
 
-// Default voice model
-const DEFAULT_MODEL = "eleven_monolingual_v1";
+// Default voice model — eleven_turbo_v2_5 per Panther Voice System Report v1.0
+const DEFAULT_MODEL = "eleven_turbo_v2_5";
 const DEFAULT_VOICE_SETTINGS = {
-  stability: 0.45,        // Slightly lower = more expressive/dynamic
-  similarity_boost: 0.80, // High similarity = consistent brand voice
-  style: 0.35,            // Some style exaggeration for coaching energy
-  use_speaker_boost: true,
+  stability: 0.70,         // Per report: 0.65–0.75 for consistency with natural variance
+  similarity_boost: 0.85,  // Per report: 0.80–0.90 — close to Marc's actual voice sample
+  style: 0.15,             // Per report: 0.10–0.20 — minimal, Panther doesn't perform, he coaches
+  use_speaker_boost: true, // Per report: ON — enhances clarity for coaching delivery
 };
 
 // ─── POST /api/voice/speak ────────────────────────────────────────────────────
