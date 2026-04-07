@@ -89,25 +89,50 @@ export default function Onboarding() {
   // ── Welcome screen ──────────────────────────────────────────────────────────
   if (step === 0) {
     return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center px-6 text-center">
-        <div className="max-w-[360px] w-full">
-          <div className="mb-8">
-            <PantherAvatar state="active" size="lg" />
+      <div className="min-h-screen bg-[#080808] flex flex-col items-center justify-center px-6 text-center">
+        <div className="max-w-[400px] w-full">
+
+          {/* Panther UP hero image */}
+          <div
+            className="relative mb-6 rounded-3xl overflow-hidden"
+            style={{
+              boxShadow: '0 0 60px rgba(255,69,0,0.4), 0 0 120px rgba(220,38,38,0.15), 0 4px 32px rgba(0,0,0,0.7)',
+              border: '1px solid rgba(255,69,0,0.3)',
+            }}
+          >
+            <img
+              src="https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/panther-up_950a85bd.png"
+              alt="Panther — Turned Up Fitness"
+              className="w-full object-cover"
+              style={{ maxHeight: '300px', objectPosition: 'top' }}
+            />
+            {/* Bottom fade into background */}
+            <div
+              className="absolute inset-x-0 bottom-0 h-20"
+              style={{ background: 'linear-gradient(to top, rgba(8,8,8,1) 0%, transparent 100%)' }}
+            />
           </div>
 
-          <h1 className="text-3xl font-black tracking-tight text-foreground mb-2">
+          <h1
+            className="font-black leading-none mb-2 text-white"
+            style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '2.4rem', letterSpacing: '0.06em' }}
+          >
             TURNED UP <span className="text-primary">FITNESS</span>
           </h1>
-          <p className="text-sm text-muted-foreground mb-2">
+          <p className="text-sm text-muted-foreground mb-1">
             AI-powered coaching built for the 40+ athlete.
           </p>
-          <p className="text-xs text-muted-foreground mb-10">
+          <p className="text-xs text-muted-foreground mb-8">
             Assess your movement. Correct the root cause. Train without limits.
           </p>
 
           <button
             onClick={() => setStep(1)}
-            className="w-full py-4 rounded-2xl bg-primary text-white font-black text-base tracking-wide shadow-lg hover:shadow-xl active:scale-[0.98] transition-all"
+            className="w-full py-4 rounded-2xl text-white font-black text-base tracking-wide active:scale-[0.98] transition-all"
+            style={{
+              background: 'linear-gradient(135deg, #FF4500, #DC2626)',
+              boxShadow: '0 4px 24px rgba(255,69,0,0.4)',
+            }}
           >
             GET STARTED →
           </button>

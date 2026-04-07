@@ -2,10 +2,12 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
 import { Route, Switch, Redirect } from "wouter";
+import { useState } from "react";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { TufHeader } from "./components/TufHeader";
 import { TufBottomNav } from "./components/TufBottomNav";
+import SplashScreen from "./components/SplashScreen";
 
 // Core Panther UX System screens
 import Home from "./pages/Home";
@@ -74,14 +76,25 @@ function Router() {
 }
 
 function App() {
+  // Show splash only once per browser session
+  const [splashDone, setSplashDone] = useState(
+    () => sessionStorage.getItem("tuf_splash_shown") === "true"
+  );
+
+  const handleSplashComplete = () => {
+    sessionStorage.setItem("tuf_splash_shown", "true");
+    setSplashDone(true);
+  };
+
   return (
     <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="dark"
-        switchable
-      >
+      <ThemeProvider defaultTheme="dark" switchable>
         <TooltipProvider>
           <Toaster />
+          {/* Splash screen plays once per session, then the app loads */}
+          {!splashDone && (
+            <SplashScreen onComplete={handleSplashComplete} />
+          )}
           <Router />
         </TooltipProvider>
       </ThemeProvider>
