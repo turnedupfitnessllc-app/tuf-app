@@ -19,6 +19,7 @@ import Onboarding from "./pages/Onboarding";
 
 // Feature screens
 import Goals from "./pages/Goals";
+import BiomechanicalOverlay from "./pages/BiomechanicalOverlay";
 import JarvisChat from "./pages/JarvisChat";
 import LiveCoaching from "./pages/LiveCoaching";
 import BodyComposition from "./pages/BodyComposition";
@@ -51,6 +52,7 @@ function Router() {
         <Route path={"/profile"} component={Profile} />
 
         {/* ── Feature screens ───────────────────────────────── */}
+        <Route path={"/boa"} component={BiomechanicalOverlay} />
         <Route path={"/jarvis"} component={JarvisChat} />
         <Route path={"/live"} component={LiveCoaching} />
         <Route path={"/body-comp"} component={BodyComposition} />

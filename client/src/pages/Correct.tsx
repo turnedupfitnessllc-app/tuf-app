@@ -623,6 +623,17 @@ export default function Correct() {
 
         {/* ── Exercise Header ───────────────────────────────────────── */}
         <div className="mb-4">
+          {/* BOA Form Analysis shortcut */}
+          <div className="flex justify-end mb-2">
+            <a
+              href="/boa"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black uppercase tracking-widest"
+              style={{ background: 'rgba(255,69,0,0.15)', border: '1px solid rgba(255,69,0,0.4)', color: '#FF4500' }}
+            >
+              <span>📐</span>
+              <span>FORM ANALYSIS</span>
+            </a>
+          </div>
           <div className="flex items-center gap-2 mb-1">
             <span className={`text-xs font-black px-2 py-0.5 rounded-full ${phaseColors[currentExercise.phase]}`}>
               {currentExercise.phase}
