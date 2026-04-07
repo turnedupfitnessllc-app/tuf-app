@@ -1,0 +1,887 @@
+// TUTK — Turned Up In The Kitchen
+// Complete Recipe Collection — Wilfred Edition v3.0
+// 43 recipes optimized for adults 40+
+
+export type RecipeCategory = 'mains' | 'breakfast' | 'shakes' | 'dressings';
+
+export interface Recipe {
+  id: string;
+  name: string;
+  category: RecipeCategory;
+  calories?: number;
+  protein?: number;
+  fat?: number;
+  carbs?: number;
+  fiber?: number;
+  prepTime?: number; // minutes
+  servings?: number;
+  tags: string[];
+  ingredients: string[];
+  directions: string[];
+  scienceNote?: string;
+  conditionFriendly?: string[]; // 'bad-knees' | 'lower-back' | 'shoulder' | 'diabetes' | 'heart' | 'arthritis'
+}
+
+export const tutkRecipes: Recipe[] = [
+  // ===== MAINS =====
+  {
+    id: 'M01',
+    name: 'Seared Scallops with Sprouts',
+    category: 'mains',
+    tags: ['high-protein', 'low-carb', 'seafood', 'anti-inflammatory'],
+    conditionFriendly: ['heart', 'diabetes', 'arthritis'],
+    ingredients: [
+      '6 oz scallops',
+      '2 tbsp olive oil (divided)',
+      '2 tbsp rice wine vinegar',
+      '1 cup diced brussels sprouts',
+      '½ cup sauerkraut (optional)',
+    ],
+    directions: [
+      'Heat oil in a skillet over medium-high heat until shimmering.',
+      'Add shallots and brussels sprouts, season with salt and pepper, cook stirring for 5–6 minutes.',
+      'Stir in vinegar, scraping up brown bits, then transfer to a plate and set aside.',
+      'Add scallops to same pan and sear 2 min per side until golden.',
+    ],
+    scienceNote: 'Scallops deliver lean protein with minimal fat. Brussels sprouts are cruciferous — they help balance estrogen metabolism, critical after 40.',
+  },
+  {
+    id: 'M02',
+    name: 'Stir Fry Cabbage & Pork',
+    category: 'mains',
+    tags: ['high-protein', 'low-carb', 'gut-health'],
+    conditionFriendly: ['diabetes', 'heart'],
+    ingredients: [
+      '6 oz pork, cooked and shredded',
+      '2 tbsp Kerrygold butter',
+      '½ cup chopped celery',
+      '2 cups shredded cabbage',
+      '¼ cup chopped onion',
+      '4 tbsp Bragg\'s Soy Sauce Alternative',
+      'Salt to taste',
+    ],
+    directions: [
+      'Heat butter in skillet until bubbly and hot.',
+      'Add celery, cook 1 minute.',
+      'Add cabbage and onion, fry until tender-crisp (2–3 min).',
+      'Add pork, then Bragg\'s and salt. Stir well and cook 1 minute longer.',
+      'Remove from heat and serve.',
+    ],
+    scienceNote: 'Cabbage is a prebiotic powerhouse — feeds beneficial gut bacteria that decline after 40. Bragg\'s replaces high-sodium soy sauce to protect blood pressure.',
+  },
+  {
+    id: 'M03',
+    name: 'Lean Stuffed Pepper',
+    category: 'mains',
+    tags: ['high-protein', 'low-fat', 'meal-prep'],
+    conditionFriendly: ['diabetes', 'heart', 'arthritis'],
+    ingredients: [
+      '6 oz cooked ground turkey',
+      '2 tbsp coconut oil',
+      '1 green pepper, halved & seeded',
+      '¼ cup onion, chopped',
+      '½ tbsp minced garlic',
+      '¼ cup diced tomato',
+      '1 tsp parsley, ½ tsp each oregano, basil, rosemary',
+      '1 tsp seasoned salt',
+    ],
+    directions: [
+      'Preheat oven to 350°F.',
+      'Heat skillet with coconut oil. Add all veggies and spices, cook 5–10 min until tender.',
+      'Add turkey when veggies are done.',
+      'Place pepper halves on tray, fill with meat mixture.',
+      'Bake 25–30 minutes.',
+    ],
+  },
+  {
+    id: 'M04',
+    name: 'Lemon Butter Asparagus & Fish',
+    category: 'mains',
+    tags: ['omega-3', 'anti-inflammatory', 'seafood', 'heart-healthy'],
+    conditionFriendly: ['heart', 'arthritis', 'diabetes'],
+    ingredients: [
+      '~15 stalks asparagus',
+      '6 oz any white fish (yellowtail suggested)',
+      '1 tbsp lemon juice',
+      '1 tbsp coconut oil',
+      '1 tbsp Kerrygold butter',
+    ],
+    directions: [
+      'Sauté asparagus in 1 tbsp coconut oil until tender, drizzle lemon juice.',
+      'Move to side of skillet, add butter, turn to medium-high.',
+      'Add fish to butter and cook 2–3 minutes per side until crisp.',
+      'Add salt to taste, remove and plate.',
+    ],
+    scienceNote: 'Asparagus is a prebiotic fiber source. White fish provides lean omega-3s that reduce joint inflammation — key for the 40+ athlete.',
+  },
+  {
+    id: 'M05',
+    name: 'Healthy Holiday Comfort',
+    category: 'mains',
+    tags: ['comfort-food', 'low-carb', 'high-protein'],
+    conditionFriendly: ['diabetes', 'bad-knees'],
+    ingredients: [
+      '6 oz baked turkey tenders',
+      '2 cups chopped cauliflower',
+      '½ cup water',
+      '½ tbsp minced garlic',
+      '½ tsp Italian seasoning',
+      '¼ tsp salt, pinch black pepper',
+      '1 green onion stalk (optional)',
+      '2 tbsp Kerrygold butter',
+    ],
+    directions: [
+      'Bring 1 cup water to simmer, add cauliflower.',
+      'Cover and cook 12–15 min until very tender.',
+      'Drain, add butter, spices, salt and pepper.',
+      'Mash until it looks like mashed potatoes. Top with chives.',
+      'Pair with baked turkey.',
+    ],
+    scienceNote: 'Cauliflower mash replaces starchy potatoes — same comfort, fraction of the carbs. Keeps blood sugar stable post-40.',
+  },
+  {
+    id: 'M06',
+    name: 'Lemon & Almond Roasted Salad',
+    category: 'mains',
+    tags: ['high-protein', 'healthy-fats', 'meal-prep'],
+    conditionFriendly: ['heart', 'arthritis'],
+    ingredients: [
+      '6 oz skinless chicken breasts',
+      '¼ cup plain Greek yogurt',
+      '1 tbsp olive oil',
+      '12 pieces sliced almonds',
+      '1 tbsp lemon juice',
+      '1 green onion, diced',
+      '1 tbsp fresh parsley, chopped',
+      '1 tbsp lemon pepper seasoning',
+      '½ tsp coarse sea salt',
+    ],
+    directions: [
+      'Preheat oven to 400°F. Season chicken and bake 20–25 min.',
+      'Toast almonds in nonstick skillet over medium-low heat stirring constantly, 4–5 min. Let cool.',
+      'Combine chicken, almonds, lemon juice, green onions, and parsley in bowl.',
+      'Fold in yogurt until moistened. Season with salt and pepper.',
+    ],
+  },
+  {
+    id: 'M07',
+    name: 'Low Carb Broccoli & Tuna Salad',
+    category: 'mains',
+    tags: ['omega-3', 'low-carb', 'high-protein', 'meal-prep'],
+    conditionFriendly: ['heart', 'diabetes', 'arthritis'],
+    ingredients: [
+      '6 cups broccoli',
+      '1 small onion, chopped',
+      '1 cup plain Greek yogurt',
+      '½ cup almonds, chopped',
+      '2 tbsp red vinegar',
+      '1½ cans tuna',
+      '1 tsp lemon pepper',
+      '1 green onion',
+      'Salt and pepper to taste',
+    ],
+    directions: [
+      'In a large bowl, combine broccoli, tuna, onion, and almonds.',
+      'In a separate bowl, mix yogurt, vinegar, and seasonings.',
+      'Pour dressing over broccoli mixture and stir until evenly distributed.',
+      'Cover and refrigerate about 1 hour until ready to serve.',
+    ],
+  },
+  {
+    id: 'M08',
+    name: 'Shrimp & Avocado Stuffed Salad',
+    category: 'mains',
+    tags: ['healthy-fats', 'high-protein', 'seafood', 'hormone-support'],
+    conditionFriendly: ['heart', 'arthritis', 'diabetes'],
+    ingredients: [
+      '3 large ripe avocados',
+      '35 oz cooked shrimp (no tails, thawed)',
+      '2 tbsp Greek yogurt',
+      '2 tbsp fresh lime juice',
+      '1 tbsp sriracha or hot sauce',
+      'Salt and pepper to taste',
+    ],
+    directions: [
+      'Cut avocados in half lengthwise and remove pit.',
+      'Cut flesh into chunks and scoop into medium bowl.',
+      'Add shrimp, yogurt, lime juice, sriracha, salt and pepper.',
+      'Toss to combine and separate into servings.',
+      'Can serve inside empty avocado skin if desired.',
+    ],
+    scienceNote: 'Avocado provides monounsaturated fats that support testosterone and estrogen production — both decline significantly after 40.',
+  },
+  {
+    id: 'M09',
+    name: 'Honey Mustard Chicken Salad',
+    category: 'mains',
+    tags: ['high-protein', 'low-carb', 'quick'],
+    conditionFriendly: ['diabetes', 'heart'],
+    ingredients: [
+      '6 oz boneless skinless chicken breast',
+      '1 bag spinach',
+      '2 ripe tomatoes',
+      '¼ cup red onion',
+      '¼ cup mustard',
+      '8 tbsp olive oil',
+      '4 stevia packets',
+    ],
+    directions: [
+      'Whisk mustard, oil and stevia together in small bowl until thoroughly combined.',
+      'Pour over bowl of spinach, onion, tomato and chicken.',
+      'Serve cold with chicken heated separately.',
+    ],
+  },
+  {
+    id: 'M10',
+    name: 'Garlic Shrimp',
+    category: 'mains',
+    tags: ['high-protein', 'seafood', 'quick', 'anti-inflammatory'],
+    conditionFriendly: ['heart', 'arthritis'],
+    ingredients: [
+      '6 oz shrimp, tails removed',
+      '½ tsp salt',
+      '2 tbsp minced garlic',
+      '1 cup cubed tomato',
+      'Red wine vinegar to taste',
+      'Dried basil to taste',
+      '½ cup white rice',
+    ],
+    directions: [
+      'In a medium bowl, combine salt, garlic, tomato, vinegar and basil.',
+      'Toss shrimp in mixture to coat.',
+      'Heat skillet greased with pam to medium heat, pour mixture on skillet.',
+      'Cook until shrimp is fully colored.',
+      'Remove from heat and lay atop ½ cup white rice.',
+    ],
+  },
+  {
+    id: 'M11',
+    name: 'Turkey Tacos',
+    category: 'mains',
+    tags: ['high-protein', 'low-carb', 'quick', 'meal-prep'],
+    conditionFriendly: ['diabetes', 'heart'],
+    ingredients: [
+      '6 oz lean ground turkey',
+      '3–4 large romaine lettuce leaves (taco shells)',
+      '½ cup pico de gallo',
+      '½ cup wild rice',
+      '½ tsp garlic powder',
+      '¼ tsp cayenne pepper',
+      '1 tsp onion powder',
+      '1½ tsp chili powder',
+    ],
+    directions: [
+      'Brown turkey in skillet with spices.',
+      'Use romaine leaves as taco shells.',
+      'Fill with turkey, pico de gallo.',
+      'Serve with wild rice on the side.',
+    ],
+    scienceNote: 'Romaine replaces corn tortillas — eliminates refined carbs while adding fiber and hydration. Wild rice is low-GI, keeps blood sugar stable.',
+  },
+  {
+    id: 'M12',
+    name: 'Quinoa Chicken Salad',
+    category: 'mains',
+    tags: ['complete-protein', 'high-fiber', 'anti-inflammatory'],
+    conditionFriendly: ['heart', 'diabetes', 'arthritis'],
+    ingredients: [
+      '6 oz cooked skinless chicken breasts',
+      '½ cup cooked quinoa',
+      '½ cup garbanzo beans',
+      '1½ cup fresh kale',
+      '¼ cup chopped red onion',
+      'Juice & zest of 1 lemon',
+      '2 tbsp white wine vinegar',
+      '1 tsp ground cumin',
+      'Salt and pepper to taste',
+    ],
+    directions: [
+      'Toss all ingredients together.',
+      'Whisk lemon juice and zest, white wine vinegar, cumin, salt and pepper together to make dressing.',
+      'Top salad with dressing and serve.',
+    ],
+    scienceNote: 'Quinoa is a complete protein — all 9 essential amino acids. Combined with garbanzo beans, this meal supports muscle protein synthesis all day.',
+  },
+  {
+    id: 'M13',
+    name: 'Seared Whitefish with Couscous Cucumber Salad',
+    category: 'mains',
+    tags: ['seafood', 'high-protein', 'mediterranean'],
+    conditionFriendly: ['heart', 'arthritis'],
+    ingredients: [
+      '6 oz white fish',
+      '1 cup couscous',
+      '2 tbsp minced garlic',
+      '1 cup chopped cucumber',
+      '½ cup diced red onion',
+      '2 tbsp fresh lemon juice',
+      '2 tbsp fresh chopped mint leaves',
+    ],
+    directions: [
+      'Season fish with salt and pepper and set aside.',
+      'Reheat couscous in microwave, then stir in onion, mint, lemon and lastly cucumber.',
+      'Sear fish in hot skillet 3–4 min per side.',
+      'Serve fish on the side with fresh squeezed lemon and couscous cucumber salad.',
+    ],
+  },
+  {
+    id: 'M14',
+    name: 'Thai Beef Salad',
+    category: 'mains',
+    tags: ['high-protein', 'anti-inflammatory', 'bold-flavor'],
+    conditionFriendly: ['arthritis'],
+    ingredients: [
+      '6 oz lean steak',
+      '100g baby cos lettuce hearts',
+      '½ cup mint and coriander',
+      '½ cup bean sprouts',
+      '½ cup tomato',
+      '½ cucumber, sliced',
+      '½ red onion, thinly sliced',
+      '1 tbsp fresh lime juice',
+      '1 tsp Bragg\'s soy sauce alternative',
+      '1 tsp chilli flakes',
+    ],
+    directions: [
+      'Marinate steak in soy sauce, fish sauce and 1 tbsp lime juice.',
+      'Cook steak 2–3 minutes per side to desired texture. Set aside.',
+      'Place tomato, bean sprouts, cucumber, onion, chilli, mint, coriander and lime juice in a bowl and mix well.',
+      'Thinly slice steak across the grain and add atop the vegetable mix.',
+    ],
+  },
+  {
+    id: 'M15',
+    name: 'Avocado Tuna Salad',
+    category: 'mains',
+    tags: ['omega-3', 'healthy-fats', 'quick', 'no-cook'],
+    conditionFriendly: ['heart', 'arthritis', 'diabetes'],
+    ingredients: [
+      '½ avocado',
+      '1½ cans tuna',
+      '1 cup diced tomato',
+      '1½ tbsp lime juice',
+      '½ tsp chili powder',
+      'Sriracha chili sauce to taste',
+    ],
+    directions: [
+      'Mash avocado and combine with tuna and tomato.',
+      'Once mashed, stir in lime juice and chili powder.',
+      'Top with sriracha and serve.',
+    ],
+    scienceNote: 'Tuna + avocado = omega-3s + monounsaturated fats. This combination reduces systemic inflammation and supports cardiovascular health simultaneously.',
+  },
+  {
+    id: 'M16',
+    name: 'Spicy Thai Shrimp Salad',
+    category: 'mains',
+    tags: ['seafood', 'high-protein', 'anti-inflammatory', 'bold-flavor'],
+    conditionFriendly: ['heart', 'arthritis'],
+    ingredients: [
+      '6 oz jumbo shrimp (without tail)',
+      '1 tbsp lime juice',
+      '1 tsp fish sauce',
+      '2 tbsp coconut oil',
+      '2 stevia packets',
+      '½ tsp crushed red pepper',
+      '2 handfuls mixed greens',
+      'Another veggie of choice',
+    ],
+    directions: [
+      'Whisk lime juice, fish sauce, oil, stevia and crushed red pepper in a large bowl.',
+      'Add shrimp, veggies and fresh herbs if desired.',
+      'Toss to coat salad and serve immediately.',
+    ],
+  },
+  {
+    id: 'M17',
+    name: 'Crispy Chicken & Brussels',
+    category: 'mains',
+    tags: ['high-protein', 'low-carb', 'hormone-support'],
+    conditionFriendly: ['heart', 'diabetes', 'arthritis'],
+    ingredients: [
+      '6 oz skinless chicken breast',
+      '1 cup brussels sprouts, halved',
+      '2 tbsp coconut oil',
+      '¼ tsp garlic powder',
+      '1 tbsp lemon juice',
+    ],
+    directions: [
+      'Preheat oven to 425°F.',
+      'Toss brussels sprouts in 1 tbsp coconut oil, garlic powder and salt.',
+      'Heat skillet to medium-high, add other 1 tbsp coconut oil, fry thinly sliced chicken until crispy.',
+      'Add brussels sprouts and continue to sauté at medium-low heat while adding lemon juice.',
+    ],
+  },
+  {
+    id: 'M18',
+    name: 'Thai Peanut Chicken',
+    category: 'mains',
+    tags: ['high-protein', 'healthy-fats', 'bold-flavor'],
+    conditionFriendly: ['heart'],
+    ingredients: [
+      '6 oz skinless chicken breast',
+      '2 tbsp peanut butter',
+      '2 tbsp Bragg\'s soy sauce alternative',
+      '1 tbsp lemon juice',
+      '1 tbsp rice vinegar',
+      '¼ tsp cayenne pepper',
+      '1 cup mixed veggies of choice',
+    ],
+    directions: [
+      'In a bowl, combine slightly microwaved peanut butter, Bragg\'s soy sauce, 1 tbsp lemon juice, rice vinegar and cayenne pepper.',
+      'Whisk until thick.',
+      'Shred chicken, then toss chicken and veggies into peanut sauce.',
+      'Top with salt to taste and serve.',
+    ],
+  },
+
+  // ===== BREAKFAST =====
+  {
+    id: 'B01',
+    name: 'Sweet Egg Scramble',
+    category: 'breakfast',
+    tags: ['high-protein', 'quick', 'low-carb'],
+    conditionFriendly: ['diabetes'],
+    ingredients: [
+      '3 egg whites',
+      '½ scoop vanilla protein powder',
+      '¼ cup frozen berries',
+      '2 stevia packets',
+      '¼ tsp vanilla extract',
+      'Dash of cinnamon',
+    ],
+    directions: [
+      'Grease skillet with pam and bring to medium heat.',
+      'Whisk egg whites, protein, and extras together in bowl then pour onto skillet.',
+      'Once eggs are about halfway cooked, add the berries and continue to cook (scrambling thoroughly) until eggs are fully cooked.',
+      'Top with cinnamon or Walden Farms Pancake Syrup with veggie side.',
+    ],
+  },
+  {
+    id: 'B02',
+    name: 'Egg White Omelet',
+    category: 'breakfast',
+    tags: ['high-protein', 'low-fat', 'quick'],
+    conditionFriendly: ['heart', 'diabetes'],
+    ingredients: [
+      '1¼ cup egg whites',
+      'Veggies of choice (spinach, peppers, onion)',
+      'Salt and pepper to taste',
+    ],
+    directions: [
+      'Whisk egg whites with salt and pepper.',
+      'Pour into greased skillet over medium heat.',
+      'Add veggies to one half, fold over and cook until set.',
+    ],
+  },
+  {
+    id: 'B03',
+    name: 'Protein Pancakes',
+    category: 'breakfast',
+    calories: 320,
+    protein: 30,
+    fat: 8,
+    carbs: 28,
+    fiber: 3,
+    prepTime: 15,
+    servings: 1,
+    tags: ['high-protein', 'muscle-building', 'breakfast-staple'],
+    conditionFriendly: ['diabetes'],
+    ingredients: [
+      '½ cup oatmeal',
+      '2 packets of stevia',
+      'Cinnamon to taste',
+      '½ cup cottage cheese',
+      '3 egg whites (2/3 cup)',
+    ],
+    directions: [
+      'Mix all ingredients in bowl or puree in food processor for smoother texture.',
+      'Cook on greased skillet at medium heat for about 2 minutes per side.',
+      'Flip when bubbles form and cook until firm.',
+      'Top with Walden Farms Syrup.',
+    ],
+    scienceNote: 'The oat and egg white combo creates a low-glycemic, high-protein breakfast that supports both muscle maintenance and stable blood sugar — two priorities after 40.',
+  },
+  {
+    id: 'B04',
+    name: 'Blueberry Oat Bake',
+    category: 'breakfast',
+    tags: ['meal-prep', 'high-fiber', 'antioxidant'],
+    conditionFriendly: ['heart', 'diabetes', 'arthritis'],
+    ingredients: [
+      '1 cup rolled oats',
+      '½ cup blueberries',
+      '1 scoop vanilla protein powder',
+      '1 cup almond milk',
+      '2 egg whites',
+      '1 tsp cinnamon',
+      '2 stevia packets',
+    ],
+    directions: [
+      'Preheat oven to 375°F.',
+      'Mix all ingredients in a bowl.',
+      'Pour into greased baking dish.',
+      'Bake 25–30 minutes until set.',
+      'Cut into portions and refrigerate for the week.',
+    ],
+    scienceNote: 'Blueberries are one of the highest antioxidant foods — they reduce oxidative stress that accelerates aging and muscle breakdown after 40.',
+  },
+  {
+    id: 'B05',
+    name: 'Cottage Cheese Bowl',
+    category: 'breakfast',
+    tags: ['high-protein', 'quick', 'no-cook', 'bone-health'],
+    conditionFriendly: ['diabetes', 'heart'],
+    ingredients: [
+      '1 cup low-fat cottage cheese',
+      '½ cup fresh berries',
+      '1 tbsp ground flaxseed',
+      '1 tsp cinnamon',
+      '1 stevia packet',
+    ],
+    directions: [
+      'Combine cottage cheese in bowl.',
+      'Top with berries, flaxseed, and cinnamon.',
+      'Sweeten with stevia if desired.',
+      'Serve immediately.',
+    ],
+    scienceNote: 'Cottage cheese is casein protein — slow-digesting, ideal for muscle preservation overnight. High in calcium for bone density protection after 40.',
+  },
+  {
+    id: 'B06',
+    name: 'Egg White Sandwich',
+    category: 'breakfast',
+    tags: ['high-protein', 'quick', 'portable'],
+    conditionFriendly: ['heart', 'diabetes'],
+    ingredients: [
+      '3 egg whites',
+      '2 slices whole grain bread',
+      '1 slice tomato',
+      'Sriracha to taste',
+    ],
+    directions: [
+      'Cook egg whites in greased skillet until firm.',
+      'Toast bread until golden.',
+      'Put eggs between toast and add tomato plus desired sauce.',
+    ],
+  },
+
+  // ===== SHAKES =====
+  {
+    id: 'S01',
+    name: 'Blueberry Pie Smoothie',
+    category: 'shakes',
+    tags: ['antioxidant', 'gut-health', 'quick'],
+    conditionFriendly: ['heart', 'arthritis', 'diabetes'],
+    ingredients: [
+      '1 scoop vanilla protein powder',
+      '¼ cup mixed frozen berries',
+      '2 handfuls spinach',
+      '1 cup cold water',
+      '1 tsp vanilla',
+      'Dash of cinnamon',
+      '2 stevia packets',
+    ],
+    directions: [
+      'Combine all ingredients in blender.',
+      'Blend until smooth and creamy.',
+      'Add ice if desired for a thicker consistency.',
+      'Serve immediately.',
+    ],
+    scienceNote: 'Spinach in a shake is invisible but powerful — delivers magnesium, folate, and vitamin K. Blueberries add anthocyanins that reduce muscle soreness after training.',
+  },
+  {
+    id: 'S02',
+    name: 'Vanilla Almond Shake',
+    category: 'shakes',
+    tags: ['high-protein', 'healthy-fats', 'quick'],
+    conditionFriendly: ['heart'],
+    ingredients: [
+      '1½ scoops strawberry or chocolate protein powder',
+      '2 tbsp smooth peanut butter',
+      '1 cup water',
+      'Handful of ice',
+    ],
+    directions: [
+      'Combine all ingredients in blender.',
+      'Blend until smooth and creamy.',
+      'Serve immediately.',
+    ],
+  },
+  {
+    id: 'S03',
+    name: 'Cake for Breakfast Shake',
+    category: 'shakes',
+    tags: ['high-protein', 'low-fat', 'quick'],
+    conditionFriendly: ['diabetes'],
+    ingredients: [
+      '1 scoop vanilla protein powder',
+      '¼ cup ground dry oats',
+      '1 tsp vanilla',
+      '1 stevia packet',
+      'Dash of salt',
+      '1 cup water',
+      'Handful of ice',
+    ],
+    directions: [
+      'Combine all ingredients in blender.',
+      'Blend until smooth.',
+      'Top with a dash of sprinkles for fun presentation.',
+      'Serve immediately.',
+    ],
+  },
+  {
+    id: 'S04',
+    name: 'PB Sandwich Shake',
+    category: 'shakes',
+    tags: ['high-protein', 'healthy-fats', 'muscle-building'],
+    conditionFriendly: ['heart'],
+    ingredients: [
+      '1½ scoops strawberry or chocolate protein powder',
+      '2 tbsp smooth peanut butter',
+      '1 cup water',
+      'Handful of ice',
+    ],
+    directions: [
+      'Combine all ingredients in blender.',
+      'Blend until smooth and thick.',
+      'Add extra peanut butter for richer flavor.',
+      'Serve immediately.',
+    ],
+  },
+
+  // ===== DRESSINGS =====
+  {
+    id: 'D01',
+    name: 'Balsamic Vinegar Dressing',
+    category: 'dressings',
+    tags: ['low-calorie', 'quick', 'versatile'],
+    conditionFriendly: ['heart', 'diabetes'],
+    ingredients: [
+      '½ cup water',
+      '¼ cup balsamic vinegar',
+      '2 packets Splenda/stevia',
+      '1 tsp onion salt',
+      '1 tsp garlic powder',
+      '¼ tsp dried mustard',
+    ],
+    directions: [
+      'Combine all ingredients in a container with a tight lid.',
+      'Shake well before use and again before each serving.',
+      'Store in refrigerator for up to 1 week.',
+    ],
+  },
+  {
+    id: 'D02',
+    name: 'Versatile Vinegar Dressing',
+    category: 'dressings',
+    tags: ['low-calorie', 'quick', 'versatile'],
+    conditionFriendly: ['heart', 'diabetes'],
+    ingredients: [
+      '½ cup cold water',
+      '½ cup white vinegar',
+      '½ tsp salt',
+      '½ tsp dry mustard',
+      '⅛ tsp pepper',
+      '1 dash paprika',
+    ],
+    directions: [
+      'Combine all ingredients in container.',
+      'Shake well.',
+      'Variations: Dilly Dressing — replace with ½ cup malt vinegar, omit paprika, add 1½ tsp dill seed.',
+      'Green Onion Dressing — add 2–3 minced green onions.',
+    ],
+  },
+  {
+    id: 'D03',
+    name: 'Honey Mustard Dressing',
+    category: 'dressings',
+    tags: ['low-calorie', 'quick', 'sweet'],
+    conditionFriendly: ['heart', 'diabetes'],
+    ingredients: [
+      '1 cup balsamic vinegar',
+      '¼ cup yellow or spicy mustard',
+      '3 packets of stevia',
+    ],
+    directions: [
+      'Mix all ingredients well together.',
+      'Toss into salad or use as dipping sauce.',
+      'Adjust stevia to preferred sweetness level.',
+    ],
+  },
+];
+
+// ===== HEALTH CONDITION MODIFICATIONS =====
+export interface ConditionModification {
+  id: string;
+  name: string;
+  affects: string;
+  rootCause: string;
+  recoveryTimeline: string;
+  exercisesToAvoid: string[];
+  safeSubstitutions: Array<{ instead: string; use: string; why: string }>;
+  weeklyProgression: Array<{ week: string; focus: string; exercises: string[] }>;
+}
+
+export const conditionModifications: ConditionModification[] = [
+  {
+    id: 'bad-knees',
+    name: 'Bad Knees',
+    affects: '65% of 40+',
+    rootCause: 'Weak Glutes & Quads — the knee absorbs forces it was never designed to handle alone',
+    recoveryTimeline: '8–12 Weeks',
+    exercisesToAvoid: [
+      'Deep squats below parallel — excessive knee flexion under load compresses the patella',
+      'Leg extensions on a machine — creates shear force directly on the knee joint',
+      'Running on hard surfaces — repetitive high-impact loading without adequate muscle support',
+      'Lunges with forward knee drive — places excessive stress on the patellar tendon',
+      'Box jumps or plyometrics — high-impact landing forces the knee cannot safely absorb yet',
+    ],
+    safeSubstitutions: [
+      { instead: 'Deep Squat', use: 'Box Squat (high box)', why: 'Limits knee flexion angle — keeps load in safe range while building quad strength' },
+      { instead: 'Standard Lunge', use: 'Reverse Lunge', why: 'Shifts load to hip extensors, dramatically reduces knee shear force' },
+      { instead: 'Leg Press (full range)', use: 'Leg Press (partial — top half only)', why: 'Maintains quad engagement while eliminating the deep compression zone' },
+      { instead: 'Running', use: 'Walking on incline treadmill or cycling', why: 'Maintains cardiovascular conditioning without joint impact' },
+    ],
+    weeklyProgression: [
+      { week: 'Weeks 1–2', focus: 'Inhibit & Lengthen', exercises: ['Foam roll IT band', 'Calf stretching', 'Hip flexor stretch'] },
+      { week: 'Weeks 3–4', focus: 'Activate', exercises: ['Glute bridges', 'Clamshells', 'Terminal knee extensions'] },
+      { week: 'Weeks 5–8', focus: 'Integrate', exercises: ['Box squats', 'Reverse lunges', 'Step-ups'] },
+      { week: 'Weeks 9–12', focus: 'Progressive Loading', exercises: ['Loaded box squats', 'Bulgarian split squats', 'Leg press (partial)'] },
+    ],
+  },
+  {
+    id: 'lower-back',
+    name: 'Lower Back Pain',
+    affects: '80% of adults over 40',
+    rootCause: 'Weak core and tight hip flexors — the lumbar spine compensates for lack of stability',
+    recoveryTimeline: '6–10 Weeks',
+    exercisesToAvoid: [
+      'Sit-ups and crunches — excessive spinal flexion under load',
+      'Deadlifts with rounded back — shear force on lumbar discs',
+      'Leg raises (straight leg) — creates extreme hip flexor tension pulling on lumbar',
+      'Heavy overhead pressing without core bracing',
+    ],
+    safeSubstitutions: [
+      { instead: 'Sit-ups', use: 'Dead Bug', why: 'Trains deep core stabilizers without spinal flexion' },
+      { instead: 'Deadlift', use: 'Hip Hinge with kettlebell', why: 'Same posterior chain activation, teaches neutral spine pattern' },
+      { instead: 'Leg Raises', use: 'Heel Slides', why: 'Core engagement without lumbar stress' },
+    ],
+    weeklyProgression: [
+      { week: 'Weeks 1–2', focus: 'Inhibit & Lengthen', exercises: ['Foam roll thoracic spine', 'Hip flexor stretch', 'Piriformis stretch'] },
+      { week: 'Weeks 3–4', focus: 'Activate', exercises: ['Dead bug', 'Bird dog', 'Glute bridge'] },
+      { week: 'Weeks 5–8', focus: 'Integrate', exercises: ['Pallof press', 'Hip hinge', 'Plank variations'] },
+      { week: 'Weeks 9–10', focus: 'Progressive Loading', exercises: ['Loaded hip hinge', 'Cable core work', 'Farmer carries'] },
+    ],
+  },
+  {
+    id: 'shoulder',
+    name: 'Shoulder Issues',
+    affects: '40% of adults over 40',
+    rootCause: 'Rotator cuff weakness and poor scapular stability — shoulder impingement from muscle imbalance',
+    recoveryTimeline: '8–16 Weeks',
+    exercisesToAvoid: [
+      'Behind-the-neck press — extreme external rotation under load',
+      'Upright rows — compresses subacromial space',
+      'Wide-grip bench press — excessive shoulder external rotation',
+      'Kipping pull-ups — uncontrolled shoulder loading',
+    ],
+    safeSubstitutions: [
+      { instead: 'Overhead Press (barbell)', use: 'Dumbbell Press (neutral grip)', why: 'Neutral grip reduces impingement risk while maintaining pressing strength' },
+      { instead: 'Upright Row', use: 'Face Pull', why: 'Trains rear deltoid and external rotators — the muscles most often weak' },
+      { instead: 'Wide Bench Press', use: 'Close-grip or neutral-grip press', why: 'Reduces shoulder stress while maintaining chest activation' },
+    ],
+    weeklyProgression: [
+      { week: 'Weeks 1–2', focus: 'Inhibit & Lengthen', exercises: ['Pec minor stretch', 'Thoracic rotation', 'Cross-body shoulder stretch'] },
+      { week: 'Weeks 3–4', focus: 'Activate', exercises: ['Band external rotation', 'Prone Y/T/W', 'Serratus activation'] },
+      { week: 'Weeks 5–8', focus: 'Integrate', exercises: ['Cable face pulls', 'Neutral-grip press', 'Scapular push-ups'] },
+      { week: 'Weeks 9–16', focus: 'Progressive Loading', exercises: ['Dumbbell overhead press', 'Landmine press', 'Pull-ups (controlled)'] },
+    ],
+  },
+];
+
+// ===== 40+ NUTRITION SCIENCE PILLARS =====
+export const nutritionSciencePillars = [
+  {
+    id: 'metabolism',
+    title: 'Metabolism',
+    icon: '🔥',
+    summary: 'After 40, resting metabolic rate decreases ~1–2% per decade.',
+    detail: 'These recipes use lean proteins (chicken, fish, turkey) that require more energy to digest (high thermic effect), helping maintain calorie burn.',
+  },
+  {
+    id: 'muscle',
+    title: 'Muscle Mass',
+    icon: '💪',
+    summary: 'Adults 40+ need 1.2–1.6g protein/kg body weight to counter sarcopenia.',
+    detail: 'Most recipes deliver 25–40g protein per serving, supporting muscle protein synthesis throughout the day.',
+  },
+  {
+    id: 'inflammation',
+    title: 'Inflammation',
+    icon: '🛡️',
+    summary: 'Chronic inflammation rises with age.',
+    detail: 'Recipes feature anti-inflammatory ingredients: turmeric, ginger, olive oil, omega-3-rich fish, cruciferous vegetables like brussels sprouts and broccoli.',
+  },
+  {
+    id: 'blood-sugar',
+    title: 'Blood Sugar',
+    icon: '📊',
+    summary: 'Insulin sensitivity drops after 40.',
+    detail: 'Recipes favor low-GI carbs: sweet potato, brown rice, quinoa, oats. No refined sugar — stevia used as sweetener to avoid glucose spikes.',
+  },
+  {
+    id: 'heart',
+    title: 'Heart Health',
+    icon: '❤️',
+    summary: 'Cardiovascular risk increases post-40.',
+    detail: 'Recipes use heart-healthy fats: avocado, olive oil, coconut oil, and omega-3-rich fish. Bragg\'s used instead of sodium-heavy soy sauce.',
+  },
+  {
+    id: 'bone',
+    title: 'Bone Density',
+    icon: '🦴',
+    summary: 'Bone loss accelerates at 40+, especially in women.',
+    detail: 'Recipes include calcium-rich ingredients: Greek yogurt, cottage cheese, leafy greens. Vitamin D from egg whites and fatty fish.',
+  },
+  {
+    id: 'gut',
+    title: 'Gut Health',
+    icon: '🦠',
+    summary: 'Gut microbiome diversity decreases with age.',
+    detail: 'Recipes feature probiotic-rich foods (Greek yogurt, cottage cheese, sauerkraut) and prebiotic fiber (oats, garlic, onion, asparagus).',
+  },
+  {
+    id: 'hormones',
+    title: 'Hormones',
+    icon: '⚡',
+    summary: 'Testosterone and estrogen decline post-40.',
+    detail: 'Healthy fat intake from avocados, olive oil and eggs supports hormone production. Cruciferous veg help balance estrogen metabolism.',
+  },
+];
+
+// Helper functions
+export const getRecipesByCategory = (category: RecipeCategory) =>
+  tutkRecipes.filter(r => r.category === category);
+
+export const getRecipesByCondition = (condition: string) =>
+  tutkRecipes.filter(r => r.conditionFriendly?.includes(condition));
+
+export const getRecipesByTag = (tag: string) =>
+  tutkRecipes.filter(r => r.tags.includes(tag));
+
+export const allTags = [...new Set(tutkRecipes.flatMap(r => r.tags))].sort();
+
+export const categoryLabels: Record<RecipeCategory, string> = {
+  mains: 'Mains',
+  breakfast: 'Breakfast',
+  shakes: 'Shakes',
+  dressings: 'Dressings',
+};
+
+export const categoryIcons: Record<RecipeCategory, string> = {
+  mains: '🍽️',
+  breakfast: '🌅',
+  shakes: '🥤',
+  dressings: '🫙',
+};

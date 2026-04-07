@@ -1,364 +1,783 @@
 /**
- * TUF FUEL Page — Nutrition Tracking + Meal Plan + Principles
- * Design System: Protein ring, meal distribution, daily targets
- * Enhanced with 30-day meal plan and 40+ nutrition principles from TUF Drive
+ * TUF FUEL Page — TUTK Recipe Browser + Condition Protocols + 40+ Science
+ * Powered by Turned Up In The Kitchen cookbook data
  */
 
 import { useState } from "react";
-import { TUF_DATA } from "@/lib/tuf-data";
-import { Plus, CalendarDays, Flame } from 'lucide-react';
-import { AngleButton } from '@/components/ui/angle-button';
+import {
+  tutkRecipes,
+  conditionModifications,
+  nutritionSciencePillars,
+  getRecipesByCondition,
+  categoryLabels,
+  categoryIcons,
+  type Recipe,
+  type RecipeCategory,
+} from "@/data/tutkRecipes";
 
-// ── MEAL PLAN DATA (from TUF Drive — 30-Day Meal Plan) ───────────────────────
-
-const MEAL_PLAN_WEEK = [
-  {
-    day: "Monday",
-    meals: [
-      { type: "Breakfast", food: "Greek yogurt with mixed berries and nuts" },
-      { type: "Snack", food: "Carrot sticks with hummus" },
-      { type: "Lunch", food: "Grilled chicken, mixed greens, avocado, balsamic vinaigrette" },
-      { type: "Snack", food: "Hard-boiled egg with grape tomatoes" },
-      { type: "Dinner", food: "Baked salmon with roasted vegetables and quinoa" },
-    ],
-  },
-  {
-    day: "Tuesday",
-    meals: [
-      { type: "Breakfast", food: "Oatmeal with mixed berries and nuts" },
-      { type: "Snack", food: "Apple slices with almond butter" },
-      { type: "Lunch", food: "Turkey lettuce wraps with cucumber and carrot sticks" },
-      { type: "Snack", food: "Greek yogurt with honey" },
-      { type: "Dinner", food: "Grilled shrimp with roasted vegetables and brown rice" },
-    ],
-  },
-  {
-    day: "Wednesday",
-    meals: [
-      { type: "Breakfast", food: "Scrambled eggs with spinach and whole wheat toast" },
-      { type: "Snack", food: "Baby carrots with hummus" },
-      { type: "Lunch", food: "Grilled chicken, mixed greens, avocado, balsamic vinaigrette" },
-      { type: "Snack", food: "Pear and almonds" },
-      { type: "Dinner", food: "Baked chicken with roasted sweet potato and green beans" },
-    ],
-  },
-  {
-    day: "Thursday",
-    meals: [
-      { type: "Breakfast", food: "Green smoothie — spinach, banana, almond milk, protein powder" },
-      { type: "Snack", food: "Hard-boiled egg with cucumber slices" },
-      { type: "Lunch", food: "Grilled salmon salad with mixed greens, cucumber, tomato" },
-      { type: "Snack", food: "Greek yogurt with mixed berries" },
-      { type: "Dinner", food: "Turkey meatballs with zucchini noodles and tomato sauce" },
-    ],
-  },
-  {
-    day: "Friday",
-    meals: [
-      { type: "Breakfast", food: "Whole wheat English muffin with scrambled eggs and avocado" },
-      { type: "Snack", food: "Sliced apple with almond butter" },
-      { type: "Lunch", food: "Grilled chicken sandwich on whole wheat with mixed greens" },
-      { type: "Snack", food: "Greek yogurt with honey" },
-      { type: "Dinner", food: "Grilled steak with roasted vegetables and quinoa" },
-    ],
-  },
-  {
-    day: "Saturday",
-    meals: [
-      { type: "Breakfast", food: "Greek yogurt parfait with berries and granola" },
-      { type: "Snack", food: "Baby carrots with hummus" },
-      { type: "Lunch", food: "Turkey burger on whole wheat bun with mixed greens and avocado" },
-      { type: "Snack", food: "Mixed nuts and seeds" },
-      { type: "Dinner", food: "Baked salmon with roasted sweet potato and Brussels sprouts" },
-    ],
-  },
-  {
-    day: "Sunday",
-    meals: [
-      { type: "Breakfast", food: "Omelet with spinach, tomatoes, and whole wheat toast" },
-      { type: "Snack", food: "Sliced apple with almond butter" },
-      { type: "Lunch", food: "Turkey chili with mixed greens and avocado" },
-      { type: "Snack", food: "Greek yogurt with mixed berries" },
-      { type: "Dinner", food: "Grilled chicken with roasted vegetables and brown rice" },
-    ],
-  },
-];
-
-const NUTRITION_PRINCIPLES = [
-  {
-    icon: "💪",
-    title: "Protein First",
-    rule: "0.7–1g per pound of bodyweight",
-    detail: "At 40+, anabolic resistance means you need more protein per meal to trigger muscle protein synthesis. Aim for 30–40g per meal minimum.",
-    accent: "text-accent",
-  },
-  {
-    icon: "⏱️",
-    title: "Timing Matters",
-    rule: "Eat within 45 min post-workout",
-    detail: "The post-exercise window is real. Protein + fast carbs within 45 minutes accelerates recovery and muscle repair.",
-    accent: "text-blue-400",
-  },
-  {
-    icon: "🔥",
-    title: "Anti-Inflammatory Focus",
-    rule: "Omega-3s daily, minimize processed foods",
-    detail: "Chronic inflammation is the enemy at 40+. Salmon, walnuts, and olive oil fight it. Processed foods feed it.",
-    accent: "text-orange-400",
-  },
-  {
-    icon: "💧",
-    title: "Hydration",
-    rule: "Half your bodyweight in oz daily",
-    detail: "Dehydration mimics hunger and impairs performance. 180lb person = 90oz minimum. More on training days.",
-    accent: "text-cyan-400",
-  },
-];
-
-const MEAL_TYPE_COLORS: Record<string, string> = {
-  Breakfast: "text-yellow-400",
-  Snack: "text-green-400",
-  Lunch: "text-blue-400",
-  Dinner: "text-accent",
-};
-
-type Tab = "today" | "plan" | "principles";
-
-// ── COMPONENT ────────────────────────────────────────────────────────────────
+type FuelTab = "recipes" | "conditions" | "science";
+type ConditionFilter = "all" | "heart" | "diabetes" | "arthritis" | "bad-knees" | "lower-back" | "shoulder";
 
 export default function Fuel() {
-  const nutrition = TUF_DATA.nutrition;
-  const targets = nutrition.dailyTargets;
+  const [activeTab, setActiveTab] = useState<FuelTab>("recipes");
+  const [activeCategory, setActiveCategory] = useState<RecipeCategory | "all">("all");
+  const [conditionFilter, setConditionFilter] = useState<ConditionFilter>("all");
+  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCondition, setSelectedCondition] = useState<string | null>(null);
 
-  const [activeTab, setActiveTab] = useState<Tab>("today");
-  const todayIndex = (() => {
-    const d = new Date().getDay(); // 0=Sun
-    return d === 0 ? 6 : d - 1;   // Mon=0 … Sun=6
-  })();
-  const [selectedDay, setSelectedDay] = useState(todayIndex);
+  const categories: Array<{ key: RecipeCategory | "all"; label: string; icon: string }> = [
+    { key: "all", label: "All", icon: "🍴" },
+    { key: "mains", label: "Mains", icon: "🍽️" },
+    { key: "breakfast", label: "Breakfast", icon: "🌅" },
+    { key: "shakes", label: "Shakes", icon: "🥤" },
+    { key: "dressings", label: "Dressings", icon: "🫙" },
+  ];
+
+  const conditionFilters: Array<{ key: ConditionFilter; label: string; icon: string }> = [
+    { key: "all", label: "All Recipes", icon: "🍴" },
+    { key: "heart", label: "Heart Health", icon: "❤️" },
+    { key: "diabetes", label: "Blood Sugar", icon: "📊" },
+    { key: "arthritis", label: "Arthritis", icon: "🦴" },
+    { key: "bad-knees", label: "Bad Knees", icon: "🦵" },
+    { key: "lower-back", label: "Lower Back", icon: "🔙" },
+    { key: "shoulder", label: "Shoulder", icon: "💪" },
+  ];
+
+  const filteredRecipes = tutkRecipes.filter((recipe) => {
+    const matchesCategory = activeCategory === "all" || recipe.category === activeCategory;
+    const matchesCondition =
+      conditionFilter === "all" || recipe.conditionFriendly?.includes(conditionFilter);
+    const matchesSearch =
+      searchQuery === "" ||
+      recipe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      recipe.tags.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      recipe.ingredients.some((i) => i.toLowerCase().includes(searchQuery.toLowerCase()));
+    return matchesCategory && matchesCondition && matchesSearch;
+  });
 
   return (
-    <div className="min-h-screen bg-[#080808] text-foreground pb-20">
+    <div className="min-h-screen pb-24" style={{ background: "#080808" }}>
       {/* Header */}
-      <section className="px-4 pt-6 pb-4 border-b border-border">
-        <div className="text-xs tracking-widest uppercase text-muted-foreground mb-1">Nutrition</div>
-        <h1 className="font-barlow-condensed text-3xl tracking-wider text-foreground">
-          <span className="text-primary">FUEL</span>
-        </h1>
-
-        {/* Tabs */}
-        <div className="flex gap-1 mt-4">
-          {([
-            { id: "today" as Tab, label: "TODAY" },
-            { id: "plan" as Tab, label: "MEAL PLAN", icon: <CalendarDays className="w-3 h-3" /> },
-            { id: "principles" as Tab, label: "PRINCIPLES", icon: <Flame className="w-3 h-3" /> },
-          ]).map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold tracking-wider transition-all ${
-                activeTab === tab.id
-                  ? "bg-primary text-black"
-                  : "bg-muted text-muted-foreground hover:text-foreground"
-              }`}
+      <div className="px-4 pt-6 pb-4">
+        <div className="flex items-center justify-between mb-1">
+          <div>
+            <h1
+              className="text-3xl font-black tracking-wider text-white uppercase"
+              style={{ fontFamily: "Barlow Condensed, sans-serif", letterSpacing: "0.05em" }}
             >
-              {tab.icon}
-              {tab.label}
+              TURNED UP <span style={{ color: "#FF4500" }}>IN THE KITCHEN</span>
+            </h1>
+            <p className="text-sm mt-0.5" style={{ color: "rgba(255,255,255,0.5)" }}>
+              {tutkRecipes.length} recipes · Optimized for 40+ athletes
+            </p>
+          </div>
+          <div className="text-3xl">🔥</div>
+        </div>
+        {/* Panther quote */}
+        <div
+          className="mt-3 px-4 py-3 rounded-xl border text-sm italic"
+          style={{
+            background: "rgba(255,69,0,0.08)",
+            borderColor: "rgba(255,69,0,0.25)",
+            color: "rgba(255,255,255,0.7)",
+          }}
+        >
+          "Food is not the enemy. Ignorance is. Every meal is a decision about who you're becoming."
+        </div>
+      </div>
+
+      {/* Tab Navigation */}
+      <div className="px-4 mb-4">
+        <div
+          className="flex gap-1 p-1 rounded-xl"
+          style={{ background: "rgba(255,255,255,0.05)" }}
+        >
+          {(
+            [
+              { key: "recipes" as FuelTab, label: "Recipes", icon: "📖" },
+              { key: "conditions" as FuelTab, label: "Conditions", icon: "🏥" },
+              { key: "science" as FuelTab, label: "40+ Science", icon: "🔬" },
+            ] as const
+          ).map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className="flex-1 py-2 px-2 rounded-lg text-xs font-bold uppercase tracking-wide transition-all"
+              style={{
+                fontFamily: "Barlow Condensed, sans-serif",
+                background:
+                  activeTab === tab.key
+                    ? "linear-gradient(135deg, #FF4500, #DC2626)"
+                    : "transparent",
+                color: activeTab === tab.key ? "white" : "rgba(255,255,255,0.5)",
+              }}
+            >
+              {tab.icon} {tab.label}
             </button>
           ))}
         </div>
-      </section>
+      </div>
 
-      {/* ── TODAY TAB (existing tracker) ── */}
-      {activeTab === "today" && (
-        <>
-          {/* Protein Hero */}
-          <section className="px-4 py-6">
-            <div className="tuf-card gold-border">
-              <div className="text-xs tracking-widest uppercase text-accent mb-4">Daily Targets</div>
-
-              {/* Protein Ring */}
-              <div className="flex items-center gap-4 mb-4">
-                <div className="relative w-20 h-20 flex-shrink-0">
-                  <svg className="w-full h-full" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="8" opacity="0.2" />
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="45"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="8"
-                      strokeDasharray={`${(0 / targets.protein) * 283} 283`}
-                      strokeLinecap="round"
-                      style={{ transform: "rotate(-90deg)", transformOrigin: "50% 50%", color: "var(--accent)" }}
-                    />
-                  </svg>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <div className="font-barlow-condensed text-lg text-accent tracking-wider">0</div>
-                    <div className="text-xs text-muted-foreground">g</div>
-                  </div>
-                </div>
-
-                <div className="flex-1">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-xs text-muted-foreground">Protein</span>
-                    <span className="font-barlow-condensed text-sm text-accent">{targets.protein}g</span>
-                  </div>
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-xs text-muted-foreground">Carbs</span>
-                    <span className="font-barlow-condensed text-sm text-accent">{targets.carbs}g</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs text-muted-foreground">Fat</span>
-                    <span className="font-barlow-condensed text-sm text-accent">{targets.fat}g</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="border-t border-border pt-3 text-center">
-                <div className="text-xs text-muted-foreground mb-1">Daily Calorie Target</div>
-                <div className="font-barlow-condensed text-2xl text-accent tracking-wider">{targets.calories}</div>
-              </div>
-            </div>
-          </section>
-
-          {/* Meals */}
-          <section className="px-4 py-4">
-            <div className="font-barlow-condensed text-lg tracking-wider text-foreground border-l-4 border-l-primary pl-3 mb-4">
-              TODAY'S <span className="text-primary">MEALS</span>
-            </div>
-
-            {nutrition.meals.map((meal) => (
-              <div key={meal.id} className="tuf-card ok-border mb-3">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="font-barlow-condensed text-sm tracking-wider text-foreground">{meal.name}</div>
-                  <div className="text-xs text-muted-foreground">{meal.time}</div>
-                </div>
-                <div className="progress-bar">
-                  <div className="progress-fill ok" style={{ width: `${(meal.current / meal.target) * 100}%` }} />
-                </div>
-                <div className="text-xs text-muted-foreground mt-2">
-                  {meal.current} / {meal.target} cal
-                </div>
-              </div>
-            ))}
-          </section>
-
-          {/* CTA */}
-          <section className="px-4 py-6">
-            <AngleButton
-              variant="book-now"
-              size="lg"
-              icon={<Plus className="w-5 h-5" />}
-              className="w-full"
-            >
-              LOG MEAL
-            </AngleButton>
-          </section>
-        </>
-      )}
-
-      {/* ── MEAL PLAN TAB ── */}
-      {activeTab === "plan" && (
-        <section className="px-4 py-4">
-          {/* Today highlight */}
-          <div className="tuf-card gold-border mb-4">
-            <div className="text-xs tracking-widest uppercase text-accent mb-3">
-              TODAY — {MEAL_PLAN_WEEK[todayIndex].day.toUpperCase()}
-            </div>
-            <div className="space-y-2">
-              {MEAL_PLAN_WEEK[todayIndex].meals.map((meal, i) => (
-                <div key={i} className="flex items-start gap-3">
-                  <span className={`text-xs font-bold w-20 shrink-0 ${MEAL_TYPE_COLORS[meal.type]}`}>
-                    {meal.type}
-                  </span>
-                  <span className="text-sm text-foreground/80">{meal.food}</span>
-                </div>
-              ))}
-            </div>
+      {/* ===== RECIPES TAB ===== */}
+      {activeTab === "recipes" && (
+        <div className="px-4">
+          {/* Search */}
+          <div className="mb-3">
+            <input
+              type="text"
+              placeholder="Search recipes, ingredients..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-gray-500 outline-none border"
+              style={{
+                background: "rgba(255,255,255,0.05)",
+                borderColor: "rgba(255,255,255,0.1)",
+              }}
+            />
           </div>
 
-          {/* Day selector */}
-          <div className="flex gap-2 overflow-x-auto pb-2 mb-4">
-            {MEAL_PLAN_WEEK.map((day, i) => (
+          {/* Category Filter */}
+          <div className="flex gap-2 overflow-x-auto pb-2 mb-3">
+            {categories.map((cat) => (
               <button
-                key={i}
-                onClick={() => setSelectedDay(i)}
-                className={`shrink-0 px-3 py-2 rounded-xl text-xs font-bold tracking-wider transition-all ${
-                  selectedDay === i
-                    ? "bg-primary text-black"
-                    : i === todayIndex
-                    ? "bg-primary/20 text-primary border border-primary/30"
-                    : "bg-muted text-muted-foreground hover:text-foreground"
-                }`}
+                key={cat.key}
+                onClick={() => setActiveCategory(cat.key)}
+                className="flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide transition-all border"
+                style={{
+                  fontFamily: "Barlow Condensed, sans-serif",
+                  background:
+                    activeCategory === cat.key
+                      ? "linear-gradient(135deg, #FF4500, #DC2626)"
+                      : "rgba(255,255,255,0.05)",
+                  borderColor:
+                    activeCategory === cat.key ? "transparent" : "rgba(255,255,255,0.1)",
+                  color: activeCategory === cat.key ? "white" : "rgba(255,255,255,0.6)",
+                }}
               >
-                {day.day.slice(0, 3).toUpperCase()}
+                {cat.icon} {cat.label}
               </button>
             ))}
           </div>
 
-          {/* Selected day */}
-          <div className="tuf-card ok-border">
-            <div className="font-barlow-condensed text-lg tracking-wider mb-3">
-              {MEAL_PLAN_WEEK[selectedDay].day.toUpperCase()}
+          {/* Condition Filter */}
+          <div className="flex gap-2 overflow-x-auto pb-2 mb-4">
+            {conditionFilters.map((cf) => (
+              <button
+                key={cf.key}
+                onClick={() => setConditionFilter(cf.key)}
+                className="flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide transition-all border"
+                style={{
+                  fontFamily: "Barlow Condensed, sans-serif",
+                  background:
+                    conditionFilter === cf.key
+                      ? "rgba(255,69,0,0.2)"
+                      : "rgba(255,255,255,0.03)",
+                  borderColor:
+                    conditionFilter === cf.key
+                      ? "rgba(255,69,0,0.5)"
+                      : "rgba(255,255,255,0.08)",
+                  color: conditionFilter === cf.key ? "#FF6B35" : "rgba(255,255,255,0.5)",
+                }}
+              >
+                {cf.icon} {cf.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Results count */}
+          <p className="text-xs mb-3" style={{ color: "rgba(255,255,255,0.4)" }}>
+            {filteredRecipes.length} recipe{filteredRecipes.length !== 1 ? "s" : ""} found
+          </p>
+
+          {/* Recipe Grid */}
+          <div className="grid grid-cols-1 gap-3">
+            {filteredRecipes.map((recipe) => (
+              <button
+                key={recipe.id}
+                onClick={() => setSelectedRecipe(recipe)}
+                className="text-left p-4 rounded-2xl border transition-all"
+                style={{
+                  background: "rgba(255,255,255,0.03)",
+                  borderColor: "rgba(255,255,255,0.08)",
+                }}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-lg">{categoryIcons[recipe.category]}</span>
+                      <span
+                        className="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
+                        style={{
+                          background: "rgba(255,69,0,0.15)",
+                          color: "#FF6B35",
+                          fontFamily: "Barlow Condensed, sans-serif",
+                        }}
+                      >
+                        {categoryLabels[recipe.category]}
+                      </span>
+                    </div>
+                    <h3
+                      className="text-base font-bold text-white mb-1"
+                      style={{
+                        fontFamily: "Barlow Condensed, sans-serif",
+                        letterSpacing: "0.02em",
+                      }}
+                    >
+                      {recipe.name}
+                    </h3>
+                    <div className="flex flex-wrap gap-1 mb-2">
+                      {recipe.tags.slice(0, 3).map((tag) => (
+                        <span
+                          key={tag}
+                          className="text-xs px-2 py-0.5 rounded-full"
+                          style={{
+                            background: "rgba(255,255,255,0.06)",
+                            color: "rgba(255,255,255,0.5)",
+                          }}
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                    {recipe.calories && (
+                      <div
+                        className="flex gap-3 text-xs"
+                        style={{ color: "rgba(255,255,255,0.5)" }}
+                      >
+                        <span>🔥 {recipe.calories} cal</span>
+                        {recipe.protein && <span>💪 {recipe.protein}g protein</span>}
+                        {recipe.prepTime && <span>⏱ {recipe.prepTime} min</span>}
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-white opacity-30 mt-1">›</div>
+                </div>
+                {recipe.conditionFriendly && recipe.conditionFriendly.length > 0 && (
+                  <div
+                    className="mt-2 pt-2 border-t flex flex-wrap gap-1"
+                    style={{ borderColor: "rgba(255,255,255,0.06)" }}
+                  >
+                    {recipe.conditionFriendly.slice(0, 3).map((c) => (
+                      <span
+                        key={c}
+                        className="text-xs px-2 py-0.5 rounded-full"
+                        style={{ background: "rgba(34,197,94,0.1)", color: "#4ade80" }}
+                      >
+                        ✓ {c.replace("-", " ")}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ===== CONDITIONS TAB ===== */}
+      {activeTab === "conditions" && (
+        <div className="px-4">
+          <p className="text-sm mb-4" style={{ color: "rgba(255,255,255,0.5)" }}>
+            NASM-based movement modifications for common 40+ conditions. Tap any condition for the
+            full protocol.
+          </p>
+
+          {selectedCondition ? (
+            (() => {
+              const mod = conditionModifications.find((m) => m.id === selectedCondition);
+              if (!mod) return null;
+              return (
+                <div>
+                  <button
+                    onClick={() => setSelectedCondition(null)}
+                    className="flex items-center gap-2 text-sm mb-4"
+                    style={{ color: "#FF6B35" }}
+                  >
+                    ← Back to conditions
+                  </button>
+                  <div
+                    className="rounded-2xl p-4 mb-4 border"
+                    style={{
+                      background: "rgba(255,69,0,0.08)",
+                      borderColor: "rgba(255,69,0,0.2)",
+                    }}
+                  >
+                    <h2
+                      className="text-2xl font-black text-white mb-1 uppercase"
+                      style={{ fontFamily: "Barlow Condensed, sans-serif" }}
+                    >
+                      {mod.name}
+                    </h2>
+                    <p className="text-sm" style={{ color: "rgba(255,255,255,0.6)" }}>
+                      Affects {mod.affects}
+                    </p>
+                    <p className="text-sm mt-2 text-white">{mod.rootCause}</p>
+                    <p className="text-xs mt-1" style={{ color: "#FF6B35" }}>
+                      Recovery: {mod.recoveryTimeline}
+                    </p>
+                  </div>
+
+                  <div
+                    className="rounded-2xl p-4 mb-3 border"
+                    style={{
+                      background: "rgba(255,255,255,0.03)",
+                      borderColor: "rgba(255,255,255,0.08)",
+                    }}
+                  >
+                    <h3
+                      className="text-sm font-bold uppercase tracking-wider mb-3"
+                      style={{ color: "#ef4444", fontFamily: "Barlow Condensed, sans-serif" }}
+                    >
+                      ⚠️ Exercises to Avoid
+                    </h3>
+                    {mod.exercisesToAvoid.map((ex, i) => (
+                      <div key={i} className="flex gap-2 mb-2">
+                        <span style={{ color: "#ef4444" }}>✕</span>
+                        <p className="text-sm text-white">{ex}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div
+                    className="rounded-2xl p-4 mb-3 border"
+                    style={{
+                      background: "rgba(255,255,255,0.03)",
+                      borderColor: "rgba(255,255,255,0.08)",
+                    }}
+                  >
+                    <h3
+                      className="text-sm font-bold uppercase tracking-wider mb-3"
+                      style={{ color: "#4ade80", fontFamily: "Barlow Condensed, sans-serif" }}
+                    >
+                      ✓ Safe Substitutions
+                    </h3>
+                    {mod.safeSubstitutions.map((sub, i) => (
+                      <div
+                        key={i}
+                        className="mb-3 pb-3 border-b last:border-0 last:mb-0 last:pb-0"
+                        style={{ borderColor: "rgba(255,255,255,0.06)" }}
+                      >
+                        <div className="flex items-center gap-2 mb-1">
+                          <span
+                            className="text-xs line-through"
+                            style={{ color: "rgba(255,255,255,0.4)" }}
+                          >
+                            {sub.instead}
+                          </span>
+                          <span style={{ color: "#FF6B35" }}>→</span>
+                          <span className="text-sm font-bold text-white">{sub.use}</span>
+                        </div>
+                        <p className="text-xs" style={{ color: "rgba(255,255,255,0.5)" }}>
+                          {sub.why}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div
+                    className="rounded-2xl p-4 mb-3 border"
+                    style={{
+                      background: "rgba(255,255,255,0.03)",
+                      borderColor: "rgba(255,255,255,0.08)",
+                    }}
+                  >
+                    <h3
+                      className="text-sm font-bold uppercase tracking-wider mb-3"
+                      style={{ color: "#FF6B35", fontFamily: "Barlow Condensed, sans-serif" }}
+                    >
+                      📅 NASM Progression
+                    </h3>
+                    {mod.weeklyProgression.map((phase, i) => (
+                      <div key={i} className="mb-3">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span
+                            className="text-xs font-bold px-2 py-0.5 rounded-full"
+                            style={{ background: "rgba(255,69,0,0.2)", color: "#FF6B35" }}
+                          >
+                            {phase.week}
+                          </span>
+                          <span className="text-sm font-bold text-white">{phase.focus}</span>
+                        </div>
+                        <div className="flex flex-wrap gap-1 ml-2">
+                          {phase.exercises.map((ex, j) => (
+                            <span
+                              key={j}
+                              className="text-xs px-2 py-0.5 rounded-full"
+                              style={{
+                                background: "rgba(255,255,255,0.06)",
+                                color: "rgba(255,255,255,0.6)",
+                              }}
+                            >
+                              {ex}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div
+                    className="rounded-2xl p-4 border"
+                    style={{
+                      background: "rgba(255,255,255,0.03)",
+                      borderColor: "rgba(255,255,255,0.08)",
+                    }}
+                  >
+                    <h3
+                      className="text-sm font-bold uppercase tracking-wider mb-3"
+                      style={{ color: "#FF6B35", fontFamily: "Barlow Condensed, sans-serif" }}
+                    >
+                      🍽️ Recommended Recipes
+                    </h3>
+                    {getRecipesByCondition(mod.id)
+                      .slice(0, 5)
+                      .map((recipe) => (
+                        <button
+                          key={recipe.id}
+                          onClick={() => {
+                            setSelectedRecipe(recipe);
+                            setSelectedCondition(null);
+                          }}
+                          className="w-full text-left flex items-center gap-3 py-2 border-b last:border-0"
+                          style={{ borderColor: "rgba(255,255,255,0.06)" }}
+                        >
+                          <span>{categoryIcons[recipe.category]}</span>
+                          <span className="text-sm text-white">{recipe.name}</span>
+                          <span className="ml-auto text-white opacity-30">›</span>
+                        </button>
+                      ))}
+                  </div>
+                </div>
+              );
+            })()
+          ) : (
+            <div className="grid grid-cols-1 gap-3">
+              {conditionModifications.map((mod) => (
+                <button
+                  key={mod.id}
+                  onClick={() => setSelectedCondition(mod.id)}
+                  className="text-left p-4 rounded-2xl border transition-all"
+                  style={{
+                    background: "rgba(255,255,255,0.03)",
+                    borderColor: "rgba(255,255,255,0.08)",
+                  }}
+                >
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h3
+                        className="text-lg font-black text-white uppercase mb-1"
+                        style={{ fontFamily: "Barlow Condensed, sans-serif" }}
+                      >
+                        {mod.name}
+                      </h3>
+                      <p className="text-xs mb-2" style={{ color: "#FF6B35" }}>
+                        Affects {mod.affects}
+                      </p>
+                      <p className="text-sm" style={{ color: "rgba(255,255,255,0.6)" }}>
+                        {mod.rootCause}
+                      </p>
+                    </div>
+                    <span className="text-white opacity-30 ml-3">›</span>
+                  </div>
+                  <div className="mt-3 flex items-center gap-3">
+                    <span
+                      className="text-xs px-2 py-1 rounded-full"
+                      style={{ background: "rgba(255,69,0,0.15)", color: "#FF6B35" }}
+                    >
+                      ⏱ {mod.recoveryTimeline}
+                    </span>
+                    <span
+                      className="text-xs px-2 py-1 rounded-full"
+                      style={{ background: "rgba(34,197,94,0.1)", color: "#4ade80" }}
+                    >
+                      {getRecipesByCondition(mod.id).length} recipes
+                    </span>
+                  </div>
+                </button>
+              ))}
             </div>
-            <div className="space-y-3">
-              {MEAL_PLAN_WEEK[selectedDay].meals.map((meal, i) => (
-                <div key={i} className="flex items-start gap-3 pb-3 border-b border-border last:border-0 last:pb-0">
-                  <span className={`text-xs font-bold w-20 shrink-0 pt-0.5 ${MEAL_TYPE_COLORS[meal.type]}`}>
-                    {meal.type}
-                  </span>
-                  <span className="text-sm text-foreground/80 leading-relaxed">{meal.food}</span>
+          )}
+        </div>
+      )}
+
+      {/* ===== 40+ SCIENCE TAB ===== */}
+      {activeTab === "science" && (
+        <div className="px-4">
+          <div
+            className="rounded-2xl p-4 mb-4 border"
+            style={{ background: "rgba(255,69,0,0.08)", borderColor: "rgba(255,69,0,0.2)" }}
+          >
+            <h2
+              className="text-xl font-black text-white uppercase mb-1"
+              style={{ fontFamily: "Barlow Condensed, sans-serif" }}
+            >
+              Why These Recipes Work
+            </h2>
+            <p className="text-sm" style={{ color: "rgba(255,255,255,0.6)" }}>
+              Every recipe in TUTK is engineered around 8 physiological priorities that change after
+              40. This is not a diet. It is a fuel system.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-3">
+            {nutritionSciencePillars.map((pillar) => (
+              <div
+                key={pillar.id}
+                className="p-4 rounded-2xl border"
+                style={{
+                  background: "rgba(255,255,255,0.03)",
+                  borderColor: "rgba(255,255,255,0.08)",
+                }}
+              >
+                <div className="flex items-start gap-3">
+                  <span className="text-2xl">{pillar.icon}</span>
+                  <div>
+                    <h3
+                      className="text-base font-black text-white uppercase mb-1"
+                      style={{ fontFamily: "Barlow Condensed, sans-serif" }}
+                    >
+                      {pillar.title}
+                    </h3>
+                    <p className="text-sm font-semibold mb-1" style={{ color: "#FF6B35" }}>
+                      {pillar.summary}
+                    </p>
+                    <p className="text-sm" style={{ color: "rgba(255,255,255,0.6)" }}>
+                      {pillar.detail}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div
+            className="mt-4 p-4 rounded-2xl border text-center"
+            style={{
+              background: "rgba(255,255,255,0.03)",
+              borderColor: "rgba(255,255,255,0.08)",
+            }}
+          >
+            <p className="text-xs" style={{ color: "rgba(255,255,255,0.4)" }}>
+              TUTK — Turned Up In The Kitchen · Wilfred Edition v3.0
+              <br />
+              Optimized for Adults 40+ · Georgia · Global
+              <br />
+              © 2026 Turned Up Fitness LLC
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* ===== RECIPE DETAIL MODAL ===== */}
+      {selectedRecipe && (
+        <div
+          className="fixed inset-0 z-50 flex flex-col overflow-y-auto"
+          style={{ background: "#080808" }}
+        >
+          {/* Modal Header */}
+          <div
+            className="sticky top-0 z-10 px-4 py-4 flex items-center gap-3 border-b"
+            style={{ background: "#080808", borderColor: "rgba(255,255,255,0.08)" }}
+          >
+            <button
+              onClick={() => setSelectedRecipe(null)}
+              className="p-2 rounded-xl border"
+              style={{
+                background: "rgba(255,255,255,0.05)",
+                borderColor: "rgba(255,255,255,0.1)",
+                color: "white",
+              }}
+            >
+              ←
+            </button>
+            <div>
+              <h2
+                className="text-xl font-black text-white uppercase"
+                style={{ fontFamily: "Barlow Condensed, sans-serif" }}
+              >
+                {selectedRecipe.name}
+              </h2>
+              <p className="text-xs" style={{ color: "#FF6B35" }}>
+                {categoryIcons[selectedRecipe.category]} {categoryLabels[selectedRecipe.category]}
+              </p>
+            </div>
+          </div>
+
+          <div className="px-4 py-4 pb-24">
+            {/* Macros */}
+            {selectedRecipe.calories && (
+              <div className="grid grid-cols-4 gap-2 mb-4">
+                {[
+                  { label: "Calories", value: selectedRecipe.calories, unit: "" },
+                  { label: "Protein", value: selectedRecipe.protein, unit: "g" },
+                  { label: "Fat", value: selectedRecipe.fat, unit: "g" },
+                  { label: "Carbs", value: selectedRecipe.carbs, unit: "g" },
+                ].map((macro) => (
+                  <div
+                    key={macro.label}
+                    className="p-3 rounded-xl text-center border"
+                    style={{
+                      background: "rgba(255,69,0,0.08)",
+                      borderColor: "rgba(255,69,0,0.2)",
+                    }}
+                  >
+                    <div
+                      className="text-lg font-black text-white"
+                      style={{ fontFamily: "Barlow Condensed, sans-serif" }}
+                    >
+                      {macro.value}
+                      {macro.unit}
+                    </div>
+                    <div className="text-xs" style={{ color: "rgba(255,255,255,0.5)" }}>
+                      {macro.label}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Meta */}
+            <div className="flex flex-wrap gap-2 mb-4">
+              {selectedRecipe.prepTime && (
+                <span
+                  className="text-xs px-3 py-1 rounded-full border"
+                  style={{
+                    background: "rgba(255,255,255,0.05)",
+                    borderColor: "rgba(255,255,255,0.1)",
+                    color: "rgba(255,255,255,0.6)",
+                  }}
+                >
+                  ⏱ {selectedRecipe.prepTime} min
+                </span>
+              )}
+              {selectedRecipe.servings && (
+                <span
+                  className="text-xs px-3 py-1 rounded-full border"
+                  style={{
+                    background: "rgba(255,255,255,0.05)",
+                    borderColor: "rgba(255,255,255,0.1)",
+                    color: "rgba(255,255,255,0.6)",
+                  }}
+                >
+                  👤 {selectedRecipe.servings} serving{selectedRecipe.servings > 1 ? "s" : ""}
+                </span>
+              )}
+              {selectedRecipe.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="text-xs px-3 py-1 rounded-full border"
+                  style={{
+                    background: "rgba(255,255,255,0.05)",
+                    borderColor: "rgba(255,255,255,0.1)",
+                    color: "rgba(255,255,255,0.5)",
+                  }}
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            {/* Ingredients */}
+            <div
+              className="rounded-2xl p-4 mb-3 border"
+              style={{
+                background: "rgba(255,255,255,0.03)",
+                borderColor: "rgba(255,255,255,0.08)",
+              }}
+            >
+              <h3
+                className="text-sm font-black uppercase tracking-wider mb-3 text-white"
+                style={{ fontFamily: "Barlow Condensed, sans-serif" }}
+              >
+                Ingredients
+              </h3>
+              {selectedRecipe.ingredients.map((ing, i) => (
+                <div key={i} className="flex items-start gap-2 mb-2">
+                  <span style={{ color: "#FF4500" }}>■</span>
+                  <span className="text-sm text-white">{ing}</span>
                 </div>
               ))}
             </div>
-          </div>
 
-          <p className="text-xs text-muted-foreground text-center mt-4">
-            30-Day TUF Meal Plan · Week 1 of 4
-          </p>
-        </section>
-      )}
+            {/* Directions */}
+            <div
+              className="rounded-2xl p-4 mb-3 border"
+              style={{
+                background: "rgba(255,255,255,0.03)",
+                borderColor: "rgba(255,255,255,0.08)",
+              }}
+            >
+              <h3
+                className="text-sm font-black uppercase tracking-wider mb-3 text-white"
+                style={{ fontFamily: "Barlow Condensed, sans-serif" }}
+              >
+                Directions
+              </h3>
+              {selectedRecipe.directions.map((step, i) => (
+                <div key={i} className="flex gap-3 mb-3">
+                  <span
+                    className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white"
+                    style={{ background: "linear-gradient(135deg, #FF4500, #DC2626)" }}
+                  >
+                    {i + 1}
+                  </span>
+                  <p className="text-sm text-white">{step}</p>
+                </div>
+              ))}
+            </div>
 
-      {/* ── PRINCIPLES TAB ── */}
-      {activeTab === "principles" && (
-        <section className="px-4 py-4 space-y-4">
-          <div className="tuf-card ok-border">
-            <p className="text-sm text-foreground/60 leading-relaxed">
-              Nutrition for the 40+ athlete is different. Your hormones have shifted, your recovery takes longer, and your metabolism responds differently. These aren't excuses — they're variables to engineer around.
-            </p>
-          </div>
+            {/* 40+ Science Note */}
+            {selectedRecipe.scienceNote && (
+              <div
+                className="rounded-2xl p-4 mb-3 border"
+                style={{
+                  background: "rgba(255,69,0,0.08)",
+                  borderColor: "rgba(255,69,0,0.2)",
+                }}
+              >
+                <h3
+                  className="text-xs font-black uppercase tracking-wider mb-2"
+                  style={{ color: "#FF6B35", fontFamily: "Barlow Condensed, sans-serif" }}
+                >
+                  🔬 40+ Science
+                </h3>
+                <p className="text-sm" style={{ color: "rgba(255,255,255,0.8)" }}>
+                  {selectedRecipe.scienceNote}
+                </p>
+              </div>
+            )}
 
-          {NUTRITION_PRINCIPLES.map((p) => (
-            <div key={p.title} className="tuf-card gold-border">
-              <div className="flex items-center gap-3 mb-2">
-                <span className="text-2xl">{p.icon}</span>
-                <div>
-                  <p className="font-barlow-condensed text-base tracking-wider">{p.title}</p>
-                  <p className={`text-xs font-bold ${p.accent}`}>{p.rule}</p>
+            {/* Condition Friendly */}
+            {selectedRecipe.conditionFriendly && selectedRecipe.conditionFriendly.length > 0 && (
+              <div
+                className="rounded-2xl p-4 border"
+                style={{
+                  background: "rgba(34,197,94,0.05)",
+                  borderColor: "rgba(34,197,94,0.15)",
+                }}
+              >
+                <h3
+                  className="text-xs font-black uppercase tracking-wider mb-2"
+                  style={{ color: "#4ade80", fontFamily: "Barlow Condensed, sans-serif" }}
+                >
+                  ✓ Safe For
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {selectedRecipe.conditionFriendly.map((c) => (
+                    <span
+                      key={c}
+                      className="text-xs px-3 py-1 rounded-full"
+                      style={{ background: "rgba(34,197,94,0.1)", color: "#4ade80" }}
+                    >
+                      {c.replace("-", " ")}
+                    </span>
+                  ))}
                 </div>
               </div>
-              <p className="text-sm text-foreground/60 leading-relaxed">{p.detail}</p>
-            </div>
-          ))}
-
-          {/* Supplement stack */}
-          <div className="tuf-card gold-border">
-            <div className="font-barlow-condensed text-base tracking-wider border-l-4 border-l-primary pl-3 mb-3">
-              SUPPLEMENT STACK
-            </div>
-            <div className="space-y-2 text-sm text-foreground/70">
-              <p><span className="text-foreground font-bold">Burn AM/PM</span> — Metabolism support + fat loss</p>
-              <p><span className="text-foreground font-bold">Intra/Test Storm</span> — Soreness, fatigue, and recovery</p>
-              <p><span className="text-foreground font-bold">Sleep Multiplier</span> — Stress, sleep quality, and recovery</p>
-              <p><span className="text-foreground font-bold">EFA Hormone Optimizer</span> — Hormonal balance + plateau breaking</p>
-            </div>
-            <p className="text-xs text-muted-foreground mt-3">
-              Ask your TUF coach for personalized supplement recommendations.
-            </p>
+            )}
           </div>
-        </section>
+        </div>
       )}
     </div>
   );
