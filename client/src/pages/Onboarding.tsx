@@ -113,12 +113,14 @@ export default function Onboarding() {
             />
           </div>
 
-          <h1
-            className="font-black leading-none mb-2 text-white"
-            style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '2.4rem', letterSpacing: '0.06em' }}
-          >
-            TURNED UP <span className="text-primary">FITNESS</span>
-          </h1>
+          <div className="flex justify-center mb-2">
+            <img
+              src="https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/tuf-wordmark_9c8bc171.png"
+              alt="Turned Up Fitness"
+              className="w-full max-w-[320px] h-auto"
+              style={{ filter: 'invert(1) drop-shadow(0 0 8px rgba(255,40,40,0.5))' }}
+            />
+          </div>
           <p className="text-sm text-muted-foreground mb-1">
             AI-powered coaching built for the 40+ athlete.
           </p>

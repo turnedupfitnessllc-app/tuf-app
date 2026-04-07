@@ -9,10 +9,12 @@ export function TufHeader() {
       <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
         {/* Brand */}
         <div className="flex items-center gap-2">
-          <div className="text-2xl font-bold">
-            <span className="text-foreground">TUF</span>
-            <span className="text-gradient ml-1">MOVE</span>
-          </div>
+          <img
+            src="https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/tuf-up-mark_24c33eef.png"
+            alt="Turned Up Fitness"
+            className="h-10 w-auto"
+            style={{ filter: 'drop-shadow(0 0 6px rgba(255,40,40,0.5))' }}
+          />
         </div>
 
         {/* Right section */}
