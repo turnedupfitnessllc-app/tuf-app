@@ -23,6 +23,7 @@ import Onboarding from "./pages/Onboarding";
 import Goals from "./pages/Goals";
 import BiomechanicalOverlay from "./pages/BiomechanicalOverlay";
 import JarvisChat from "./pages/JarvisChat";
+import PantherBrain from "./pages/PantherBrain";
 import LiveCoaching from "./pages/LiveCoaching";
 import BodyComposition from "./pages/BodyComposition";
 
@@ -55,7 +56,8 @@ function Router() {
 
         {/* ── Feature screens ───────────────────────────────── */}
         <Route path={"/boa"} component={BiomechanicalOverlay} />
-        <Route path={"/jarvis"} component={JarvisChat} />
+        <Route path={"/jarvis"} component={PantherBrain} />
+        <Route path={"/jarvis-legacy"} component={JarvisChat} />
         <Route path={"/live"} component={LiveCoaching} />
         <Route path={"/body-comp"} component={BodyComposition} />
 
