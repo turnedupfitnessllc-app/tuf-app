@@ -1,4 +1,3 @@
-import { TufBottomNav } from '@/components/TufBottomNav';
 import { BookOpen, Award, Lock, ChevronRight } from 'lucide-react';
 
 export default function Vault() {
@@ -172,7 +171,6 @@ export default function Vault() {
         </section>
       </main>
 
-      <TufBottomNav />
     </div>
   );
 }

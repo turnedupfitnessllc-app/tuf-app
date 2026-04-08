@@ -1,4 +1,3 @@
-import { TufBottomNav } from '@/components/TufBottomNav';
 import { TrendingUp, Award, Zap, Target } from 'lucide-react';
 
 export default function Progress() {
@@ -227,7 +226,6 @@ export default function Progress() {
         </section>
       </main>
 
-      <TufBottomNav />
     </div>
   );
 }

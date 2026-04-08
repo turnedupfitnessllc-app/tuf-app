@@ -26,6 +26,68 @@ const PANTHER_STATES: Record<PantherStateName, {
 
 // ─── Client Memory System ─────────────────────────────────────────────────────
 const MEMORY_KEY = "tuf_panther_client";
+const USER_ID_KEY = "tuf_user_id";
+
+// ─── DB Sync Helpers ─────────────────────────────────────────────────────────
+function getOrCreateUserId(): string {
+  let uid = localStorage.getItem(USER_ID_KEY);
+  if (!uid) {
+    uid = `user_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+    localStorage.setItem(USER_ID_KEY, uid);
+  }
+  return uid;
+}
+
+async function loadMemoryFromDB(userId: string): Promise<Partial<ClientMemory> | null> {
+  try {
+    const res = await fetch(`/api/db/memory/${userId}`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (!data) return null;
+    return {
+      name: data.client_name || null,
+      goal: data.primary_goal || null,
+      primaryIssue: data.primary_issue || null,
+      sessions: data.sessions_count || 0,
+      totalMessages: data.total_messages || 0,
+      wins: data.wins || [],
+      struggles: data.struggles || [],
+      missedDays: data.missed_days || 0,
+      lastSeen: data.last_seen || null,
+      streakDays: data.streak_days || 0,
+      pantherStage: data.panther_stage || "CUB",
+      xp: data.xp || 0,
+      conversationHistory: data.conversation_history || [],
+      milestones: data.milestones || [],
+    };
+  } catch { return null; }
+}
+
+async function saveMemoryToDB(userId: string, mem: ClientMemory): Promise<void> {
+  try {
+    await fetch("/api/db/memory", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        user_id: userId,
+        client_name: mem.name,
+        primary_goal: mem.goal,
+        primary_issue: mem.primaryIssue,
+        sessions_count: mem.sessions,
+        total_messages: mem.totalMessages,
+        wins: mem.wins,
+        struggles: mem.struggles,
+        missed_days: mem.missedDays,
+        last_seen: Date.now(),
+        streak_days: mem.streakDays,
+        panther_stage: mem.pantherStage,
+        xp: mem.xp,
+        conversation_history: mem.conversationHistory.slice(-20),
+        milestones: mem.milestones,
+      }),
+    });
+  } catch { /* silent fail — localStorage is the backup */ }
+}
 
 interface ClientMemory {
   name: string | null;
@@ -333,12 +395,11 @@ export default function PantherBrain() {
   const [isThinking, setIsThinking]       = useState(false);
   const [xpDelta, setXpDelta]             = useState<string | null>(null);
   const [imageTransition, setImageTransition] = useState(false);
-
+  const [userId]                          = useState<string>(() => getOrCreateUserId());
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef  = useRef<HTMLTextAreaElement>(null);
   const memRef    = useRef(memory);
   memRef.current  = memory;
-
   // Inject keyframes once
   useEffect(() => {
     const id = "panther-live-styles";
@@ -349,15 +410,25 @@ export default function PantherBrain() {
       document.head.appendChild(style);
     }
   }, []);
-
-  // Memory update helper
+  // Load memory from DB on mount (DB takes priority over localStorage)
+  useEffect(() => {
+    loadMemoryFromDB(userId).then(dbMem => {
+      if (dbMem && (dbMem.sessions || 0) > 0) {
+        setMemory(prev => ({ ...prev, ...dbMem }));
+        saveMemory({ ...loadMemory(), ...dbMem });
+      }
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId]);
+  // Memory update helper — saves to both localStorage and DB
   const updateMemory = useCallback((updates: Partial<ClientMemory>) => {
     setMemory(prev => {
       const next = { ...prev, ...updates };
       saveMemory(next);
+      saveMemoryToDB(userId, next);
       return next;
     });
-  }, []);
+  }, [userId]);
 
   // Award XP with visual feedback
   const awardXP = useCallback((amount: number, mem: ClientMemory) => {

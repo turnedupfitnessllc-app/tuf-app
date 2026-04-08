@@ -6,6 +6,8 @@ import { fileURLToPath } from "url";
 import jarvisRouter from "./routes/jarvis.js";
 import coachingRouter from "./routes/coaching.js";
 import voiceRouter from "./routes/voice.js";
+import dbRouter from "./routes/database.js";
+import videoRouter from "./routes/video.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,6 +24,8 @@ async function startServer() {
   app.use("/api/jarvis", jarvisRouter);
   app.use("/api/coaching", coachingRouter);
   app.use("/api/voice", voiceRouter);
+  app.use("/api/db", dbRouter);
+  app.use("/api/video", videoRouter);
 
   // Health check endpoint
   app.get("/api/health", (_req, res) => {

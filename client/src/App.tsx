@@ -34,6 +34,7 @@ import Feast from "./pages/Feast";
 import Vault from "./pages/Vault";
 import Progress from "./pages/Progress";
 import ComponentShowcase from "./pages/ComponentShowcase";
+import PantherPipeline from "./pages/PantherPipeline";
 
 function Router() {
   // First-launch detection — show onboarding if not yet completed
@@ -68,6 +69,7 @@ function Router() {
         <Route path={"/vault"} component={Vault} />
         <Route path={"/progress"} component={Progress} />
         <Route path={"/showcase"} component={ComponentShowcase} />
+        <Route path={"/pipeline"} component={PantherPipeline} />
 
         <Route path={"/404"} component={NotFound} />
         <Route component={NotFound} />
