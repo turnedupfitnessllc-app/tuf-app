@@ -1,10 +1,9 @@
 /**
- * TUF Home Screen — Panther UX System v2
- * Fixed: header added, hero gap removed, isNewUser logic, visual hierarchy
+ * TUF Home Screen — Panther UX v3
+ * Layout: Panther greeting → Today's Focus → Pain Status → Quick Actions
  */
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
-import { useProgress } from "@/hooks/useProgress";
 
 type PantherStage = "CUB" | "STEALTH" | "CONTROLLED" | "DOMINANT" | "APEX PREDATOR";
 
@@ -14,25 +13,6 @@ function getPantherStage(xp: number): PantherStage {
   if (xp < 600) return "CONTROLLED";
   if (xp < 1000) return "DOMINANT";
   return "APEX PREDATOR";
-}
-
-function getGreeting(): string {
-  const hour = new Date().getHours();
-  if (hour < 5) return "Still up?";
-  if (hour < 12) return "Good morning";
-  if (hour < 17) return "Good afternoon";
-  if (hour < 21) return "Good evening";
-  return "Late session?";
-}
-
-function getJarvisQuip(stage: PantherStage, streak: number): string {
-  if (streak >= 7) return "Seven days straight. That's discipline.";
-  if (streak >= 3) return "Three days in a row. Keep the chain alive.";
-  if (stage === "APEX PREDATOR") return "You've built something real. Don't stop now.";
-  if (stage === "DOMINANT") return "You're close to the top. One session at a time.";
-  if (stage === "CONTROLLED") return "Your movement is getting cleaner. I can see it.";
-  if (stage === "STEALTH") return "Foundation is building. Trust the process.";
-  return "Every session counts. Start where you are.";
 }
 
 const STAGE_COLORS: Record<PantherStage, string> = {
@@ -45,88 +25,61 @@ const STAGE_COLORS: Record<PantherStage, string> = {
 
 const CDN = "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR";
 
-interface ScoreBarProps {
-  label: string;
-  value: number;
-  color: string;
-  delay?: number;
-}
-
-function ScoreBar({ label, value, color, delay = 0 }: ScoreBarProps) {
-  const [width, setWidth] = useState(0);
-  useEffect(() => {
-    const t = setTimeout(() => setWidth(value), 100 + delay);
-    return () => clearTimeout(t);
-  }, [value, delay]);
-  return (
-    <div>
-      <div className="flex justify-between items-center mb-1">
-        <span className="text-xs font-black tracking-widest" style={{ color: 'rgba(255,255,255,0.5)', fontFamily: "'Barlow Condensed', sans-serif" }}>{label}</span>
-        <span className="text-xs font-black tabular-nums text-white">{value}</span>
-      </div>
-      <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
-        <div
-          className="h-full rounded-full transition-all duration-700 ease-out"
-          style={{ width: `${width}%`, background: color }}
-        />
-      </div>
-    </div>
-  );
-}
+const FOCUS_OPTIONS = [
+  { label: "Lower Body", icon: "🦵", color: "#FF4500" },
+  { label: "Mobility", icon: "🌀", color: "#4a9eff" },
+  { label: "Recovery", icon: "💤", color: "#22c55e" },
+  { label: "Upper Body", icon: "💪", color: "#C8973A" },
+  { label: "Core", icon: "⚡", color: "#a855f7" },
+];
 
 export default function Home() {
   const [, navigate] = useLocation();
-  const { progress, totalScore } = useProgress();
-  const greeting = getGreeting();
 
-  // User profile
+  // User state
   const [userName, setUserName] = useState<string>("");
   const [pantherXP, setPantherXP] = useState<number>(0);
   const [streakDays, setStreakDays] = useState<number>(0);
+  const [hasPlan, setHasPlan] = useState(false);
+  const [lastPainLog, setLastPainLog] = useState<{ location: string; level: number } | null>(null);
+  const [todayFocusIdx, setTodayFocusIdx] = useState(0);
+
   useEffect(() => {
     try {
       const p = JSON.parse(localStorage.getItem("tuf_profile") || "{}");
       setUserName(p.name || "");
     } catch {}
     try {
-      const mem = JSON.parse(localStorage.getItem("tuf_panther_v3") || localStorage.getItem("tuf_panther_client") || "{}");
+      const mem = JSON.parse(
+        localStorage.getItem("tuf_panther_v3") ||
+        localStorage.getItem("tuf_panther_client") || "{}"
+      );
       setPantherXP(mem.xp || 0);
       setStreakDays(mem.streakDays || 0);
     } catch {}
+    try {
+      const stored = JSON.parse(localStorage.getItem("tuf_correctives") || "{}");
+      if (stored?.issue?.correctives?.length || stored?.correctives?.length) {
+        setHasPlan(true);
+      }
+    } catch {}
+    try {
+      const painLogs = JSON.parse(localStorage.getItem("tuf_pain_logs") || "[]");
+      if (painLogs.length > 0) {
+        const latest = painLogs[painLogs.length - 1];
+        setLastPainLog({ location: latest.location || latest.pain_location, level: latest.level || latest.pain_level });
+      }
+    } catch {}
+    // Rotate today's focus based on day of week
+    setTodayFocusIdx(new Date().getDay() % FOCUS_OPTIONS.length);
   }, []);
 
   const stage = getPantherStage(pantherXP);
   const stageColor = STAGE_COLORS[stage];
-  const quip = getJarvisQuip(stage, streakDays);
-
-  // Corrective plan
-  const [lastPlan, setLastPlan] = useState<{ issueLabel: string; correctives: string[]; totalCount: number } | null>(null);
-  const [hasPlan, setHasPlan] = useState(false);
-  useEffect(() => {
-    try {
-      const stored = JSON.parse(localStorage.getItem("tuf_correctives") || "{}");
-      if (stored?.issue?.correctives?.length) {
-        setHasPlan(true);
-        setLastPlan({
-          issueLabel: stored.issue.label || "Corrective Plan",
-          correctives: stored.issue.correctives.slice(0, 3),
-          totalCount: stored.issue.correctives.length,
-        });
-      } else if (stored?.correctives?.length) {
-        // Legacy format
-        setHasPlan(true);
-        setLastPlan({
-          issueLabel: stored.primaryIssue || "Corrective Plan",
-          correctives: stored.correctives.slice(0, 3),
-          totalCount: stored.correctives.length,
-        });
-      }
-    } catch {}
-  }, []);
-
   const isNewUser = !hasPlan && pantherXP === 0;
+  const todayFocus = FOCUS_OPTIONS[todayFocusIdx];
 
-  // XP bar percentage within current stage
+  // XP bar
   const xpRanges: Record<PantherStage, [number, number]> = {
     "CUB": [0, 100], "STEALTH": [100, 300], "CONTROLLED": [300, 600],
     "DOMINANT": [600, 1000], "APEX PREDATOR": [1000, 1000],
@@ -134,246 +87,282 @@ export default function Home() {
   const [mn, mx] = xpRanges[stage];
   const xpPct = stage === "APEX PREDATOR" ? 100 : Math.min(100, ((pantherXP - mn) / (mx - mn)) * 100);
 
+  const hasPain = lastPainLog && lastPainLog.level >= 3;
+
   return (
-    <div className="min-h-screen pb-24" style={{ background: '#080808' }}>
-      <main className="max-w-[480px] mx-auto px-4 pt-5">
+    <div className="min-h-screen pb-28" style={{ background: '#080808' }}>
+      <main className="max-w-[480px] mx-auto px-4 pt-5 space-y-4">
 
-        {/* ── Greeting ──────────────────────────────────────────────── */}
-        <div className="mb-5">
-          <p
-            className="text-sm font-bold"
-            style={{ color: 'rgba(255,255,255,0.45)', fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: '0.05em' }}
-          >
-            {greeting}{userName ? `, ${userName}` : ""}.
-          </p>
-          <h1
-            className="font-black leading-none mt-0.5"
-            style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '2.4rem', letterSpacing: '0.06em', color: '#fff' }}
-          >
-            TURNED UP <span style={{ color: '#FF4500' }}>FITNESS</span>
-          </h1>
-        </div>
-
-        {/* ── Panther Hero ──────────────────────────────────────────── */}
+        {/* ── Panther Hero + Greeting ───────────────────────────────── */}
         <div
-          className="relative mb-5 rounded-2xl overflow-hidden"
+          className="relative rounded-2xl overflow-hidden"
           style={{
-            boxShadow: `0 0 60px rgba(255,69,0,0.3), 0 0 120px rgba(220,38,38,0.12), 0 4px 32px rgba(0,0,0,0.7)`,
-            border: `1px solid ${stageColor}44`,
-            lineHeight: 0,
+            border: `1px solid ${stageColor}33`,
+            boxShadow: `0 0 60px rgba(255,69,0,0.2), 0 4px 32px rgba(0,0,0,0.7)`,
           }}
         >
-          {/* Panther image — fills from top edge, no gap */}
+          {/* Panther image */}
           <img
             src={`${CDN}/panther-up_950a85bd.png`}
-            alt="Panther — Turned Up Fitness"
-            style={{ width: '100%', height: '340px', objectFit: 'cover', objectPosition: 'center 20%', display: 'block', verticalAlign: 'top' }}
-          />
-
-          {/* Bottom gradient fade */}
-          <div
-            className="absolute inset-x-0 bottom-0"
+            alt="Panther"
             style={{
-              height: '120px',
-              background: 'linear-gradient(to top, #080808 0%, rgba(8,8,8,0.7) 50%, transparent 100%)',
+              width: '100%',
+              height: '300px',
+              objectFit: 'cover',
+              objectPosition: 'center 20%',
+              display: 'block',
             }}
           />
 
-          {/* Stage badge — bottom center */}
-          <div className="absolute bottom-3 inset-x-0 flex flex-col items-center gap-1">
-            <span
-              className="font-black tracking-widest text-sm"
-              style={{ fontFamily: "'Barlow Condensed', sans-serif", color: stageColor, letterSpacing: '0.2em' }}
+          {/* Bottom gradient */}
+          <div
+            className="absolute inset-x-0 bottom-0"
+            style={{
+              height: '160px',
+              background: 'linear-gradient(to top, #080808 0%, rgba(8,8,8,0.85) 40%, transparent 100%)',
+            }}
+          />
+
+          {/* Streak badge — top right */}
+          {streakDays > 0 && (
+            <div className="absolute top-3 right-3">
+              <div
+                className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl"
+                style={{ background: 'rgba(245,166,35,0.15)', border: '1px solid rgba(245,166,35,0.35)' }}
+              >
+                <span style={{ fontSize: '13px' }}>🔥</span>
+                <span className="font-black text-xs" style={{ color: '#F5A623', fontFamily: "'Barlow Condensed', sans-serif" }}>
+                  {streakDays}d
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* Stage + XP — top left */}
+          <div className="absolute top-3 left-3">
+            <div
+              className="px-2.5 py-1.5 rounded-xl"
+              style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(8px)', border: `1px solid ${stageColor}44` }}
             >
-              {stage}
-            </span>
+              <p className="font-black text-xs tracking-widest" style={{ color: stageColor, fontFamily: "'Barlow Condensed', sans-serif" }}>
+                {stage}
+              </p>
+            </div>
+          </div>
+
+          {/* Greeting + CTA — bottom overlay */}
+          <div className="absolute bottom-0 inset-x-0 px-4 pb-4">
+            {/* Greeting */}
+            <p
+              className="text-xs mb-0.5"
+              style={{ color: 'rgba(255,255,255,0.45)', fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: '0.08em' }}
+            >
+              {userName ? `WELCOME BACK, ${userName.toUpperCase()}` : "WELCOME BACK"}
+            </p>
+            <h1
+              className="font-black leading-none mb-3"
+              style={{
+                fontFamily: "'Bebas Neue', 'Barlow Condensed', sans-serif",
+                fontSize: '2rem',
+                color: '#fff',
+                letterSpacing: '0.04em',
+              }}
+            >
+              READY TO MOVE WITH PRECISION?
+            </h1>
+
             {/* XP bar */}
-            <div className="w-32">
+            <div className="mb-3">
               <div className="h-1 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.1)' }}>
                 <div
                   className="h-full rounded-full transition-all duration-700"
                   style={{ width: `${xpPct}%`, background: stageColor }}
                 />
               </div>
-              <p className="text-center mt-0.5" style={{ fontSize: '9px', color: 'rgba(255,255,255,0.35)', fontFamily: "'Barlow Condensed', sans-serif" }}>
+              <p className="mt-0.5 text-right" style={{ fontSize: '9px', color: 'rgba(255,255,255,0.3)', fontFamily: "'Barlow Condensed', sans-serif" }}>
                 {pantherXP} XP
               </p>
             </div>
-          </div>
 
-          {/* Quip — top overlay */}
-          <div className="absolute top-3 inset-x-3">
-            <div
-              className="px-3 py-2 rounded-xl"
-              style={{
-                background: 'rgba(0,0,0,0.6)',
-                backdropFilter: 'blur(10px)',
-                border: '1px solid rgba(255,255,255,0.08)',
-              }}
-            >
-              <p className="text-xs text-white leading-snug" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>
-                🐆 {quip}
-              </p>
-            </div>
-          </div>
-
-          {/* Streak flame — top right if active */}
-          {streakDays > 0 && (
-            <div className="absolute top-3 right-3">
-              <div
-                className="flex items-center gap-1 px-2 py-1 rounded-lg"
-                style={{ background: 'rgba(245,166,35,0.15)', border: '1px solid rgba(245,166,35,0.3)' }}
-              >
-                <span style={{ fontSize: '12px' }}>🔥</span>
-                <span
-                  className="font-black"
-                  style={{ fontSize: '11px', color: '#F5A623', fontFamily: "'Barlow Condensed', sans-serif" }}
-                >
-                  {streakDays}
-                </span>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* ── Score Bars (returning user) ───────────────────────────── */}
-        {!isNewUser && (
-          <div
-            className="p-4 rounded-2xl mb-4 space-y-3"
-            style={{
-              background: 'rgba(255,255,255,0.03)',
-              border: '1px solid rgba(255,255,255,0.07)',
-            }}
-          >
-            <ScoreBar label="MOBILITY" value={progress.mobility} color="#4a9eff" delay={0} />
-            <ScoreBar label="STRENGTH" value={progress.strength} color="#FF4500" delay={100} />
-            <ScoreBar label="STABILITY" value={progress.stability} color="#22c55e" delay={200} />
-          </div>
-        )}
-
-        {/* ── New User CTA ──────────────────────────────────────────── */}
-        {isNewUser && (
-          <div
-            className="p-4 rounded-2xl mb-4"
-            style={{
-              background: 'rgba(255,69,0,0.07)',
-              border: '1px solid rgba(255,69,0,0.22)',
-            }}
-          >
-            <p className="font-black text-sm text-white" style={{ fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: '0.05em' }}>
-              Start your first assessment
-            </p>
-            <p className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.45)' }}>
-              JARVIS will identify your compensation patterns and build your corrective plan.
-            </p>
-          </div>
-        )}
-
-        {/* ── Today's Corrective Plan ───────────────────────────────── */}
-        {lastPlan && (
-          <div className="mb-4">
-            <p
-              className="text-xs font-black tracking-widest mb-2"
-              style={{ color: 'rgba(255,255,255,0.35)', fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: '0.15em' }}
-            >
-              YOUR CORRECTIVE PLAN
-            </p>
+            {/* START WORKOUT button */}
             <button
-              onClick={() => navigate("/correct")}
-              className="w-full text-left p-4 rounded-2xl active:scale-[0.98] transition-all"
+              onClick={() => navigate(isNewUser ? "/assess" : hasPlan ? "/correct" : "/program")}
+              className="w-full py-3.5 rounded-xl font-black text-white text-sm tracking-widest active:scale-[0.98] transition-all"
               style={{
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(255,255,255,0.08)',
+                fontFamily: "'Barlow Condensed', sans-serif",
+                background: 'linear-gradient(135deg, #FF4500, #DC2626)',
+                boxShadow: '0 4px 20px rgba(255,69,0,0.45)',
+                letterSpacing: '0.15em',
               }}
             >
-              <div className="flex items-center justify-between mb-2">
-                <p className="font-black text-sm text-white" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>
-                  {lastPlan.issueLabel}
-                </p>
-                <span className="text-xs font-bold" style={{ color: '#FF4500' }}>START →</span>
-              </div>
-              <div className="flex flex-wrap gap-1">
-                {lastPlan.correctives.map((ex) => (
-                  <span
-                    key={ex}
-                    className="text-xs px-2 py-0.5 rounded-full capitalize"
-                    style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.55)' }}
-                  >
-                    {ex.replace(/-/g, " ")}
-                  </span>
-                ))}
-                {lastPlan.totalCount > 3 && (
-                  <span
-                    className="text-xs px-2 py-0.5 rounded-full"
-                    style={{ background: 'rgba(255,69,0,0.12)', color: 'rgba(255,69,0,0.8)' }}
-                  >
-                    +{lastPlan.totalCount - 3} more
-                  </span>
-                )}
-              </div>
+              {isNewUser ? 'START ASSESSMENT' : 'START WORKOUT'}
             </button>
           </div>
-        )}
+        </div>
 
-        {/* ── Primary Action CTA ────────────────────────────────────── */}
-        <div className="space-y-3">
-          <button
-            onClick={() => navigate(isNewUser ? "/assess" : "/correct")}
-            className="w-full flex items-center gap-4 p-5 rounded-2xl text-white active:scale-[0.98] transition-all text-left"
-            style={{
-              background: 'linear-gradient(135deg, #FF4500, #DC2626)',
-              boxShadow: '0 4px 24px rgba(255,69,0,0.4)',
-            }}
+        {/* ── Today's Focus ─────────────────────────────────────────── */}
+        <div
+          className="p-4 rounded-2xl"
+          style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}
+        >
+          <p
+            className="text-xs font-black tracking-widest mb-3"
+            style={{ color: 'rgba(255,255,255,0.35)', fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: '0.15em' }}
           >
-            <div
-              className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0"
-              style={{ background: 'rgba(255,255,255,0.15)' }}
-            >
-              {isNewUser ? '🧠' : '⚡'}
-            </div>
-            <div className="flex-1">
-              <p
-                className="font-black text-base"
-                style={{ fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: '0.08em' }}
-              >
-                {isNewUser ? 'ASSESS YOUR MOVEMENT' : 'START CORRECTIVES'}
-              </p>
-              <p className="text-white/70 text-sm">
-                {isNewUser ? 'Find your weakness. Fix it at the root.' : (lastPlan ? lastPlan.issueLabel : 'Continue your plan')}
-              </p>
-            </div>
-            <span className="text-white/50 text-xl">›</span>
-          </button>
-
-          {/* Secondary 2×2 grid */}
-          <div className="grid grid-cols-2 gap-3">
-            {[
-              { path: '/train', icon: '🔥', label: 'TRAIN', sub: '8 programs ready' },
-              { path: '/jarvis', icon: '🐆', label: 'PANTHER', sub: 'Ask anything' },
-              { path: '/live', icon: '📷', label: 'LIVE FORM', sub: 'Camera coaching' },
-              { path: '/assess', icon: '🧠', label: 'ASSESS', sub: isNewUser ? 'Start here' : 'Reassess' },
-            ].map(({ path, icon, label, sub }) => (
+            TODAY'S FOCUS
+          </p>
+          <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
+            {FOCUS_OPTIONS.map((f, i) => (
               <button
-                key={path}
-                onClick={() => navigate(path)}
-                className="flex flex-col gap-2 p-4 rounded-2xl active:scale-[0.97] transition-all text-left"
+                key={f.label}
+                onClick={() => setTodayFocusIdx(i)}
+                className="flex-shrink-0 flex flex-col items-center gap-1.5 px-4 py-2.5 rounded-xl transition-all active:scale-[0.97]"
                 style={{
-                  background: 'rgba(255,255,255,0.03)',
-                  border: '1px solid rgba(255,255,255,0.07)',
+                  background: i === todayFocusIdx ? `${f.color}22` : 'rgba(255,255,255,0.04)',
+                  border: `1px solid ${i === todayFocusIdx ? f.color + '55' : 'rgba(255,255,255,0.07)'}`,
                 }}
               >
-                <span className="text-2xl">{icon}</span>
-                <p
-                  className="font-black text-sm text-white"
-                  style={{ fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: '0.08em' }}
+                <span style={{ fontSize: '20px' }}>{f.icon}</span>
+                <span
+                  className="font-black text-xs whitespace-nowrap"
+                  style={{
+                    fontFamily: "'Barlow Condensed', sans-serif",
+                    color: i === todayFocusIdx ? f.color : 'rgba(255,255,255,0.5)',
+                    letterSpacing: '0.06em',
+                  }}
                 >
-                  {label}
-                </p>
-                <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>{sub}</p>
+                  {f.label.toUpperCase()}
+                </span>
               </button>
             ))}
           </div>
         </div>
+
+        {/* ── Pain Status ───────────────────────────────────────────── */}
+        <button
+          onClick={() => navigate("/assess")}
+          className="w-full p-4 rounded-2xl text-left active:scale-[0.98] transition-all"
+          style={{
+            background: hasPain
+              ? 'rgba(220,38,38,0.08)'
+              : 'rgba(34,197,94,0.06)',
+            border: `1px solid ${hasPain ? 'rgba(220,38,38,0.3)' : 'rgba(34,197,94,0.2)'}`,
+          }}
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div
+                className="w-9 h-9 rounded-xl flex items-center justify-center text-lg flex-shrink-0"
+                style={{ background: hasPain ? 'rgba(220,38,38,0.15)' : 'rgba(34,197,94,0.12)' }}
+              >
+                {hasPain ? '⚠️' : '✅'}
+              </div>
+              <div>
+                <p
+                  className="font-black text-sm text-white"
+                  style={{ fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: '0.05em' }}
+                >
+                  PAIN STATUS
+                </p>
+                <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.45)' }}>
+                  {hasPain
+                    ? `${lastPainLog!.location} — Level ${lastPainLog!.level}/10 detected`
+                    : "No pain detected — movement clear"}
+                </p>
+              </div>
+            </div>
+            <span style={{ color: hasPain ? '#DC2626' : '#22c55e', fontSize: '18px' }}>›</span>
+          </div>
+        </button>
+
+        {/* ── Quick Actions ─────────────────────────────────────────── */}
+        <div>
+          <p
+            className="text-xs font-black tracking-widest mb-3"
+            style={{ color: 'rgba(255,255,255,0.35)', fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: '0.15em' }}
+          >
+            QUICK ACTIONS
+          </p>
+          <div className="grid grid-cols-3 gap-3">
+            {[
+              {
+                path: hasPlan ? "/correct" : "/program",
+                icon: '⚡',
+                label: 'START TRAINING',
+                color: '#FF4500',
+                bg: 'rgba(255,69,0,0.1)',
+                border: 'rgba(255,69,0,0.25)',
+              },
+              {
+                path: '/assess',
+                icon: '🩺',
+                label: 'LOG PAIN',
+                color: '#DC2626',
+                bg: 'rgba(220,38,38,0.08)',
+                border: 'rgba(220,38,38,0.2)',
+              },
+              {
+                path: '/assess',
+                icon: '🧠',
+                label: 'ASSESS',
+                color: '#4a9eff',
+                bg: 'rgba(74,158,255,0.08)',
+                border: 'rgba(74,158,255,0.2)',
+              },
+            ].map(({ path, icon, label, color, bg, border }) => (
+              <button
+                key={label}
+                onClick={() => navigate(path)}
+                className="flex flex-col items-center gap-2 p-3.5 rounded-2xl active:scale-[0.96] transition-all"
+                style={{ background: bg, border: `1px solid ${border}` }}
+              >
+                <span style={{ fontSize: '22px' }}>{icon}</span>
+                <span
+                  className="font-black text-center leading-tight"
+                  style={{
+                    fontFamily: "'Barlow Condensed', sans-serif",
+                    fontSize: '10px',
+                    color,
+                    letterSpacing: '0.08em',
+                  }}
+                >
+                  {label}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* ── Panther Brain teaser ──────────────────────────────────── */}
+        <button
+          onClick={() => navigate("/jarvis")}
+          className="w-full p-4 rounded-2xl text-left active:scale-[0.98] transition-all"
+          style={{
+            background: 'rgba(255,69,0,0.05)',
+            border: '1px solid rgba(255,69,0,0.18)',
+          }}
+        >
+          <div className="flex items-center gap-3">
+            <div
+              className="w-10 h-10 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
+              style={{ background: 'rgba(255,69,0,0.12)' }}
+            >
+              🐆
+            </div>
+            <div className="flex-1">
+              <p
+                className="font-black text-sm text-white"
+                style={{ fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: '0.06em' }}
+              >
+                ASK PANTHER BRAIN
+              </p>
+              <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                "Why does my lower back hurt after squats?"
+              </p>
+            </div>
+            <span style={{ color: '#FF4500', fontSize: '18px' }}>›</span>
+          </div>
+        </button>
 
       </main>
     </div>
