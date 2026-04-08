@@ -36,6 +36,7 @@ import Progress from "./pages/Progress";
 import ComponentShowcase from "./pages/ComponentShowcase";
 import PantherPipeline from "./pages/PantherPipeline";
 import Program from "./pages/Program";
+import Evolve from "./pages/Evolve";
 
 function Router() {
   // First-launch detection — show onboarding if not yet completed
@@ -55,6 +56,7 @@ function Router() {
         <Route path={"/correct"} component={Correct} />
         <Route path={"/program"} component={Program} />
         <Route path={"/goals"} component={Goals} />
+        <Route path={"/evolve"} component={Evolve} />
         <Route path={"/profile"} component={Profile} />
 
         {/* ── Feature screens ───────────────────────────────── */}

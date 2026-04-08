@@ -1,368 +1,270 @@
 /**
- * TUF Home Screen — Panther UX v3
- * Layout: Panther greeting → Today's Focus → Pain Status → Quick Actions
+ * TUF HOME — v4.0
+ * Arc: Hook(dashboard) → Problem(today's gap) → Fix(today's plan)
+ *      → Demo(quick actions) → Cues(Panther) → CTA(start)
  */
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useLocation } from "wouter";
+import { PantherPresence, XPBar, PantherMessage, V4Card, SceneHeader } from "@/components/v4Components";
+import { ls, getStageFromXP } from "@/data/v4constants";
 
-type PantherStage = "CUB" | "STEALTH" | "CONTROLLED" | "DOMINANT" | "APEX PREDATOR";
-
-function getPantherStage(xp: number): PantherStage {
-  if (xp < 100) return "CUB";
-  if (xp < 300) return "STEALTH";
-  if (xp < 600) return "CONTROLLED";
-  if (xp < 1000) return "DOMINANT";
-  return "APEX PREDATOR";
-}
-
-const STAGE_COLORS: Record<PantherStage, string> = {
-  "CUB": "#888888",
-  "STEALTH": "#4a9eff",
-  "CONTROLLED": "#FF4500",
-  "DOMINANT": "#C8973A",
-  "APEX PREDATOR": "#22c55e",
-};
-
-const CDN = "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR";
-
-const FOCUS_OPTIONS = [
-  { label: "Lower Body", icon: "🦵", color: "#FF4500" },
-  { label: "Mobility", icon: "🌀", color: "#4a9eff" },
-  { label: "Recovery", icon: "💤", color: "#22c55e" },
-  { label: "Upper Body", icon: "💪", color: "#C8973A" },
-  { label: "Core", icon: "⚡", color: "#a855f7" },
+const FOCUS_PILLS = [
+  { label: "LOWER BODY",  color: "#FF4500", day: [1, 4] },
+  { label: "MOBILITY",    color: "#4a9eff", day: [2, 5] },
+  { label: "RECOVERY",    color: "#22c55e", day: [0, 3] },
+  { label: "UPPER BODY",  color: "#C8973A", day: [1, 4] },
+  { label: "CORE",        color: "#7c3aed", day: [2, 6] },
 ];
+
+const QUIPS = [
+  "Seven days straight. That's discipline.",
+  "Three days in. Keep the chain.",
+  "You showed up. That's the whole game.",
+  "The body adapts to what you demand of it.",
+  "Consistency over intensity. Always.",
+];
+
+const FOCUS_RGB: Record<string, string> = {
+  "#FF4500": "255,69,0",
+  "#4a9eff": "74,158,255",
+  "#22c55e": "34,197,94",
+  "#C8973A": "200,151,58",
+  "#7c3aed": "124,58,237",
+};
 
 export default function Home() {
   const [, navigate] = useLocation();
+  const [quip] = useState(() => QUIPS[Math.floor(Math.random() * QUIPS.length)]);
 
-  // User state
-  const [userName, setUserName] = useState<string>("");
-  const [pantherXP, setPantherXP] = useState<number>(0);
-  const [streakDays, setStreakDays] = useState<number>(0);
-  const [hasPlan, setHasPlan] = useState(false);
-  const [lastPainLog, setLastPainLog] = useState<{ location: string; level: number } | null>(null);
-  const [todayFocusIdx, setTodayFocusIdx] = useState(0);
+  const profile  = ls.get<{ name: string; goal: string }>("tuf_profile", { name: "", goal: "" });
+  const progress = ls.get<{ xp: number; streakDays: number; sessionsCompleted: number }>(
+    "tuf_progress", { xp: 0, streakDays: 0, sessionsCompleted: 0 }
+  );
+  const painLogs = ls.get<Array<{ location: string; level: number }>>("tuf_pain_logs", []);
+  const correctives = ls.get<{ issue?: { label: string } } | null>("tuf_correctives", null);
 
-  useEffect(() => {
-    try {
-      const p = JSON.parse(localStorage.getItem("tuf_profile") || "{}");
-      setUserName(p.name || "");
-    } catch {}
-    try {
-      const mem = JSON.parse(
-        localStorage.getItem("tuf_panther_v3") ||
-        localStorage.getItem("tuf_panther_client") || "{}"
-      );
-      setPantherXP(mem.xp || 0);
-      setStreakDays(mem.streakDays || 0);
-    } catch {}
-    try {
-      const stored = JSON.parse(localStorage.getItem("tuf_correctives") || "{}");
-      if (stored?.issue?.correctives?.length || stored?.correctives?.length) {
-        setHasPlan(true);
-      }
-    } catch {}
-    try {
-      const painLogs = JSON.parse(localStorage.getItem("tuf_pain_logs") || "[]");
-      if (painLogs.length > 0) {
-        const latest = painLogs[painLogs.length - 1];
-        setLastPainLog({ location: latest.location || latest.pain_location, level: latest.level || latest.pain_level });
-      }
-    } catch {}
-    // Rotate today's focus based on day of week
-    setTodayFocusIdx(new Date().getDay() % FOCUS_OPTIONS.length);
-  }, []);
+  const xp       = progress.xp || 0;
+  const streak   = progress.streakDays || 0;
+  const sessions = progress.sessionsCompleted || 0;
+  const stage    = getStageFromXP(xp);
+  const isNew    = sessions === 0;
 
-  const stage = getPantherStage(pantherXP);
-  const stageColor = STAGE_COLORS[stage];
-  const isNewUser = !hasPlan && pantherXP === 0;
-  const todayFocus = FOCUS_OPTIONS[todayFocusIdx];
+  const hour = new Date().getHours();
+  const greeting =
+    hour < 5  ? "Still up?" :
+    hour < 12 ? "Good morning" :
+    hour < 17 ? "Good afternoon" :
+    hour < 21 ? "Good evening" : "Late session?";
 
-  // XP bar
-  const xpRanges: Record<PantherStage, [number, number]> = {
-    "CUB": [0, 100], "STEALTH": [100, 300], "CONTROLLED": [300, 600],
-    "DOMINANT": [600, 1000], "APEX PREDATOR": [1000, 1000],
+  const todayDow = new Date().getDay();
+  const latestPain = painLogs.length > 0 ? painLogs[painLogs.length - 1] : null;
+
+  const handleStart = () => {
+    if (isNew) navigate("/assess");
+    else if (correctives?.issue) navigate("/program");
+    else navigate("/assess");
   };
-  const [mn, mx] = xpRanges[stage];
-  const xpPct = stage === "APEX PREDATOR" ? 100 : Math.min(100, ((pantherXP - mn) / (mx - mn)) * 100);
-
-  const hasPain = lastPainLog && lastPainLog.level >= 3;
 
   return (
-    <div className="min-h-screen pb-28" style={{ background: '#080808' }}>
-      <main className="max-w-[480px] mx-auto px-4 pt-5 space-y-4">
+    <div style={{ minHeight: "100vh", background: "#080808", paddingBottom: 96 }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap');
+        @keyframes ambient { 0%,100%{opacity:0.4} 50%{opacity:0.7} }
+        @keyframes ring    { 0%,100%{transform:scale(1);opacity:0.5} 50%{transform:scale(1.05);opacity:1} }
+        @keyframes scan    { 0%{top:-2%;opacity:0} 5%{opacity:1} 95%{opacity:1} 100%{top:102%;opacity:0} }
+        @keyframes fadeUp  { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes streakPulse { 0%,100%{opacity:0.8} 50%{opacity:1;filter:brightness(1.3)} }
+      `}</style>
 
-        {/* ── Panther Hero + Greeting ───────────────────────────────── */}
-        <div
-          className="relative rounded-2xl overflow-hidden"
+      <main style={{ maxWidth: 480, margin: "0 auto", padding: "80px 16px 0", position: "relative" }}>
+
+        {/* ── SCENE 1 — HOOK: Greeting + Panther ── */}
+        <div style={{ marginBottom: 20, animation: "fadeUp 0.5s ease forwards" }}>
+          <p style={{
+            fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700,
+            letterSpacing: "0.18em", color: "#FF4500", marginBottom: 4,
+          }}>
+            {greeting.toUpperCase()}{profile.name ? `, ${profile.name.toUpperCase()}` : ""}
+          </p>
+          <h1 style={{
+            fontFamily: "'Bebas Neue', sans-serif", fontSize: 36, letterSpacing: "0.07em",
+            color: "#fff", lineHeight: 1.05, marginBottom: 12,
+          }}>
+            READY TO MOVE WITH <span style={{ color: "#FF4500" }}>PRECISION?</span>
+          </h1>
+
+          {/* Panther + XP row */}
+          <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 10 }}>
+            <PantherPresence state="idle" size={72} />
+            <div style={{ flex: 1 }}>
+              <XPBar xp={xp} stage={stage} />
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 8 }}>
+                <span style={{
+                  fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700,
+                  letterSpacing: "0.1em", color: "rgba(255,255,255,0.4)",
+                }}>
+                  {sessions} SESSIONS
+                </span>
+                {streak > 0 && (
+                  <span style={{
+                    fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700,
+                    color: "#C8973A", animation: "streakPulse 2s ease-in-out infinite",
+                  }}>
+                    🔥 {streak}-DAY STREAK
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <p style={{
+            fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12,
+            color: "rgba(255,255,255,0.4)", fontStyle: "italic",
+          }}>
+            "{quip}"
+          </p>
+        </div>
+
+        {/* ── SCENE 6 — CTA: Start Workout ── */}
+        <button
+          onClick={handleStart}
           style={{
-            border: `1px solid ${stageColor}33`,
-            boxShadow: `0 0 60px rgba(255,69,0,0.2), 0 4px 32px rgba(0,0,0,0.7)`,
+            width: "100%", padding: "18px", borderRadius: 20, border: "none",
+            background: "linear-gradient(135deg, #FF4500, #8B0000)",
+            fontFamily: "'Bebas Neue', sans-serif", fontSize: 20, letterSpacing: "0.1em",
+            color: "#fff", cursor: "pointer", marginBottom: 20,
+            boxShadow: "0 4px 32px rgba(255,69,0,0.35)",
           }}
         >
-          {/* Panther image */}
-          <img
-            src={`${CDN}/panther-up_950a85bd.png`}
-            alt="Panther"
-            style={{
-              width: '100%',
-              height: '300px',
-              objectFit: 'cover',
-              objectPosition: 'center 20%',
-              display: 'block',
-            }}
-          />
+          {isNew ? "START YOUR ASSESSMENT →" : "START TODAY'S SESSION →"}
+        </button>
 
-          {/* Bottom gradient */}
-          <div
-            className="absolute inset-x-0 bottom-0"
-            style={{
-              height: '160px',
-              background: 'linear-gradient(to top, #080808 0%, rgba(8,8,8,0.85) 40%, transparent 100%)',
-            }}
-          />
+        {/* ── SCENE 2 — PROBLEM: Today's Focus ── */}
+        <V4Card accent="#4a9eff" style={{ marginBottom: 14 }}>
+          <SceneHeader num="02" label="TODAY'S FOCUS" color="#4a9eff" />
+          <div style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 4 }}>
+            {FOCUS_PILLS.map(pill => {
+              const isToday = pill.day.includes(todayDow);
+              const rgb = FOCUS_RGB[pill.color] || "255,255,255";
+              return (
+                <button
+                  key={pill.label}
+                  onClick={() => navigate("/program")}
+                  style={{
+                    flexShrink: 0, padding: "8px 14px", borderRadius: 20,
+                    border: `1px solid ${isToday ? pill.color : "rgba(255,255,255,0.08)"}`,
+                    background: isToday ? `rgba(${rgb},0.12)` : "transparent",
+                    fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, fontWeight: 700,
+                    letterSpacing: "0.1em", color: isToday ? pill.color : "rgba(255,255,255,0.35)",
+                    cursor: "pointer",
+                  }}
+                >
+                  {pill.label}
+                </button>
+              );
+            })}
+          </div>
+        </V4Card>
 
-          {/* Streak badge — top right */}
-          {streakDays > 0 && (
-            <div className="absolute top-3 right-3">
-              <div
-                className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl"
-                style={{ background: 'rgba(245,166,35,0.15)', border: '1px solid rgba(245,166,35,0.35)' }}
-              >
-                <span style={{ fontSize: '13px' }}>🔥</span>
-                <span className="font-black text-xs" style={{ color: '#F5A623', fontFamily: "'Barlow Condensed', sans-serif" }}>
-                  {streakDays}d
-                </span>
+        {/* ── SCENE 3 — FIX: Pain Status ── */}
+        <V4Card accent={latestPain ? "#FF4500" : "#22c55e"} style={{ marginBottom: 14 }}>
+          <SceneHeader num="03" label="PAIN STATUS" color={latestPain ? "#FF4500" : "#22c55e"} />
+          {latestPain ? (
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <span style={{ fontSize: 20 }}>⚠️</span>
+              <div>
+                <p style={{
+                  fontFamily: "'Barlow Condensed', sans-serif", fontSize: 14, fontWeight: 700,
+                  color: "#FF4500",
+                }}>
+                  {latestPain.location.toUpperCase()} — LEVEL {latestPain.level}/10
+                </p>
+                <p style={{ fontSize: 11, color: "rgba(255,255,255,0.45)" }}>
+                  Corrective plan active. Address before loading.
+                </p>
               </div>
+            </div>
+          ) : (
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <span style={{ fontSize: 20 }}>✅</span>
+              <p style={{
+                fontFamily: "'Barlow Condensed', sans-serif", fontSize: 14, fontWeight: 700,
+                color: "#22c55e",
+              }}>
+                NO PAIN DETECTED
+              </p>
             </div>
           )}
+        </V4Card>
 
-          {/* Stage + XP — top left */}
-          <div className="absolute top-3 left-3">
-            <div
-              className="px-2.5 py-1.5 rounded-xl"
-              style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(8px)', border: `1px solid ${stageColor}44` }}
-            >
-              <p className="font-black text-xs tracking-widest" style={{ color: stageColor, fontFamily: "'Barlow Condensed', sans-serif" }}>
-                {stage}
-              </p>
-            </div>
-          </div>
-
-          {/* Greeting + CTA — bottom overlay */}
-          <div className="absolute bottom-0 inset-x-0 px-4 pb-4">
-            {/* Greeting */}
-            <p
-              className="text-xs mb-0.5"
-              style={{ color: 'rgba(255,255,255,0.45)', fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: '0.08em' }}
-            >
-              {userName ? `WELCOME BACK, ${userName.toUpperCase()}` : "WELCOME BACK"}
-            </p>
-            <h1
-              className="font-black leading-none mb-3"
-              style={{
-                fontFamily: "'Bebas Neue', 'Barlow Condensed', sans-serif",
-                fontSize: '2rem',
-                color: '#fff',
-                letterSpacing: '0.04em',
-              }}
-            >
-              READY TO MOVE WITH PRECISION?
-            </h1>
-
-            {/* XP bar */}
-            <div className="mb-3">
-              <div className="h-1 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.1)' }}>
-                <div
-                  className="h-full rounded-full transition-all duration-700"
-                  style={{ width: `${xpPct}%`, background: stageColor }}
-                />
-              </div>
-              <p className="mt-0.5 text-right" style={{ fontSize: '9px', color: 'rgba(255,255,255,0.3)', fontFamily: "'Barlow Condensed', sans-serif" }}>
-                {pantherXP} XP
-              </p>
-            </div>
-
-            {/* START WORKOUT button */}
+        {/* ── SCENE 4 — DEMO: Quick Actions ── */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 14 }}>
+          {[
+            { icon: "🏋️", label: "TRAIN",    sub: "Start session",  path: "/program" },
+            { icon: "🔴", label: "LOG PAIN",  sub: "Track symptoms", path: "/assess" },
+            { icon: "🧠", label: "ASSESS",    sub: "Find the root",  path: "/assess" },
+          ].map(({ icon, label, sub, path }) => (
             <button
-              onClick={() => navigate(isNewUser ? "/assess" : hasPlan ? "/correct" : "/program")}
-              className="w-full py-3.5 rounded-xl font-black text-white text-sm tracking-widest active:scale-[0.98] transition-all"
+              key={label}
+              onClick={() => navigate(path)}
               style={{
-                fontFamily: "'Barlow Condensed', sans-serif",
-                background: 'linear-gradient(135deg, #FF4500, #DC2626)',
-                boxShadow: '0 4px 20px rgba(255,69,0,0.45)',
-                letterSpacing: '0.15em',
+                padding: "16px 8px", borderRadius: 16,
+                border: "1px solid rgba(255,255,255,0.06)",
+                background: "rgba(13,13,13,0.95)", cursor: "pointer",
+                display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
               }}
             >
-              {isNewUser ? 'START ASSESSMENT' : 'START WORKOUT'}
+              <span style={{ fontSize: 22 }}>{icon}</span>
+              <p style={{
+                fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, fontWeight: 700,
+                letterSpacing: "0.08em", color: "#fff",
+              }}>
+                {label}
+              </p>
+              <p style={{ fontSize: 10, color: "rgba(255,255,255,0.35)" }}>{sub}</p>
+            </button>
+          ))}
+        </div>
+
+        {/* ── SCENE 5 — CUES: Panther Brain teaser ── */}
+        <V4Card accent="#FF4500" style={{ marginBottom: 14 }}>
+          <SceneHeader num="05" label="PANTHER BRAIN" />
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <PantherPresence state="coaching" size={48} />
+            <div style={{ flex: 1 }}>
+              <p style={{
+                fontFamily: "'Barlow Condensed', sans-serif", fontSize: 13, fontWeight: 700,
+                color: "#fff", marginBottom: 4,
+              }}>
+                "My shoulder hurts when I press overhead"
+              </p>
+              <p style={{ fontSize: 11, color: "rgba(255,255,255,0.4)" }}>
+                Ask Panther anything about your movement
+              </p>
+            </div>
+            <button
+              onClick={() => navigate("/jarvis")}
+              style={{
+                padding: "8px 14px", borderRadius: 12,
+                border: "1px solid rgba(255,69,0,0.4)",
+                background: "rgba(255,69,0,0.1)",
+                fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, fontWeight: 700,
+                color: "#FF4500", cursor: "pointer", flexShrink: 0,
+              }}
+            >
+              ASK →
             </button>
           </div>
-        </div>
+        </V4Card>
 
-        {/* ── Today's Focus ─────────────────────────────────────────── */}
-        <div
-          className="p-4 rounded-2xl"
-          style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}
-        >
-          <p
-            className="text-xs font-black tracking-widest mb-3"
-            style={{ color: 'rgba(255,255,255,0.35)', fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: '0.15em' }}
-          >
-            TODAY'S FOCUS
-          </p>
-          <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
-            {FOCUS_OPTIONS.map((f, i) => (
-              <button
-                key={f.label}
-                onClick={() => setTodayFocusIdx(i)}
-                className="flex-shrink-0 flex flex-col items-center gap-1.5 px-4 py-2.5 rounded-xl transition-all active:scale-[0.97]"
-                style={{
-                  background: i === todayFocusIdx ? `${f.color}22` : 'rgba(255,255,255,0.04)',
-                  border: `1px solid ${i === todayFocusIdx ? f.color + '55' : 'rgba(255,255,255,0.07)'}`,
-                }}
-              >
-                <span style={{ fontSize: '20px' }}>{f.icon}</span>
-                <span
-                  className="font-black text-xs whitespace-nowrap"
-                  style={{
-                    fontFamily: "'Barlow Condensed', sans-serif",
-                    color: i === todayFocusIdx ? f.color : 'rgba(255,255,255,0.5)',
-                    letterSpacing: '0.06em',
-                  }}
-                >
-                  {f.label.toUpperCase()}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* ── Pain Status ───────────────────────────────────────────── */}
-        <button
-          onClick={() => navigate("/assess")}
-          className="w-full p-4 rounded-2xl text-left active:scale-[0.98] transition-all"
-          style={{
-            background: hasPain
-              ? 'rgba(220,38,38,0.08)'
-              : 'rgba(34,197,94,0.06)',
-            border: `1px solid ${hasPain ? 'rgba(220,38,38,0.3)' : 'rgba(34,197,94,0.2)'}`,
-          }}
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div
-                className="w-9 h-9 rounded-xl flex items-center justify-center text-lg flex-shrink-0"
-                style={{ background: hasPain ? 'rgba(220,38,38,0.15)' : 'rgba(34,197,94,0.12)' }}
-              >
-                {hasPain ? '⚠️' : '✅'}
-              </div>
-              <div>
-                <p
-                  className="font-black text-sm text-white"
-                  style={{ fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: '0.05em' }}
-                >
-                  PAIN STATUS
-                </p>
-                <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.45)' }}>
-                  {hasPain
-                    ? `${lastPainLog!.location} — Level ${lastPainLog!.level}/10 detected`
-                    : "No pain detected — movement clear"}
-                </p>
-              </div>
-            </div>
-            <span style={{ color: hasPain ? '#DC2626' : '#22c55e', fontSize: '18px' }}>›</span>
-          </div>
-        </button>
-
-        {/* ── Quick Actions ─────────────────────────────────────────── */}
-        <div>
-          <p
-            className="text-xs font-black tracking-widest mb-3"
-            style={{ color: 'rgba(255,255,255,0.35)', fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: '0.15em' }}
-          >
-            QUICK ACTIONS
-          </p>
-          <div className="grid grid-cols-3 gap-3">
-            {[
-              {
-                path: hasPlan ? "/correct" : "/program",
-                icon: '⚡',
-                label: 'START TRAINING',
-                color: '#FF4500',
-                bg: 'rgba(255,69,0,0.1)',
-                border: 'rgba(255,69,0,0.25)',
-              },
-              {
-                path: '/assess',
-                icon: '🩺',
-                label: 'LOG PAIN',
-                color: '#DC2626',
-                bg: 'rgba(220,38,38,0.08)',
-                border: 'rgba(220,38,38,0.2)',
-              },
-              {
-                path: '/assess',
-                icon: '🧠',
-                label: 'ASSESS',
-                color: '#4a9eff',
-                bg: 'rgba(74,158,255,0.08)',
-                border: 'rgba(74,158,255,0.2)',
-              },
-            ].map(({ path, icon, label, color, bg, border }) => (
-              <button
-                key={label}
-                onClick={() => navigate(path)}
-                className="flex flex-col items-center gap-2 p-3.5 rounded-2xl active:scale-[0.96] transition-all"
-                style={{ background: bg, border: `1px solid ${border}` }}
-              >
-                <span style={{ fontSize: '22px' }}>{icon}</span>
-                <span
-                  className="font-black text-center leading-tight"
-                  style={{
-                    fontFamily: "'Barlow Condensed', sans-serif",
-                    fontSize: '10px',
-                    color,
-                    letterSpacing: '0.08em',
-                  }}
-                >
-                  {label}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* ── Panther Brain teaser ──────────────────────────────────── */}
-        <button
-          onClick={() => navigate("/jarvis")}
-          className="w-full p-4 rounded-2xl text-left active:scale-[0.98] transition-all"
-          style={{
-            background: 'rgba(255,69,0,0.05)',
-            border: '1px solid rgba(255,69,0,0.18)',
-          }}
-        >
-          <div className="flex items-center gap-3">
-            <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
-              style={{ background: 'rgba(255,69,0,0.12)' }}
-            >
-              🐆
-            </div>
-            <div className="flex-1">
-              <p
-                className="font-black text-sm text-white"
-                style={{ fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: '0.06em' }}
-              >
-                ASK PANTHER BRAIN
-              </p>
-              <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>
-                "Why does my lower back hurt after squats?"
-              </p>
-            </div>
-            <span style={{ color: '#FF4500', fontSize: '18px' }}>›</span>
-          </div>
-        </button>
+        {/* Corrective plan reminder */}
+        {correctives?.issue && (
+          <PantherMessage
+            headline={`ACTIVE PLAN: ${(correctives.issue.label || "").toUpperCase()}`}
+            body="Your corrective sequence is loaded. Execute it before every session. Consistency is the mechanism."
+            directive="Open PROGRAM to see your full corrective plan."
+          />
+        )}
 
       </main>
     </div>

@@ -16,7 +16,7 @@ const navItems: NavItem[] = [
   { id: "assess",  icon: "🧠", label: "ASSESS",  path: "/assess" },
   { id: "program", icon: "📋", label: "PROGRAM", path: "/program" },
   { id: "jarvis",  icon: "🐆", label: "JARVIS",  path: "/jarvis" },
-  { id: "profile", icon: "⚡", label: "EVOLVE",  path: "/profile" },
+  { id: "evolve",  icon: "⚡", label: "EVOLVE",  path: "/evolve" },
 ];
 
 export function TufBottomNav() {

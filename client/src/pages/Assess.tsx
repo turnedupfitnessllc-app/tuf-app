@@ -1,345 +1,259 @@
 /**
- * TUF Assess Screen — The Brain
- * "Assess → Correct → Perform → Evolve"
- * Option A: Guided Assessment (Overhead Squat, Push Test, Posture Scan)
- * Option B: Quick Select (Knees cave in, Lower back pain, Tight hips, etc.)
+ * TUF ASSESS — v4.0
+ * Arc: Hook(pain) → Problem(what's wrong) → Fix(mechanism)
+ *      → Demo(correctives) → Cues(Panther) → CTA(build plan)
+ * Step 0: 8-region pain selector
+ * Step 1: Diagnosis + corrective sequence + CTA
  */
-import { useState } from 'react';
-import { useLocation } from 'wouter';
-import { PantherAvatar } from '@/components/PantherAvatar';
-
-type AssessMode = 'select' | 'guided' | 'quick' | 'result';
-
-interface Issue {
-  id: string;
-  label: string;
-  icon: string;
-  pattern: string;
-  correctives: string[];
-}
-
-const QUICK_ISSUES: Issue[] = [
-  {
-    id: 'knee-valgus',
-    label: 'Knees cave in',
-    icon: '🦵',
-    pattern: 'Lower Crossed Syndrome — weak glutes, tight adductors',
-    correctives: ['glute-bridge', 'clamshell', 'lateral-band-walk', 'squat-with-pause'],
-  },
-  {
-    id: 'low-back-pain',
-    label: 'Lower back pain',
-    icon: '🔴',
-    pattern: 'LCS — tight hip flexors, weak core/glutes',
-    correctives: ['hip-flexor-stretch', 'dead-bug', 'glute-bridge', 'bird-dog'],
-  },
-  {
-    id: 'tight-hips',
-    label: 'Tight hips',
-    icon: '🔒',
-    pattern: 'Hip flexor dominance — sedentary pattern',
-    correctives: ['hip-flexor-stretch', 'pigeon-pose', 'hip-hinge', 'lateral-lunge'],
-  },
-  {
-    id: 'forward-head',
-    label: 'Head forward posture',
-    icon: '😤',
-    pattern: 'Upper Crossed Syndrome — tight chest/anterior shoulders, weak deep neck flexors',
-    correctives: ['chin-tuck', 'wall-angel', 'face-pull', 'thoracic-extension'],
-  },
-  {
-    id: 'shoulder-pain',
-    label: 'Shoulder pain',
-    icon: '💪',
-    pattern: 'UCS — tight pec minor, weak lower traps/serratus',
-    correctives: ['pec-stretch', 'wall-angel', 'band-pull-apart', 'y-t-w'],
-  },
-  {
-    id: 'heel-rise',
-    label: 'Heels rise in squat',
-    icon: '👟',
-    pattern: 'Tight calves/soleus, limited ankle dorsiflexion',
-    correctives: ['calf-stretch', 'ankle-mobility', 'box-squat', 'goblet-squat'],
-  },
-  {
-    id: 'forward-lean',
-    label: 'Excessive forward lean',
-    icon: '📐',
-    pattern: 'LCS — tight hip flexors, weak thoracic extensors',
-    correctives: ['thoracic-extension', 'hip-flexor-stretch', 'goblet-squat', 'rdl'],
-  },
-  {
-    id: 'arms-fall-forward',
-    label: 'Arms fall forward',
-    icon: '🙌',
-    pattern: 'UCS — tight lats/pec minor, weak lower traps',
-    correctives: ['lat-stretch', 'wall-angel', 'y-t-w', 'overhead-squat'],
-  },
-];
-
-const GUIDED_TESTS = [
-  {
-    id: 'overhead-squat',
-    label: 'Overhead Squat',
-    icon: '🏋️',
-    description: 'Arms overhead, squat to depth. JARVIS watches for compensations.',
-    cameraRequired: true,
-  },
-  {
-    id: 'push-test',
-    label: 'Push Test',
-    icon: '🤜',
-    description: 'Standard push-up. Checks UCS patterns — head, shoulders, scapulae.',
-    cameraRequired: true,
-  },
-  {
-    id: 'posture-scan',
-    label: 'Posture Scan',
-    icon: '📸',
-    description: 'Stand naturally. JARVIS analyzes your resting posture.',
-    cameraRequired: true,
-  },
-];
+import { useState } from "react";
+import { useLocation } from "wouter";
+import { PantherPresence, PantherMessage, V4Card, SceneHeader } from "@/components/v4Components";
+import { ISSUES, PHASE_COLORS, ls, type Issue } from "@/data/v4constants";
 
 export default function Assess() {
   const [, navigate] = useLocation();
-  const [mode, setMode] = useState<AssessMode>('select');
-  const [selectedIssue, setSelectedIssue] = useState<Issue | null>(null);
-  const [pantherMessage, setPantherMessage] = useState<string | undefined>(undefined);
+  const [step, setStep] = useState(0);
+  const [issue, setIssue] = useState<Issue | null>(null);
+  const [saved, setSaved] = useState(false);
 
-  const handleQuickSelect = (issue: Issue) => {
-    setSelectedIssue(issue);
-    setPantherMessage("I see the weakness. Let's fix it.");
-    setMode('result');
-  };
+  function handleSelect(iss: Issue) {
+    setIssue(iss);
+    setStep(1);
+    ls.set("tuf_correctives", {
+      issue: {
+        id: iss.id,
+        label: iss.label,
+        color: iss.color,
+        correctives: iss.correctives,
+        pattern: iss.pattern,
+        cue: iss.cue,
+      },
+    });
+    const logs = ls.get<Array<{ location: string; level: number; date: string }>>("tuf_pain_logs", []);
+    logs.push({ location: iss.label, level: 5, date: new Date().toISOString() });
+    ls.set("tuf_pain_logs", logs);
+  }
 
-  const handleStartCorrectives = () => {
-    if (selectedIssue) {
-      // Store selected correctives in localStorage for Correct screen
-      localStorage.setItem('tuf_correctives', JSON.stringify({
-        issue: selectedIssue,
-        timestamp: Date.now(),
-      }));
-      navigate('/correct');
-    }
+  function handleStartPlan() {
+    setSaved(true);
+    setTimeout(() => navigate("/program"), 800);
+  }
+
+  const hexRgbLocal = (hex: string): string => {
+    const m: Record<string, string> = {
+      "#FF4500": "255,69,0", "#2563eb": "37,99,235", "#C8973A": "200,151,58",
+      "#7c3aed": "124,58,237", "#0d9488": "13,148,136", "#16a34a": "22,163,74",
+      "#dc2626": "220,38,38", "#9333ea": "147,51,234",
+    };
+    return m[hex] || "255,255,255";
   };
 
   return (
-    <div className="min-h-screen bg-[#080808] pb-24">
-      <main className="max-w-[480px] mx-auto px-4 pt-6">
+    <div style={{ minHeight: "100vh", background: "#080808", paddingBottom: 96 }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap');
+        @keyframes ambient { 0%,100%{opacity:0.4} 50%{opacity:0.7} }
+        @keyframes ring    { 0%,100%{transform:scale(1);opacity:0.5} 50%{transform:scale(1.05);opacity:1} }
+        @keyframes scan    { 0%{top:-2%;opacity:0} 5%{opacity:1} 95%{opacity:1} 100%{top:102%;opacity:0} }
+        @keyframes fadeUp  { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+      `}</style>
 
-        {/* ── Header ────────────────────────────────────────────────── */}
-        <div className="mb-6">
-          <p className="text-xs font-black tracking-widest text-muted-foreground mb-1">STEP 1 OF 4</p>
-          <h1
-            className="font-black leading-none"
-            style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '2.2rem', letterSpacing: '0.06em' }}
-          >
-            ASSESS <span className="text-primary">YOUR MOVEMENT</span>
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">Find the weakness. Fix it at the root.</p>
-        </div>
+      <main style={{ maxWidth: 480, margin: "0 auto", padding: "80px 16px 0", position: "relative" }}>
 
-        {/* ── Mode: Select ──────────────────────────────────────────── */}
-        {mode === 'select' && (
+        {step === 0 && (
           <>
-            <div className="flex flex-col items-center mb-8">
-              <PantherAvatar state="idle" size="md" />
-              <p className="text-sm text-muted-foreground mt-3 text-center">
-                How do you want to assess today?
+            {/* SCENE 1 — HOOK */}
+            <div style={{ marginBottom: 20, animation: "fadeUp 0.4s ease forwards" }}>
+              <p style={{
+                fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700,
+                letterSpacing: "0.18em", color: "#FF4500", marginBottom: 4,
+              }}>
+                MOVEMENT ASSESSMENT
+              </p>
+              <h1 style={{
+                fontFamily: "'Bebas Neue', sans-serif", fontSize: 40, letterSpacing: "0.07em",
+                color: "#fff", lineHeight: 1.05,
+              }}>
+                ASSESS YOUR <span style={{ color: "#FF4500" }}>MOVEMENT</span>
+              </h1>
+              <p style={{ fontSize: 13, color: "rgba(255,255,255,0.45)", marginTop: 6 }}>
+                Find the root cause. Build the corrective plan. Fix it permanently.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-3">
-              <button
-                onClick={() => setMode('guided')}
-                className="w-full flex items-center gap-4 p-5 rounded-2xl text-white active:scale-[0.98] transition-all text-left"
-                style={{
-                  background: 'linear-gradient(135deg, #FF4500, #DC2626)',
-                  boxShadow: '0 4px 24px rgba(255,69,0,0.35)',
-                }}
-              >
-                <div className="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center text-2xl flex-shrink-0">
-                  📷
-                </div>
-                <div className="flex-1">
-                  <p className="font-black text-base" style={{ fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: '0.08em' }}>GUIDED ASSESSMENT</p>
-                  <p className="text-white/70 text-sm">Camera-based movement screen</p>
-                </div>
-                <span className="text-white/50 text-xl">›</span>
-              </button>
+            {/* SCENE 2 — PROBLEM: Pain selector */}
+            <V4Card accent="#FF4500" style={{ marginBottom: 16 }}>
+              <SceneHeader num="02" label="WHERE IS YOUR PAIN?" />
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                {ISSUES.map(iss => (
+                  <button
+                    key={iss.id}
+                    onClick={() => handleSelect(iss)}
+                    style={{
+                      padding: "14px 10px", borderRadius: 14,
+                      border: `1px solid rgba(${hexRgbLocal(iss.color)},0.3)`,
+                      background: `rgba(${hexRgbLocal(iss.color)},0.06)`,
+                      display: "flex", flexDirection: "column", alignItems: "center", gap: 6,
+                      cursor: "pointer",
+                    }}
+                  >
+                    <span style={{ fontSize: 24 }}>{iss.icon}</span>
+                    <span style={{
+                      fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, fontWeight: 700,
+                      letterSpacing: "0.08em", color: iss.color, textAlign: "center",
+                    }}>
+                      {iss.label.toUpperCase()}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </V4Card>
 
-              <button
-                onClick={() => setMode('quick')}
-                className="w-full flex items-center gap-4 p-5 rounded-2xl active:scale-[0.98] transition-all text-left"
-                style={{
-                  background: 'rgba(255,69,0,0.08)',
-                  border: '1.5px solid rgba(255,69,0,0.35)',
-                }}
-              >
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0" style={{ background: 'rgba(255,69,0,0.15)' }}>
-                  ⚡
-                </div>
-                <div className="flex-1">
-                  <p className="font-black text-base text-white" style={{ fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: '0.08em' }}>QUICK SELECT</p>
-                  <p className="text-muted-foreground text-sm">Tell me what's bothering you</p>
-                </div>
-                <span className="text-muted-foreground text-xl">›</span>
-              </button>
+            {/* Panther idle */}
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, marginBottom: 16 }}>
+              <PantherPresence state="idle" size={100} />
+              <p style={{
+                fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700,
+                letterSpacing: "0.18em", color: "rgba(255,255,255,0.3)",
+              }}>
+                PANTHER IS READY TO DIAGNOSE
+              </p>
             </div>
           </>
         )}
 
-        {/* ── Mode: Guided ──────────────────────────────────────────── */}
-        {mode === 'guided' && (
+        {step === 1 && issue && (
           <>
+            {/* Back */}
             <button
-              onClick={() => setMode('select')}
-              className="flex items-center gap-2 text-sm text-muted-foreground mb-6 hover:text-foreground transition-colors"
-            >
-              ← Back
-            </button>
-
-            <div className="flex flex-col items-center mb-6">
-              <PantherAvatar state="coaching" size="md" message="Show me how you move." />
-            </div>
-
-            <div className="space-y-3">
-              {GUIDED_TESTS.map((test) => (
-                <button
-                  key={test.id}
-                  onClick={() => navigate('/live')}
-                  className="w-full flex items-center gap-4 p-5 rounded-2xl active:scale-[0.98] transition-all text-left"
-                  style={{
-                    background: 'rgba(255,255,255,0.03)',
-                    border: '1px solid rgba(255,255,255,0.08)',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
-                  }}
-                >
-                  <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0" style={{ background: 'rgba(255,69,0,0.12)' }}>
-                    {test.icon}
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-black text-sm tracking-wide text-white">{test.label}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">{test.description}</p>
-                    {test.cameraRequired && (
-                      <span className="inline-block mt-1 text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: 'rgba(255,69,0,0.15)', color: '#FF4500' }}>
-                        CAMERA REQUIRED
-                      </span>
-                    )}
-                  </div>
-                  <span className="text-muted-foreground text-xl">›</span>
-                </button>
-              ))}
-            </div>
-          </>
-        )}
-
-        {/* ── Mode: Quick Select ────────────────────────────────────── */}
-        {mode === 'quick' && (
-          <>
-            <button
-              onClick={() => setMode('select')}
-              className="flex items-center gap-2 text-sm text-muted-foreground mb-6 hover:text-foreground transition-colors"
-            >
-              ← Back
-            </button>
-
-            <p className="text-sm font-bold text-muted-foreground mb-4 tracking-wide">
-              WHAT'S BOTHERING YOU?
-            </p>
-
-            <div className="grid grid-cols-2 gap-3">
-              {QUICK_ISSUES.map((issue) => (
-                <button
-                  key={issue.id}
-                  onClick={() => handleQuickSelect(issue)}
-                  className="flex flex-col items-center gap-2 p-4 rounded-2xl active:scale-[0.97] transition-all text-center"
-                  style={{
-                    background: 'rgba(255,255,255,0.03)',
-                    border: '1px solid rgba(255,255,255,0.08)',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
-                  }}
-                >
-                  <span className="text-3xl">{issue.icon}</span>
-                  <p className="text-xs font-black tracking-wide text-white leading-tight" style={{ fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: '0.06em' }}>
-                    {issue.label}
-                  </p>
-                </button>
-              ))}
-            </div>
-          </>
-        )}
-
-        {/* ── Mode: Result ──────────────────────────────────────────── */}
-        {mode === 'result' && selectedIssue && (
-          <>
-            <div className="flex flex-col items-center mb-6">
-              <PantherAvatar
-                state="coaching"
-                size="lg"
-                message={pantherMessage}
-              />
-            </div>
-
-            <div
-              className="p-5 rounded-2xl mb-4"
+              onClick={() => { setStep(0); setIssue(null); setSaved(false); }}
               style={{
-                background: 'rgba(255,69,0,0.08)',
-                border: '1px solid rgba(255,69,0,0.25)',
-                boxShadow: '0 4px 24px rgba(255,69,0,0.12)',
+                display: "flex", alignItems: "center", gap: 6, marginBottom: 16,
+                background: "transparent", border: "none", cursor: "pointer",
+                fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, fontWeight: 700,
+                letterSpacing: "0.1em", color: "rgba(255,255,255,0.45)",
               }}
             >
-              <div className="flex items-center gap-3 mb-3">
-                <span className="text-3xl">{selectedIssue.icon}</span>
+              ← BACK TO REGIONS
+            </button>
+
+            {/* SCENE 1 — Panther locked in */}
+            <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}>
+              <PantherPresence state="locked_in" size={120} showScan />
+            </div>
+
+            {/* SCENE 2 — PROBLEM: Verdict */}
+            <V4Card accent={issue.color} style={{ marginBottom: 12 }}>
+              <SceneHeader num="02" label="WHAT'S WRONG" color={issue.color} />
+              <div style={{ display: "flex", alignItems: "flex-start", gap: 12, marginBottom: 10 }}>
+                <span style={{ fontSize: 28, flexShrink: 0 }}>{issue.icon}</span>
                 <div>
-                  <p className="font-black text-sm text-white" style={{ fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: '0.06em' }}>{selectedIssue.label}</p>
-                  <p className="text-xs text-primary font-bold mt-0.5">{selectedIssue.pattern}</p>
+                  <p style={{
+                    fontFamily: "'Barlow Condensed', sans-serif", fontSize: 18, fontWeight: 900,
+                    letterSpacing: "0.04em", color: "#fff", lineHeight: 1.2, marginBottom: 4,
+                  }}>
+                    {issue.verdict}
+                  </p>
+                  <p style={{ fontSize: 12, color: `rgba(${hexRgbLocal(issue.color)},0.9)`, fontWeight: 600 }}>
+                    {issue.pattern}
+                  </p>
                 </div>
               </div>
-              <p className="text-xs text-muted-foreground">
-                {selectedIssue.correctives.length} corrective exercises prescribed
-              </p>
-            </div>
+            </V4Card>
 
-            <div className="space-y-2 mb-6">
-              <p className="text-xs font-black tracking-widest text-muted-foreground">YOUR CORRECTIVE PLAN</p>
-              {selectedIssue.correctives.map((ex, i) => (
-                <div
-                  key={ex}
-                  className="flex items-center gap-3 p-3 rounded-xl"
-                  style={{ background: 'rgba(255,69,0,0.05)', border: '1px solid rgba(255,69,0,0.15)' }}
-                >
-                  <span className="w-6 h-6 rounded-full bg-primary text-white text-xs font-black flex items-center justify-center flex-shrink-0">
-                    {i + 1}
-                  </span>
-                  <p className="text-sm font-bold text-white capitalize">
-                    {ex.replace(/-/g, ' ')}
-                  </p>
-                </div>
-              ))}
-            </div>
+            {/* SCENE 3 — FIX: NASM Continuum */}
+            <V4Card style={{ marginBottom: 12 }}>
+              <SceneHeader num="03" label="THE FIX — NASM CORRECTIVE CONTINUUM" />
+              <div style={{ display: "flex", gap: 6, marginBottom: 12, flexWrap: "wrap" }}>
+                {(["INHIBIT", "LENGTHEN", "ACTIVATE", "INTEGRATE"] as const).map((phase, i) => (
+                  <div key={phase} style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                    <span style={{
+                      fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700,
+                      letterSpacing: "0.1em", color: PHASE_COLORS[phase],
+                      padding: "3px 8px", borderRadius: 6,
+                      background: `${PHASE_COLORS[phase]}18`,
+                      border: `1px solid ${PHASE_COLORS[phase]}44`,
+                    }}>
+                      {phase}
+                    </span>
+                    {i < 3 && <span style={{ color: "rgba(255,255,255,0.2)", fontSize: 10 }}>→</span>}
+                  </div>
+                ))}
+              </div>
+            </V4Card>
 
+            {/* SCENE 4 — DEMO: Exercise list */}
+            <V4Card style={{ marginBottom: 12 }}>
+              <SceneHeader num="04" label="YOUR CORRECTIVE PLAN" />
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {issue.correctives.map((ex, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      display: "flex", alignItems: "center", gap: 12,
+                      padding: "10px 12px", borderRadius: 12,
+                      background: "rgba(255,255,255,0.03)",
+                      border: `1px solid ${PHASE_COLORS[ex.phase] || "rgba(255,255,255,0.06)"}22`,
+                    }}
+                  >
+                    <div style={{
+                      width: 24, height: 24, borderRadius: "50%",
+                      background: `${PHASE_COLORS[ex.phase] || "#FF4500"}22`,
+                      border: `1px solid ${PHASE_COLORS[ex.phase] || "#FF4500"}44`,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      flexShrink: 0,
+                    }}>
+                      <span style={{
+                        fontFamily: "'Bebas Neue', sans-serif", fontSize: 10,
+                        color: PHASE_COLORS[ex.phase] || "#FF4500",
+                      }}>
+                        {i + 1}
+                      </span>
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <p style={{
+                        fontFamily: "'Barlow Condensed', sans-serif", fontSize: 14, fontWeight: 700,
+                        color: "#fff",
+                      }}>
+                        {ex.name}
+                      </p>
+                      <p style={{ fontSize: 11, color: "rgba(255,255,255,0.4)" }}>{ex.sets}</p>
+                    </div>
+                    <span style={{
+                      fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, fontWeight: 700,
+                      letterSpacing: "0.1em", color: PHASE_COLORS[ex.phase] || "#FF4500",
+                      padding: "2px 6px", borderRadius: 4,
+                      background: `${PHASE_COLORS[ex.phase] || "#FF4500"}18`,
+                    }}>
+                      {ex.phase}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </V4Card>
+
+            {/* SCENE 5 — CUES: Panther message */}
+            <PantherMessage
+              headline="I SEE THE WEAKNESS."
+              body={`${issue.pattern}. That's the root. Not where you feel the pain — where the movement broke down.`}
+              directive={issue.cue}
+            />
+
+            {/* SCENE 6 — CTA */}
             <button
-              onClick={handleStartCorrectives}
-              className="w-full py-4 rounded-2xl text-white font-black active:scale-[0.98] transition-all"
+              onClick={handleStartPlan}
               style={{
-                background: 'linear-gradient(135deg, #FF4500, #DC2626)',
-                boxShadow: '0 4px 24px rgba(255,69,0,0.35)',
-                fontFamily: "'Barlow Condensed', sans-serif",
-                fontSize: '1.1rem',
-                letterSpacing: '0.1em',
+                width: "100%", padding: "18px", borderRadius: 20, border: "none",
+                background: saved
+                  ? "linear-gradient(135deg, #22c55e, #16a34a)"
+                  : "linear-gradient(135deg, #FF4500, #8B0000)",
+                fontFamily: "'Bebas Neue', sans-serif", fontSize: 20, letterSpacing: "0.1em",
+                color: "#fff", cursor: "pointer",
+                boxShadow: "0 4px 32px rgba(255,69,0,0.35)",
+                transition: "background 0.3s ease",
               }}
             >
-              START CORRECTIVES
-            </button>
-
-            <button
-              onClick={() => setMode('quick')}
-              className="w-full mt-3 py-3 rounded-2xl font-bold text-sm text-muted-foreground transition-colors"
-              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)' }}
-            >
-              Select Different Issue
+              {saved ? "✓ PLAN SAVED — LOADING PROGRAM" : "BUILD MY CORRECTIVE PROGRAM →"}
             </button>
           </>
         )}
