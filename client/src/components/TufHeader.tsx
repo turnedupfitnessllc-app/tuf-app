@@ -15,8 +15,8 @@ export function TufHeader() {
   }, []);
 
   return (
-    <header className="header-exec">
-      <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+    <header style={{ background: 'rgba(8,8,8,0.95)', borderBottom: '1px solid rgba(255,69,0,0.15)', backdropFilter: 'blur(12px)', position: 'sticky', top: 0, zIndex: 50 }}>
+      <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
         {/* Brand */}
         <div className="flex items-center gap-2">
           <img

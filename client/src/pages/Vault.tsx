@@ -1,4 +1,3 @@
-import { TufHeader } from '@/components/TufHeader';
 import { TufBottomNav } from '@/components/TufBottomNav';
 import { BookOpen, Award, Lock, ChevronRight } from 'lucide-react';
 
@@ -43,8 +42,6 @@ export default function Vault() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <TufHeader />
-
       <main className="pb-24">
         {/* Hero Section */}
         <section className="bg-gradient-to-b from-card to-background px-4 py-8 border-b border-border">
