@@ -103,6 +103,92 @@ Anterior hip pain + squat trigger → Hip flexor restriction → Thomas Test →
 Lateral hip + walking trigger → Glute med weakness → Single leg test → Clamshells + lateral walk
 Deep glute + sitting trigger → Piriformis → FAIR test → Lacrosse ball + pigeon pose
 Lower back + APT → Lower Crossed Syndrome → OHSA → Hip flexor inhibition + posterior pelvic tilt cue
+
+═══════════════════════════════════════════════════════════════
+KNOWLEDGE BASE — CERVICAL SPINE MODULE (Marc Turner, NASM CES)
+═══════════════════════════════════════════════════════════════
+COACH NOTE: The most overlooked region in fitness. Your 40+ client who spends 8 hours at a screen has Upper Crossed Syndrome already established. Every inch the head moves forward = 10 extra lbs of load on the cervical spine.
+
+OVERACTIVE (tight): Upper Trapezius, SCM, Levator Scapulae, Suboccipitals, Scalenes
+UNDERACTIVE (weak): Deep Neck Flexors (Longus Colli, Longus Capitis) — the cervical "core"
+
+DYSFUNCTIONS & CORRECTIONS:
+1. FORWARD HEAD POSTURE — Verdict: YOUR SCREEN IS BREAKING YOUR NECK.
+   Root cause: Weak deep neck flexors + overactive upper trap/SCM.
+   Fix: INHIBIT (suboccipital release, upper trap foam roll 60s) → LENGTHEN (chin tuck stretch, levator scapulae stretch 30sx3) → ACTIVATE (chin tucks 3x12, deep neck flexor holds 3x10s) → INTEGRATE (wall angels, face pulls 3x15). Cue: "Ears over shoulders, shoulders over hips."
+
+2. UPPER CROSSED SYNDROME — Verdict: DESK POSTURE IS A STRUCTURAL PROBLEM.
+   Root cause: Tight pecs + upper trap. Weak deep neck flexors + mid-back.
+   Fix: INHIBIT (pec minor release, upper trap) → LENGTHEN (doorway chest stretch, levator stretch) → ACTIVATE (chin tucks, band pull-aparts 3x15) → INTEGRATE (cable row, face pull, TRX row).
+
+3. CERVICOGENIC HEADACHE — Verdict: YOUR HEADACHE IS A POSTURE PROBLEM.
+   Root cause: Suboccipital compression from forward head posture. C1-C2 restriction.
+   Fix: Suboccipital release (2 min) → Chin tucks 3x10 → Cervical retraction → Deep neck flexor activation.
+
+KEY CUES: Chin Tuck = "Make a double chin, not a nod." Band Pull-Apart = "Pinch a pencil between shoulder blades." Wall Angel = "Low back stays on wall the entire time."
+
+PAIN PATTERN MAP:
+Headache + screen time → Forward head posture → Chin tuck test → Deep neck flexor activation
+Neck pain + shoulder elevation → Upper trap dominance → Shoulder shrug test → Upper trap release + lower trap activation
+Arm tingling + neck rotation → Scalene compression → Thoracic outlet screen → Scalene release + first rib mob
+
+═══════════════════════════════════════════════════════════════
+KNOWLEDGE BASE — THORACIC SPINE MODULE (Marc Turner, NASM CES)
+═══════════════════════════════════════════════════════════════
+COACH NOTE: The thoracic spine should move. In your 40+ population it doesn't. Stiff thoracic = compensating lumbar = lower back pain. Fix the T-spine and half your lower back cases resolve.
+
+OVERACTIVE (tight): Thoracic Erectors, Lats (limit T-spine extension), Pecs (pull into kyphosis)
+UNDERACTIVE (weak): Mid/Lower Trapezius, Rhomboids, Serratus Anterior, Thoracic Extensors
+
+DYSFUNCTIONS & CORRECTIONS:
+1. THORACIC KYPHOSIS — Verdict: YEARS OF SITTING BUILT THIS. WE UNDO IT.
+   Root cause: Tight lats + pecs. Weak mid/lower trap. Thoracic facet restriction.
+   Fix: INHIBIT (thoracic foam roll extension 60-90s, lat foam roll) → LENGTHEN (doorway stretch, thread-the-needle 3x8/side) → ACTIVATE (band pull-apart 3x15, prone Y/T/W 3x10) → INTEGRATE (cable row, face pull, overhead press with T-spine extension).
+
+2. SCAPULAR WINGING — Verdict: YOUR SERRATUS IS OFFLINE.
+   Root cause: Weak serratus anterior. Scapula loses contact with rib cage.
+   Fix: INHIBIT (pec minor release) → LENGTHEN (pec stretch) → ACTIVATE (wall push-up plus 3x15, serratus punch 3x12) → INTEGRATE (push-up, landmine press). Cue: "Push the floor away, don't just lower yourself."
+
+3. RESTRICTED T-SPINE ROTATION — Verdict: YOUR LOWER BACK IS ROTATING FOR YOUR THORACIC SPINE.
+   Root cause: Thoracic facet restriction. Tight lats.
+   Fix: Thoracic foam roll (segmental) → Thread-the-needle 3x8/side → Open book stretch 3x8/side → Rotational exercises (cable chop, med ball rotation).
+
+KEY CUES: Thoracic Extension on Foam Roll = "Arms crossed, let gravity do the work, don't force it." Thread-the-Needle = "Follow your hand with your eyes." Prone Y/T/W = "Thumbs up, squeeze at top, hold 2 seconds."
+
+PAIN PATTERN MAP:
+Mid-back pain + sitting trigger → Thoracic kyphosis → Foam roll test → T-spine mob + mid trap activation
+Shoulder pain + overhead trigger → Restricted T-spine → Overhead reach test → T-spine extension + serratus activation
+Lower back pain + no hip cause → T-spine stiffness → Rotation screen → T-spine rotation mob
+
+═══════════════════════════════════════════════════════════════
+KNOWLEDGE BASE — ANKLE COMPLEX MODULE (Marc Turner, NASM CES)
+═══════════════════════════════════════════════════════════════
+COACH NOTE: The ankle is the foundation of every lower body movement. Restricted dorsiflexion = the body compensates above — knee caves, hip drops, lower back flexes. Fix the ankle and you fix the squat.
+
+OVERACTIVE (tight): Gastrocnemius, Soleus, Peroneals, Tibialis Posterior
+UNDERACTIVE (weak): Tibialis Anterior, Peroneals (stability), Intrinsic Foot Muscles
+
+DYSFUNCTIONS & CORRECTIONS:
+1. RESTRICTED DORSIFLEXION — Verdict: YOUR SQUAT PROBLEM STARTS AT YOUR ANKLE.
+   Root cause: Tight gastrocnemius + soleus. Posterior ankle capsule restriction.
+   Dorsiflexion test: Knee-to-wall test — less than 4 inches = restricted.
+   Fix: INHIBIT (calf foam roll 60-90s, plantar fascia release) → LENGTHEN (straight-leg calf stretch 30sx3, bent-knee calf stretch 30sx3) → ACTIVATE (tibialis anterior raises 3x15, single leg balance 3x30s) → INTEGRATE (goblet squat with heel elevation → progress to flat foot).
+
+2. OVERPRONATION / FLAT ARCH — Verdict: YOUR ARCH COLLAPSE IS DRIVING KNEE VALGUS.
+   Root cause: Weak intrinsic foot muscles + tibialis posterior. Tight peroneals.
+   Compensation chain: Flat arch → internal tibial rotation → knee valgus → hip adduction → lower back rotation.
+   Fix: INHIBIT (peroneal foam roll, plantar fascia) → LENGTHEN (peroneal stretch) → ACTIVATE (short foot exercise 3x10s, towel scrunches 3x15, single leg balance with arch activation) → INTEGRATE (single leg squat with arch cue, step-up with arch cue).
+
+3. CHRONIC ANKLE INSTABILITY — Verdict: THAT OLD SPRAIN IS STILL RUNNING YOUR MECHANICS.
+   Root cause: Proprioceptive deficit from previous lateral ankle sprain. Weak peroneals.
+   Fix: INHIBIT (peroneal release, calf release) → LENGTHEN (ankle circles, peroneal stretch) → ACTIVATE (peroneal strengthening 3x15, single leg balance 3x30s eyes closed) → INTEGRATE (lateral band walk, single leg RDL, lateral step-down).
+
+KEY CUES: Calf Stretch = "Heel stays on floor, drive knee over pinky toe." Short Foot = "Shorten the foot without curling toes — create an arch." Single Leg Balance = "Soft knee, hip over ankle, eyes forward."
+
+PAIN PATTERN MAP:
+Heel pain + morning stiffness → Plantar fasciitis → Plantar fascia palpation → Calf release + arch activation
+Lateral ankle pain + instability → Peroneal weakness → Single leg balance test → Peroneal strengthening + proprioception
+Knee valgus + squat → Ankle dorsiflexion restriction → Knee-to-wall test → Calf release + dorsiflexion mobility
 ═══════════════════════════════════════════════════════════════`;
 
 // ─── 14 Trigger Types — Offline Fallback Response Library ────────────────────

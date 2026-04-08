@@ -17,8 +17,8 @@ const PANTHER_STATES: Record<PantherStateName, {
   img: string; label: string; glow: string; border: string;
 }> = {
   IDLE:      { img: `${CDN}/panther-up_950a85bd.png`, label: "READY",      glow: "rgba(255,69,0,0.15)",   border: "rgba(255,69,0,0.2)"  },
-  LOCKED_IN: { img: `${CDN}/panther-up_950a85bd.png`, label: "LOCKED IN",  glow: "rgba(200,151,58,0.35)", border: "rgba(200,151,58,0.5)"},
-  ANALYZING: { img: `${CDN}/panther-up_950a85bd.png`, label: "ANALYZING",  glow: "rgba(200,151,58,0.4)",  border: "rgba(200,151,58,0.6)"},
+  LOCKED_IN: { img: `${CDN}/panther-up_950a85bd.png`, label: "LOCKED IN",  glow: "rgba(200,151,58,0.28)", border: "rgba(200,151,58,0.6)"},
+  ANALYZING: { img: `${CDN}/panther-up_950a85bd.png`, label: "ANALYZING",  glow: "rgba(200,0,0,0.15)",    border: "rgba(200,0,0,0.4)"},
   DOMINANT:  { img: `${CDN}/panther-up_950a85bd.png`, label: "DOMINANT",   glow: "rgba(139,0,0,0.5)",     border: "rgba(255,69,0,0.7)"  },
   ACTIVATED: { img: `${CDN}/panther-up_950a85bd.png`, label: "ACTIVATED",  glow: "rgba(255,69,0,0.55)",   border: "rgba(255,69,0,0.9)"  },
   COACHING:  { img: `${CDN}/panther-up_950a85bd.png`, label: "COACHING",   glow: "rgba(255,69,0,0.4)",    border: "rgba(255,69,0,0.6)"  },
@@ -148,14 +148,22 @@ function getStageColor(stage: string): string {
 // ─── Emotional State Classifier ───────────────────────────────────────────────
 function classifyEmotion(text: string): PantherStateName {
   const t = text.toLowerCase();
-  if (/miss|skip|didn't|haven't|no workout|been gone|fell off|quit/.test(t)) return "LOCKED_IN";
-  if (/pain|hurt|ache|injury|sore|back|knee|shoulder|tight/.test(t))         return "LOCKED_IN";
-  if (/can't|too old|too late|expensive|cost|afford|worth it|why/.test(t))   return "LOCKED_IN";
-  if (/plateau|stuck|same|not working|no progress|nothing/.test(t))          return "LOCKED_IN";
-  if (/tired|fog|no energy|exhausted|unmotivated|burnt/.test(t))             return "LOCKED_IN";
+  // Body region triggers → LOCKED_IN (clinical)
+  if (/hip|pelvis|piriformis|glute|pelvic tilt/.test(t))                     return "LOCKED_IN";
+  if (/neck|cervical|forward head|headache|skull/.test(t))                   return "LOCKED_IN";
+  if (/upper back|thoracic|kyphosis|rounded|mid back|hump/.test(t))          return "LOCKED_IN";
+  if (/ankle|heel|plantar|dorsiflexion|arch|sprain|foot/.test(t))            return "LOCKED_IN";
+  if (/shoulder|rotator|scapula|overhead|winging/.test(t))                   return "LOCKED_IN";
+  if (/knee|valgus|patella|it band/.test(t))                                 return "LOCKED_IN";
+  if (/lower back|lumbar|back pain|sitting all day/.test(t))                 return "LOCKED_IN";
+  // Motivational triggers → DOMINANT
+  if (/miss|skip|didn't|haven't|no workout|been gone|fell off|quit/.test(t)) return "DOMINANT";
+  if (/can't|too old|too late|expensive|cost|afford|worth it/.test(t))       return "DOMINANT";
+  if (/plateau|stuck|not working|no progress/.test(t))                       return "DOMINANT";
+  // Win triggers → ACTIVATED
   if (/crushed|hit|pr|personal record|milestone|win|killed it|nailed/.test(t)) return "ACTIVATED";
+  // Education triggers → COACHING
   if (/how|what|why|explain|tell me|teach/.test(t))                          return "COACHING";
-  if (/help|need|struggling|problem|issue/.test(t))                          return "LOCKED_IN";
   return "COACHING";
 }
 
@@ -612,9 +620,13 @@ export default function PantherBrain() {
   const currentState = PANTHER_STATES[pantherState] || PANTHER_STATES.IDLE;
   const stage        = memory.pantherStage || "CUB";
   const starters     = memory.name ? null : [
+    "My shoulder hurts when I press overhead",
+    "My knees cave in when I squat",
+    "My neck is always tight and I get headaches",
+    "My ankle limits my squat depth",
+    "My upper back is rounded from sitting all day",
+    "I get deep hip pain when I sit for long periods",
     "My lower back kills me after sitting all day",
-    "I missed my last 4 workouts",
-    "I can't lose weight no matter what I eat",
     "I'm 47 — is it too late to build muscle?",
   ];
 
@@ -758,6 +770,25 @@ export default function PantherBrain() {
               NASM · CORRECTIVE · NUTRITION · ACCOUNTABILITY
             </div>
             <XPBar xp={memory.xp || 0} stage={stage} />
+          </div>
+
+          {/* Knowledge Base Region Pills */}
+          <div style={{ marginTop: 10, display: "flex", flexWrap: "wrap", gap: 6, justifyContent: "center", padding: "0 16px" }}>
+            {[
+              { icon: "💪", label: "SHOULDER" },
+              { icon: "🦴", label: "HIP COMPLEX" },
+              { icon: "🦵", label: "KNEE" },
+              { icon: "🔥", label: "LOWER BACK" },
+              { icon: "🧠", label: "CERVICAL" },
+              { icon: "🫁", label: "THORACIC" },
+              { icon: "🦶", label: "ANKLE" },
+            ].map((r) => (
+              <div key={r.label} style={{ display: "flex", alignItems: "center", gap: 4, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 20, padding: "3px 10px" }}>
+                <span style={{ fontSize: 11 }}>{r.icon}</span>
+                <span style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: 1, color: "rgba(255,255,255,0.45)" }}>{r.label}</span>
+                <span style={{ fontSize: 8, color: "#22c55e" }}>✓</span>
+              </div>
+            ))}
           </div>
         </div>
 
