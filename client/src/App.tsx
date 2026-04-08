@@ -35,6 +35,7 @@ import Vault from "./pages/Vault";
 import Progress from "./pages/Progress";
 import ComponentShowcase from "./pages/ComponentShowcase";
 import PantherPipeline from "./pages/PantherPipeline";
+import Program from "./pages/Program";
 
 function Router() {
   // First-launch detection — show onboarding if not yet completed
@@ -52,6 +53,7 @@ function Router() {
         <Route path={"/assess"} component={Assess} />
         <Route path={"/train"} component={Train} />
         <Route path={"/correct"} component={Correct} />
+        <Route path={"/program"} component={Program} />
         <Route path={"/goals"} component={Goals} />
         <Route path={"/profile"} component={Profile} />
 

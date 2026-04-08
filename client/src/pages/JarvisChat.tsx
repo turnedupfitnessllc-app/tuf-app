@@ -217,6 +217,16 @@ export default function JarvisChat() {
       goals: profile.goal,
       conditions: profile.conditions,
     };
+    const progress = JSON.parse(localStorage.getItem('tuf_progress') || '{}');
+    const clientMemory = {
+      name:            profile.name,
+      goal:            profile.goal,
+      primaryIssue:    (profile as any).primaryIssue,
+      sessions:        progress.sessionsCompleted || 0,
+      stage:           progress.pantherStage || 'CUB',
+      xp:              progress.xp || 0,
+      regionsAssessed: progress.regionsAssessed || [],
+    };
 
     const jarvisId = (Date.now() + 1).toString();
     setMessages(prev => [...prev, { id: jarvisId, role: "jarvis", content: "", timestamp: new Date() }]);
@@ -226,7 +236,7 @@ export default function JarvisChat() {
       const res = await fetch("/api/jarvis/stream", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: claudeMessages, memberData }),
+        body: JSON.stringify({ messages: claudeMessages, memberData, memory: clientMemory }),
         signal: abortRef.current.signal,
       });
       if (!res.ok) throw new Error("Stream failed");

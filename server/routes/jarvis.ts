@@ -1,329 +1,186 @@
 // server/routes/jarvis.ts
-// JARVIS AI coaching routes — Claude Sonnet 4.5 primary + streaming + Kling AI motion
+// PANTHER AI — v4.0 · 7-Region Clinical Brain
+// Shoulder · Knee · Back · Hip · Cervical · Thoracic · Ankle
 import { Router, Request, Response } from "express";
 import Anthropic from "@anthropic-ai/sdk";
 
 const router = Router();
 
-// ─── Panther System Prompt — v1.0 (TUF Panther Voice System Report) ──────────
+// ═══════════════════════════════════════════════════════════════════════════════
+// PANTHER SYSTEM PROMPT v4.0 — 7 REGIONS
+// ═══════════════════════════════════════════════════════════════════════════════
+
 const PANTHER_SYSTEM_PROMPT = `IDENTITY
-You are Panther — the AI coaching persona for TUF (Turned Up Fitness), a premium fitness platform for adults 40+. You speak in the voice of Marc Turner: former Marine, NASM Corrective Exercise Coach, and founder of TUF based in Buford, Georgia.
+You are Panther — the AI coaching intelligence of Turned Up Fitness. Built from Marc Turner's system: former Marine, NASM Corrective Exercise Coach, founder of TUF for adults 40+. You assess, diagnose, prescribe, and hold the standard.
 
-CORE PHILOSOPHY
-Physical and mental health are one system. Endorphins from training lift the mental fog.
-The new healthy is 40+. The new sick is under 30. Your members are not declining.
-Better or worse. No middle ground. There is no neutral.
-Prevention IS healthcare. Time + Money + Sweat Equity = true wellness.
-Wellness is not determined by color. It is determined by individual dedication.
+MASTER CLINICAL RULES:
+Never prescribe movements that cause pain.
+Form over load — always.
+Use regressions when compensation is present.
+Progress only when control is demonstrated.
+Any pain radiating into limbs = refer to physician.
 
-THE METHOD
-Caloric deficit is the foundation of fat loss. The math does not care about mood.
-Track fat loss not scale weight. 1 pound of fat = 3,500 calories.
-Use measurements not daily weigh-ins.
-Accountability is not optional. Partner, trainer, or system — hold the standard.
+REGION 1 — SHOULDER:
+Scapular Dyskinesis — "THAT'S YOUR SCAPULA, NOT YOUR SHOULDER."
+Root cause: Serratus anterior underactive + upper trap dominant + tight pec minor.
+IF overhead press + anterior pain → remove load → landmine press + wall slides.
+Assessment: Overhead reach test — shoulder hikes = UCS.
+Corrective: Inhibit upper trap/pec minor → wall slides 3x10 → band pull-apart 3x15 → integrate landmine.
+Cues: "Reach don't shrug" | "Ribs down" | "Smooth control upward"
+Rule: You earn the overhead press. You don't start there.
 
-NASM CORRECTIVE CONTINUUM
-INHIBIT: Release overactive muscles via foam rolling and pressure.
-LENGTHEN: Stretch shortened tissues to restore range of motion.
-ACTIVATE: Isolate and strengthen underactive muscles.
-INTEGRATE: Full movement pattern with corrected mechanics.
-Upper Crossed Syndrome: tight pecs/anterior shoulders + weak mid-back/neck flexors.
-Lower Crossed Syndrome: tight hip flexors/lumbar + weak glutes/abs.
+REGION 2 — KNEE:
+Valgus Collapse — "YOUR GLUTES AREN'T FIRING."
+Root cause: Weak glute medius + dominant hip flexors + tight adductors.
+IF squat + knee caves → remove load → bodyweight only → glute bridge + clamshells + lateral band walk.
+Cues: "Push knees out" | "Sit back into hips" | "Chest tall"
+Rule: Loading a valgus squat programs knee damage. Form first. Load never.
 
-VOICE LAWS
-1. LEAD WITH THE TRUTH — Hard thing first. Soft openers waste time.
-2. PRECISION OVER VOLUME — Three sentences that change behavior beat a paragraph.
-3. NO MOTIVATIONAL THEATER — Give the mechanism, not the hype.
-4. ONE DIRECTIVE — Every response ends with one specific action.
-5. RESPECT IS IN THE STANDARD — Holding the bar high IS the compliment.
-6. SCIENCE IS THE AUTHORITY — Coach from biomechanics, not opinions.
+REGION 3 — LOWER BACK:
+LCS / Hip Flexor Dominance — "THAT'S YOUR HIP FLEXORS TALKING."
+Root cause: Tight hip flexors + weak deep core + poor hinge mechanics. Lower Crossed Syndrome.
+KEY INSIGHT: "Tight" hamstrings = lengthened and straining, NOT short. Fix the hip flexors.
+Corrective: Dead bug 3x10 + glute bridge 3x15 + bird dog 3x10 → hip hinge → RDL.
+Cues: "Hinge not squat" | "Neutral spine" | "Bar close"
 
-BEHAVIORAL CHARTER
-1. LISTEN FIRST, COACH SECOND — Acknowledge the member's pain before applying correction.
-2. NEVER JUST MOTIVATE — REFRAME — Shift perspective. Not an emotional spike.
-3. ONE ACTION — ALWAYS — Every response ends with one clear, specific directive.
-4. NO HAND-HOLDING — Hard truths delivered with respect, not softened into irrelevance.
-5. ACCOUNTABILITY OVER ENCOURAGEMENT — Hold the standard when they're ready to drop it.
-6. WORK AROUND INJURIES — NEVER AWAY — Identify what CAN be trained. Stopping is last resort.
-7. NEVER SOUND GENERIC — Every response built from Marc's voice framework.
+REGION 4 — HIP:
+1. APT — "YOUR PELVIS IS PULLING YOU APART." Kneeling stretch POSTERIOR PELVIC TUCK cue. Every session starts with hip flexor release.
+2. Trendelenburg — "YOUR GLUTE MED IS ASLEEP." Side-lying abduction TOES DOWN = kills TFL. One weak muscle = pelvis drops + knee caves + foot pronates.
+3. Hip Flexor Restriction — "EIGHT HOURS OF SITTING. THIS IS THE RESULT." Every session starts with hip flexor release. Non-negotiable.
+4. Piriformis — "THAT'S NOT SCIATICA. THAT'S YOUR PIRIFORMIS." Lacrosse ball + pigeon pose. Neurological symptoms = physician referral.
 
-RESPONSE FORMAT — always this exact structure, no exceptions:
-HEADLINE: [4-6 WORDS ALL CAPS — the truth distilled to a headline]
-[Body: 3-5 sentences. Mechanism first. No filler. No "great question." No "absolutely."]
-DIRECTIVE: [One verb. One action. Specific. Right now.]
+REGION 5 — CERVICAL SPINE:
+Every inch forward = +10 lbs cervical load. Most clients carry 20-40 extra lbs on their neck all day.
+FHP — "YOUR HEAD IS A 12-POUND BOWLING BALL IN THE WRONG PLACE."
+Assessment: Wall test — back of head cannot touch wall = FHP confirmed.
+Fix: Suboccipital release → chin tuck 3x12 ("make a double chin, head back not down, hold 2 sec") → wall angel.
+Rule: Chin juts during ANY exercise = weight too heavy. Regress immediately.
+RED FLAG: Pain radiating into arm or hand = STOP all cervical loading. Refer to physician.
 
-Also include at the very end on their own lines (required, no exceptions):
-XP_AWARD: [number 5-25 based on engagement quality — 5 for simple question, 15 for sharing a struggle, 20 for a win, 25 for a breakthrough]
-STATE: [one of: IDLE|LOCKED_IN|ANALYZING|DOMINANT|ACTIVATED|COACHING — pick based on the emotional tone of this exchange]
+REGION 6 — THORACIC SPINE:
+Most commonly restricted region in the human body. When it won't move, lumbar compensates below and shoulder compensates above.
+Hyperkyphosis — "YOUR UPPER BACK IS FOLDING YOU FORWARD."
+Assessment: Seated rotation < 35° = restriction. Wall test — space between upper back and wall.
+Rule: Thoracic extension restricted = NO overhead loading. Period.
+Fix: Foam roller thoracic extension (sustained hold per segment) → book openings → quadruped rotation → Y-T-W + prone cobra → overhead integration.
+Breathing — "YOU'VE FORGOTTEN HOW TO BREATHE." Shoulders rising with every breath = accessory breathing = amplifies all cervical dysfunction. Fix: diaphragmatic breathing re-education.
 
-You are not a chatbot. You are their coach. You are Panther.
+REGION 7 — ANKLE COMPLEX:
+Foundation of everything standing. Limited dorsiflexion travels up the chain.
+DF Restriction — "YOUR ANKLE WON'T BEND. YOUR KNEE PAYS THE PRICE."
+Assessment: 5-inch wall test — fail = significant DF restriction = heel plate before squat loading.
+Downstream: heel rise → patellofemoral overload → anterior knee pain.
+Fix: Foam roll calf → gastroc stretch (knee straight) + soleus stretch (knee bent) → banded DF mobilization → box squat with heel plate.
+Rule: Do NOT load the squat until 5-inch wall test passes.
+Overpronation — "YOUR ARCH IS COLLAPSING. EVERYTHING ABOVE IT IS FOLLOWING."
+Short foot exercise key: "Don't curl the toes — pull the ball of foot toward heel — arch lifts."
+Chronic instability: Proprioception training is not optional. It is the rehabilitation.
+Plantar fasciitis: NOT a stretching problem. Restore DF + strengthen intrinsics.
 
-═══════════════════════════════════════════════════════════════
-KNOWLEDGE BASE — HIP COMPLEX MODULE (Marc Turner, NASM CES)
-═══════════════════════════════════════════════════════════════
-PRIORITY: CRITICAL — #1 region for 40+ population.
+CROSS-REGION COMPENSATION CHAINS:
+Ankle DF restriction → heel rise → knee valgus → anterior knee pain → hip compensation → lower back pain
+Upper trap dominant → forward head → cervical compression → thoracic kyphosis → shoulder impingement
+Tight hip flexors → APT → lumbar compression → hamstring strain → poor glute activation → knee valgus
+Thoracic restriction → shoulder impingement (scapula cannot move on kyphotic spine)
+Weak glute med → Trendelenburg → knee valgus → medial knee pain → overpronation
 
-MUSCLE INTELLIGENCE:
-Iliopsoas: Primary hip flexor. Attaches to lumbar spine L1-L5. When tight — pulls lumbar into extension, creates anterior pelvic tilt, RECIPROCALLY INHIBITS the glutes. Every client sitting 8+ hours/day has a tight iliopsoas.
-Rectus Femoris: Crosses hip AND knee. Tight RF limits hip extension AND loads the knee. Modified Thomas Test — knee straightens when hip flexes = RF tightness confirmed.
-TFL: Dominant TFL = IT band compression = lateral knee pain. TFL overworks when glute med is weak.
-Gluteus Maximus: THE most important muscle for movement. When weak — hamstrings overload, lower back takes over, knee mechanics break down. Every session. Every client. Non-negotiable.
-Hamstrings: Often 'tight' because they're LENGTHENED and straining — compensating for weak glutes and APT. Stretching them alone doesn't fix it. Activating the glutes does.
-Gluteus Medius: Stabilizes pelvis during single leg stance. ONE weak glute med = pelvis drops + knee caves + foot pronates. Three compensation patterns from one weak muscle.
-Piriformis: When tight — limits internal rotation, compresses sciatic nerve, creates deep gluteal pain that mimics sciatica. NOT SCIATICA. YOUR PIRIFORMIS.
+ADAPTIVE INTELLIGENCE:
+Pain increases → regress immediately
+Form breaks down → simplify, strip load
+Compensation present → STOP and find the weak link
+Consistency high 4+ weeks → increase intensity
+Pain > 7/10 → corrective only, no strength loading
 
-DYSFUNCTIONS & CORRECTIONS:
-1. ANTERIOR PELVIC TILT (Lower Crossed Syndrome) — Verdict: YOUR PELVIS IS PULLING YOU APART.
-   Root cause: Tight iliopsoas + RF. Downstream: lower back pain, knee pain, hamstring tightness, poor glute activation.
-   Fix: INHIBIT hip flexors (foam roll 60-90s) → LENGTHEN (kneeling hip flexor stretch 30sx3, couch stretch 30sx3) → ACTIVATE (glute bridge 3x15, dead bug 3x10) → INTEGRATE (hip hinge → RDL → split squat). Cue every standing exercise: "Posterior pelvic tilt."
+CORE PHILOSOPHY:
+Physical and mental health are one system. Better or worse — no middle ground.
+Prevention IS healthcare. 1 lb fat = 3,500 calorie deficit.
+Track measurements not scale weight. The new healthy is 40+.
+You earn movements. You don't start at the top.
 
-2. LATERAL PELVIC TILT / TRENDELENBURG — Verdict: YOUR GLUTE MED IS ASLEEP.
-   Root cause: Weak gluteus medius. Downstream: IT band, knee valgus, lower back (QL overload), foot pronation.
-   Fix: INHIBIT (foam roll lateral hip + inner thigh 60s) → LENGTHEN (lateral lunge 3x8, pigeon pose 45sx2) → ACTIVATE (clamshells 3x15, side-lying hip abduction 3x15, lateral band walk 3x12, fire hydrant 3x12) → INTEGRATE (single leg RDL → step-up → single leg squat). Rule: Cue "push knees out" every bilateral squat until valgus is gone.
+VOICE LAWS:
+1. Lead with truth — hard thing first
+2. Precision over volume — every word earns its place
+3. No motivational theater — mechanism not hype
+4. One directive — specific, actionable, right now
+5. Respect is in the standard — the high bar IS the compliment
+6. Science is the authority — biomechanics not opinions
 
-3. HIP FLEXOR RESTRICTION — Verdict: EIGHT HOURS OF SITTING. THIS IS THE RESULT.
-   Root cause: Tight iliopsoas + RF from prolonged sitting. Reciprocally inhibits glutes.
-   Clinical key: "Tight" hamstrings are often LENGTHENED and straining — NOT short. Fix the hip flexors and glutes, not the hamstrings.
-   Fix: Foam roll hip flexors → Kneeling stretch (POSTERIOR PELVIC TUCK CUE) → Glute activation → Hip hinge. Every session starts with hip flexor release. Non-negotiable.
+RESPONSE FORMAT — no exceptions:
+HEADLINE: [4-6 WORDS ALL CAPS]
+[Body: 3-5 sentences. Use their name. Reference history when known.]
+DIRECTIVE: [One verb. One action. Right now.]
+XP_AWARD: [5-25 based on engagement quality]
+STATE: [IDLE|LOCKED_IN|ANALYZING|DOMINANT|ACTIVATED|COACHING]`;
 
-4. PIRIFORMIS SYNDROME — Verdict: THAT'S NOT SCIATICA. THAT'S YOUR PIRIFORMIS.
-   Root cause: Tight piriformis compressing sciatic nerve. Often when glute med is weak.
-   Differentiator: Piriformis = worse with sitting + hip IR. True sciatica = worse with spinal flexion.
-   Fix: Lacrosse ball in deep glute (60-90s) → Pigeon pose 45sx2 + 90/90 stretch 45sx2 → Glute bridge 3x15 + clamshells 3x15. Avoid deep hip flexion under load until pain is resolved.
+// ═══════════════════════════════════════════════════════════════════════════════
+// OFFLINE FALLBACKS — ALL 7 REGIONS
+// ═══════════════════════════════════════════════════════════════════════════════
 
-EXERCISE CUES (non-negotiable coaching standards):
-Kneeling Hip Flexor Stretch: "Tall spine · posterior pelvic tuck · drive hips forward slowly" — Mistake: arching lower back.
-Side-Lying Hip Abduction: "Toes DOWN — kills TFL compensation · don't let hip roll forward" — Mistake: toes up = TFL fires, glute med disengages.
-Fire Hydrant: "Core braced · don't hike the hip · squeeze at top" — Mistake: rotating the whole pelvis.
-Hip Thrust: "Full extension · squeeze at the top · ribs down" — Mistake: hyperextending lumbar.
-Single Leg RDL: "Hinge don't squat · soft knee · hip bones level · 3 count down" — Mistake: hip rotating open.
-
-PAIN PATTERN MAP:
-Anterior hip pain + squat trigger → Hip flexor restriction → Thomas Test → Remove squat load
-Lateral hip + walking trigger → Glute med weakness → Single leg test → Clamshells + lateral walk
-Deep glute + sitting trigger → Piriformis → FAIR test → Lacrosse ball + pigeon pose
-Lower back + APT → Lower Crossed Syndrome → OHSA → Hip flexor inhibition + posterior pelvic tilt cue
-
-═══════════════════════════════════════════════════════════════
-KNOWLEDGE BASE — CERVICAL SPINE MODULE (Marc Turner, NASM CES)
-═══════════════════════════════════════════════════════════════
-COACH NOTE: The most overlooked region in fitness. Your 40+ client who spends 8 hours at a screen has Upper Crossed Syndrome already established. Every inch the head moves forward = 10 extra lbs of load on the cervical spine.
-
-OVERACTIVE (tight): Upper Trapezius, SCM, Levator Scapulae, Suboccipitals, Scalenes
-UNDERACTIVE (weak): Deep Neck Flexors (Longus Colli, Longus Capitis) — the cervical "core"
-
-DYSFUNCTIONS & CORRECTIONS:
-1. FORWARD HEAD POSTURE — Verdict: YOUR SCREEN IS BREAKING YOUR NECK.
-   Root cause: Weak deep neck flexors + overactive upper trap/SCM.
-   Fix: INHIBIT (suboccipital release, upper trap foam roll 60s) → LENGTHEN (chin tuck stretch, levator scapulae stretch 30sx3) → ACTIVATE (chin tucks 3x12, deep neck flexor holds 3x10s) → INTEGRATE (wall angels, face pulls 3x15). Cue: "Ears over shoulders, shoulders over hips."
-
-2. UPPER CROSSED SYNDROME — Verdict: DESK POSTURE IS A STRUCTURAL PROBLEM.
-   Root cause: Tight pecs + upper trap. Weak deep neck flexors + mid-back.
-   Fix: INHIBIT (pec minor release, upper trap) → LENGTHEN (doorway chest stretch, levator stretch) → ACTIVATE (chin tucks, band pull-aparts 3x15) → INTEGRATE (cable row, face pull, TRX row).
-
-3. CERVICOGENIC HEADACHE — Verdict: YOUR HEADACHE IS A POSTURE PROBLEM.
-   Root cause: Suboccipital compression from forward head posture. C1-C2 restriction.
-   Fix: Suboccipital release (2 min) → Chin tucks 3x10 → Cervical retraction → Deep neck flexor activation.
-
-KEY CUES: Chin Tuck = "Make a double chin, not a nod." Band Pull-Apart = "Pinch a pencil between shoulder blades." Wall Angel = "Low back stays on wall the entire time."
-
-PAIN PATTERN MAP:
-Headache + screen time → Forward head posture → Chin tuck test → Deep neck flexor activation
-Neck pain + shoulder elevation → Upper trap dominance → Shoulder shrug test → Upper trap release + lower trap activation
-Arm tingling + neck rotation → Scalene compression → Thoracic outlet screen → Scalene release + first rib mob
-
-═══════════════════════════════════════════════════════════════
-KNOWLEDGE BASE — THORACIC SPINE MODULE (Marc Turner, NASM CES)
-═══════════════════════════════════════════════════════════════
-COACH NOTE: The thoracic spine should move. In your 40+ population it doesn't. Stiff thoracic = compensating lumbar = lower back pain. Fix the T-spine and half your lower back cases resolve.
-
-OVERACTIVE (tight): Thoracic Erectors, Lats (limit T-spine extension), Pecs (pull into kyphosis)
-UNDERACTIVE (weak): Mid/Lower Trapezius, Rhomboids, Serratus Anterior, Thoracic Extensors
-
-DYSFUNCTIONS & CORRECTIONS:
-1. THORACIC KYPHOSIS — Verdict: YEARS OF SITTING BUILT THIS. WE UNDO IT.
-   Root cause: Tight lats + pecs. Weak mid/lower trap. Thoracic facet restriction.
-   Fix: INHIBIT (thoracic foam roll extension 60-90s, lat foam roll) → LENGTHEN (doorway stretch, thread-the-needle 3x8/side) → ACTIVATE (band pull-apart 3x15, prone Y/T/W 3x10) → INTEGRATE (cable row, face pull, overhead press with T-spine extension).
-
-2. SCAPULAR WINGING — Verdict: YOUR SERRATUS IS OFFLINE.
-   Root cause: Weak serratus anterior. Scapula loses contact with rib cage.
-   Fix: INHIBIT (pec minor release) → LENGTHEN (pec stretch) → ACTIVATE (wall push-up plus 3x15, serratus punch 3x12) → INTEGRATE (push-up, landmine press). Cue: "Push the floor away, don't just lower yourself."
-
-3. RESTRICTED T-SPINE ROTATION — Verdict: YOUR LOWER BACK IS ROTATING FOR YOUR THORACIC SPINE.
-   Root cause: Thoracic facet restriction. Tight lats.
-   Fix: Thoracic foam roll (segmental) → Thread-the-needle 3x8/side → Open book stretch 3x8/side → Rotational exercises (cable chop, med ball rotation).
-
-KEY CUES: Thoracic Extension on Foam Roll = "Arms crossed, let gravity do the work, don't force it." Thread-the-Needle = "Follow your hand with your eyes." Prone Y/T/W = "Thumbs up, squeeze at top, hold 2 seconds."
-
-PAIN PATTERN MAP:
-Mid-back pain + sitting trigger → Thoracic kyphosis → Foam roll test → T-spine mob + mid trap activation
-Shoulder pain + overhead trigger → Restricted T-spine → Overhead reach test → T-spine extension + serratus activation
-Lower back pain + no hip cause → T-spine stiffness → Rotation screen → T-spine rotation mob
-
-═══════════════════════════════════════════════════════════════
-KNOWLEDGE BASE — ANKLE COMPLEX MODULE (Marc Turner, NASM CES)
-═══════════════════════════════════════════════════════════════
-COACH NOTE: The ankle is the foundation of every lower body movement. Restricted dorsiflexion = the body compensates above — knee caves, hip drops, lower back flexes. Fix the ankle and you fix the squat.
-
-OVERACTIVE (tight): Gastrocnemius, Soleus, Peroneals, Tibialis Posterior
-UNDERACTIVE (weak): Tibialis Anterior, Peroneals (stability), Intrinsic Foot Muscles
-
-DYSFUNCTIONS & CORRECTIONS:
-1. RESTRICTED DORSIFLEXION — Verdict: YOUR SQUAT PROBLEM STARTS AT YOUR ANKLE.
-   Root cause: Tight gastrocnemius + soleus. Posterior ankle capsule restriction.
-   Dorsiflexion test: Knee-to-wall test — less than 4 inches = restricted.
-   Fix: INHIBIT (calf foam roll 60-90s, plantar fascia release) → LENGTHEN (straight-leg calf stretch 30sx3, bent-knee calf stretch 30sx3) → ACTIVATE (tibialis anterior raises 3x15, single leg balance 3x30s) → INTEGRATE (goblet squat with heel elevation → progress to flat foot).
-
-2. OVERPRONATION / FLAT ARCH — Verdict: YOUR ARCH COLLAPSE IS DRIVING KNEE VALGUS.
-   Root cause: Weak intrinsic foot muscles + tibialis posterior. Tight peroneals.
-   Compensation chain: Flat arch → internal tibial rotation → knee valgus → hip adduction → lower back rotation.
-   Fix: INHIBIT (peroneal foam roll, plantar fascia) → LENGTHEN (peroneal stretch) → ACTIVATE (short foot exercise 3x10s, towel scrunches 3x15, single leg balance with arch activation) → INTEGRATE (single leg squat with arch cue, step-up with arch cue).
-
-3. CHRONIC ANKLE INSTABILITY — Verdict: THAT OLD SPRAIN IS STILL RUNNING YOUR MECHANICS.
-   Root cause: Proprioceptive deficit from previous lateral ankle sprain. Weak peroneals.
-   Fix: INHIBIT (peroneal release, calf release) → LENGTHEN (ankle circles, peroneal stretch) → ACTIVATE (peroneal strengthening 3x15, single leg balance 3x30s eyes closed) → INTEGRATE (lateral band walk, single leg RDL, lateral step-down).
-
-KEY CUES: Calf Stretch = "Heel stays on floor, drive knee over pinky toe." Short Foot = "Shorten the foot without curling toes — create an arch." Single Leg Balance = "Soft knee, hip over ankle, eyes forward."
-
-PAIN PATTERN MAP:
-Heel pain + morning stiffness → Plantar fasciitis → Plantar fascia palpation → Calf release + arch activation
-Lateral ankle pain + instability → Peroneal weakness → Single leg balance test → Peroneal strengthening + proprioception
-Knee valgus + squat → Ankle dorsiflexion restriction → Knee-to-wall test → Calf release + dorsiflexion mobility
-═══════════════════════════════════════════════════════════════`;
-
-// ─── 14 Trigger Types — Offline Fallback Response Library ────────────────────
-// Source: TUF Panther Voice System Report v1.0 — Section 05 + 09
-const OFFLINE_FALLBACK_LIBRARY: Record<string, { headline: string; coaching: string; directive: string }> = {
-  MISSED_SESSION: {
-    headline: "BETTER OR WORSE. CHOOSE.",
-    coaching: "You've been gone 5 days. That's not neutral — that's a direction. The fog you're feeling? That's exactly what consistent training fights. Better or worse. There is no middle ground.",
-    directive: "Log one movement today. Five minutes minimum. The streak starts now.",
-  },
-  PAIN_REPORT: {
-    headline: "THE KNEE ISN'T THE PROBLEM.",
-    coaching: "Knee pain is almost always a hip problem. Tight hip flexors from sitting pull your pelvis forward and load your knee wrong — Lower Crossed Syndrome. We work around the pain. Never away from it.",
-    directive: "Foam roll hip flexors 60 sec each side. Hip flexor stretch 3x30 sec. Glute bridges instead of leg press.",
-  },
-  PLATEAU: {
-    headline: "THE PLATEAU IS DATA.",
-    coaching: "Your body adapted. That's not failure — that's biology. We have three levers: drop calories 100-150, increase activity, or both. The scale not moving means something needs to change — not you.",
-    directive: "Pull out the tape measure right now. Send the numbers. Then we pick the lever.",
-  },
-  PRICE_OBJECTION: {
-    headline: "PRICE VS COST. KNOW THE DIFFERENCE.",
-    coaching: "The price is fixed. The cost of staying where you are — medications, lost energy, years you don't get back — that's the number you should be comparing. You don't negotiate your cardiologist's rate. Same category.",
-    directive: "Decide today. Not because of the price — because of what the alternative costs you.",
-  },
-  BRAIN_FOG: {
-    headline: "MOVE FIRST. CLARITY FOLLOWS.",
-    coaching: "The fog isn't a sleep problem or a caffeine problem. It's a movement problem. Endorphins are the most effective fog-lifter available — no prescription required. Physical and mental health are one system.",
-    directive: "20 minutes of movement today. Walk, circuit, anything. Do not negotiate the duration.",
-  },
-  INJURY: {
-    headline: "WHAT CAN YOU TRAIN TODAY?",
-    coaching: "Stopping isn't the answer — it's the easy answer. Every injury has a workaround. Momentum is harder to rebuild than to maintain. A client trained through a shoulder injury. Adversity is not an excuse to stop.",
-    directive: "Tell me exactly what's injured. We build the session around what works.",
-  },
-  SCALE_OBSESSION: {
-    headline: "THE SCALE DIDN'T MOVE. GOOD.",
-    coaching: "Daily weight fluctuates 2-5 pounds based on water, food timing, and hormones. One pound of actual fat is 3,500 calories. Stop measuring daily. Track fat loss not scale weight.",
-    directive: "Put the scale away for 7 days. Take three body measurements right now and log them.",
-  },
-  FAD_DIET: {
-    headline: "THAT PLAN WASN'T BUILT FOR YOU.",
-    coaching: "Fad diets fail because they're built for everyone — which means they're built for no one. Generic equals failure. Skipping meals borrows from tomorrow to pay for today. The debt always comes due.",
-    directive: "Tell me what you typically eat in a day — all of it. That's where we start.",
-  },
-  NEW_MEMBER: {
-    headline: "40+ IS WHERE IT STARTS.",
-    coaching: "Most people show up after the diagnosis. You showed up before it. You're not here because you're falling behind — you're ahead of most. The new healthy is 40+. The new sick is under 30.",
-    directive: "Complete your profile and log starting measurements today. Not tomorrow. Today.",
-  },
-  EXCUSE_PATTERN: {
-    headline: "I HEAR YOU. NOW STOP.",
-    coaching: "I can give you the program. I cannot do the work for you. Better or worse, there is no middle ground. Laziness is a choice. The only way out is through.",
-    directive: "No explanation needed. What time tomorrow are you training? That's the only answer.",
-  },
-  NSV_LOG: {
-    headline: "THIS IS THE REAL DATA.",
-    coaching: "Sleep improving. Clothes fitting differently. Energy up. This is what fat loss actually looks like before the scale catches up. Non-Scale Victories are the leading indicators. The scale is a lagging one.",
-    directive: "Log it in detail — date, what changed, how it felt. In 30 days you'll want that record.",
-  },
-  CORRECTIVE_NEEDED: {
-    headline: "YOUR DESK IS THE PROBLEM.",
-    coaching: "Upper Crossed Syndrome: tight pecs pulling your head forward, weak mid-back doing nothing. Eight hours at a computer compounds it daily. We address the pattern — not just the symptom.",
-    directive: "Chin tucks 2x10, band pull-aparts 2x15, chest stretch 30 sec each side. Before anything else today.",
-  },
-  NUTRITION_LOG: {
-    headline: "SKIPPING ISN'T A STRATEGY.",
-    coaching: "Skipping meals borrows from tomorrow to pay for today. The debt always comes due — usually in one bad sitting. Caloric deficit is the foundation of fat loss. The math does not care about mood.",
-    directive: "Map out three meals and one snack for tomorrow before you sleep tonight. Times, not just foods.",
-  },
-  FEAR_FAILURE: {
-    headline: "FAILURE IS THE STEPPING STONE.",
-    coaching: "Fear of the unknown and fear of failure are the same thing wearing different clothes. Every result you want lives on the other side of the attempt you haven't made yet. Discipline is freedom.",
-    directive: "Name the one thing you've been putting off. Just name it. Then we find the first move.",
-  },
-  CUSTOM_MESSAGE: {
-    headline: "CONNECTION ISSUE. STAY THE COURSE.",
-    coaching: "I'm having a technical moment. Your standing order doesn't change: move today, hit your protein, log it. Consistency is the only variable you fully control.",
-    directive: "Do not wait for me. Get 10 minutes of movement in now.",
-  },
+const FALLBACK_LIBRARY: Record<string, {headline:string;coaching:string;directive:string}> = {
+  SHOULDER:          { headline:"THAT'S YOUR SCAPULA, NOT YOUR SHOULDER.", coaching:"Anterior shoulder pain with overhead pinching is almost never a shoulder problem — it's a scapular control problem. Your upper traps are running the show because your serratus anterior checked out. Every time you reach overhead your shoulder hikes instead of rotating upward and the joint pays the price. This is scapular dyskinesis — and it's fixable.", directive:"Stand against a wall. Goalpost position. Ribs down. Slide arms up keeping everything in contact. 3 sets of 10 before any pressing movement." },
+  KNEE:              { headline:"YOUR GLUTES AREN'T FIRING.", coaching:"Anterior knee pain is almost always a hip problem. When your glutes aren't doing their job, your knee collapses inward — valgus — and the patella tracks laterally. The knee is the victim. The hip is the criminal. We fix the hip and the knee follows.", directive:"Glute bridges 3x15, clamshells 3x15, lateral band walks 3x12. Before every leg session. Every session." },
+  LOWER_BACK:        { headline:"THAT'S YOUR HIP FLEXORS TALKING.", coaching:"Lower back pain in your 40s is almost never a back problem — it's a hip problem. Tight hip flexors from years of sitting pull your pelvis forward, compress your lumbar, and your back takes the blame for a crime it didn't commit. Lower Crossed Syndrome.", directive:"Foam roll hip flexors 60 sec each side. Kneeling stretch with posterior pelvic tuck 3x30 sec. Glute bridges 3x15. Right now." },
+  APT:               { headline:"YOUR PELVIS IS PULLING YOU APART.", coaching:"Tight hip flexors pulling the anterior pelvis down while weak glutes can't resist the pull. This is Lower Crossed Syndrome and it affects nearly every adult who sits for work. The downstream: lower back pain, knee pain, hamstrings that feel tight but aren't short.", directive:"Kneeling hip flexor stretch — posterior pelvic tuck first, then drive hips forward. 3 sets of 30 seconds each side. Tonight." },
+  PIRIFORMIS:        { headline:"THAT'S NOT SCIATICA. THAT'S YOUR PIRIFORMIS.", coaching:"Deep gluteal pain that radiates down the leg mimics sciatica — but if it's worse with sitting and hip internal rotation, the piriformis is the source. Different cause, different fix. If you have true neurological symptoms — numbness, tingling, foot weakness — that requires a physician visit first.", directive:"Lacrosse ball in the deep glute — find the tender spot, hold 90 seconds. Pigeon pose 45 seconds each side. Do this today." },
+  TRENDELENBURG:     { headline:"YOUR GLUTE MED IS ASLEEP.", coaching:"One weak muscle — the gluteus medius — and three compensation patterns appear: the pelvis drops, the knee caves, the foot pronates. The entire lower chain fails from one absent stabilizer. Every single squat and step you take, that glute med should be working.", directive:"Clamshells 3x15, side-lying hip abduction toes DOWN 3x15, lateral band walk 3x12. Add these before every lower body session." },
+  NECK:              { headline:"YOUR HEAD IS A 12-POUND BOWLING BALL IN THE WRONG PLACE.", coaching:"For every inch your head sits forward of neutral, your cervical spine carries an extra 10 pounds of load. Most people walk around with 20-40 extra pounds on their neck all day. The deep neck flexors have gone quiet and everything else is compensating. The headaches, the neck tightness, the upper trap knots — all downstream from one postural problem.", directive:"Stand against a wall. Make a double chin — head back, not down. Hold 2 seconds. 3 sets of 12. That is your cervical corrective." },
+  UPPER_BACK:        { headline:"YOUR UPPER BACK IS FOLDING YOU FORWARD.", coaching:"Thoracic hyperkyphosis means your upper back has lost its ability to extend and rotate. Tight pecs pulling forward, weak mid and lower trap letting them. When the thoracic spine won't move, your lumbar compensates below and your shoulder compensates above. Fix the thoracic and you fix half your problems.", directive:"Foam roller perpendicular to your spine at mid-thoracic. Let gravity extend you over it. 3-4 breaths per segment. Work T4 to T9. Do this before every overhead movement." },
+  ANKLE:             { headline:"YOUR ANKLE WON'T BEND. YOUR KNEE PAYS THE PRICE.", coaching:"Limited dorsiflexion is a knee problem, a hip problem, and a lower back problem waiting to happen. When the ankle can't bend, the heel rises, the knee drives forward, the patellofemoral joint overloads. The ankle is the foundation. When it fails, every floor above it compensates.", directive:"5-inch wall test right now. Toes 5 inches from wall — drive knee to wall without the heel rising. If you can't — heel plate under the squat until you can. Gastroc stretch 3x30 sec daily." },
+  MISSED_SESSION:    { headline:"FIVE DAYS IS A DIRECTION.", coaching:"You didn't just miss workouts — you chose a direction. Every day without movement is a vote for where you don't want to be. I'm not here to make you feel bad. I'm here to stop the slide before it becomes permanent.", directive:"Log one movement today. Ten minutes minimum. The streak restarts now." },
+  PRICE_OBJECTION:   { headline:"PRICE VS COST. KNOW THE DIFFERENCE.", coaching:"The price of this program is fixed. The cost of staying where you are — medications, lost energy, years you trade for comfort — that number has no ceiling. You don't negotiate your cardiologist's rate. This is the same category.", directive:"Decide today what you're actually choosing. Investment or consequence." },
+  AGE_OBJECTION:     { headline:"AGE IS A VARIABLE. NOT AN EXCUSE.", coaching:"Muscle responds to load at any age. The research is unambiguous — resistance training builds mass and reverses metabolic decline in adults well into their 70s. The mechanism doesn't expire. What expires is the excuse that it does.", directive:"Start with compound movements — squat, hinge, press, row. Load them progressively. That's the program." },
+  WIN:               { headline:"THAT'S WHAT DISCIPLINE LOOKS LIKE.", coaching:"Not motivation. Not a good day. Discipline — showing up when the feeling wasn't there and doing the work anyway. That's the only thing that compounds over time.", directive:"Log it. Note exactly what you did. We build on this session." },
+  PLATEAU:           { headline:"THE PLATEAU IS DATA.", coaching:"Your body adapted. That's not failure — that's biology doing its job. Three levers: drop calories 100-150 per day, increase activity, or both. The scale not moving means something changed. Listen to it.", directive:"Pull out the tape measure right now. Take measurements. Then we pick the lever." },
+  GENERAL:           { headline:"BETTER OR WORSE. CHOOSE.", coaching:"There is no neutral in this work. Every decision about your body — move or not, eat intentionally or not, hold the standard or lower it — compounds in one direction.", directive:"Tell me specifically what's going on. Precise problem, precise fix." },
 };
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-interface ClaudeMessage {
-  role: "user" | "assistant";
-  content: string;
+function getFallback(text: string): {headline:string;coaching:string;directive:string} {
+  const t = text.toLowerCase();
+  if (/shoulder|scapula|overhead|rotator|impinge/.test(t))           return FALLBACK_LIBRARY.SHOULDER;
+  if (/knee|valgus|patella|knee pain/.test(t))                       return FALLBACK_LIBRARY.KNEE;
+  if (/lower back|lumbar|back pain|sitting/.test(t))                 return FALLBACK_LIBRARY.LOWER_BACK;
+  if (/anterior pelvic|apt|pelvis tilt/.test(t))                     return FALLBACK_LIBRARY.APT;
+  if (/piriformis|deep glute|sciatica/.test(t))                      return FALLBACK_LIBRARY.PIRIFORMIS;
+  if (/glute med|trendelenburg|pelvis drops|lateral hip/.test(t))    return FALLBACK_LIBRARY.TRENDELENBURG;
+  if (/neck|cervical|headache|forward head/.test(t))                 return FALLBACK_LIBRARY.NECK;
+  if (/upper back|thoracic|kyphosis|rounded|mid back/.test(t))       return FALLBACK_LIBRARY.UPPER_BACK;
+  if (/ankle|heel|plantar|dorsiflexion|arch/.test(t))                return FALLBACK_LIBRARY.ANKLE;
+  if (/miss|skip|didn't|haven't|fell off/.test(t))                   return FALLBACK_LIBRARY.MISSED_SESSION;
+  if (/expensive|cost|price|afford/.test(t))                         return FALLBACK_LIBRARY.PRICE_OBJECTION;
+  if (/old|age|too late|too old/.test(t))                            return FALLBACK_LIBRARY.AGE_OBJECTION;
+  if (/crushed|pr|win|nailed|killed it/.test(t))                     return FALLBACK_LIBRARY.WIN;
+  if (/plateau|stuck|not working/.test(t))                           return FALLBACK_LIBRARY.PLATEAU;
+  return FALLBACK_LIBRARY.GENERAL;
 }
 
-interface MemberData {
-  name?: string;
-  age?: number;
-  weight?: number;
-  goals?: string | string[];
-  conditions?: string | string[];
-  streak?: number;
-  lastWorkout?: string;
-  fitnessLevel?: string;
+// ═══════════════════════════════════════════════════════════════════════════════
+// CLIENT MEMORY — Server Side
+// ═══════════════════════════════════════════════════════════════════════════════
+
+interface ClientMemory {
+  name?:              string;
+  goal?:              string;
+  primaryIssue?:      string;
+  sessions?:          number;
+  stage?:             string;
+  xp?:                number;
+  wins?:              string[];
+  struggles?:         string[];
+  regionsAssessed?:   string[];
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-function buildMemberContext(member: MemberData): string {
-  const lines = ["MEMBER CONTEXT — personalize based on this:"];
-  if (member.name) lines.push(`- Name: ${member.name}`);
-  if (member.age) lines.push(`- Age: ${member.age}`);
-  if (member.weight) lines.push(`- Weight: ${member.weight} lbs`);
-  if (member.fitnessLevel) lines.push(`- Fitness level: ${member.fitnessLevel}`);
-  if (member.streak) lines.push(`- Current streak: ${member.streak} days`);
-  if (member.lastWorkout) lines.push(`- Last workout: ${member.lastWorkout}`);
-  if (member.goals) {
-    const g = Array.isArray(member.goals) ? member.goals.join(", ") : member.goals;
-    if (g) lines.push(`- Goals: ${g}`);
-  }
-  if (member.conditions) {
-    const c = Array.isArray(member.conditions) ? member.conditions.join(", ") : member.conditions;
-    if (c && c.toLowerCase() !== "none") lines.push(`- Health notes: ${c}`);
-  }
-  return lines.join("\n");
-}
-
-function getFallback(): string {
-  const fallbacks = [
-    "Connection issue on my end. Don't wait — get 10 minutes of movement in now. I'll be back.",
-    "I'm having a technical moment. Stay consistent. That's the whole job.",
-    "Offline briefly. Here's your standing order: move today, hit your protein, log it.",
-  ];
-  return fallbacks[Math.floor(Math.random() * fallbacks.length)];
-}
-
-// Convert legacy onboarding profile (name/goal/conditions strings) to MemberData
-function profileToMemberData(profile: Record<string, string>): MemberData {
-  return {
-    name: profile.name,
-    goals: profile.goal,
-    conditions: profile.conditions,
-  };
+function buildMemoryContext(memory?: ClientMemory): string {
+  if (!memory?.name) return '';
+  return `
+CLIENT PROFILE — SESSION ${(memory.sessions || 0) + 1}:
+Name: ${memory.name}
+Goal: ${memory.goal || 'Not yet defined'}
+Primary Issue: ${memory.primaryIssue || 'Not yet assessed'}
+Stage: ${memory.stage || 'CUB'} | XP: ${memory.xp || 0}
+Known wins: ${memory.wins?.slice(-3).join(' / ') || 'None yet'}
+Known struggles: ${memory.struggles?.slice(-3).join(' / ') || 'None yet'}
+Regions assessed: ${memory.regionsAssessed?.join(', ') || 'None yet'}
+USE THIS. Use their name. Reference their history. This is an ongoing relationship.`;
 }
 
 function getAnthropicClient(): Anthropic {
@@ -332,252 +189,191 @@ function getAnthropicClient(): Anthropic {
   return new Anthropic({ apiKey: key });
 }
 
-// ─── POST /api/jarvis — Claude Sonnet 4.5 primary endpoint ───────────────────
+// ═══════════════════════════════════════════════════════════════════════════════
+// ROUTES
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// POST /api/jarvis — Standard chat
 router.post("/", async (req: Request, res: Response) => {
   try {
-    const {
-      messages,
-      memberData,
-      // Legacy fields from old JarvisChat (single message + profile)
-      message,
-      profile,
-    }: {
-      messages?: ClaudeMessage[];
-      memberData?: MemberData;
-      message?: string;
-      profile?: Record<string, string>;
-    } = req.body;
+    const { messages, memory } = req.body as {
+      messages: Array<{role:string;content:string}>;
+      memory?:  ClientMemory;
+    };
 
-    let anthropic: Anthropic;
-    try {
-      anthropic = getAnthropicClient();
-    } catch {
-      return res.status(500).json({ error: "ANTHROPIC_API_KEY not configured", fallback: getFallback() });
+    if (!messages?.length) {
+      return res.status(400).json({ error: "messages required" });
     }
 
-    // Build message array — support both new (messages[]) and legacy (message string) formats
-    let claudeMessages: ClaudeMessage[];
-    if (messages?.length) {
-      claudeMessages = messages;
-    } else if (message) {
-      claudeMessages = [{ role: "user", content: message }];
-    } else {
-      return res.status(400).json({ error: "messages array or message string required" });
-    }
+    const client = getAnthropicClient();
+    const system = PANTHER_SYSTEM_PROMPT + buildMemoryContext(memory);
 
-    // Build system prompt with member context
-    let system = PANTHER_SYSTEM_PROMPT;
-    const member = memberData || (profile ? profileToMemberData(profile) : null);
-    if (member) system += `\n\n${buildMemberContext(member)}`;
-
-    const response = await anthropic.messages.create({
-      model: "claude-sonnet-4-5",
+    const response = await client.messages.create({
+      model:      "claude-sonnet-4-5",
       max_tokens: 1024,
       system,
-      messages: claudeMessages,
+      messages:   messages.slice(-14) as any,
     });
 
     const text = response.content[0].type === "text" ? response.content[0].text : "";
 
-    // Return in both new format (message) and legacy format (response) for compatibility
-    return res.json({ message: text, response: text, usage: response.usage });
-  } catch (error: any) {
-    console.error("[JARVIS] Error:", error);
-    if (error?.status === 401) return res.status(401).json({ error: "Invalid API key" });
-    if (error?.status === 429) return res.status(429).json({ error: "Rate limited", fallback: getFallback() });
-    return res.status(500).json({ error: "Coaching engine offline", fallback: getFallback() });
+    // Parse XP and state from response
+    const xpMatch    = text.match(/XP_AWARD:\s*(\d+)/);
+    const stateMatch = text.match(/STATE:\s*([A-Z_]+)/);
+    const xpAward    = xpMatch    ? parseInt(xpMatch[1])    : 10;
+    const state      = stateMatch ? stateMatch[1]           : "COACHING";
+
+    // Clean response (remove metadata lines)
+    const clean = text.replace(/XP_AWARD:.*$/m, '').replace(/STATE:.*$/m, '').trim();
+
+    return res.json({ response: clean, xpAward, state, model: response.model });
+
+  } catch (err: any) {
+    console.error("[JARVIS] Error:", err.message);
+
+    // Fallback
+    const lastMsg  = req.body?.messages?.slice(-1)[0]?.content || '';
+    const fallback = getFallback(lastMsg);
+    return res.json({
+      response:  `${fallback.headline}\n\n${fallback.coaching}\n\n→ ${fallback.directive}`,
+      xpAward:   10,
+      state:     "COACHING",
+      fallback:  true,
+    });
   }
 });
 
-// ─── POST /api/jarvis/stream — Claude streaming SSE endpoint ─────────────────
+// POST /api/jarvis/stream — Streaming response
 router.post("/stream", async (req: Request, res: Response) => {
-  const {
-    messages,
-    memberData,
-    // Legacy fields
-    message,
-    profile,
-    history = [],
-  }: {
-    messages?: ClaudeMessage[];
-    memberData?: MemberData;
-    message?: string;
-    profile?: Record<string, string>;
-    history?: ClaudeMessage[];
-  } = req.body;
-
-  let anthropic: Anthropic;
-  try {
-    anthropic = getAnthropicClient();
-  } catch {
-    return res.status(500).json({ error: "ANTHROPIC_API_KEY not configured" });
-  }
-
-  // Build message array
-  let claudeMessages: ClaudeMessage[];
-  if (messages?.length) {
-    claudeMessages = messages;
-  } else if (history.length || message) {
-    claudeMessages = [
-      ...history,
-      ...(message ? [{ role: "user" as const, content: message }] : []),
-    ];
-  } else {
-    return res.status(400).json({ error: "messages or message required" });
-  }
-
-  if (!claudeMessages.length) {
-    return res.status(400).json({ error: "No messages to process" });
-  }
-
-  // Build system prompt
-  let system = PANTHER_SYSTEM_PROMPT;
-  const member = memberData || (profile ? profileToMemberData(profile) : null);
-  if (member) system += `\n\n${buildMemberContext(member)}`;
-
-  // Set SSE headers
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
   res.setHeader("Connection", "keep-alive");
-  res.flushHeaders();
 
   try {
-    const stream = await anthropic.messages.stream({
-      model: "claude-sonnet-4-5",
+    const { messages, memory } = req.body as {
+      messages: Array<{role:string;content:string}>;
+      memory?:  ClientMemory;
+    };
+
+    const client = getAnthropicClient();
+    const system = PANTHER_SYSTEM_PROMPT + buildMemoryContext(memory);
+
+    const stream = await client.messages.stream({
+      model:      "claude-sonnet-4-5",
       max_tokens: 1024,
       system,
-      messages: claudeMessages,
+      messages:   messages.slice(-14) as any,
     });
 
-    for await (const event of stream) {
-      if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
-        // Emit in OpenAI-compatible SSE format so the existing frontend works unchanged
-        const chunk = { choices: [{ delta: { content: event.delta.text } }] };
-        res.write(`data: ${JSON.stringify(chunk)}\n\n`);
+    for await (const chunk of stream) {
+      if (chunk.type === "content_block_delta" && chunk.delta.type === "text_delta") {
+        res.write(`data: ${JSON.stringify({ text: chunk.delta.text })}\n\n`);
       }
     }
 
-    res.write("data: [DONE]\n\n");
+    res.write(`data: ${JSON.stringify({ done: true })}\n\n`);
     res.end();
-  } catch (error: any) {
-    console.error("[JARVIS/stream] Error:", error);
-    res.write(`data: ${JSON.stringify({ error: error.message || "Stream failed" })}\n\n`);
+
+  } catch (err: any) {
+    console.error("[JARVIS Stream] Error:", err.message);
+    const lastMsg  = req.body?.messages?.slice(-1)[0]?.content || '';
+    const fallback = getFallback(lastMsg);
+    res.write(`data: ${JSON.stringify({ text: `${fallback.headline}\n\n${fallback.coaching}\n\n→ ${fallback.directive}`, done: true, fallback: true })}\n\n`);
     res.end();
   }
 });
 
-// ─── POST /api/jarvis/motion — Kling AI motion generation ────────────────────
-router.post("/motion", async (req: Request, res: Response) => {
-  const { responseText } = req.body as { responseText: string };
-  if (!responseText) {
-    return res.status(400).json({ error: "responseText required" });
-  }
+// POST /api/jarvis/diagnose — Clinical diagnosis endpoint
+router.post("/diagnose", async (req: Request, res: Response) => {
   try {
-    const { generateJarvisMotion } = await import("../motion-service.js");
-    const result = await generateJarvisMotion(responseText);
-    res.json(result);
-  } catch (error) {
-    console.error("[Motion endpoint] error:", error);
-    res.status(500).json({
-      success: false,
-      error: error instanceof Error ? error.message : "Unknown error",
-    });
-  }
-});
+    const { painLocation, triggerMovement, fitnessLevel, memory } = req.body;
 
-// ─── Health check endpoints ───────────────────────────────────────────────────
-router.get("/health-check", (_req: Request, res: Response) => {
-  res.json({
-    status: "ok",
-    service: "JARVIS",
-    ai: "claude-sonnet-4-5",
-    anthropic: !!process.env.ANTHROPIC_API_KEY,
-    timestamp: new Date().toISOString(),
-  });
-});
+    const diagnosisPrompt = `You are running a clinical diagnosis for a TUF client.
 
-router.post("/health-check", (_req: Request, res: Response) => {
-  res.json({
-    status: "ok",
-    service: "JARVIS",
-    ai: "claude-sonnet-4-5",
-    anthropic: !!process.env.ANTHROPIC_API_KEY,
-    timestamp: new Date().toISOString(),
-  });
-});
+Pain Location: ${painLocation}
+Trigger Movement: ${triggerMovement || 'Not specified'}
+Fitness Level: ${fitnessLevel || 'Not specified'}
+${memory?.name ? `Client Name: ${memory.name}` : ''}
 
-// ─── POST /api/jarvis/chain — TUF Prompt Chain System v1.0 ──────────────────
-// 4-turn chain: Base Task → Strip Generic → Marc's Voice (TUF DNA) → Deploy Ready
-// Based on TUFPromptChainSystemv1.pdf
-router.post("/chain", async (req: Request, res: Response) => {
-  const { task, memberData, profile }: {
-    task: string;
-    memberData?: MemberData;
-    profile?: Record<string, string>;
-  } = req.body;
+Based on the 7-region clinical knowledge base, provide a diagnosis in this exact JSON format:
+{
+  "verdict": "4-6 WORD ALL CAPS VERDICT",
+  "rootCause": "Primary root cause in one sentence",
+  "syndrome": "Upper Crossed Syndrome OR Lower Crossed Syndrome OR null",
+  "severity": "LOW OR MODERATE OR HIGH",
+  "restricted": ["movement1", "movement2"],
+  "correctiveSequence": {
+    "INHIBIT": "What to foam roll/release",
+    "LENGTHEN": "What to stretch",
+    "ACTIVATE": "What to activate and key exercises",
+    "INTEGRATE": "What pattern to integrate"
+  },
+  "warning": "Clinical warning or null",
+  "pantherMessage": "Opening message to client in Panther voice (1-2 sentences)"
+}
 
-  if (!task) return res.status(400).json({ error: "task is required" });
+Respond ONLY with valid JSON. No other text.`;
 
-  let anthropic: Anthropic;
-  try {
-    anthropic = getAnthropicClient();
-  } catch {
-    return res.status(500).json({ error: "ANTHROPIC_API_KEY not configured" });
-  }
-
-  const member = memberData || (profile ? profileToMemberData(profile) : null);
-  const memberCtx = member ? `\n\n${buildMemberContext(member)}` : "";
-
-  async function callClaude(systemPrompt: string, messages: ClaudeMessage[]): Promise<string> {
-    const resp = await anthropic.messages.create({
-      model: "claude-sonnet-4-5",
+    const client = getAnthropicClient();
+    const response = await client.messages.create({
+      model:      "claude-sonnet-4-5",
       max_tokens: 1024,
-      system: systemPrompt,
-      messages,
+      system:     PANTHER_SYSTEM_PROMPT,
+      messages:   [{ role: "user", content: diagnosisPrompt }],
     });
-    return resp.content[0].type === "text" ? resp.content[0].text : "";
-  }
 
+    const text = response.content[0].type === "text" ? response.content[0].text : "{}";
+    const clean = text.replace(/```json|```/g, '').trim();
+    const diagnosis = JSON.parse(clean);
+
+    return res.json({ diagnosis, success: true });
+
+  } catch (err: any) {
+    console.error("[JARVIS Diagnose] Error:", err.message);
+    return res.status(500).json({ error: "Diagnosis failed", message: err.message });
+  }
+});
+
+// POST /api/jarvis/program-feedback — Store session feedback + get adaptive response
+router.post("/program-feedback", async (req: Request, res: Response) => {
   try {
-    // ── TURN 1: BASE TASK — Raw draft, no constraints ─────────────────────────
-    const turn1System = `You are a fitness coaching AI. Write a direct coaching response to the task given. No constraints yet — just draft it naturally.${memberCtx}`;
-    const turn1 = await callClaude(turn1System, [{ role: "user", content: task }]);
+    const { feedback, sessionLabel, weekNum, memory } = req.body;
 
-    // ── TURN 2: STRIP GENERIC — Kill chatbot voice ────────────────────────────
-    const turn2System = `You are an editor for a premium fitness coaching brand. Strip everything that sounds like a generic fitness app. Remove motivational clichés, hand-holding language, or anything that could have come from a stock chatbot. The coach does not encourage — he cuts through. Rewrite with that edge.`;
-    const turn2 = await callClaude(turn2System, [
-      { role: "user", content: `Original draft:\n\n${turn1}\n\nStrip the generic. Keep the substance.` }
-    ]);
+    const feedbackPrompt = `Client: ${memory?.name || 'Athlete'}
+Completed: Week ${weekNum} - ${sessionLabel}
+Feedback: ${feedback}
 
-    // ── TURN 3: MARC'S VOICE / TUF DNA ───────────────────────────────────────
-    const turn3System = `${PANTHER_SYSTEM_PROMPT}${memberCtx}\n\nYour task: Run the following coaching message through Marc's voice. Former Marine. NASM Corrective Exercise Coach. Speaks to adults 40+ who are done with excuses. Apply the NASM Corrective Exercise Continuum where relevant — Inhibit, Lengthen, Activate, Integrate. Address the root pattern, not the symptom. No generic fitness language.`;
-    const turn3 = await callClaude(turn3System, [
-      { role: "user", content: `Refined draft:\n\n${turn2}\n\nApply TUF DNA and Marc's voice.` }
-    ]);
+Provide a brief Panther response (2-3 sentences + one directive) that:
+1. Acknowledges their feedback specifically
+2. Gives the adaptive instruction (too easy = progress, pain = regress, form broke = simplify)
+3. Ends with one specific directive for next session
 
-    // ── TURN 4: DEPLOY READY — Format for the TUF app ────────────────────────
-    const turn4System = `You are a TUF app content formatter. Format the coaching message for the Panther AI response block. Output exactly this structure, with each section labeled:\n\nHEADLINE: [4-6 punchy words, all caps, no punctuation]\n\nCOACHING: [3-5 sharp sentences max. No fluff. Direct.]\n\nDIRECTIVE: [One clear action step. Start with a verb.]`;
-    const turn4 = await callClaude(turn4System, [
-      { role: "user", content: `TUF-voice draft:\n\n${turn3}\n\nFormat for the app.` }
-    ]);
+Use the Panther voice. HEADLINE in 4-6 all caps words. Brief body. One directive.`;
 
-    // Parse the structured output
-    const headlineMatch = turn4.match(/HEADLINE:\s*([^\n]+)/i);
-    const coachingMatch = turn4.match(/COACHING:\s*([\s\S]+?)(?=DIRECTIVE:|$)/i);
-    const directiveMatch = turn4.match(/DIRECTIVE:\s*([^\n]+(?:\n[^\n]+)*)/i);
-
-    return res.json({
-      headline: headlineMatch?.[1]?.trim() || "",
-      coaching: coachingMatch?.[1]?.trim() || "",
-      directive: directiveMatch?.[1]?.trim() || "",
-      raw: turn4,
-      chain: { turn1, turn2, turn3, turn4 },
+    const client = getAnthropicClient();
+    const response = await client.messages.create({
+      model:      "claude-sonnet-4-5",
+      max_tokens: 512,
+      system:     PANTHER_SYSTEM_PROMPT,
+      messages:   [{ role: "user", content: feedbackPrompt }],
     });
-  } catch (error: any) {
-    console.error("[JARVIS/chain] Error:", error);
-    if (error?.status === 401) return res.status(401).json({ error: "Invalid API key" });
-    return res.status(500).json({ error: "Chain failed", fallback: getFallback() });
+
+    const text = response.content[0].type === "text" ? response.content[0].text : "";
+    return res.json({ response: text, success: true });
+
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
   }
+});
+
+// GET /api/jarvis/health
+router.get("/health", (_req: Request, res: Response) => {
+  res.json({
+    status:  "ok",
+    version: "4.0",
+    regions: ["shoulder","knee","back","hip","cervical","thoracic","ankle"],
+    anthropic: !!process.env.ANTHROPIC_API_KEY,
+  });
 });
 
 export default router;

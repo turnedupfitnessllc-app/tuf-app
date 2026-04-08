@@ -1,7 +1,6 @@
 /**
- * TUF Bottom Navigation — Panther UX System
- * 5 screens: Home · Assess · Train · Correct · Profile
- * "Assess → Correct → Perform → Evolve"
+ * TUF Bottom Navigation — v4.0
+ * Home · Assess · Program · Jarvis · Evolve
  */
 import { useLocation } from "wouter";
 
@@ -15,9 +14,9 @@ interface NavItem {
 const navItems: NavItem[] = [
   { id: "home",    icon: "🏠", label: "HOME",    path: "/" },
   { id: "assess",  icon: "🧠", label: "ASSESS",  path: "/assess" },
-  { id: "train",   icon: "🔥", label: "TRAIN",   path: "/train" },
-  { id: "goals",   icon: "🎯", label: "GOALS",   path: "/goals" },
-  { id: "profile", icon: "🐆", label: "EVOLVE",  path: "/profile" },
+  { id: "program", icon: "📋", label: "PROGRAM", path: "/program" },
+  { id: "jarvis",  icon: "🐆", label: "JARVIS",  path: "/jarvis" },
+  { id: "profile", icon: "⚡", label: "EVOLVE",  path: "/profile" },
 ];
 
 export function TufBottomNav() {
