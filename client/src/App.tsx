@@ -37,6 +37,7 @@ import ComponentShowcase from "./pages/ComponentShowcase";
 import PantherPipeline from "./pages/PantherPipeline";
 import Program from "./pages/Program";
 import Evolve from "./pages/Evolve";
+import Pricing from "./pages/Pricing";
 
 function Router() {
   // First-launch detection — show onboarding if not yet completed
@@ -58,6 +59,7 @@ function Router() {
         <Route path={"/goals"} component={Goals} />
         <Route path={"/evolve"} component={Evolve} />
         <Route path={"/profile"} component={Profile} />
+        <Route path={"/pricing"} component={Pricing} />
 
         {/* ── Feature screens ───────────────────────────────── */}
         <Route path={"/boa"} component={BiomechanicalOverlay} />

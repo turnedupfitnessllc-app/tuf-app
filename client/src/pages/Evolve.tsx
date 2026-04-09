@@ -271,6 +271,20 @@ export default function Evolve() {
           EARN MORE XP — TRAIN NOW →
         </button>
 
+        {/* Upgrade plan button */}
+        <button
+          onClick={() => navigate("/pricing")}
+          style={{
+            width: "100%", padding: "14px", borderRadius: 20, marginTop: 12,
+            background: "rgba(255,255,255,0.03)",
+            border: "1px solid rgba(200,151,58,0.3)",
+            fontFamily: "'Bebas Neue', sans-serif", fontSize: 16, letterSpacing: "0.1em",
+            color: "#C8973A", cursor: "pointer",
+          }}
+        >
+          UPGRADE YOUR PLAN →
+        </button>
+
       </main>
     </div>
   );

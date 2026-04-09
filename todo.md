@@ -119,3 +119,15 @@
 - [ ] Responsive layout: tablet split-screen, desktop 3-column
 - [ ] Landing/marketing page: Hero + CTA + Features + Pricing
 - [ ] Exercise library page with filters and detail cards
+
+## Stripe Billing System
+- [ ] Add Stripe npm packages (stripe, @stripe/stripe-js, @stripe/react-stripe-js)
+- [ ] Add STRIPE_SECRET_KEY and VITE_STRIPE_PUBLISHABLE_KEY secrets
+- [ ] Create Stripe products and prices (Free / Core $19.99 / Elite $39.99 / Pro $79.99)
+- [ ] Create checkout session endpoint on server
+- [ ] Create webhook endpoint for subscription status updates
+- [ ] Add subscription tier to user table in DB
+- [ ] Build Pricing screen with 4 tiers + 4 add-ons
+- [ ] Build PaywallGate component for tier-based feature gating
+- [ ] Build Billing Management screen (current plan, cancel, upgrade)
+- [ ] Wire PaywallGate into BOA, Program, and Panther Brain screens
