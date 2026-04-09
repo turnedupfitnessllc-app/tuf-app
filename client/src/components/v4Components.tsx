@@ -4,6 +4,15 @@
  */
 import { STAGES, hexRgb } from "@/data/v4constants";
 
+// Panther avatar CDN URLs per state
+const PANTHER_IMAGES: Record<string, string> = {
+  idle:      "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/panther-avatar-ready-bLbwtZmR5t5Rbd2FCeA4ib.webp",
+  coaching:  "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/panther-avatar-coaching-Kx3TyL7JBnRCWhpSZjkVzr.webp",
+  activated: "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/panther-avatar-analyzing-VAQEPoajs2GTMFvyRyRSPQ.webp",
+  dominant:  "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/panther-avatar-coaching-Kx3TyL7JBnRCWhpSZjkVzr.webp",
+  locked_in: "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/panther-avatar-analyzing-VAQEPoajs2GTMFvyRyRSPQ.webp",
+};
+
 // ── PANTHER PRESENCE ──────────────────────────────────────────────────────────
 interface PantherPresenceProps {
   state?: "idle" | "coaching" | "activated" | "dominant" | "locked_in";
@@ -54,23 +63,32 @@ export function PantherPresence({ state = "idle", size = 180, showScan = false }
       <div style={{
         width: "100%", height: "100%", borderRadius: "50%", overflow: "hidden",
         border: `1px solid ${b}`,
-        background: "linear-gradient(135deg, #1a0a00, #0d0d0d)",
-        display: "flex", alignItems: "center", justifyContent: "center",
-        fontSize: size * 0.55,
+        background: "#0d0d0d",
+        position: "relative",
       }}>
-        🐆
+        <img
+          src={PANTHER_IMAGES[state] || PANTHER_IMAGES.idle}
+          alt="Panther AI"
+          style={{
+            width: "100%", height: "100%",
+            objectFit: "cover", objectPosition: "center top",
+            display: "block",
+          }}
+        />
         {/* Scan line for locked_in */}
         {(showScan || state === "locked_in") && (
           <div style={{
             position: "absolute", left: 0, right: 0, height: 2,
             background: "linear-gradient(90deg, transparent, #FF4500, transparent)",
             animation: "scan 2s linear infinite",
+            top: "50%",
           }} />
         )}
         {/* Bottom fade */}
         <div style={{
-          position: "absolute", inset: "45% 0 0 0",
-          background: "linear-gradient(to bottom, transparent, rgba(8,8,8,0.6))",
+          position: "absolute", inset: "55% 0 0 0",
+          background: "linear-gradient(to bottom, transparent, rgba(8,8,8,0.7))",
+          pointerEvents: "none",
         }} />
       </div>
       {/* State badge */}

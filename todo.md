@@ -107,3 +107,15 @@
 - [ ] Carry CSS improvements to Home, Correct, Assess, Fuel screens
 - [ ] Global CSS tokens — glow shadows, gradient utilities, card depth
 - [ ] Jotform tester feedback survey (via MCP)
+
+## Panther AI Trainer Spec (v4 Production)
+- [ ] Generate real panther avatar image (replace emoji 🐆 across all screens)
+- [ ] Upload panther avatar to CDN and wire into v4Components PantherPresence
+- [ ] Replace emoji avatar in Home, Assess, Program, Jarvis, Evolve screens
+- [ ] Align bottom nav to spec: Home | Train | Assess | Progress | Profile
+- [ ] Add Progress screen stub (pain tracking, strength tracking, streaks)
+- [ ] Add subscription tier badge to Evolve/Profile (Free / Core $19.99 / Elite $39.99 / Pro $79.99)
+- [ ] Panther brand tone audit: ensure all copy matches "Calm. Dominant. Precise."
+- [ ] Responsive layout: tablet split-screen, desktop 3-column
+- [ ] Landing/marketing page: Hero + CTA + Features + Pricing
+- [ ] Exercise library page with filters and detail cards
