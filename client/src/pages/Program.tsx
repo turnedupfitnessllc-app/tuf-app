@@ -1,13 +1,22 @@
 /**
- * TUF PROGRAM — v4.0
- * Arc: Hook(your program) → Problem(week focus) → Fix(session list)
- *      → Demo(exercise cards) → Cues(Panther) → CTA(complete)
- * View: overview | session player
+ * TUF PROGRAM — v4.1
+ * Arc: Hook → Week selector → Day-by-day calendar → Session player
+ * Features: 4-week view, rest day indicators, exercise checklist,
+ *           session feedback chips, XP award, Panther coaching
  */
 import { useState } from "react";
 import { useLocation } from "wouter";
 import { PantherPresence, PantherMessage, V4Card, SceneHeader, XPBar } from "@/components/v4Components";
 import { PROGRAM_WEEKS, ls, getStageFromXP } from "@/data/v4constants";
+
+const DAY_LABELS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
+const FEEDBACK_CHIPS = [
+  { id: "easy",    label: "Too Easy",   emoji: "😤", xp: 5  },
+  { id: "good",    label: "On Point",   emoji: "💪", xp: 20 },
+  { id: "hard",    label: "Too Hard",   emoji: "🥵", xp: 15 },
+  { id: "pain",    label: "Pain Felt",  emoji: "⚠️", xp: 10 },
+  { id: "form",    label: "Form Broke", emoji: "🔧", xp: 10 },
+];
 
 export default function Program() {
   const [, navigate] = useLocation();
@@ -15,373 +24,474 @@ export default function Program() {
   const [activeWeek, setWeek] = useState(0);
   const [activeSession, setSess] = useState<typeof PROGRAM_WEEKS[0]["sessions"][0] | null>(null);
   const [completed, setCompleted] = useState<Set<number>>(new Set());
-  const [feedback, setFeedback] = useState("");
+  const [feedback, setFeedback] = useState<string[]>([]);
   const [showFeedback, setShowFB] = useState(false);
-  const [sessionDone, setSessDone] = useState<Record<string, boolean>>({});
+  const [sessionDone, setSessDone] = useState<Record<string, boolean>>(
+    () => ls.get<Record<string, boolean>>("tuf_prog_done", {})
+  );
 
   const week = PROGRAM_WEEKS[activeWeek];
   const correctives = ls.get<{ issue?: { label: string; color?: string } } | null>("tuf_correctives", null);
   const progress = ls.get<{ xp: number; sessionsCompleted: number }>("tuf_progress", { xp: 0, sessionsCompleted: 0 });
 
+  // Build 7-day calendar: map sessions to weekdays (Mon=0, Wed=2, Fri=4)
+  const SESSION_DAYS = [0, 2, 4]; // Mon, Wed, Fri
+  const calendarDays = DAY_LABELS.map((label, i) => {
+    const sessionIdx = SESSION_DAYS.indexOf(i);
+    const session = sessionIdx >= 0 ? week.sessions[sessionIdx] : null;
+    const key = session ? `w${activeWeek + 1}_d${session.day}` : "";
+    const isDone = key ? !!sessionDone[key] : false;
+    return { label, isSession: !!session, session, isDone };
+  });
+
   function startSession(session: typeof PROGRAM_WEEKS[0]["sessions"][0]) {
     setSess(session);
     setCompleted(new Set());
     setShowFB(false);
-    setFeedback("");
+    setFeedback([]);
     setView("session");
+  }
+
+  function toggleExercise(idx: number) {
+    setCompleted(prev => {
+      const next = new Set(prev);
+      next.has(idx) ? next.delete(idx) : next.add(idx);
+      return next;
+    });
+  }
+
+  function toggleFeedback(id: string) {
+    setFeedback(prev =>
+      prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]
+    );
   }
 
   function completeSession() {
     if (!activeSession) return;
     const key = `w${activeWeek + 1}_d${activeSession.day}`;
-    setSessDone(p => ({ ...p, [key]: true }));
-    ls.set(`tuf_prog_done`, { ...ls.get("tuf_prog_done", {}), [key]: true });
-    setShowFB(true);
-    // Award XP
+    const updated = { ...sessionDone, [key]: true };
+    setSessDone(updated);
+    ls.set("tuf_prog_done", updated);
+    // XP award based on feedback
+    const bonusXP = feedback.reduce((sum, id) => {
+      const chip = FEEDBACK_CHIPS.find(c => c.id === id);
+      return sum + (chip?.xp || 0);
+    }, 0);
+    const baseXP = 20;
+    const totalXP = baseXP + bonusXP;
     const prog = ls.get<{ xp: number; sessionsCompleted: number }>("tuf_progress", { xp: 0, sessionsCompleted: 0 });
     prog.sessionsCompleted = (prog.sessionsCompleted || 0) + 1;
-    prog.xp = (prog.xp || 0) + 20;
+    prog.xp = (prog.xp || 0) + totalXP;
     ls.set("tuf_progress", prog);
+    setShowFB(true);
   }
 
-  // ── SESSION PLAYER VIEW ──────────────────────────────────────────────────
+  // ── SESSION PLAYER VIEW ────────────────────────────────────────────────────
   if (view === "session" && activeSession) {
     const allIds = activeSession.exercises.map((_, i) => i);
     const pct = Math.round((completed.size / allIds.length) * 100);
+    const allDone = completed.size === allIds.length;
 
     return (
       <div style={{ minHeight: "100vh", background: "#080808", paddingBottom: 96 }}>
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap');
           @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+          @keyframes pulse  { 0%,100%{opacity:0.6} 50%{opacity:1} }
+          @keyframes fill   { from{width:0} to{width:var(--pct)} }
         `}</style>
         <main style={{ maxWidth: 480, margin: "0 auto", padding: "80px 16px 0" }}>
 
-          {/* Back */}
-          <button
-            onClick={() => { setView("overview"); setSess(null); }}
-            style={{
-              display: "flex", alignItems: "center", gap: 6, marginBottom: 16,
-              background: "transparent", border: "none", cursor: "pointer",
-              fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, fontWeight: 700,
-              letterSpacing: "0.1em", color: "rgba(255,255,255,0.45)",
-            }}
-          >
-            ← BACK TO PROGRAM
-          </button>
-
-          {/* Session title */}
-          <div style={{ marginBottom: 16 }}>
-            <p style={{
-              fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700,
-              letterSpacing: "0.18em", color: week.color, marginBottom: 4,
-            }}>
-              WEEK {week.week} · DAY {activeSession.day}
-            </p>
-            <h1 style={{
-              fontFamily: "'Bebas Neue', sans-serif", fontSize: 32, letterSpacing: "0.07em",
-              color: "#fff", lineHeight: 1.05,
-            }}>
-              {activeSession.label}
-            </h1>
-            <p style={{ fontSize: 12, color: "rgba(255,255,255,0.4)" }}>{activeSession.duration}</p>
+          {/* Back + title */}
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
+            <button
+              onClick={() => setView("overview")}
+              style={{ padding: "8px 14px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.04)", fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, fontWeight: 700, letterSpacing: "0.08em", color: "rgba(255,255,255,0.5)", cursor: "pointer" }}
+            >
+              ← BACK
+            </button>
+            <div>
+              <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: "0.15em", color: week.color }}>
+                WEEK {week.week} · DAY {activeSession.day}
+              </p>
+              <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 22, color: "#fff", letterSpacing: "0.06em", lineHeight: 1 }}>
+                {activeSession.label}
+              </p>
+            </div>
           </div>
 
           {/* Progress bar */}
-          <div style={{ marginBottom: 20 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-              <span style={{
-                fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700,
-                letterSpacing: "0.1em", color: "rgba(255,255,255,0.4)",
-              }}>
+          <V4Card style={{ marginBottom: 14, padding: "12px 16px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+              <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", color: "rgba(255,255,255,0.4)" }}>
                 SESSION PROGRESS
-              </span>
-              <span style={{
-                fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, fontWeight: 700,
-                color: week.color,
-              }}>
-                {pct}%
-              </span>
+              </p>
+              <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 18, color: week.color }}>
+                {completed.size}/{allIds.length}
+              </p>
             </div>
-            <div style={{ height: 4, background: "rgba(255,255,255,0.06)", borderRadius: 2, overflow: "hidden" }}>
+            <div style={{ height: 6, borderRadius: 3, background: "rgba(255,255,255,0.06)", overflow: "hidden" }}>
               <div style={{
-                height: "100%", width: `${pct}%`,
-                background: `linear-gradient(90deg, ${week.color}88, ${week.color})`,
-                borderRadius: 2, transition: "width 0.5s ease",
+                height: "100%", borderRadius: 3,
+                background: `linear-gradient(90deg, ${week.color}, ${week.color}88)`,
+                width: `${pct}%`,
+                transition: "width 0.4s ease",
               }} />
             </div>
-          </div>
+          </V4Card>
 
-          {/* Week badge */}
-          <div style={{
-            display: "flex", alignItems: "center", gap: 8, marginBottom: 16,
-            padding: "8px 12px", borderRadius: 10,
-            background: `rgba(255,255,255,0.03)`,
-            border: `1px solid ${week.color}33`,
-          }}>
-            <span style={{ fontSize: 14 }}>{week.icon}</span>
-            <span style={{
-              fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, fontWeight: 700,
-              letterSpacing: "0.1em", color: week.color,
-            }}>
-              {week.label}
-            </span>
-          </div>
-
-          {/* Exercise cards */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 16 }}>
+          {/* Exercise checklist */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 16 }}>
             {activeSession.exercises.map((ex, i) => {
               const done = completed.has(i);
               return (
-                <div
+                <button
                   key={i}
+                  onClick={() => toggleExercise(i)}
                   style={{
-                    background: done ? "rgba(34,197,94,0.05)" : "rgba(13,13,13,0.95)",
-                    border: `1px solid ${done ? "rgba(34,197,94,0.3)" : "rgba(255,255,255,0.06)"}`,
-                    borderRadius: 16, padding: "14px",
-                    transition: "all 0.3s ease",
+                    padding: "14px 16px", borderRadius: 16,
+                    background: done ? "rgba(34,197,94,0.06)" : "rgba(255,255,255,0.03)",
+                    border: `1px solid ${done ? "rgba(34,197,94,0.25)" : "rgba(255,255,255,0.07)"}`,
+                    display: "flex", alignItems: "center", gap: 12,
+                    cursor: "pointer", textAlign: "left",
+                    transition: "all 0.2s ease",
+                    animation: `fadeUp 0.3s ease ${i * 0.05}s both`,
                   }}
                 >
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
-                    <div style={{ flex: 1 }}>
-                      <p style={{
-                        fontFamily: "'Barlow Condensed', sans-serif", fontSize: 16, fontWeight: 700,
-                        color: done ? "rgba(255,255,255,0.5)" : "#fff",
-                        textDecoration: done ? "line-through" : "none",
-                      }}>
-                        {ex.name}
-                      </p>
-                      {ex.cue && (
-                        <p style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", marginTop: 2 }}>
-                          "{ex.cue}"
-                        </p>
-                      )}
-                    </div>
-                    <div style={{ textAlign: "right", flexShrink: 0, marginLeft: 12 }}>
-                      <p style={{
-                        fontFamily: "'Bebas Neue', sans-serif", fontSize: 20,
-                        color: done ? "#22c55e" : week.color,
-                      }}>
-                        {ex.sets}
-                      </p>
-                    </div>
+                  {/* Checkbox */}
+                  <div style={{
+                    width: 24, height: 24, borderRadius: 8, flexShrink: 0,
+                    background: done ? "#22c55e" : "rgba(255,255,255,0.05)",
+                    border: `2px solid ${done ? "#22c55e" : "rgba(255,255,255,0.15)"}`,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    transition: "all 0.2s ease",
+                  }}>
+                    {done && <span style={{ color: "#fff", fontSize: 13, fontWeight: 700 }}>✓</span>}
                   </div>
-                  <button
-                    onClick={() => {
-                      const u = new Set(completed);
-                      if (done) u.delete(i); else u.add(i);
-                      setCompleted(u);
-                    }}
-                    style={{
-                      width: "100%", padding: "9px", borderRadius: 12,
-                      border: `1px solid ${done ? "rgba(34,197,94,0.4)" : "rgba(255,255,255,0.1)"}`,
-                      background: done ? "rgba(34,197,94,0.1)" : "transparent",
-                      fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, fontWeight: 700,
-                      letterSpacing: "0.1em",
-                      color: done ? "#22c55e" : "rgba(255,255,255,0.6)",
-                      cursor: "pointer",
-                    }}
-                  >
-                    {done ? "✓ DONE" : "MARK COMPLETE"}
-                  </button>
-                </div>
+
+                  {/* Exercise info */}
+                  <div style={{ flex: 1 }}>
+                    <p style={{
+                      fontFamily: "'Barlow Condensed', sans-serif", fontSize: 14, fontWeight: 700,
+                      letterSpacing: "0.04em",
+                      color: done ? "rgba(255,255,255,0.4)" : "#fff",
+                      textDecoration: done ? "line-through" : "none",
+                    }}>
+                      {ex.name}
+                    </p>
+                    <p style={{ fontSize: 11, color: done ? "rgba(255,255,255,0.2)" : week.color, marginTop: 1 }}>
+                      {ex.sets}
+                    </p>
+                    {ex.cue && !done && (
+                      <p style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", marginTop: 3, lineHeight: 1.4 }}>
+                        "{ex.cue}"
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Phase dot */}
+                  <div style={{
+                    width: 8, height: 8, borderRadius: "50%", flexShrink: 0,
+                    background: done ? "#22c55e" : week.color,
+                    animation: done ? "none" : "pulse 2s ease-in-out infinite",
+                  }} />
+                </button>
               );
             })}
           </div>
 
-          {/* Complete / Feedback */}
-          {!showFeedback ? (
-            <button
-              onClick={completeSession}
-              style={{
-                width: "100%", padding: "18px", borderRadius: 20, border: "none",
-                background: "linear-gradient(135deg, #FF4500, #8B0000)",
-                fontFamily: "'Bebas Neue', sans-serif", fontSize: 20, letterSpacing: "0.1em",
-                color: "#fff", cursor: "pointer",
-                boxShadow: "0 4px 32px rgba(255,69,0,0.35)",
-              }}
-            >
-              COMPLETE SESSION ✓
-            </button>
-          ) : (
-            <V4Card accent="#C8973A">
-              <p style={{
-                fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700,
-                letterSpacing: "0.15em", color: "#C8973A", marginBottom: 10,
-              }}>
-                HOW WAS THE SESSION?
-              </p>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 14 }}>
-                {["Too Easy", "On Point", "Too Hard", "Pain Felt", "Form Broke"].map(f => (
+          {/* Feedback chips (show when all done) */}
+          {allDone && !showFeedback && (
+            <V4Card accent={week.color} style={{ marginBottom: 14 }}>
+              <SceneHeader num="FB" label="HOW DID IT FEEL?" color={week.color} />
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 14 }}>
+                {FEEDBACK_CHIPS.map(chip => (
                   <button
-                    key={f}
-                    onClick={() => setFeedback(f)}
+                    key={chip.id}
+                    onClick={() => toggleFeedback(chip.id)}
                     style={{
-                      padding: "8px 14px", borderRadius: 20,
-                      border: `1px solid ${feedback === f ? "#C8973A" : "rgba(255,255,255,0.1)"}`,
-                      background: feedback === f ? "rgba(200,151,58,0.15)" : "transparent",
-                      fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, fontWeight: 700,
-                      color: feedback === f ? "#C8973A" : "rgba(255,255,255,0.5)",
-                      cursor: "pointer",
+                      padding: "8px 14px", borderRadius: 20, border: "none",
+                    background: feedback.includes(chip.id) ? `${week.color}22` : "rgba(255,255,255,0.04)",
+                    outline: `1px solid ${feedback.includes(chip.id) ? week.color + "66" : "rgba(255,255,255,0.1)"}`,
+                      fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, fontWeight: 700,
+                      letterSpacing: "0.06em",
+                      color: feedback.includes(chip.id) ? week.color : "rgba(255,255,255,0.5)",
+                      cursor: "pointer", display: "flex", alignItems: "center", gap: 6,
                     }}
                   >
-                    {f}
+                    <span>{chip.emoji}</span> {chip.label}
                   </button>
                 ))}
               </div>
               <button
-                onClick={() => { setView("overview"); setSess(null); }}
-                disabled={!feedback}
+                onClick={completeSession}
                 style={{
-                  width: "100%", padding: "12px", borderRadius: 14,
-                  border: "1px solid rgba(200,151,58,0.4)",
-                  background: feedback ? "rgba(200,151,58,0.15)" : "transparent",
-                  fontFamily: "'Barlow Condensed', sans-serif", fontSize: 13, fontWeight: 700,
-                  letterSpacing: "0.1em",
-                  color: feedback ? "#C8973A" : "rgba(255,255,255,0.2)",
-                  cursor: feedback ? "pointer" : "not-allowed",
+                  width: "100%", padding: "14px", borderRadius: 14, border: "none",
+                  background: `linear-gradient(135deg, ${week.color}, ${week.color}88)`,
+                  fontFamily: "'Bebas Neue', sans-serif", fontSize: 18, letterSpacing: "0.1em",
+                  color: "#fff", cursor: "pointer",
                 }}
               >
-                STORE FEEDBACK → ADAPT NEXT SESSION
+                COMPLETE SESSION +{20 + feedback.reduce((s, id) => s + (FEEDBACK_CHIPS.find(c => c.id === id)?.xp || 0), 0)} XP
               </button>
             </V4Card>
           )}
+
+          {/* Session complete state */}
+          {showFeedback && (
+            <V4Card accent="#22c55e" style={{ marginBottom: 14 }}>
+              <div style={{ textAlign: "center", padding: "8px 0" }}>
+                <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 32, color: "#22c55e", letterSpacing: "0.06em", lineHeight: 1 }}>
+                  SESSION COMPLETE
+                </p>
+                <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, color: "rgba(255,255,255,0.4)", marginTop: 4 }}>
+                  XP AWARDED · PANTHER WATCHING
+                </p>
+              </div>
+              <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
+                <button
+                  onClick={() => setView("overview")}
+                  style={{
+                    flex: 1, padding: "12px", borderRadius: 14, border: "none",
+                    background: "rgba(255,255,255,0.06)",
+                    fontFamily: "'Barlow Condensed', sans-serif", fontSize: 13, fontWeight: 700,
+                    letterSpacing: "0.08em", color: "rgba(255,255,255,0.6)", cursor: "pointer",
+                  }}
+                >
+                  BACK TO PROGRAM
+                </button>
+                <button
+                  onClick={() => navigate("/boa")}
+                  style={{
+                    flex: 1, padding: "12px", borderRadius: 14, border: "none",
+                    background: "linear-gradient(135deg, #FF4500, #8B0000)",
+                    fontFamily: "'Barlow Condensed', sans-serif", fontSize: 13, fontWeight: 700,
+                    letterSpacing: "0.08em", color: "#fff", cursor: "pointer",
+                  }}
+                >
+                  ANALYZE FORM →
+                </button>
+              </div>
+            </V4Card>
+          )}
+
+          {/* Panther coaching cue */}
+          <PantherMessage
+            headline={allDone ? "WORK DONE." : "EXECUTE THE REPS."}
+            body={
+              allDone
+                ? "Every checked box is a deposit. You're building something that compounds."
+                : `${activeSession.exercises.length - completed.size} exercises remaining. Form over speed. Control the movement.`
+            }
+            directive={allDone ? "Log your feedback. Collect your XP." : "Tap each exercise when complete."}
+          />
         </main>
       </div>
     );
   }
 
-  // ── OVERVIEW ──────────────────────────────────────────────────────────────
+  // ── OVERVIEW ───────────────────────────────────────────────────────────────
+  const totalSessions = PROGRAM_WEEKS.reduce((s, w) => s + w.sessions.length, 0);
+  const completedCount = Object.keys(sessionDone).filter(k => sessionDone[k]).length;
+
   return (
     <div style={{ minHeight: "100vh", background: "#080808", paddingBottom: 96 }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap');
-        @keyframes ambient { 0%,100%{opacity:0.4} 50%{opacity:0.7} }
-        @keyframes ring    { 0%,100%{transform:scale(1);opacity:0.5} 50%{transform:scale(1.05);opacity:1} }
-        @keyframes scan    { 0%{top:-2%;opacity:0} 5%{opacity:1} 95%{opacity:1} 100%{top:102%;opacity:0} }
-        @keyframes fadeUp  { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes pulse  { 0%,100%{opacity:0.6} 50%{opacity:1} }
       `}</style>
+      <main style={{ maxWidth: 480, margin: "0 auto", padding: "72px 16px 0" }}>
 
-      <main style={{ maxWidth: 480, margin: "0 auto", padding: "80px 16px 0", position: "relative" }}>
-
-        {/* SCENE 1 — HOOK */}
-        <div style={{ marginBottom: 20, animation: "fadeUp 0.4s ease forwards" }}>
-          <p style={{
-            fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700,
-            letterSpacing: "0.18em", color: "#FF4500", marginBottom: 4,
-          }}>
-            YOUR 4-WEEK PROGRAM
+        {/* SCENE 1 — HOOK: Header */}
+        <div style={{ marginBottom: 16, animation: "fadeUp 0.4s ease forwards" }}>
+          <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", color: "#FF4500", marginBottom: 2 }}>
+            YOUR PROGRAM
           </p>
-          <h1 style={{
-            fontFamily: "'Bebas Neue', sans-serif", fontSize: 40, letterSpacing: "0.07em",
-            color: "#fff", lineHeight: 1.05,
-          }}>
-            YOUR <span style={{ color: "#FF4500" }}>PLAN</span>
+          <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 32, letterSpacing: "0.07em", color: "#fff", lineHeight: 1 }}>
+            4-WEEK <span style={{ color: week.color }}>CORRECTIVE</span>
           </h1>
+          <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, color: "rgba(255,255,255,0.35)", marginTop: 2 }}>
+            {completedCount}/{totalSessions} sessions complete
+          </p>
         </div>
 
-        {/* Diagnosis card */}
-        {correctives?.issue && (
-          <V4Card accent="#FF4500" style={{ marginBottom: 14 }}>
-            <SceneHeader num="01" label="ACTIVE DIAGNOSIS" />
-            <p style={{
-              fontFamily: "'Barlow Condensed', sans-serif", fontSize: 14, fontWeight: 700,
-              color: "#fff",
-            }}>
-              {correctives.issue.label.toUpperCase()} — CORRECTIVE PLAN ACTIVE
-            </p>
-            <p style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", marginTop: 4 }}>
-              Execute your corrective sequence before each session.
-            </p>
-          </V4Card>
-        )}
+        {/* Overall progress bar */}
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ height: 4, borderRadius: 2, background: "rgba(255,255,255,0.06)", overflow: "hidden" }}>
+            <div style={{
+              height: "100%", borderRadius: 2,
+              background: `linear-gradient(90deg, #FF4500, #C8973A)`,
+              width: `${Math.round((completedCount / totalSessions) * 100)}%`,
+              transition: "width 0.6s ease",
+            }} />
+          </div>
+        </div>
 
-        {/* SCENE 2 — PROBLEM: Week selector */}
+        {/* SCENE 2 — Week selector */}
         <V4Card style={{ marginBottom: 14 }}>
           <SceneHeader num="02" label="SELECT WEEK" />
           <div style={{ display: "flex", gap: 8 }}>
-            {PROGRAM_WEEKS.map((w, i) => (
+            {PROGRAM_WEEKS.map((w, i) => {
+              const weekSessions = w.sessions.map((_, si) => `w${i + 1}_d${si + 1}`);
+              const weekDone = weekSessions.filter(k => sessionDone[k]).length;
+              const weekComplete = weekDone === w.sessions.length;
+              return (
+                <button
+                  key={w.week}
+                  onClick={() => setWeek(i)}
+                  style={{
+                    flex: 1, padding: "12px 4px", borderRadius: 14,
+                    border: `1px solid ${activeWeek === i ? w.color : "rgba(255,255,255,0.07)"}`,
+                    background: activeWeek === i ? `${w.color}18` : "transparent",
+                    display: "flex", flexDirection: "column", alignItems: "center", gap: 3,
+                    cursor: "pointer", position: "relative",
+                  }}
+                >
+                  {weekComplete && (
+                    <div style={{
+                      position: "absolute", top: -4, right: -4, width: 12, height: 12,
+                      borderRadius: "50%", background: "#22c55e", border: "2px solid #080808",
+                    }} />
+                  )}
+                  <span style={{ fontSize: 16 }}>{w.icon}</span>
+                  <span style={{
+                    fontFamily: "'Bebas Neue', sans-serif", fontSize: 18,
+                    color: activeWeek === i ? w.color : "rgba(255,255,255,0.35)",
+                    lineHeight: 1,
+                  }}>
+                    W{w.week}
+                  </span>
+                  <span style={{
+                    fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, fontWeight: 700,
+                    letterSpacing: "0.06em",
+                    color: activeWeek === i ? `${w.color}88` : "rgba(255,255,255,0.2)",
+                  }}>
+                    {weekDone}/{w.sessions.length}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </V4Card>
+
+        {/* Week theme banner */}
+        <V4Card accent={week.color} style={{ marginBottom: 14 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
+            <span style={{ fontSize: 22 }}>{week.icon}</span>
+            <div>
+              <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 13, fontWeight: 700, letterSpacing: "0.1em", color: week.color }}>
+                WEEK {week.week}: {week.label}
+              </p>
+              <p style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", marginTop: 1 }}>{week.focus}</p>
+            </div>
+          </div>
+        </V4Card>
+
+        {/* SCENE 3 — 7-day calendar */}
+        <V4Card style={{ marginBottom: 14 }}>
+          <SceneHeader num="03" label="WEEKLY SCHEDULE" />
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 4 }}>
+            {calendarDays.map((day, i) => (
               <button
-                key={w.week}
-                onClick={() => setWeek(i)}
+                key={i}
+                onClick={() => day.session && startSession(day.session)}
+                disabled={!day.isSession}
                 style={{
-                  flex: 1, padding: "10px 4px", borderRadius: 12,
-                  border: `1px solid ${activeWeek === i ? w.color : "rgba(255,255,255,0.08)"}`,
-                  background: activeWeek === i ? `${w.color}18` : "transparent",
+                  padding: "8px 2px", borderRadius: 10,
+                  background: day.isDone
+                    ? "rgba(34,197,94,0.08)"
+                    : day.isSession
+                    ? `${week.color}12`
+                    : "rgba(255,255,255,0.02)",
+                  border: `1px solid ${
+                    day.isDone
+                      ? "rgba(34,197,94,0.3)"
+                      : day.isSession
+                      ? `${week.color}44`
+                      : "rgba(255,255,255,0.04)"
+                  }`,
                   display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
-                  cursor: "pointer",
+                  cursor: day.isSession ? "pointer" : "default",
                 }}
               >
-                <span style={{ fontSize: 16 }}>{w.icon}</span>
-                <span style={{
-                  fontFamily: "'Bebas Neue', sans-serif", fontSize: 16,
-                  color: activeWeek === i ? w.color : "rgba(255,255,255,0.4)",
+                <p style={{
+                  fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, fontWeight: 700,
+                  letterSpacing: "0.08em",
+                  color: day.isSession ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.2)",
                 }}>
-                  W{w.week}
-                </span>
+                  {day.label}
+                </p>
+                <div style={{
+                  width: 20, height: 20, borderRadius: 6,
+                  background: day.isDone
+                    ? "#22c55e"
+                    : day.isSession
+                    ? week.color
+                    : "rgba(255,255,255,0.05)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}>
+                  <span style={{ fontSize: 9, color: day.isSession || day.isDone ? "#fff" : "rgba(255,255,255,0.15)" }}>
+                    {day.isDone ? "✓" : day.isSession ? "▶" : "—"}
+                  </span>
+                </div>
               </button>
             ))}
           </div>
+          <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: "0.1em", color: "rgba(255,255,255,0.2)", marginTop: 8, textAlign: "center" }}>
+            MON · WED · FRI — REST DAYS IN BETWEEN
+          </p>
         </V4Card>
 
-        {/* Week theme */}
-        <V4Card accent={week.color} style={{ marginBottom: 14 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-            <span style={{ fontSize: 20 }}>{week.icon}</span>
-            <p style={{
-              fontFamily: "'Barlow Condensed', sans-serif", fontSize: 14, fontWeight: 700,
-              letterSpacing: "0.08em", color: week.color,
-            }}>
-              WEEK {week.week}: {week.label}
-            </p>
-          </div>
-          <p style={{ fontSize: 12, color: "rgba(255,255,255,0.5)" }}>{week.focus}</p>
-        </V4Card>
-
-        {/* SCENE 3 — FIX: Session cards */}
-        <SceneHeader num="03" label="THIS WEEK'S SESSIONS" />
+        {/* SCENE 4 — Session cards */}
+        <SceneHeader num="04" label="THIS WEEK'S SESSIONS" />
         <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 16 }}>
           {week.sessions.map(session => {
             const key = `w${activeWeek + 1}_d${session.day}`;
-            const isDone = sessionDone[key] || ls.get<Record<string, boolean>>("tuf_prog_done", {})[key];
+            const isDone = !!sessionDone[key];
             return (
               <button
                 key={session.day}
                 onClick={() => startSession(session)}
                 style={{
-                  padding: "16px", borderRadius: 16,
-                  border: `1px solid ${isDone ? "rgba(34,197,94,0.3)" : "rgba(255,255,255,0.08)"}`,
-                  background: isDone ? "rgba(34,197,94,0.05)" : "rgba(13,13,13,0.95)",
+                  padding: "16px", borderRadius: 16, border: "none",
+                  background: isDone ? "rgba(34,197,94,0.04)" : "rgba(13,13,13,0.95)",
+                  outline: `1px solid ${isDone ? "rgba(34,197,94,0.25)" : "rgba(255,255,255,0.07)"}`,
                   display: "flex", alignItems: "center", gap: 12,
                   cursor: "pointer", textAlign: "left",
+                  animation: `fadeUp 0.3s ease ${session.day * 0.08}s both`,
                 }}
               >
+                {/* Day badge */}
                 <div style={{
-                  width: 36, height: 36, borderRadius: 10,
-                  background: isDone ? "rgba(34,197,94,0.15)" : `${week.color}18`,
-                  border: `1px solid ${isDone ? "rgba(34,197,94,0.4)" : `${week.color}44`}`,
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  flexShrink: 0,
+                  width: 44, height: 44, borderRadius: 12, flexShrink: 0,
+                  background: isDone ? "rgba(34,197,94,0.12)" : `${week.color}18`,
+                  border: `1px solid ${isDone ? "rgba(34,197,94,0.35)" : `${week.color}44`}`,
+                  display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
                 }}>
-                  <span style={{
-                    fontFamily: "'Bebas Neue', sans-serif", fontSize: 16,
-                    color: isDone ? "#22c55e" : week.color,
-                  }}>
+                  <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 18, color: isDone ? "#22c55e" : week.color, lineHeight: 1 }}>
                     {isDone ? "✓" : `D${session.day}`}
                   </span>
+                  <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 8, fontWeight: 700, letterSpacing: "0.06em", color: isDone ? "rgba(34,197,94,0.5)" : `${week.color}88` }}>
+                    {isDone ? "DONE" : DAY_LABELS[SESSION_DAYS[session.day - 1]] || "DAY"}
+                  </span>
                 </div>
+
+                {/* Session info */}
                 <div style={{ flex: 1 }}>
                   <p style={{
-                    fontFamily: "'Barlow Condensed', sans-serif", fontSize: 14, fontWeight: 700,
-                    color: isDone ? "rgba(255,255,255,0.5)" : "#fff",
+                    fontFamily: "'Barlow Condensed', sans-serif", fontSize: 15, fontWeight: 700,
+                    letterSpacing: "0.04em",
+                    color: isDone ? "rgba(255,255,255,0.4)" : "#fff",
                   }}>
                     {session.label}
                   </p>
-                  <p style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>
+                  <p style={{ fontSize: 11, color: "rgba(255,255,255,0.3)", marginTop: 2 }}>
                     {session.exercises.length} exercises · {session.duration}
                   </p>
                 </div>
-                <span style={{ color: isDone ? "#22c55e" : "rgba(255,255,255,0.3)", fontSize: 18 }}>
+
+                <span style={{ fontSize: 20, color: isDone ? "#22c55e" : "rgba(255,255,255,0.25)" }}>
                   {isDone ? "✓" : "›"}
                 </span>
               </button>
@@ -389,20 +499,37 @@ export default function Program() {
           })}
         </div>
 
-        {/* SCENE 5 — CUES: Panther */}
+        {/* Corrective program notice */}
+        {correctives?.issue && (
+          <V4Card accent={correctives.issue.color || "#FF4500"} style={{ marginBottom: 14 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <div style={{ width: 8, height: 8, borderRadius: "50%", background: correctives.issue.color || "#FF4500", animation: "pulse 1.5s ease-in-out infinite" }} />
+              <div>
+                <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", color: correctives.issue.color || "#FF4500" }}>
+                  ACTIVE CORRECTIVE PROTOCOL
+                </p>
+                <p style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", marginTop: 1 }}>
+                  {correctives.issue.label} — complete correctives before each session
+                </p>
+              </div>
+            </div>
+          </V4Card>
+        )}
+
+        {/* SCENE 5 — Panther + XP */}
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
           <PantherPresence state="coaching" size={60} />
           <div style={{ flex: 1 }}>
             <XPBar xp={progress.xp || 0} stage={getStageFromXP(progress.xp || 0)} />
             <p style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", marginTop: 6 }}>
-              {progress.sessionsCompleted || 0} sessions completed
+              {progress.sessionsCompleted || 0} sessions completed · {progress.xp || 0} XP earned
             </p>
           </div>
         </div>
 
         <PantherMessage
           headline="EXECUTE THE SEQUENCE."
-          body="Week by week. Session by session. The program is the mechanism. Trust it."
+          body="Week by week. Session by session. The program is the mechanism. Trust it. The body adapts when you show up consistently."
           directive="Select a session above. Start the work."
         />
 
