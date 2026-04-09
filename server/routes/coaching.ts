@@ -292,6 +292,72 @@ router.post("/pipeline", async (req: Request, res: Response) => {
 });
 
 /**
+ * POST /api/coaching/analyze-movement
+ * BOA v4: Exercise-specific AI vision analysis with NASM corrective prompt
+ * Body: { imageBase64: string, prompt: string, mode: string }
+ * Returns: { content: string }
+ */
+router.post("/analyze-movement", async (req: Request, res: Response) => {
+  try {
+    const { imageBase64, prompt, mode } = req.body as {
+      imageBase64: string;
+      prompt: string;
+      mode: string;
+    };
+    if (!imageBase64 || !prompt) {
+      return res.status(400).json({ error: "imageBase64 and prompt required" });
+    }
+
+    // Try fal.ai first for vision, then fall back to Anthropic
+    let visionDescription = "";
+    const falKey = process.env.FAL_KEY;
+    if (falKey) {
+      try {
+        visionDescription = await analyzeFrameWithFal(imageBase64, mode);
+      } catch (falErr) {
+        console.warn("[BOA] fal.ai failed, falling back to Anthropic vision:", falErr);
+      }
+    }
+
+    const anthropicKey = process.env.ANTHROPIC_API_KEY;
+    if (!anthropicKey) {
+      if (!visionDescription) throw new Error("No vision API configured");
+      return res.json({ content: visionDescription });
+    }
+
+    const client = new Anthropic({ apiKey: anthropicKey });
+
+    // If we have a fal description, use it as context for the Panther prompt
+    const userContent = visionDescription
+      ? `${prompt}\n\nVISION ANALYSIS FROM CAMERA:\n${visionDescription}`
+      : prompt;
+
+    // If no fal vision, use Anthropic vision directly with the image
+    const messages: Anthropic.MessageParam[] = visionDescription
+      ? [{ role: "user", content: userContent }]
+      : [{
+          role: "user",
+          content: [
+            { type: "image", source: { type: "base64", media_type: "image/jpeg", data: imageBase64 } },
+            { type: "text", text: prompt },
+          ],
+        }];
+
+    const response = await client.messages.create({
+      model: "claude-opus-4-5",
+      max_tokens: 600,
+      messages,
+    });
+
+    const content = response.content[0].type === "text" ? response.content[0].text : visionDescription;
+    return res.json({ content });
+  } catch (error: any) {
+    console.error("[Coaching/analyze-movement] Error:", error);
+    return res.status(500).json({ error: error.message || "Movement analysis failed" });
+  }
+});
+
+/**
  * GET /api/coaching/health
  * Check which services are configured
  */
