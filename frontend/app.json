@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "TUF - Turned Up Fitness",
+    "slug": "tuf-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.turnedupfitness.app"
+    },
+    "android": {
+      "package": "com.turnedupfitness.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#0B0B0B"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
