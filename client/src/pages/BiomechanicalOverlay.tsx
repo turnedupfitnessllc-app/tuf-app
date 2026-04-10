@@ -395,6 +395,8 @@ export default function BiomechanicalOverlay() {
     status: "OFFLINE",
   });
 
+  const [facingMode, setFacingMode] = useState<"user" | "environment">("user");
+
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -532,7 +534,7 @@ export default function BiomechanicalOverlay() {
     setError(null);
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } },
+        video: { facingMode, width: { ideal: 640 }, height: { ideal: 480 } },
       });
       streamRef.current = stream;
       if (videoRef.current) {
@@ -584,7 +586,40 @@ export default function BiomechanicalOverlay() {
         ? "Camera access denied. Allow camera access in browser settings."
         : "Could not start camera. Check your device and try again.");
     }
-  }, [analyzePose, drawSkeleton, voiceEnabled, currentMode]);
+  }, [analyzePose, drawSkeleton, voiceEnabled, currentMode, facingMode]);
+
+  // ── Flip Camera ─────────────────────────────────────────────────────────────
+  const handleFlipCamera = useCallback(async () => {
+    const newFacing = facingMode === "user" ? "environment" : "user";
+    setFacingMode(newFacing);
+    if (!isActive) return; // will take effect on next activation
+    // Stop current stream without resetting isActive
+    cancelAnimationFrame(animFrameRef.current);
+    if (streamRef.current) { streamRef.current.getTracks().forEach(t => t.stop()); streamRef.current = null; }
+    if (videoRef.current) videoRef.current.srcObject = null;
+    // Restart with new facing mode
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: newFacing, width: { ideal: 640 }, height: { ideal: 480 } },
+      });
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        await videoRef.current.play();
+      }
+      if (poseRef.current) {
+        const runLoop = async () => {
+          if (videoRef.current && videoRef.current.readyState >= 2 && poseRef.current) {
+            await poseRef.current.send({ image: videoRef.current });
+          }
+          animFrameRef.current = requestAnimationFrame(runLoop);
+        };
+        runLoop();
+      }
+    } catch (err) {
+      console.error("[BOA] Flip camera error:", err);
+    }
+  }, [facingMode, isActive]);
 
   // ── Stop ────────────────────────────────────────────────────────────────────
   const handleStop = useCallback(() => {
@@ -709,7 +744,7 @@ export default function BiomechanicalOverlay() {
           <div style={{ position: "relative", width: "100%", paddingTop: "75%", background: "#0a0a0a" }}>
             <video
               ref={videoRef}
-              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", transform: "scaleX(-1)", opacity: isActive ? 1 : 0 }}
+              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", transform: facingMode === "user" ? "scaleX(-1)" : "none", opacity: isActive ? 1 : 0 }}
               playsInline muted autoPlay
             />
             <canvas
@@ -787,18 +822,34 @@ export default function BiomechanicalOverlay() {
           {/* Camera controls */}
           <div style={{ padding: "12px 16px", display: "flex", gap: 8, alignItems: "center" }}>
             {!isActive ? (
-              <button
-                onClick={handleActivate}
-                disabled={isLoading}
-                style={{
-                  flex: 1, padding: "12px", borderRadius: 14, border: "none",
-                  background: `linear-gradient(135deg, ${currentMode.color}, ${currentMode.color}88)`,
-                  fontFamily: "'Bebas Neue', sans-serif", fontSize: 16, letterSpacing: "0.1em",
-                  color: "#fff", cursor: "pointer",
-                }}
-              >
-                ACTIVATE {scanMode} SCAN
-              </button>
+              <>
+                <button
+                  onClick={handleActivate}
+                  disabled={isLoading}
+                  style={{
+                    flex: 1, padding: "12px", borderRadius: 14, border: "none",
+                    background: `linear-gradient(135deg, ${currentMode.color}, ${currentMode.color}88)`,
+                    fontFamily: "'Bebas Neue', sans-serif", fontSize: 16, letterSpacing: "0.1em",
+                    color: "#fff", cursor: "pointer",
+                  }}
+                >
+                  ACTIVATE {scanMode} SCAN
+                </button>
+                <button
+                  onClick={handleFlipCamera}
+                  title={facingMode === "user" ? "Switch to rear camera" : "Switch to front camera"}
+                  style={{
+                    padding: "12px", borderRadius: 14,
+                    border: "1px solid rgba(255,255,255,0.15)",
+                    background: facingMode === "environment" ? "rgba(255,69,0,0.12)" : "rgba(255,255,255,0.05)",
+                    fontSize: 18, cursor: "pointer",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    minWidth: 44,
+                  }}
+                >
+                  🔄
+                </button>
+              </>
             ) : (
               <>
                 <button
@@ -824,6 +875,20 @@ export default function BiomechanicalOverlay() {
                   }}
                 >
                   STOP
+                </button>
+                <button
+                  onClick={handleFlipCamera}
+                  title={facingMode === "user" ? "Switch to rear camera" : "Switch to front camera"}
+                  style={{
+                    padding: "12px", borderRadius: 14,
+                    border: "1px solid rgba(255,255,255,0.15)",
+                    background: "rgba(255,255,255,0.05)",
+                    fontSize: 18, cursor: "pointer",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    minWidth: 44,
+                  }}
+                >
+                  🔄
                 </button>
                 <button
                   onClick={() => setVoiceEnabled(v => !v)}
