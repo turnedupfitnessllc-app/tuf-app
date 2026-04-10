@@ -88,12 +88,10 @@ function Router() {
 }
 
 function App() {
-  const [splashDone, setSplashDone] = useState(
-    () => sessionStorage.getItem("tuf_splash_shown") === "true"
-  );
+  // Pure in-memory — splash plays on every fresh page load, no storage flag
+  const [splashDone, setSplashDone] = useState(false);
 
   const handleSplashComplete = () => {
-    sessionStorage.setItem("tuf_splash_shown", "true");
     setSplashDone(true);
   };
 

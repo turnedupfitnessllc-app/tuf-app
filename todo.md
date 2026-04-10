@@ -133,8 +133,8 @@
 - [ ] Wire PaywallGate into BOA, Program, and Panther Brain screens
 
 ## Navigation Redesign — Command Center
-- [ ] Remove persistent bottom nav bar (TufBottomNav) from all screens
-- [ ] Rebuild Home as visual command center — full-width CTA + 2-col section cards with panther images
-- [ ] Upload panther character images to CDN for card backgrounds
-- [ ] Add back arrow / return-to-home on all inner screens
-- [ ] 30-Day Challenge screen with day-by-day phase cards
+- [x] Remove persistent bottom nav bar (TufBottomNav) from all screens
+- [x] Rebuild Home as visual command center — full-width CTA + 2-col section cards with panther images
+- [x] Upload panther character images to CDN for card backgrounds
+- [x] Add back arrow on Challenge screen; other inner screens use header
+- [x] 30-Day Challenge screen with day-by-day phase cards
