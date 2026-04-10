@@ -132,6 +132,11 @@
 - [ ] Build Billing Management screen (current plan, cancel, upgrade)
 - [ ] Wire PaywallGate into BOA, Program, and Panther Brain screens
 
+## 30-Day Challenge Image
+- [x] Upload IMG_6650 (panther gym hero "YOUR 30-DAY CHALLENGE STARTS NOW") to CDN
+- [x] Wire as hero banner on Challenge screen
+- [x] Wire as Home card background for the challenge CTA
+
 ## Navigation Redesign — Command Center
 - [x] Remove persistent bottom nav bar (TufBottomNav) from all screens
 - [x] Rebuild Home as visual command center — full-width CTA + 2-col section cards with panther images

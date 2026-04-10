@@ -17,7 +17,7 @@ import { TufSocialStickyStrip } from "@/components/TufSocialFooter";
 
 const CDN = "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR";
 const PANTHER_MASCOT = `${CDN}/panther-mascot-gym_27e64ae1.png`;
-const CHALLENGE_IMG  = `${CDN}/challenge-launch_fb692dde.jpg`;
+const CHALLENGE_IMG  = "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/challenge-hero-panther_60538eb1.jpg";
 
 export default function Home() {
   const [, navigate] = useLocation();

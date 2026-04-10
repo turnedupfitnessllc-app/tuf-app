@@ -171,53 +171,64 @@ export default function Challenge() {
         {/* ─── HERO BANNER ─── */}
         <div style={{
           borderRadius: 20, overflow: "hidden",
-          position: "relative", height: 180,
+          position: "relative", height: 320,
           marginBottom: 20,
-          border: "1px solid rgba(255,69,0,0.2)",
+          border: "1px solid rgba(255,69,0,0.25)",
+          boxShadow: "0 8px 40px rgba(255,69,0,0.2)",
         }}>
           <img
-            src={`${CDN}/panther-mindset-overview_9706cfb0.jpg`}
+            src="https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/challenge-hero-panther_60538eb1.jpg"
             alt="30-Day Challenge"
             style={{
               position: "absolute", inset: 0,
               width: "100%", height: "100%",
               objectFit: "cover",
-              objectPosition: "center 25%",
-              filter: "brightness(0.4) saturate(1.1)",
+              objectPosition: "center 15%",
+              filter: "brightness(0.75) saturate(1.15)",
             }}
           />
+          {/* bottom gradient so text is legible */}
           <div style={{
             position: "absolute", inset: 0,
-            background: "linear-gradient(to right, rgba(8,8,8,0.9) 0%, rgba(8,8,8,0.3) 70%, transparent 100%)",
+            background: "linear-gradient(to bottom, transparent 30%, rgba(8,8,8,0.85) 100%)",
           }} />
+          {/* bottom-left text block */}
           <div style={{
             position: "absolute",
-            left: 20, top: "50%",
-            transform: "translateY(-50%)",
+            left: 20, bottom: 20, right: 20,
           }}>
             <div style={{
               fontFamily: "'Barlow Condensed', sans-serif",
               fontSize: 10, fontWeight: 700,
               letterSpacing: "0.22em", color: "#FF4500",
-              marginBottom: 6,
+              marginBottom: 4,
             }}>
               PANTHER MINDSET PROGRAM
             </div>
             <div style={{
               fontFamily: "'Bebas Neue', sans-serif",
-              fontSize: 30, letterSpacing: "0.05em",
+              fontSize: 36, letterSpacing: "0.04em",
               color: "#fff", lineHeight: 1,
             }}>
-              30-DAY<br />CHALLENGE
+              YOUR 30-DAY<br />CHALLENGE
             </div>
             <div style={{
               fontFamily: "'Barlow Condensed', sans-serif",
               fontSize: 11, fontWeight: 700,
               letterSpacing: "0.12em",
-              color: "rgba(255,255,255,0.4)",
+              color: "rgba(255,255,255,0.5)",
               marginTop: 6,
             }}>
-              6 Phases · Mental + Physical
+              6 Phases · Control · Patience · Precision · Power
+            </div>
+            <div style={{
+              marginTop: 10,
+              fontFamily: "'Barlow Condensed', sans-serif",
+              fontSize: 10, fontWeight: 700,
+              letterSpacing: "0.1em",
+              color: "rgba(255,255,255,0.3)",
+            }}>
+              #TurnedUpFitness  #PantherMindset  #BecomeDangerous
             </div>
           </div>
         </div>
