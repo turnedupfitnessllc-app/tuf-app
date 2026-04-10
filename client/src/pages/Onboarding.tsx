@@ -92,34 +92,30 @@ export default function Onboarding() {
       <div className="min-h-screen bg-[#080808] flex flex-col items-center justify-center px-6 text-center">
         <div className="max-w-[400px] w-full">
 
-          {/* Panther UP hero image */}
-          <div
-            className="relative mb-6 rounded-3xl overflow-hidden"
-            style={{
-              boxShadow: '0 0 60px rgba(255,69,0,0.4), 0 0 120px rgba(220,38,38,0.15), 0 4px 32px rgba(0,0,0,0.7)',
-              border: '1px solid rgba(255,69,0,0.3)',
-            }}
-          >
-            <img
-              src="https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/panther-up_950a85bd.png"
-              alt="Panther — Turned Up Fitness"
-              className="w-full object-cover"
-              style={{ maxHeight: '300px', objectPosition: 'top' }}
-            />
-            {/* Bottom fade into background */}
-            <div
-              className="absolute inset-x-0 bottom-0 h-20"
-              style={{ background: 'linear-gradient(to top, rgba(8,8,8,1) 0%, transparent 100%)' }}
-            />
-          </div>
-
-          <div className="flex justify-center mb-2">
-            <img
-              src="https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/tuf-wordmark_9c8bc171.png"
-              alt="Turned Up Fitness"
-              className="w-full max-w-[320px] h-auto"
-              style={{ filter: 'invert(1) drop-shadow(0 0 8px rgba(255,40,40,0.5))' }}
-            />
+          {/* Glowing UP logo */}
+          <div className="flex justify-center mb-6" style={{ position: "relative" }}>
+            {/* Ambient glow */}
+            <div style={{
+              position: "absolute", inset: -40,
+              background: "radial-gradient(circle, rgba(255,69,0,0.18) 0%, transparent 65%)",
+              borderRadius: "50%",
+              pointerEvents: "none",
+            }} />
+            <span style={{
+              fontFamily: "'Bebas Neue', sans-serif",
+              fontSize: 120,
+              lineHeight: 1,
+              color: "#FF4500",
+              letterSpacing: "-0.02em",
+              textShadow: [
+                "0 0 20px rgba(255,69,0,0.95)",
+                "0 0 50px rgba(255,69,0,0.65)",
+                "0 0 100px rgba(255,69,0,0.35)",
+              ].join(", "),
+              position: "relative",
+            }}>
+              UP
+            </span>
           </div>
           <p className="text-sm text-muted-foreground mb-1">
             AI-powered coaching built for the 40+ athlete.
