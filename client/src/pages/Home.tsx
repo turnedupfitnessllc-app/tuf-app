@@ -14,9 +14,6 @@ import { useLocation } from "wouter";
 import { XPBar } from "@/components/v4Components";
 import { ls, getStageFromXP } from "@/data/v4constants";
 
-const UP_MARK_URL =
-  "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/tuf-up-mark_24c33eef.png";
-
 const FOCUS_PILLS = [
   { label: "LOWER BODY", color: "#FF4500", day: [1, 4] },
   { label: "MOBILITY",   color: "#4a9eff", day: [2, 5] },
@@ -115,16 +112,37 @@ export default function Home() {
         style={{ maxWidth: 480, margin: "0 auto", padding: "0 20px" }}
       >
 
-        {/* ─── LOGO — 100px tall, centered ─── */}
+        {/* ─── LOGO — glowing UP mark, centered ─── */}
         <div style={{ paddingTop: 52, marginBottom: 20, textAlign: "center" }}>
-          <img
-            src={UP_MARK_URL}
-            alt="Turned Up Fitness"
-            style={{
-              height: 100, width: "auto",
-              filter: "drop-shadow(0 0 20px rgba(255,69,0,0.45))",
-            }}
-          />
+          <div style={{
+            display: "inline-flex", alignItems: "center", justifyContent: "center",
+            position: "relative",
+          }}>
+            {/* Outer ambient glow */}
+            <div style={{
+              position: "absolute", inset: -24,
+              background: "radial-gradient(circle, rgba(255,69,0,0.22) 0%, transparent 70%)",
+              borderRadius: "50%",
+              animation: "ambient 3s ease-in-out infinite",
+              pointerEvents: "none",
+            }} />
+            <span style={{
+              fontFamily: "'Bebas Neue', sans-serif",
+              fontSize: 96,
+              lineHeight: 1,
+              color: "#FF4500",
+              letterSpacing: "-0.02em",
+              textShadow: [
+                "0 0 20px rgba(255,69,0,0.9)",
+                "0 0 40px rgba(255,69,0,0.6)",
+                "0 0 80px rgba(255,69,0,0.3)",
+              ].join(", "),
+              animation: "flamePulse 2.5s ease-in-out infinite",
+              position: "relative",
+            }}>
+              UP
+            </span>
+          </div>
         </div>
 
         {/* ─── GREETING ─── */}

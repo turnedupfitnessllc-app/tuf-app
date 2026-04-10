@@ -19,12 +19,16 @@ export function TufHeader() {
       <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
         {/* Brand */}
         <div className="flex items-center gap-2">
-          <img
-            src="https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/tuf-up-mark_24c33eef.png"
-            alt="Turned Up Fitness"
-            className="h-10 w-auto"
-            style={{ filter: 'drop-shadow(0 0 6px rgba(255,40,40,0.5))' }}
-          />
+          <span style={{
+            fontFamily: "'Bebas Neue', sans-serif",
+            fontSize: 32,
+            lineHeight: 1,
+            color: "#FF4500",
+            letterSpacing: "-0.02em",
+            textShadow: "0 0 12px rgba(255,69,0,0.8), 0 0 24px rgba(255,69,0,0.4)",
+          }}>
+            UP
+          </span>
         </div>
 
         {/* Right section */}
