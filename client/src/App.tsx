@@ -40,6 +40,7 @@ import Pricing from "./pages/Pricing";
 
 // New screens
 import Challenge from "./pages/Challenge";
+import Schedule from "./pages/Schedule";
 
 function Router() {
   const isOnboarded = localStorage.getItem("tuf_onboarded") === "true";
@@ -62,6 +63,7 @@ function Router() {
         <Route path={"/profile"} component={Profile} />
         <Route path={"/pricing"} component={Pricing} />
         <Route path={"/challenge"} component={Challenge} />
+        <Route path={"/schedule"} component={Schedule} />
 
         {/* ── Feature screens ───────────────────────────────── */}
         <Route path={"/boa"} component={BiomechanicalOverlay} />

@@ -430,6 +430,35 @@ export default function Home() {
           </div>
         </button>
 
+        {/* ─── PANTHER SCHEDULER ─── */}
+        <button
+          className="cmd-card"
+          onClick={() => navigate("/schedule")}
+          style={{ width: "100%", display: "block" }}
+        >
+          <div style={{ padding: "16px", display: "flex", alignItems: "center", gap: 14 }}>
+            <div style={{ fontSize: 32 }}>📅</div>
+            <div>
+              <div style={{
+                fontFamily: "'Bebas Neue', sans-serif",
+                fontSize: 18, letterSpacing: "0.06em",
+                color: "#4a9eff",
+              }}>
+                PANTHER SCHEDULER
+              </div>
+              <div style={{
+                fontFamily: "'Barlow Condensed', sans-serif",
+                fontSize: 10, fontWeight: 700,
+                letterSpacing: "0.1em",
+                color: "rgba(255,255,255,0.35)",
+              }}>
+                Training calendar · Push alerts · Device sync
+              </div>
+            </div>
+            <div style={{ marginLeft: "auto", color: "rgba(255,255,255,0.2)", fontSize: 18 }}>›</div>
+          </div>
+        </button>
+
       </main>
 
       {/* ─── STICKY STRIP (Option A) ─── */}

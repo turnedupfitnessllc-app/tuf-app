@@ -143,3 +143,18 @@
 - [x] Upload panther character images to CDN for card backgrounds
 - [x] Add back arrow on Challenge screen; other inner screens use header
 - [x] 30-Day Challenge screen with day-by-day phase cards
+
+## Panther Scheduler — Training Calendar + Push Notifications
+- [x] Create Service Worker (public/sw.js) for push notification delivery
+- [x] Build /schedule route — Panther Scheduler screen
+- [x] Weekly calendar grid with training/rest/missed day states
+- [x] Session creation modal — time, program, notes
+- [x] Goal days per week setting (1–7)
+- [x] Daily check-in system — Did you train? Rate session 1–5
+- [x] Panther roar triggers — streak milestones, missed sessions, phase unlocks
+- [x] .ics calendar export — one-tap "Add to Device Calendar"
+- [x] Push notification permission flow with Panther framing
+- [x] Schedule morning activation + pre-workout + post-session notifications
+- [x] Add to Home Screen prompt for iOS push support (documented in settings)
+- [x] Add Scheduler card to Home Command Center
+- [x] Wire /schedule route in App.tsx
