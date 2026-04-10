@@ -13,6 +13,7 @@
 import { useLocation } from "wouter";
 import { XPBar } from "@/components/v4Components";
 import { ls, getStageFromXP } from "@/data/v4constants";
+import { TufSocialStickyStrip, TufSocialInlineFooter } from "@/components/TufSocialFooter";
 
 const CDN = "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR";
 const PANTHER_MASCOT = `${CDN}/panther-mascot-gym_27e64ae1.png`;
@@ -53,7 +54,7 @@ export default function Home() {
     : "START WORKOUT →";
 
   return (
-    <div style={{ minHeight: "100vh", background: "#080808", paddingBottom: 40 }}>
+    <div style={{ minHeight: "100vh", background: "#080808", paddingBottom: 100 }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap');
 
@@ -429,7 +430,13 @@ export default function Home() {
           </div>
         </button>
 
+        {/* ─── INLINE FOOTER (Option B) ─── */}
+        <TufSocialInlineFooter />
+
       </main>
+
+      {/* ─── STICKY STRIP (Option A) ─── */}
+      <TufSocialStickyStrip />
     </div>
   );
 }
