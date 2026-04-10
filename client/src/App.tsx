@@ -6,7 +6,6 @@ import { useState } from "react";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { TufHeader } from "./components/TufHeader";
-import { TufBottomNav } from "./components/TufBottomNav";
 import SplashScreen from "./components/SplashScreen";
 
 // Core Panther UX System screens
@@ -27,7 +26,7 @@ import PantherBrain from "./pages/PantherBrain";
 import LiveCoaching from "./pages/LiveCoaching";
 import BodyComposition from "./pages/BodyComposition";
 
-// Legacy screens (still accessible via Profile quick links)
+// Legacy screens
 import Move from "./pages/Move";
 import Fuel from "./pages/Fuel";
 import Feast from "./pages/Feast";
@@ -39,8 +38,10 @@ import Program from "./pages/Program";
 import Evolve from "./pages/Evolve";
 import Pricing from "./pages/Pricing";
 
+// New screens
+import Challenge from "./pages/Challenge";
+
 function Router() {
-  // First-launch detection — show onboarding if not yet completed
   const isOnboarded = localStorage.getItem("tuf_onboarded") === "true";
 
   return (
@@ -60,6 +61,7 @@ function Router() {
         <Route path={"/evolve"} component={Evolve} />
         <Route path={"/profile"} component={Profile} />
         <Route path={"/pricing"} component={Pricing} />
+        <Route path={"/challenge"} component={Challenge} />
 
         {/* ── Feature screens ───────────────────────────────── */}
         <Route path={"/boa"} component={BiomechanicalOverlay} />
@@ -80,13 +82,12 @@ function Router() {
         <Route path={"/404"} component={NotFound} />
         <Route component={NotFound} />
       </Switch>
-      <TufBottomNav />
+      {/* Bottom nav removed — Home IS the navigation hub */}
     </>
   );
 }
 
 function App() {
-  // Show splash only once per browser session
   const [splashDone, setSplashDone] = useState(
     () => sessionStorage.getItem("tuf_splash_shown") === "true"
   );
@@ -101,7 +102,6 @@ function App() {
       <ThemeProvider defaultTheme="dark" switchable>
         <TooltipProvider>
           <Toaster />
-          {/* Splash screen plays once per session, then the app loads */}
           {!splashDone && (
             <SplashScreen onComplete={handleSplashComplete} />
           )}

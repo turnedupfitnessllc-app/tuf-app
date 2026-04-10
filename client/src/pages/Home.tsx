@@ -1,26 +1,22 @@
 /**
- * TUF HOME — v4.1 Mobile
- * Layout spec:
- *   - Logo (100px tall), centered
- *   - Large heading tagline
- *   - Full-width START WORKOUT button
- *   - Secondary buttons row (Log Pain, Assess, Panther)
- *   - 20px vertical spacing between each element
- *   - Today's Focus pills
- *   - Pain Status
- *   - Panther Brain teaser
+ * TUF HOME — v4.2 Command Center
+ * Logo: panther mascot image with blended overlay (full body + glow halo + scan ring)
+ * Layout:
+ *   - Hero logo (panther mascot with UP overlay)
+ *   - Greeting + tagline
+ *   - XP / Stage bar
+ *   - Full-width START WORKOUT CTA
+ *   - 2-col section cards: ASSESS | PROGRAM
+ *   - 2-col section cards: JARVIS | EVOLVE
+ *   - Full-width: 30-DAY CHALLENGE
  */
 import { useLocation } from "wouter";
 import { XPBar } from "@/components/v4Components";
 import { ls, getStageFromXP } from "@/data/v4constants";
 
-const FOCUS_PILLS = [
-  { label: "LOWER BODY", color: "#FF4500", day: [1, 4] },
-  { label: "MOBILITY",   color: "#4a9eff", day: [2, 5] },
-  { label: "RECOVERY",   color: "#22c55e", day: [0, 3] },
-  { label: "UPPER BODY", color: "#C8973A", day: [1, 4] },
-  { label: "CORE",       color: "#7c3aed", day: [2, 6] },
-];
+const CDN = "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR";
+const PANTHER_MASCOT = `${CDN}/panther-mascot-gym_27e64ae1.png`;
+const CHALLENGE_IMG  = `${CDN}/challenge-launch_fb692dde.jpg`;
 
 export default function Home() {
   const [, navigate] = useLocation();
@@ -44,9 +40,6 @@ export default function Home() {
     hour < 17 ? "GOOD AFTERNOON, ATHLETE." :
     hour < 21 ? "GOOD EVENING, ATHLETE." : "LATE SESSION, ATHLETE.";
 
-  const todayDow   = new Date().getDay();
-  const latestPain = painLogs.length > 0 ? painLogs[painLogs.length - 1] : null;
-
   const handleStart = () => {
     if (isNew) navigate("/assess");
     else if (correctives?.issue) navigate("/program");
@@ -60,13 +53,20 @@ export default function Home() {
     : "START WORKOUT →";
 
   return (
-    <div style={{ minHeight: "100vh", background: "#080808", paddingBottom: 100 }}>
+    <div style={{ minHeight: "100vh", background: "#080808", paddingBottom: 40 }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap');
-        @keyframes fadeUp    { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
-        @keyframes glowPulse { 0%,100%{box-shadow:0 4px 24px rgba(255,69,0,0.35)} 50%{box-shadow:0 4px 48px rgba(255,69,0,0.65)} }
-        @keyframes flamePulse { 0%,100%{transform:scaleY(1)} 50%{transform:scaleY(1.2)} }
-        .tuf-home { animation: fadeUp 0.45s ease both; }
+
+        @keyframes fadeUp    { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes glowPulse { 0%,100%{box-shadow:0 4px 24px rgba(255,69,0,0.4)} 50%{box-shadow:0 4px 56px rgba(255,69,0,0.75)} }
+        @keyframes ringPulse {
+          0%,100% { box-shadow: 0 0 14px rgba(255,69,0,0.5), inset 0 0 10px rgba(255,69,0,0.08); }
+          50%     { box-shadow: 0 0 30px rgba(255,69,0,0.9), inset 0 0 18px rgba(255,69,0,0.18); }
+        }
+        @keyframes haloPulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+
+        .tuf-home  { animation: fadeUp 0.45s ease both; }
+
         .btn-primary {
           display: block; width: 100%;
           padding: 18px 24px;
@@ -81,72 +81,117 @@ export default function Home() {
           transition: transform 0.12s ease, background 0.12s ease;
         }
         .btn-primary:active { transform: scale(0.97); background: #cc3700; animation: none; }
-        .btn-sec {
-          flex: 1;
-          padding: 14px 8px;
-          background: rgba(255,255,255,0.04);
-          border: 1px solid rgba(255,255,255,0.1);
-          border-radius: 12px;
-          color: rgba(255,255,255,0.8);
-          font-family: 'Barlow Condensed', sans-serif;
-          font-size: 12px; font-weight: 700;
-          letter-spacing: 0.08em;
+
+        .cmd-card {
+          position: relative;
+          border-radius: 16px;
+          overflow: hidden;
           cursor: pointer;
-          display: flex; flex-direction: column; align-items: center; gap: 4px;
-          transition: background 0.12s ease, border-color 0.12s ease;
+          border: 1px solid rgba(255,255,255,0.07);
+          transition: transform 0.15s ease, border-color 0.15s ease;
+          background: rgba(255,255,255,0.03);
         }
-        .btn-sec:active { background: rgba(255,255,255,0.09); }
-        .pill {
-          display: inline-flex; align-items: center;
-          padding: 7px 14px; border-radius: 20px;
-          font-family: 'Barlow Condensed', sans-serif;
-          font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
-          white-space: nowrap; cursor: pointer;
-          transition: transform 0.12s ease;
-        }
-        .pill:active { transform: scale(0.95); }
+        .cmd-card:active { transform: scale(0.97); }
+        .cmd-card:hover  { border-color: rgba(255,69,0,0.3); }
+
+        .logo-ring { animation: ringPulse 2.5s ease-in-out infinite; }
+        .logo-halo { animation: haloPulse 2.5s ease-in-out infinite; }
       `}</style>
 
-      <main
-        className="tuf-home"
-        style={{ maxWidth: 480, margin: "0 auto", padding: "0 20px" }}
-      >
+      <main className="tuf-home" style={{ maxWidth: 480, margin: "0 auto", padding: "0 16px" }}>
 
-        {/* ─── LOGO — glowing UP mark, centered ─── */}
-        <div style={{ paddingTop: 52, marginBottom: 20, textAlign: "center" }}>
+        {/* ─── HERO LOGO ─── */}
+        <div style={{ paddingTop: 24, marginBottom: 20, display: "flex", justifyContent: "center" }}>
           <div style={{
-            display: "inline-flex", alignItems: "center", justifyContent: "center",
+            width: 160,
+            height: 200,
+            borderRadius: 20,
+            overflow: "hidden",
             position: "relative",
+            border: "1px solid rgba(255,69,0,0.25)",
+            boxShadow: "0 0 40px rgba(255,69,0,0.15), 0 12px 40px rgba(0,0,0,0.6)",
           }}>
-            {/* Outer ambient glow */}
+            {/* Panther mascot — full body, darkened */}
+            <img
+              src={PANTHER_MASCOT}
+              alt="TUF Panther"
+              style={{
+                position: "absolute", inset: 0,
+                width: "100%", height: "100%",
+                objectFit: "cover",
+                objectPosition: "center 18%",
+                filter: "brightness(0.5) saturate(1.2)",
+              }}
+            />
+            {/* Edge vignette */}
             <div style={{
-              position: "absolute", inset: -24,
-              background: "radial-gradient(circle, rgba(255,69,0,0.22) 0%, transparent 70%)",
-              borderRadius: "50%",
-              animation: "ambient 3s ease-in-out infinite",
+              position: "absolute", inset: 0,
+              background: "radial-gradient(ellipse 65% 60% at 50% 45%, transparent 0%, rgba(8,8,8,0.4) 60%, rgba(8,8,8,0.75) 100%)",
               pointerEvents: "none",
             }} />
-            <span style={{
-              fontFamily: "'Bebas Neue', sans-serif",
-              fontSize: 96,
-              lineHeight: 1,
-              color: "#FF4500",
-              letterSpacing: "-0.02em",
-              textShadow: [
-                "0 0 20px rgba(255,69,0,0.9)",
-                "0 0 40px rgba(255,69,0,0.6)",
-                "0 0 80px rgba(255,69,0,0.3)",
-              ].join(", "),
-              animation: "flamePulse 2.5s ease-in-out infinite",
-              position: "relative",
+            {/* Spotlight on chest */}
+            <div style={{
+              position: "absolute",
+              left: "50%", top: "60%",
+              transform: "translate(-50%, -50%)",
+              width: 90, height: 60,
+              background: "radial-gradient(ellipse at center, rgba(255,255,255,0.22) 0%, transparent 70%)",
+              borderRadius: "50%",
+              pointerEvents: "none",
+            }} />
+            {/* Red glow halo */}
+            <div
+              className="logo-halo"
+              style={{
+                position: "absolute",
+                left: "50%", top: "60%",
+                transform: "translate(-50%, -50%)",
+                width: 80, height: 52,
+                background: "radial-gradient(ellipse at center, rgba(255,69,0,0.55) 0%, rgba(255,69,0,0.15) 55%, transparent 80%)",
+                borderRadius: "50%",
+                pointerEvents: "none",
+              }}
+            />
+            {/* Scan ring */}
+            <div
+              className="logo-ring"
+              style={{
+                position: "absolute",
+                left: "50%", top: "60%",
+                transform: "translate(-50%, -50%)",
+                width: 64, height: 44,
+                border: "1.5px solid rgba(255,69,0,0.65)",
+                borderRadius: 8,
+                pointerEvents: "none",
+              }}
+            />
+            {/* Scan label */}
+            <div style={{
+              position: "absolute",
+              left: "50%", top: "calc(60% + 26px)",
+              transform: "translateX(-50%)",
+              fontSize: 7, fontWeight: 700,
+              letterSpacing: "0.2em",
+              color: "rgba(255,69,0,0.6)",
+              whiteSpace: "nowrap",
+              fontFamily: "'Barlow Condensed', sans-serif",
+              pointerEvents: "none",
             }}>
-              UP
-            </span>
+              ▸ UP MARK
+            </div>
+            {/* Bottom fade */}
+            <div style={{
+              position: "absolute",
+              bottom: 0, left: 0, right: 0,
+              height: "30%",
+              background: "linear-gradient(to top, rgba(8,8,8,0.95) 0%, transparent 100%)",
+              pointerEvents: "none",
+            }} />
           </div>
         </div>
 
         {/* ─── GREETING ─── */}
-        <div style={{ marginBottom: 8, textAlign: "center" }}>
+        <div style={{ marginBottom: 4, textAlign: "center" }}>
           <p style={{
             fontFamily: "'Barlow Condensed', sans-serif",
             fontSize: 11, fontWeight: 700,
@@ -159,10 +204,10 @@ export default function Home() {
         </div>
 
         {/* ─── TAGLINE ─── */}
-        <div style={{ marginBottom: 20, textAlign: "center" }}>
+        <div style={{ marginBottom: 18, textAlign: "center" }}>
           <h1 style={{
             fontFamily: "'Bebas Neue', sans-serif",
-            fontSize: 38, letterSpacing: "0.04em",
+            fontSize: 36, letterSpacing: "0.04em",
             color: "#fff", lineHeight: 1.08, margin: 0,
           }}>
             READY TO MOVE<br />
@@ -171,7 +216,7 @@ export default function Home() {
         </div>
 
         {/* ─── XP / STAGE BAR ─── */}
-        <div style={{ marginBottom: 20 }}>
+        <div style={{ marginBottom: 18 }}>
           <div style={{
             display: "flex", alignItems: "center",
             justifyContent: "space-between", marginBottom: 8,
@@ -182,7 +227,6 @@ export default function Home() {
                   fontFamily: "'Barlow Condensed', sans-serif",
                   fontSize: 13, fontWeight: 700, color: "#C8973A",
                   display: "flex", alignItems: "center", gap: 3,
-                  animation: "flamePulse 1.8s ease-in-out infinite",
                 }}>
                   🔥 {streak}
                 </span>
@@ -208,168 +252,182 @@ export default function Home() {
         </div>
 
         {/* ─── START WORKOUT — full-width primary CTA ─── */}
-        <div style={{ marginBottom: 20 }}>
+        <div style={{ marginBottom: 16 }}>
           <button className="btn-primary" onClick={handleStart}>
             {startLabel}
           </button>
         </div>
 
-        {/* ─── SECONDARY BUTTONS — evenly spaced ─── */}
-        <div style={{ display: "flex", gap: 12, marginBottom: 20 }}>
-          <button
-            className="btn-sec"
-            onClick={() => navigate("/assess")}
-            style={{ borderColor: "rgba(255,69,0,0.25)" }}
-          >
-            <span style={{ fontSize: 20 }}>📋</span>
-            <span>ASSESS</span>
-          </button>
-          <button
-            className="btn-sec"
-            onClick={() => navigate("/assess")}
-            style={{ borderColor: "rgba(255,69,0,0.2)" }}
-          >
-            <span style={{ fontSize: 20 }}>🩺</span>
-            <span>LOG PAIN</span>
-          </button>
-          <button
-            className="btn-sec"
-            onClick={() => navigate("/jarvis")}
-            style={{ borderColor: "rgba(74,158,255,0.25)" }}
-          >
-            <span style={{ fontSize: 20 }}>🧠</span>
-            <span>PANTHER</span>
-          </button>
-        </div>
+        {/* ─── SECTION LABEL ─── */}
+        <p style={{
+          fontFamily: "'Barlow Condensed', sans-serif",
+          fontSize: 10, fontWeight: 700,
+          letterSpacing: "0.2em",
+          color: "rgba(255,255,255,0.25)",
+          marginBottom: 10,
+        }}>
+          COMMAND CENTER
+        </p>
 
-        {/* ─── TODAY'S FOCUS PILLS ─── */}
-        <div style={{ marginBottom: 20 }}>
-          <p style={{
-            fontFamily: "'Barlow Condensed', sans-serif",
-            fontSize: 10, fontWeight: 700,
-            letterSpacing: "0.18em",
-            color: "rgba(255,255,255,0.28)",
-            marginBottom: 10,
-          }}>
-            TODAY'S FOCUS
-          </p>
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            {FOCUS_PILLS.map(pill => {
-              const active = pill.day.includes(todayDow);
-              return (
-                <button
-                  key={pill.label}
-                  className="pill"
-                  onClick={() => navigate("/program")}
-                  style={{
-                    background: active ? `${pill.color}1a` : "rgba(255,255,255,0.03)",
-                    border: `1px solid ${active ? pill.color + "55" : "rgba(255,255,255,0.07)"}`,
-                    color: active ? pill.color : "rgba(255,255,255,0.28)",
-                  }}
-                >
-                  {pill.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* ─── PAIN STATUS ─── */}
-        <div style={{ marginBottom: 20 }}>
-          {latestPain ? (
-            <div style={{
-              background: "rgba(255,69,0,0.06)",
-              border: "1px solid rgba(255,69,0,0.25)",
-              borderRadius: 12, padding: "14px 16px",
-              display: "flex", alignItems: "center", gap: 12,
-            }}>
-              <span style={{ fontSize: 20 }}>⚠️</span>
-              <div style={{ flex: 1 }}>
-                <p style={{
-                  fontFamily: "'Barlow Condensed', sans-serif",
-                  fontSize: 12, fontWeight: 700,
-                  color: "#FF4500", letterSpacing: "0.1em", margin: "0 0 2px",
-                }}>
-                  PAIN DETECTED
-                </p>
-                <p style={{ fontSize: 12, color: "rgba(255,255,255,0.55)", margin: 0 }}>
-                  {latestPain.location} · Level {latestPain.level}/10
-                </p>
-              </div>
-              <button
-                onClick={() => navigate("/assess")}
-                style={{
-                  background: "#FF4500", border: "none", borderRadius: 8,
-                  padding: "7px 14px", color: "#fff",
-                  fontFamily: "'Barlow Condensed', sans-serif",
-                  fontSize: 11, fontWeight: 700, letterSpacing: "0.1em",
-                  cursor: "pointer", flexShrink: 0,
-                }}
-              >
-                FIX IT
-              </button>
-            </div>
-          ) : (
-            <div style={{
-              background: "rgba(34,197,94,0.05)",
-              border: "1px solid rgba(34,197,94,0.18)",
-              borderRadius: 12, padding: "14px 16px",
-              display: "flex", alignItems: "center", gap: 12,
-            }}>
-              <span style={{ fontSize: 20 }}>✅</span>
-              <p style={{
-                fontFamily: "'Barlow Condensed', sans-serif",
-                fontSize: 12, fontWeight: 700,
-                color: "#22c55e", letterSpacing: "0.1em", margin: 0,
-              }}>
-                NO PAIN DETECTED
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* ─── PANTHER BRAIN TEASER ─── */}
-        <div style={{ marginBottom: 20 }}>
-          <button
-            onClick={() => navigate("/jarvis")}
-            style={{
-              width: "100%",
-              background: "rgba(13,13,13,0.95)",
-              border: "1px solid rgba(74,158,255,0.18)",
-              borderRadius: 14, padding: "14px 16px",
-              textAlign: "left", cursor: "pointer",
-              display: "flex", alignItems: "center", gap: 12,
-            }}
-          >
-            <div style={{
-              width: 42, height: 42, borderRadius: "50%",
-              background: "rgba(74,158,255,0.08)",
-              border: "1px solid rgba(74,158,255,0.25)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: 20, flexShrink: 0,
-            }}>
-              🧠
-            </div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <p style={{
+        {/* ─── 2-COL CARDS: ASSESS | PROGRAM ─── */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
+          <button className="cmd-card" onClick={() => navigate("/assess")} style={{ height: 110 }}>
+            <div style={{ padding: "18px 14px" }}>
+              <div style={{ fontSize: 28, marginBottom: 6 }}>📋</div>
+              <div style={{
+                fontFamily: "'Bebas Neue', sans-serif",
+                fontSize: 18, letterSpacing: "0.06em", color: "#fff",
+              }}>ASSESS</div>
+              <div style={{
                 fontFamily: "'Barlow Condensed', sans-serif",
                 fontSize: 10, fontWeight: 700,
-                letterSpacing: "0.15em", color: "#4a9eff",
-                margin: "0 0 3px",
-              }}>
-                PANTHER BRAIN
-              </p>
-              <p style={{
-                fontSize: 13, color: "rgba(255,255,255,0.6)",
-                margin: 0, lineHeight: 1.4,
-                overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-              }}>
-                "Why does my lower back hurt after squats?"
-              </p>
+                letterSpacing: "0.1em",
+                color: "rgba(255,255,255,0.35)",
+                marginTop: 2,
+              }}>Pain · Movement</div>
             </div>
-            <span style={{ color: "rgba(255,255,255,0.25)", fontSize: 18, flexShrink: 0 }}>›</span>
+          </button>
+
+          <button className="cmd-card" onClick={() => navigate("/program")} style={{ height: 110 }}>
+            <div style={{ padding: "18px 14px" }}>
+              <div style={{ fontSize: 28, marginBottom: 6 }}>🗓</div>
+              <div style={{
+                fontFamily: "'Bebas Neue', sans-serif",
+                fontSize: 18, letterSpacing: "0.06em", color: "#fff",
+              }}>PROGRAM</div>
+              <div style={{
+                fontFamily: "'Barlow Condensed', sans-serif",
+                fontSize: 10, fontWeight: 700,
+                letterSpacing: "0.1em",
+                color: "rgba(255,255,255,0.35)",
+                marginTop: 2,
+              }}>4-Week Plan</div>
+            </div>
           </button>
         </div>
+
+        {/* ─── 2-COL CARDS: JARVIS | EVOLVE ─── */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
+          <button className="cmd-card" onClick={() => navigate("/jarvis")} style={{ height: 110 }}>
+            <div style={{ padding: "18px 14px" }}>
+              <div style={{ fontSize: 28, marginBottom: 6 }}>🐆</div>
+              <div style={{
+                fontFamily: "'Bebas Neue', sans-serif",
+                fontSize: 18, letterSpacing: "0.06em", color: "#4a9eff",
+              }}>JARVIS</div>
+              <div style={{
+                fontFamily: "'Barlow Condensed', sans-serif",
+                fontSize: 10, fontWeight: 700,
+                letterSpacing: "0.1em",
+                color: "rgba(255,255,255,0.35)",
+                marginTop: 2,
+              }}>AI Coach</div>
+            </div>
+          </button>
+
+          <button className="cmd-card" onClick={() => navigate("/evolve")} style={{ height: 110 }}>
+            <div style={{ padding: "18px 14px" }}>
+              <div style={{ fontSize: 28, marginBottom: 6 }}>⚡</div>
+              <div style={{
+                fontFamily: "'Bebas Neue', sans-serif",
+                fontSize: 18, letterSpacing: "0.06em", color: "#C8973A",
+              }}>EVOLVE</div>
+              <div style={{
+                fontFamily: "'Barlow Condensed', sans-serif",
+                fontSize: 10, fontWeight: 700,
+                letterSpacing: "0.1em",
+                color: "rgba(255,255,255,0.35)",
+                marginTop: 2,
+              }}>XP · Stages</div>
+            </div>
+          </button>
+        </div>
+
+        {/* ─── FULL-WIDTH: 30-DAY CHALLENGE ─── */}
+        <button
+          className="cmd-card"
+          onClick={() => navigate("/challenge")}
+          style={{ width: "100%", marginBottom: 10, display: "block" }}
+        >
+          <div style={{ position: "relative", height: 120, overflow: "hidden" }}>
+            <img
+              src={CHALLENGE_IMG}
+              alt="30-Day Challenge"
+              style={{
+                position: "absolute", inset: 0,
+                width: "100%", height: "100%",
+                objectFit: "cover",
+                objectPosition: "center 30%",
+                filter: "brightness(0.45) saturate(1.1)",
+              }}
+            />
+            <div style={{
+              position: "absolute", inset: 0,
+              background: "linear-gradient(to right, rgba(8,8,8,0.9) 0%, rgba(8,8,8,0.4) 60%, transparent 100%)",
+              pointerEvents: "none",
+            }} />
+            <div style={{
+              position: "absolute",
+              left: 16, top: "50%",
+              transform: "translateY(-50%)",
+            }}>
+              <div style={{
+                fontFamily: "'Barlow Condensed', sans-serif",
+                fontSize: 9, fontWeight: 700,
+                letterSpacing: "0.22em",
+                color: "#FF4500",
+                marginBottom: 4,
+              }}>
+                NEW PROGRAM
+              </div>
+              <div style={{
+                fontFamily: "'Bebas Neue', sans-serif",
+                fontSize: 22, letterSpacing: "0.06em",
+                color: "#fff", lineHeight: 1,
+              }}>
+                30-DAY PANTHER<br />MINDSET CHALLENGE
+              </div>
+              <div style={{
+                fontFamily: "'Barlow Condensed', sans-serif",
+                fontSize: 10, fontWeight: 700,
+                letterSpacing: "0.1em",
+                color: "rgba(255,255,255,0.4)",
+                marginTop: 4,
+              }}>
+                Control · Patience · Precision · Power
+              </div>
+            </div>
+          </div>
+        </button>
+
+        {/* ─── BOA SCAN ─── */}
+        <button
+          className="cmd-card"
+          onClick={() => navigate("/boa")}
+          style={{ width: "100%", display: "block" }}
+        >
+          <div style={{ padding: "16px", display: "flex", alignItems: "center", gap: 14 }}>
+            <div style={{ fontSize: 32 }}>📷</div>
+            <div>
+              <div style={{
+                fontFamily: "'Bebas Neue', sans-serif",
+                fontSize: 18, letterSpacing: "0.06em",
+                color: "#22c55e",
+              }}>
+                BOA SCAN
+              </div>
+              <div style={{
+                fontFamily: "'Barlow Condensed', sans-serif",
+                fontSize: 10, fontWeight: 700,
+                letterSpacing: "0.1em",
+                color: "rgba(255,255,255,0.35)",
+              }}>
+                Biomechanical Overlay Analysis
+              </div>
+            </div>
+            <div style={{ marginLeft: "auto", color: "rgba(255,255,255,0.2)", fontSize: 18 }}>›</div>
+          </div>
+        </button>
 
       </main>
     </div>
