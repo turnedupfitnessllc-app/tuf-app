@@ -708,7 +708,7 @@ export default function Correct() {
           <p className="text-sm font-bold text-foreground italic">
             "{currentExercise.pantherCue}"
           </p>
-          <p className="text-xs text-muted-foreground mt-1">— JARVIS</p>
+          <p className="text-xs text-muted-foreground mt-1">— THE PANTHER SYSTEM</p>
         </div>
 
         {/* ── Controls ──────────────────────────────────────────────── */}

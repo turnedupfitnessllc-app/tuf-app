@@ -1,13 +1,13 @@
 // server/routes/coaching.ts
 // Real-time AI coaching pipeline:
-// Camera frame → fal.ai vision → Claude JARVIS analysis → ElevenLabs TTS
+// Camera frame → fal.ai vision → The Panther System (Claude) analysis → ElevenLabs TTS
 import { Router, Request, Response } from "express";
 import Anthropic from "@anthropic-ai/sdk";
 
 const router = Router();
 
-// ─── JARVIS System Prompt (NASM Corrective Exercise Framework) ───────────────
-const JARVIS_COACHING_PROMPT = `You are JARVIS — the AI coaching intelligence behind Turned Up Fitness (TUF). You speak in Marc's voice: direct, no fluff, former Marine energy. You train adults 40+ and you know exactly what their bodies need.
+// ─── Panther System Coaching Prompt (NASM Corrective Exercise Framework) ───────
+const PANTHER_COACHING_PROMPT = `You are The Panther System — the clinical coaching intelligence behind Turned Up Fitness (TUF). You are not a chatbot. You do not motivate. You direct with precision and back every directive with science. You train adults 40+ and you know exactly what their bodies need.
 
 YOUR COACHING FRAMEWORK — NASM Corrective Exercise Continuum:
 1. INHIBIT — Release overactive muscles (foam rolling, static pressure)
@@ -22,14 +22,12 @@ WHAT YOU KNOW ABOUT THE 40+ BODY:
 - Upper Crossed Syndrome (UCS): tight chest/anterior shoulders, weak deep neck flexors and lower traps
 - Lower Crossed Syndrome (LCS): tight hip flexors/lumbar extensors, weak glutes and deep abdominals
 
-HOW YOU SPEAK:
-- Short sentences. No walls of text.
-- Ask one sharp diagnostic question at a time before prescribing
-- Use "we" — this is a team effort
-- Call out form breaks directly but without shame
-- Celebrate good reps loudly
-- Never talk down. They are 40+, not done.
-- Reference science briefly, then immediately translate to action
+THE FIVE VOICE LAWS:
+1. LEAD WITH TRUTH — State the fact first. No softening. No preamble.
+2. PRECISION OVER VOLUME — One directive per response. Volume is noise. Precision is power.
+3. NO MOTIVATIONAL THEATER — No 'great job', no 'you got this'. The work speaks.
+4. SCIENCE IS THE AUTHORITY — Every claim grounded in biomechanics, physiology, or NASM principles.
+5. ONE SYSTEM, ONE STANDARD — No coddling based on age — only appropriate modification based on data.
 
 LIVE COACHING MODE:
 - You are watching the user exercise via camera frames
@@ -101,8 +99,8 @@ Be specific: joint angles, spine position, alignment. 2-3 sentences.`
   return data.output || "Unable to analyze frame";
 }
 
-// ─── Claude JARVIS Coaching Analysis ─────────────────────────────────────────
-async function getJarvisCoachingCue(
+// ─── The Panther System Coaching Analysis (Claude) ─────────────────────────────
+async function getPantherCoachingCue(
   movementDescription: string,
   memberContext?: string
 ): Promise<string> {
@@ -111,7 +109,7 @@ async function getJarvisCoachingCue(
 
   const anthropic = new Anthropic({ apiKey: anthropicKey });
 
-  let system = JARVIS_COACHING_PROMPT;
+  let system = PANTHER_COACHING_PROMPT;
   if (memberContext) {
     system += `\n\nMEMBER CONTEXT:\n${memberContext}`;
   }
@@ -197,7 +195,7 @@ router.post("/analyze", async (req: Request, res: Response) => {
 
 /**
  * POST /api/coaching/coach
- * Step 2: Movement description → Claude JARVIS → coaching cue text
+ * Step 2: Movement description → The Panther System (Claude) → coaching cue text
  * Body: { description: string, memberContext?: string }
  * Returns: { cue: string }
  */
@@ -212,7 +210,7 @@ router.post("/coach", async (req: Request, res: Response) => {
       return res.status(400).json({ error: "description required" });
     }
 
-    const cue = await getJarvisCoachingCue(description, memberContext);
+    const cue = await getPantherCoachingCue(description, memberContext);
     return res.json({ cue });
   } catch (error: any) {
     console.error("[Coaching/coach] Error:", error);
@@ -266,8 +264,8 @@ router.post("/pipeline", async (req: Request, res: Response) => {
     // Step 1: Vision analysis
     const description = await analyzeFrameWithFal(frame, exerciseContext);
 
-    // Step 2: Claude coaching cue
-    const cue = await getJarvisCoachingCue(description, memberContext);
+    // Step 2: The Panther System coaching cue
+    const cue = await getPantherCoachingCue(description, memberContext);
 
     // Step 3: TTS (optional — only if audioEnabled to save latency)
     let audioBase64: string | undefined;

@@ -181,7 +181,7 @@ export default function ComponentShowcase() {
               <div className="w-12 h-12 rounded-lg bg-red-600 flex items-center justify-center mb-4">
                 <Zap className="w-6 h-6 text-white" />
               </div>
-              <h3 className="text-xl font-bold text-white mb-3">JARVIS Chat</h3>
+              <h3 className="text-xl font-bold text-white mb-3">Panther Brain</h3>
               <p className="text-gray-400">
                 AI-powered fitness coach with real-time responses, workout generation, and personalized guidance.
               </p>
@@ -193,7 +193,7 @@ export default function ComponentShowcase() {
         <section className="bg-gradient-to-r from-red-600 to-red-700 rounded-lg p-12 text-center">
           <h2 className="text-3xl font-bold text-white mb-4">Ready to Transform Your Fitness?</h2>
           <p className="text-red-100 mb-8 text-lg">
-            Start your journey with TUF App today and get personalized coaching from JARVIS
+            Start your journey with TUF App today and get personalized coaching from The Panther System
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <AngleButton variant="buy-now" size="lg" icon={<ArrowRight className="w-5 h-5" />}>

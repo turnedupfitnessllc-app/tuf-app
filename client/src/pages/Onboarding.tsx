@@ -165,7 +165,7 @@ export default function Onboarding() {
             WHAT'S YOUR <span className="text-primary">NAME?</span>
           </h2>
           <p className="text-sm text-muted-foreground mb-6">
-            JARVIS will use this to personalize your coaching.
+            The Panther System will use this to personalize your coaching.
           </p>
 
           <input
@@ -264,7 +264,7 @@ export default function Onboarding() {
             ANY <span className="text-primary">ISSUES?</span>
           </h2>
           <p className="text-sm text-muted-foreground mb-6">
-            JARVIS will build your corrective plan around this.
+            The Panther System will build your corrective plan around this.
           </p>
 
           <div className="grid grid-cols-2 gap-3 flex-1">

@@ -21,7 +21,7 @@ import Onboarding from "./pages/Onboarding";
 // Feature screens
 import Goals from "./pages/Goals";
 import BiomechanicalOverlay from "./pages/BiomechanicalOverlay";
-import JarvisChat from "./pages/JarvisChat";
+import PantherChat from "./components/PantherChat";
 import PantherBrain from "./pages/PantherBrain";
 import LiveCoaching from "./pages/LiveCoaching";
 import BodyComposition from "./pages/BodyComposition";
@@ -67,8 +67,9 @@ function Router() {
 
         {/* ── Feature screens ───────────────────────────────── */}
         <Route path={"/boa"} component={BiomechanicalOverlay} />
-        <Route path={"/jarvis"} component={PantherBrain} />
-        <Route path={"/jarvis-legacy"} component={JarvisChat} />
+        <Route path={"/panther"} component={PantherBrain} />
+        <Route path={"/jarvis"} component={PantherBrain} />   {/* legacy alias */}
+        <Route path={"/panther-chat"} component={() => <PantherChat className="h-screen" />} />
         <Route path={"/live"} component={LiveCoaching} />
         <Route path={"/body-comp"} component={BodyComposition} />
 

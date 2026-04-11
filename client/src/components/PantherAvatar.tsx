@@ -1,7 +1,7 @@
 /**
  * PantherAvatar — Animated Panther identity component
  * States: idle (breathing), active (glowing eyes), coaching (alert)
- * Used across Home, Correct, and JARVIS screens
+ * Used across Home, Correct, and Panther System screens
  */
 import { useEffect, useState } from 'react';
 
@@ -73,7 +73,7 @@ export function PantherAvatar({ state = 'idle', size = 'md', message, className 
         <span
           className={`${sz.emoji} select-none transition-all duration-300`}
           role="img"
-          aria-label="JARVIS Panther"
+          aria-label="The Panther System"
         >
           🐆
         </span>

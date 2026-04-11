@@ -158,3 +158,16 @@
 - [x] Add to Home Screen prompt for iOS push support (documented in settings)
 - [x] Add Scheduler card to Home Command Center
 - [x] Wire /schedule route in App.tsx
+
+## Change Order: JARVIS → The Panther System (Doc 3 Execution)
+- [ ] Rename jarvis-api.ts → panther-api.ts; update all exports, types, and QUICK_RESPONSES
+- [ ] Update routes/coaching.ts — JARVIS_COACHING_PROMPT → PANTHER_COACHING_PROMPT, getJarvisCoachingCue → getPantherCoachingCue
+- [ ] Rename routes/jarvis.ts → routes/panther.ts; update route paths /api/jarvis → /api/panther
+- [ ] Update server/index.ts to import and mount new panther routes
+- [ ] Rename JarvisChat.tsx → PantherChat.tsx; update all UI strings and component name
+- [ ] Update PantherAvatar.tsx aria-label from "JARVIS Panther" to "The Panther System"
+- [ ] Update TufBottomNav.tsx nav item label JARVIS → PANTHER
+- [ ] Update App.tsx routes /jarvis → /panther and import PantherChat
+- [ ] Rewrite system prompt with full Panther Voice Laws (5 laws, HEADLINE/BODY/DIRECTIVE, 3 coaching modes, 40+ context)
+- [ ] Update README.md — replace all Jarvis references with The Panther System
+- [ ] Confirm zero Jarvis string references remain in codebase

@@ -28,8 +28,8 @@ const EXERCISES: Exercise[] = [
   { id: "10", name: "Power Pose Hold", category: "Motivation", description: "Static power pose — control your breathing, visualize your goal, activate your mindset.", duration: "3 × 60 sec", difficulty: "Beginner", muscleGroup: "Mental / Core", videoUrl: `${CDN}/jarvis-power-pose_05e6e1f9.mp4` },
   { id: "11", name: "Walk Forward Activation", category: "Mobility", description: "Confident forward walk to prime your body and mind before a heavy session.", duration: "Use as warm-up", difficulty: "Beginner", muscleGroup: "Full Body Activation", videoUrl: `${CDN}/jarvis-walk-forward_7a4d2ac5.mp4` },
   { id: "12", name: "Idle Flex Hold", category: "Motivation", description: "Subtle flex and head turn — a reminder of what you're building. Use between sets.", duration: "Between sets", difficulty: "Beginner", muscleGroup: "Mental", videoUrl: `${CDN}/jarvis-idle-flex_ba34833b.mp4` },
-  { id: "13", name: "JARVIS Roar Activation", category: "Motivation", description: "Fierce roar to ignite your session. Play this before your heaviest lift.", duration: "Pre-workout ritual", difficulty: "Beginner", muscleGroup: "Mental / CNS", videoUrl: `${CDN}/jarvis-roar_c3a368a6.mp4` },
-  { id: "14", name: "JARVIS Snarl Focus", category: "Motivation", description: "Intense snarl and stare — lock in your focus before a competition or max effort set.", duration: "Pre-set ritual", difficulty: "Beginner", muscleGroup: "Mental", videoUrl: `${CDN}/jarvis-snarl_d63dad14.mp4` },
+  { id: "13", name: "PANTHER Roar Activation", category: "Motivation", description: "Fierce roar to ignite your session. Play this before your heaviest lift.", duration: "Pre-workout ritual", difficulty: "Beginner", muscleGroup: "Mental / CNS", videoUrl: `${CDN}/jarvis-roar_c3a368a6.mp4` },
+  { id: "14", name: "PANTHER Snarl Focus", category: "Motivation", description: "Intense snarl and stare — lock in your focus before a competition or max effort set.", duration: "Pre-set ritual", difficulty: "Beginner", muscleGroup: "Mental", videoUrl: `${CDN}/jarvis-snarl_d63dad14.mp4` },
 ];
 
 const CATEGORIES = ["All", "Strength", "Cardio", "Full Body", "Mobility", "Motivation"] as const;
@@ -59,7 +59,7 @@ export default function Move() {
             <span className="text-primary">MOVE</span>
           </h1>
           <p className="text-sm text-muted-foreground font-mono tracking-wider">
-            {EXERCISES.length} JARVIS-POWERED MOVEMENTS · TAP TO PLAY
+            {EXERCISES.length} PANTHER-POWERED MOVEMENTS · TAP TO PLAY
           </p>
         </section>
 

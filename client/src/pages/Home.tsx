@@ -7,7 +7,7 @@
  *   - XP / Stage bar
  *   - Full-width START WORKOUT CTA
  *   - 2-col section cards: ASSESS | PROGRAM
- *   - 2-col section cards: JARVIS | EVOLVE
+ *   - 2-col section cards: PANTHER BRAIN | EVOLVE
  *   - Full-width: 30-DAY CHALLENGE
  */
 import { useLocation } from "wouter";
@@ -307,15 +307,15 @@ export default function Home() {
           </button>
         </div>
 
-        {/* ─── 2-COL CARDS: JARVIS | EVOLVE ─── */}
+        {/* ─── 2-COL CARDS: PANTHER BRAIN | EVOLVE ─── */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
-          <button className="cmd-card" onClick={() => navigate("/jarvis")} style={{ height: 110 }}>
+          <button className="cmd-card" onClick={() => navigate("/panther")} style={{ height: 110 }}>
             <div style={{ padding: "18px 14px" }}>
               <div style={{ fontSize: 28, marginBottom: 6 }}>🐆</div>
               <div style={{
                 fontFamily: "'Bebas Neue', sans-serif",
                 fontSize: 18, letterSpacing: "0.06em", color: "#4a9eff",
-              }}>JARVIS</div>
+              }}>PANTHER BRAIN</div>
               <div style={{
                 fontFamily: "'Barlow Condensed', sans-serif",
                 fontSize: 10, fontWeight: 700,

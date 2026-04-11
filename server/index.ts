@@ -3,7 +3,8 @@ import express from "express";
 import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
-import jarvisRouter from "./routes/jarvis.js";
+import pantherRouter from "./routes/panther.js";
+import jarvisRouter from "./routes/jarvis.js"; // legacy alias — kept for backward compat
 import coachingRouter from "./routes/coaching.js";
 import voiceRouter from "./routes/voice.js";
 import dbRouter from "./routes/database.js";
@@ -21,7 +22,8 @@ async function startServer() {
   app.use(express.urlencoded({ extended: true }));
 
   // API Routes
-  app.use("/api/jarvis", jarvisRouter);
+  app.use("/api/panther", pantherRouter); // The Panther System — primary route
+  app.use("/api/jarvis", pantherRouter);  // legacy alias — keeps old client calls working
   app.use("/api/coaching", coachingRouter);
   app.use("/api/voice", voiceRouter);
   app.use("/api/db", dbRouter);

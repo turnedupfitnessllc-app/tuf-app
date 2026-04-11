@@ -241,7 +241,7 @@ export default function Profile() {
         <div className="space-y-2">
           {[
             { label: 'Body Composition', icon: '📏', path: '/body-comp' },
-            { label: 'JARVIS Chat', icon: '🐆', path: '/jarvis' },
+            { label: 'Panther Brain', icon: '🐆', path: '/panther' },
             { label: 'Live Coaching', icon: '📷', path: '/live' },
             { label: 'Nutrition (FUEL)', icon: '🥗', path: '/fuel' },
             { label: 'Recipes (FEAST)', icon: '🍽️', path: '/feast' },

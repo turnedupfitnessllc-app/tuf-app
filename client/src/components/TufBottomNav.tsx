@@ -1,6 +1,6 @@
 /**
  * TUF Bottom Navigation — v4.0
- * Home · Assess · Program · Jarvis · Evolve
+ * Home · Assess · Program · Panther · Evolve
  */
 import { useLocation } from "wouter";
 
@@ -15,7 +15,7 @@ const navItems: NavItem[] = [
   { id: "home",    icon: "🏠", label: "HOME",    path: "/" },
   { id: "assess",  icon: "🧠", label: "ASSESS",  path: "/assess" },
   { id: "program", icon: "📋", label: "PROGRAM", path: "/program" },
-  { id: "jarvis",  icon: "🐆", label: "JARVIS",  path: "/jarvis" },
+  { id: "panther", icon: "🐆", label: "PANTHER", path: "/panther" },
   { id: "evolve",  icon: "⚡", label: "EVOLVE",  path: "/evolve" },
 ];
 

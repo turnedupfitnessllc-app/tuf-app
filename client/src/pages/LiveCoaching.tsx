@@ -1,5 +1,5 @@
 // client/src/pages/LiveCoaching.tsx
-// Real-time AI coaching: Camera → fal.ai vision → Claude JARVIS → ElevenLabs TTS
+// Real-time AI coaching: Camera → fal.ai vision → The Panther System → ElevenLabs TTS
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Video, VideoOff, Mic, MicOff, Zap, Activity, ChevronLeft, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -252,7 +252,7 @@ export default function LiveCoaching() {
       {/* Header */}
       <div className="sticky top-0 z-10 bg-background/95 backdrop-blur border-b border-border px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Link href="/jarvis">
+          <Link href="/panther">
             <button className="p-1.5 rounded-lg hover:bg-secondary transition-colors">
               <ChevronLeft className="w-5 h-5" />
             </button>
@@ -261,7 +261,7 @@ export default function LiveCoaching() {
             <h1 className="font-bold text-sm" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>
               LIVE COACHING
             </h1>
-            <p className="text-xs text-muted-foreground">Camera · JARVIS · Voice</p>
+            <p className="text-xs text-muted-foreground">Camera · Panther Brain · Voice</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -370,7 +370,7 @@ export default function LiveCoaching() {
             )}
           </div>
 
-          {/* JARVIS avatar */}
+          {/* Panther Brain avatar */}
           <div className="relative rounded-2xl overflow-hidden bg-black aspect-[4/3]">
             <video
               ref={jarvisVideoRef}
@@ -381,10 +381,10 @@ export default function LiveCoaching() {
               playsInline
               className="w-full h-full object-cover"
             />
-            {/* JARVIS label */}
+            {/* Panther Brain label */}
             <div className="absolute top-2 left-2 bg-black/60 rounded-lg px-2 py-0.5">
               <p className="text-[10px] text-white font-mono" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>
-                JARVIS
+                PANTHER BRAIN
               </p>
             </div>
             {/* Speaking pulse */}
@@ -506,7 +506,7 @@ export default function LiveCoaching() {
             <span>→</span>
             <span className="bg-background rounded px-1.5 py-0.5 border border-border">fal.ai Vision</span>
             <span>→</span>
-            <span className="bg-background rounded px-1.5 py-0.5 border border-border">Claude JARVIS</span>
+            <span className="bg-background rounded px-1.5 py-0.5 border border-border">The Panther System</span>
             <span>→</span>
             <span className="bg-background rounded px-1.5 py-0.5 border border-border">ElevenLabs</span>
           </div>
