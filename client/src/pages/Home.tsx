@@ -101,16 +101,16 @@ export default function Home() {
 
       <main className="tuf-home" style={{ maxWidth: 480, margin: "0 auto", padding: "0 16px" }}>
 
-        {/* ─── HERO LOGO ─── */}
-        <div style={{ paddingTop: 24, marginBottom: 20, display: "flex", justifyContent: "center" }}>
+        {/* ─── HERO BANNER ─── */}
+        <div style={{ paddingTop: 0, marginBottom: 20 }}>
           <div style={{
-            width: 160,
-            height: 200,
+            width: "100%",
+            height: 220,
             borderRadius: 20,
             overflow: "hidden",
             position: "relative",
-            border: "1px solid rgba(255,69,0,0.25)",
-            boxShadow: "0 0 40px rgba(255,69,0,0.15), 0 12px 40px rgba(0,0,0,0.6)",
+            border: "1px solid rgba(255,69,0,0.2)",
+            boxShadow: "0 0 40px rgba(255,69,0,0.12), 0 12px 40px rgba(0,0,0,0.6)",
           }}>
             {/* Panther mascot — full body, darkened */}
             <img
@@ -120,35 +120,33 @@ export default function Home() {
                 position: "absolute", inset: 0,
                 width: "100%", height: "100%",
                 objectFit: "cover",
-                objectPosition: "center 18%",
-                filter: "brightness(0.5) saturate(1.2)",
+                objectPosition: "center 15%",
+                filter: "brightness(0.45) saturate(1.3)",
               }}
             />
-            {/* Edge vignette */}
+            {/* Left-to-right gradient overlay */}
             <div style={{
               position: "absolute", inset: 0,
-              background: "radial-gradient(ellipse 65% 60% at 50% 45%, transparent 0%, rgba(8,8,8,0.4) 60%, rgba(8,8,8,0.75) 100%)",
+              background: "linear-gradient(to right, rgba(8,8,8,0.85) 0%, rgba(8,8,8,0.3) 50%, transparent 100%)",
               pointerEvents: "none",
             }} />
-            {/* Spotlight on chest */}
+            {/* Bottom fade */}
             <div style={{
               position: "absolute",
-              left: "50%", top: "60%",
-              transform: "translate(-50%, -50%)",
-              width: 90, height: 60,
-              background: "radial-gradient(ellipse at center, rgba(255,255,255,0.22) 0%, transparent 70%)",
-              borderRadius: "50%",
+              bottom: 0, left: 0, right: 0,
+              height: "35%",
+              background: "linear-gradient(to top, rgba(8,8,8,0.9) 0%, transparent 100%)",
               pointerEvents: "none",
             }} />
-            {/* Red glow halo */}
+            {/* Red glow halo on chest */}
             <div
               className="logo-halo"
               style={{
                 position: "absolute",
-                left: "50%", top: "60%",
-                transform: "translate(-50%, -50%)",
-                width: 80, height: 52,
-                background: "radial-gradient(ellipse at center, rgba(255,69,0,0.55) 0%, rgba(255,69,0,0.15) 55%, transparent 80%)",
+                right: "30%", top: "55%",
+                transform: "translate(50%, -50%)",
+                width: 100, height: 70,
+                background: "radial-gradient(ellipse at center, rgba(255,69,0,0.45) 0%, rgba(255,69,0,0.1) 55%, transparent 80%)",
                 borderRadius: "50%",
                 pointerEvents: "none",
               }}
@@ -158,36 +156,36 @@ export default function Home() {
               className="logo-ring"
               style={{
                 position: "absolute",
-                left: "50%", top: "60%",
-                transform: "translate(-50%, -50%)",
-                width: 64, height: 44,
-                border: "1.5px solid rgba(255,69,0,0.65)",
+                right: "30%", top: "55%",
+                transform: "translate(50%, -50%)",
+                width: 72, height: 50,
+                border: "1.5px solid rgba(255,69,0,0.6)",
                 borderRadius: 8,
                 pointerEvents: "none",
               }}
             />
-            {/* Scan label */}
+            {/* TUF branding text — left side */}
             <div style={{
               position: "absolute",
-              left: "50%", top: "calc(60% + 26px)",
-              transform: "translateX(-50%)",
-              fontSize: 7, fontWeight: 700,
-              letterSpacing: "0.2em",
-              color: "rgba(255,69,0,0.6)",
-              whiteSpace: "nowrap",
-              fontFamily: "'Barlow Condensed', sans-serif",
-              pointerEvents: "none",
+              left: 18, bottom: 18,
             }}>
-              ▸ UP MARK
+              <div style={{
+                fontFamily: "'Barlow Condensed', sans-serif",
+                fontSize: 9, fontWeight: 700,
+                letterSpacing: "0.22em",
+                color: "rgba(255,69,0,0.85)",
+                marginBottom: 3,
+              }}>
+                TURNED UP FITNESS
+              </div>
+              <div style={{
+                fontFamily: "'Bebas Neue', sans-serif",
+                fontSize: 28, letterSpacing: "0.06em",
+                color: "#fff", lineHeight: 1,
+              }}>
+                THE PANTHER <span style={{ color: "#FF4500" }}>SYSTEM</span>
+              </div>
             </div>
-            {/* Bottom fade */}
-            <div style={{
-              position: "absolute",
-              bottom: 0, left: 0, right: 0,
-              height: "30%",
-              background: "linear-gradient(to top, rgba(8,8,8,0.95) 0%, transparent 100%)",
-              pointerEvents: "none",
-            }} />
           </div>
         </div>
 
@@ -274,7 +272,14 @@ export default function Home() {
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
           <button className="cmd-card" onClick={() => navigate("/assess")} style={{ height: 110 }}>
             <div style={{ padding: "18px 14px" }}>
-              <div style={{ fontSize: 28, marginBottom: 6 }}>📋</div>
+              <div style={{ marginBottom: 6 }}>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="4" y="3" width="16" height="18" rx="2" stroke="#FF4500" strokeWidth="1.5"/>
+                  <path d="M8 8h8M8 12h8M8 16h5" stroke="#FF4500" strokeWidth="1.5" strokeLinecap="round"/>
+                  <circle cx="17" cy="16" r="3" fill="#FF4500" opacity="0.3" stroke="#FF4500" strokeWidth="1"/>
+                  <path d="M15.5 16l1 1 2-2" stroke="#FF4500" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
               <div style={{
                 fontFamily: "'Bebas Neue', sans-serif",
                 fontSize: 18, letterSpacing: "0.06em", color: "#fff",
@@ -291,7 +296,15 @@ export default function Home() {
 
           <button className="cmd-card" onClick={() => navigate("/program")} style={{ height: 110 }}>
             <div style={{ padding: "18px 14px" }}>
-              <div style={{ fontSize: 28, marginBottom: 6 }}>🗓</div>
+              <div style={{ marginBottom: 6 }}>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="3" y="5" width="18" height="16" rx="2" stroke="#C8973A" strokeWidth="1.5"/>
+                  <path d="M3 9h18" stroke="#C8973A" strokeWidth="1.5"/>
+                  <path d="M8 3v4M16 3v4" stroke="#C8973A" strokeWidth="1.5" strokeLinecap="round"/>
+                  <rect x="7" y="13" width="3" height="3" rx="0.5" fill="#C8973A" opacity="0.7"/>
+                  <rect x="14" y="13" width="3" height="3" rx="0.5" fill="#C8973A" opacity="0.4"/>
+                </svg>
+              </div>
               <div style={{
                 fontFamily: "'Bebas Neue', sans-serif",
                 fontSize: 18, letterSpacing: "0.06em", color: "#fff",
@@ -311,7 +324,14 @@ export default function Home() {
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
           <button className="cmd-card" onClick={() => navigate("/panther")} style={{ height: 110 }}>
             <div style={{ padding: "18px 14px" }}>
-              <div style={{ fontSize: 28, marginBottom: 6 }}>🐆</div>
+              <div style={{ marginBottom: 6 }}>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 3C8.5 3 6 5.5 6 8.5c0 1.5.5 2.8 1.4 3.8C6.5 13.2 6 14.3 6 15.5 6 18 7.8 20 10 20h4c2.2 0 4-2 4-4.5 0-1.2-.5-2.3-1.4-3.2C17.5 11.3 18 10 18 8.5 18 5.5 15.5 3 12 3z" stroke="#4a9eff" strokeWidth="1.5"/>
+                  <path d="M9 10.5c0 0 1-1 3-1s3 1 3 1" stroke="#4a9eff" strokeWidth="1" strokeLinecap="round" opacity="0.6"/>
+                  <circle cx="12" cy="8" r="1" fill="#4a9eff" opacity="0.8"/>
+                  <path d="M10 15h4" stroke="#4a9eff" strokeWidth="1" strokeLinecap="round" opacity="0.5"/>
+                </svg>
+              </div>
               <div style={{
                 fontFamily: "'Bebas Neue', sans-serif",
                 fontSize: 18, letterSpacing: "0.06em", color: "#4a9eff",
@@ -328,7 +348,11 @@ export default function Home() {
 
           <button className="cmd-card" onClick={() => navigate("/evolve")} style={{ height: 110 }}>
             <div style={{ padding: "18px 14px" }}>
-              <div style={{ fontSize: 28, marginBottom: 6 }}>⚡</div>
+              <div style={{ marginBottom: 6 }}>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M13 3L6 13h6l-1 8 9-10h-6l1-8z" stroke="#C8973A" strokeWidth="1.5" strokeLinejoin="round" fill="rgba(200,151,58,0.15)"/>
+                </svg>
+              </div>
               <div style={{
                 fontFamily: "'Bebas Neue', sans-serif",
                 fontSize: 18, letterSpacing: "0.06em", color: "#C8973A",
@@ -408,7 +432,14 @@ export default function Home() {
           style={{ width: "100%", display: "block" }}
         >
           <div style={{ padding: "16px", display: "flex", alignItems: "center", gap: 14 }}>
-            <div style={{ fontSize: 32 }}>📷</div>
+            <div style={{ marginRight: 0 }}>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="2" y="7" width="20" height="14" rx="2" stroke="#22c55e" strokeWidth="1.5"/>
+                <circle cx="12" cy="14" r="3.5" stroke="#22c55e" strokeWidth="1.5"/>
+                <path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7" stroke="#22c55e" strokeWidth="1.5"/>
+                <path d="M5 5h1M5 19h1M18 5h1M18 19h1" stroke="#22c55e" strokeWidth="1" strokeLinecap="round" opacity="0.5"/>
+              </svg>
+            </div>
             <div>
               <div style={{
                 fontFamily: "'Bebas Neue', sans-serif",
@@ -437,7 +468,15 @@ export default function Home() {
           style={{ width: "100%", display: "block" }}
         >
           <div style={{ padding: "16px", display: "flex", alignItems: "center", gap: 14 }}>
-            <div style={{ fontSize: 32 }}>📅</div>
+            <div style={{ marginRight: 0 }}>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="5" width="18" height="16" rx="2" stroke="#4a9eff" strokeWidth="1.5"/>
+                <path d="M3 9h18" stroke="#4a9eff" strokeWidth="1.5"/>
+                <path d="M8 3v4M16 3v4" stroke="#4a9eff" strokeWidth="1.5" strokeLinecap="round"/>
+                <circle cx="16" cy="16" r="3" stroke="#4a9eff" strokeWidth="1" fill="rgba(74,158,255,0.1)"/>
+                <path d="M16 14.5v1.5l1 1" stroke="#4a9eff" strokeWidth="1" strokeLinecap="round"/>
+              </svg>
+            </div>
             <div>
               <div style={{
                 fontFamily: "'Bebas Neue', sans-serif",

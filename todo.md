@@ -186,3 +186,10 @@
 - [ ] Rate limiter returns 429 after 30 requests
 - [ ] System prompt guard blocks jailbreak attempts
 - [ ] TypeScript zero errors
+
+## UX Fixes (QA Pass 2)
+- [ ] Add ← HOME back navigation to Panther Brain, Assess, Program, and Evolve screens
+- [ ] Replace emoji icons in Home Command Center cards with SVG icons
+- [ ] Expand Home hero image to full-width banner
+- [ ] Fill Panther Brain empty void with panther avatar background
+- [ ] Fix Scheduler calendar date overflow bug (phantom dates 32-37)

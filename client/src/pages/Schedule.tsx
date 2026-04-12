@@ -593,6 +593,8 @@ export default function Schedule() {
                 </div>
               );
             })}
+            {/* Trailing empty cells to complete the last row */}
+            {Array.from({ length: (7 - ((firstDayOfMonth + daysInMonth) % 7)) % 7 }).map((_, i) => <div key={`t${i}`} />)}
           </div>
 
           {/* Legend */}

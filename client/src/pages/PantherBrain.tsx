@@ -4,6 +4,7 @@
  * Full clinical brain: 7 regions · NASM corrective · XP system · Fallbacks
  */
 import { useState, useRef, useEffect } from "react";
+import { useLocation } from "wouter";
 import { PantherPresence, PantherMessage, XPBar } from "@/components/v4Components";
 import { getFallback, ls, getStageFromXP } from "@/data/v4constants";
 
@@ -44,6 +45,7 @@ KNOWLEDGE BASE:
 TONE: Like a world-class coach who has seen everything. Blunt but not cruel. Clinical but human. Always end with a directive that moves the athlete forward.`;
 
 export default function PantherBrain() {
+  const [, navigate] = useLocation();
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "panther",
@@ -177,6 +179,13 @@ export default function PantherBrain() {
 
         {/* SCENE 1 — HOOK: Panther header */}
         <div style={{ padding: "72px 16px 8px", flexShrink: 0 }}>
+          {/* Back to Home */}
+          <button
+            onClick={() => navigate("/")}
+            style={{ display: "flex", alignItems: "center", gap: 6, padding: "5px 10px", marginBottom: 12, borderRadius: 8, border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.03)", fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", color: "rgba(255,255,255,0.45)", cursor: "pointer" }}
+          >
+            ← HOME
+          </button>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <PantherPresence state={pState} size={60} />
             <div style={{ flex: 1 }}>
@@ -227,6 +236,67 @@ export default function PantherBrain() {
               )}
             </div>
           ))}
+
+          {/* Empty state — show when only the initial message is visible */}
+          {messages.length <= 1 && !thinking && (
+            <div style={{
+              flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+              padding: "24px 16px", opacity: 0.9,
+            }}>
+              {/* Panther avatar SVG */}
+              <div style={{ position: "relative", marginBottom: 16 }}>
+                <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  {/* Outer glow ring */}
+                  <circle cx="40" cy="40" r="38" stroke="rgba(255,69,0,0.15)" strokeWidth="1"/>
+                  <circle cx="40" cy="40" r="32" stroke="rgba(255,69,0,0.25)" strokeWidth="1.5"/>
+                  {/* Panther head shape */}
+                  <ellipse cx="40" cy="38" rx="18" ry="20" fill="rgba(255,69,0,0.06)" stroke="rgba(255,69,0,0.4)" strokeWidth="1.5"/>
+                  {/* Ears */}
+                  <path d="M26 24 L22 14 L32 20 Z" fill="rgba(255,69,0,0.3)" stroke="rgba(255,69,0,0.5)" strokeWidth="1"/>
+                  <path d="M54 24 L58 14 L48 20 Z" fill="rgba(255,69,0,0.3)" stroke="rgba(255,69,0,0.5)" strokeWidth="1"/>
+                  {/* Eyes — glowing */}
+                  <ellipse cx="33" cy="36" rx="3.5" ry="2.5" fill="rgba(255,69,0,0.8)"/>
+                  <ellipse cx="47" cy="36" rx="3.5" ry="2.5" fill="rgba(255,69,0,0.8)"/>
+                  <ellipse cx="33" cy="36" rx="1.5" ry="2" fill="rgba(255,120,50,1)"/>
+                  <ellipse cx="47" cy="36" rx="1.5" ry="2" fill="rgba(255,120,50,1)"/>
+                  {/* Nose */}
+                  <path d="M38 43 L40 46 L42 43" stroke="rgba(255,69,0,0.5)" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
+                  {/* Whiskers */}
+                  <path d="M22 40 L32 42M22 44 L32 44" stroke="rgba(255,255,255,0.15)" strokeWidth="0.8" strokeLinecap="round"/>
+                  <path d="M58 40 L48 42M58 44 L48 44" stroke="rgba(255,255,255,0.15)" strokeWidth="0.8" strokeLinecap="round"/>
+                  {/* Scan lines */}
+                  <line x1="10" y1="38" x2="20" y2="38" stroke="rgba(255,69,0,0.3)" strokeWidth="0.8"/>
+                  <line x1="60" y1="38" x2="70" y2="38" stroke="rgba(255,69,0,0.3)" strokeWidth="0.8"/>
+                </svg>
+                {/* Pulsing outer ring */}
+                <div style={{
+                  position: "absolute", inset: -8,
+                  borderRadius: "50%",
+                  border: "1px solid rgba(255,69,0,0.2)",
+                  animation: "ring 2.5s ease-in-out infinite",
+                }} />
+              </div>
+              <p style={{
+                fontFamily: "'Barlow Condensed', sans-serif",
+                fontSize: 11, fontWeight: 700,
+                letterSpacing: "0.2em",
+                color: "rgba(255,69,0,0.5)",
+                textAlign: "center",
+                marginBottom: 6,
+              }}>
+                PANTHER IS READY
+              </p>
+              <p style={{
+                fontFamily: "'Barlow Condensed', sans-serif",
+                fontSize: 10,
+                color: "rgba(255,255,255,0.2)",
+                textAlign: "center",
+                letterSpacing: "0.08em",
+              }}>
+                Select a prompt below or describe your issue
+              </p>
+            </div>
+          )}
 
           {thinking && (
             <div style={{ display: "flex", gap: 6, alignItems: "center", paddingLeft: 4 }}>

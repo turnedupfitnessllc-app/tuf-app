@@ -67,6 +67,14 @@ export default function Evolve() {
 
       <main style={{ maxWidth: 480, margin: "0 auto", padding: "80px 16px 0", position: "relative" }}>
 
+        {/* Back to Home */}
+        <button
+          onClick={() => navigate("/")}
+          style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", marginBottom: 16, borderRadius: 8, border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.03)", fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", color: "rgba(255,255,255,0.45)", cursor: "pointer" }}
+        >
+          ← HOME
+        </button>
+
         {/* SCENE 1 — HOOK: Stage hero */}
         <div style={{ marginBottom: 20, animation: "fadeUp 0.4s ease forwards" }}>
           <p style={{
