@@ -1,9 +1,15 @@
 /**
  * THE PANTHER SYSTEM — Claude AI Integration
- * Clinical coaching intelligence for adults 40+
+ * 
+ * © 2025 Turned Up Fitness LLC. All rights reserved.
+ * This file contains TRADE SECRETS of Turned Up Fitness LLC.
+ * The Panther System™, Panther Brain™, and the 7-Region Clinical Brain architecture
+ * are proprietary technologies of Turned Up Fitness LLC.
+ * Unauthorized copying, distribution, or reverse engineering is strictly prohibited.
+ * Patent pending. Trademark applications filed.
  * 
  * Core concept: "AI that grows with you"
- * AI Engine: Claude (Anthropic API — claude-sonnet-4-20250514)
+ * AI Engine: Claude (Anthropic API)
  * Intelligence: NASM Corrective Exercise — Shoulder Complex, Knee Complex, scapular dyskinesis
  * Demographic: Adults 40+ — corrective performance, not general fitness
  */
@@ -110,6 +116,37 @@ export async function generatePantherResponse(
       role: msg.role as "user" | "assistant",
       content: msg.content,
     })) || [];
+
+    // ── SYSTEM PROMPT GUARD ──────────────────────────────────────────────────
+    // Block attempts to extract proprietary system prompt or trade secrets.
+    // The Panther System™ coaching methodology is a trade secret of Turned Up Fitness LLC.
+    const BLOCKED_PATTERNS = [
+      /ignore (previous|all|your) (instructions|prompt|system)/i,
+      /reveal (your|the) (system|instructions|prompt)/i,
+      /what (are|is) your (instructions|prompt|system prompt)/i,
+      /repeat (everything|the|your) (above|system|instructions)/i,
+      /print (your|the) (system|instructions|prompt)/i,
+      /show me (your|the) (system|instructions|prompt)/i,
+      /forget (your|all) (instructions|training|system)/i,
+      /jailbreak/i,
+      /DAN mode/i,
+      /pretend you (are|have no|don't have)/i,
+      /act as if you (are|have no|don't have)/i,
+    ];
+
+    const isBlocked = BLOCKED_PATTERNS.some((pattern) =>
+      pattern.test(request.message)
+    );
+
+    if (isBlocked) {
+      return {
+        response:
+          "THE PANTHER SYSTEM DOES NOT REVEAL ITS ARCHITECTURE.\n\nThis system's coaching methodology is proprietary technology of Turned Up Fitness LLC. It is not available for inspection or extraction.\n\nAsk about your training. That's what I'm here for.",
+        suggestions: [],
+        actionItems: [],
+      };
+    }
+    // ─────────────────────────────────────────────────────────────────────────
 
     // Add current message
     messages.push({

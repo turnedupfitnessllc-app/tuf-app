@@ -1,6 +1,11 @@
 /**
  * TUF Social Footer — two variants
  *
+ * © 2025 Turned Up Fitness LLC. All rights reserved.
+ * Turned Up Fitness™, Panther Brain™, The Panther System™, BOA Scan™,
+ * Panther Mindset™, Panther Scheduler™, and Become Dangerous™ are
+ * trademarks of Turned Up Fitness LLC. Unauthorized use is prohibited.
+ *
  * <TufSocialFooter variant="sticky" />   — fixed bottom strip, always visible
  * <TufSocialFooter variant="inline" />   — inline section at bottom of a page
  *
@@ -150,6 +155,22 @@ export function TufSocialStickyStrip() {
               </span>
             </a>
           ))}
+        </div>
+        {/* Copyright strip */}
+        <div style={{
+          textAlign: "center",
+          paddingBottom: "calc(2px + env(safe-area-inset-bottom, 0px))",
+          borderTop: "1px solid rgba(255,255,255,0.04)",
+          paddingTop: 3,
+        }}>
+          <span style={{
+            fontFamily: "'Barlow Condensed', sans-serif",
+            fontSize: 7,
+            letterSpacing: "0.12em",
+            color: "rgba(255,255,255,0.15)",
+          }}>
+            © {new Date().getFullYear()} TURNED UP FITNESS LLC · PANTHER BRAIN™ · THE PANTHER SYSTEM™ · BOA SCAN™
+          </span>
         </div>
       </div>
     </>

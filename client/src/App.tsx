@@ -42,6 +42,9 @@ import Pricing from "./pages/Pricing";
 import Challenge from "./pages/Challenge";
 import Schedule from "./pages/Schedule";
 
+// IP Protection
+import { TufTermsModal } from "./components/TufTermsModal";
+
 function Router() {
   const isOnboarded = localStorage.getItem("tuf_onboarded") === "true";
 
@@ -103,6 +106,7 @@ function App() {
       <ThemeProvider defaultTheme="dark" switchable>
         <TooltipProvider>
           <Toaster />
+          <TufTermsModal />
           {!splashDone && (
             <SplashScreen onComplete={handleSplashComplete} />
           )}

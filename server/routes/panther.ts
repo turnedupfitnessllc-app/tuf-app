@@ -1,10 +1,44 @@
 // server/routes/panther.ts
-// THE PANTHER SYSTEM — v4.0 · 7-Region Clinical Brain
-// Shoulder · Knee · Back · Hip · Cervical · Thoracic · Ankle
+/**
+ * THE PANTHER SYSTEM — v4.0 · 7-Region Clinical Brain
+ * Shoulder · Knee · Back · Hip · Cervical · Thoracic · Ankle
+ *
+ * © 2025 Turned Up Fitness LLC. All rights reserved.
+ * TRADE SECRET — This file contains proprietary AI coaching architecture.
+ * The Panther System™, 7-Region Clinical Brain™, and all coaching methodologies
+ * are trade secrets of Turned Up Fitness LLC. Unauthorized use is prohibited.
+ * Patent pending. Trademark applications filed.
+ */
 import { Router, Request, Response } from "express";
 import Anthropic from "@anthropic-ai/sdk";
 
 const router = Router();
+
+// ── RATE LIMITING ──────────────────────────────────────────────────────────────
+// Protect The Panther System™ API from abuse and unauthorized bulk access.
+// 30 requests per minute per IP for free tier; premium users get higher limits.
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
+const RATE_LIMIT_MAX = 30; // requests per window
+
+function checkRateLimit(ip: string): { allowed: boolean; remaining: number } {
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip);
+
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return { allowed: true, remaining: RATE_LIMIT_MAX - 1 };
+  }
+
+  if (entry.count >= RATE_LIMIT_MAX) {
+    return { allowed: false, remaining: 0 };
+  }
+
+  entry.count++;
+  return { allowed: true, remaining: RATE_LIMIT_MAX - entry.count };
+}
+// ────────────────────────────────────────────────────────────────────────────────
+
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // PANTHER SYSTEM PROMPT v4.0 — 7 REGIONS
@@ -195,6 +229,18 @@ function getAnthropicClient(): Anthropic {
 
 // POST /api/panther — Standard chat
 router.post("/", async (req: Request, res: Response) => {
+  // Rate limit check
+  const clientIp = req.ip || req.socket.remoteAddress || "unknown";
+  const { allowed, remaining } = checkRateLimit(clientIp);
+  res.setHeader("X-RateLimit-Limit", "30");
+  res.setHeader("X-RateLimit-Remaining", remaining.toString());
+  if (!allowed) {
+    return res.status(429).json({
+      error: "RATE LIMIT EXCEEDED",
+      message: "The Panther System™ allows 30 requests per minute. Upgrade to Elite for higher limits.",
+      retryAfter: 60,
+    });
+  }
   try {
     const { messages, memory } = req.body as {
       messages: Array<{role:string;content:string}>;
