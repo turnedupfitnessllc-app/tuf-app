@@ -14,7 +14,7 @@ describe("ANTHROPIC_API_KEY validation", () => {
   it("should successfully call Claude API with the key", async () => {
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
     const response = await client.messages.create({
-      model: "claude-3-haiku-20240307",
+      model: "claude-haiku-4-5",
       max_tokens: 10,
       messages: [{ role: "user", content: "Say: OK" }],
     });
