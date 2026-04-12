@@ -250,6 +250,27 @@ router.post("/", async (req: Request, res: Response) => {
     if (!messages?.length) {
       return res.status(400).json({ error: "messages required" });
     }
+    // ── System Prompt Guard ─────────────────────────────────────────
+    const BLOCKED_PATTERNS = [
+      /reveal.{0,20}(system|prompt|instruction)/i,
+      /ignore.{0,20}(previous|above|instruction)/i,
+      /what.{0,20}(are|were).{0,20}(your|the).{0,20}(instruction|prompt)/i,
+      /repeat.{0,20}(everything|above|prompt)/i,
+      /print.{0,20}(your|the).{0,20}(system|prompt)/i,
+      /DAN mode|jailbreak|pretend you are|act as if/i,
+      /disregard.{0,20}(your|all|previous)/i,
+      /override.{0,20}(your|all|previous)/i,
+    ];
+    const lastUserMsg = messages.slice(-1)[0]?.content || '';
+    const isBlocked = BLOCKED_PATTERNS.some(p => p.test(lastUserMsg));
+    if (isBlocked) {
+      return res.json({
+        response: "THE PANTHER SYSTEM DOES NOT REVEAL ITS ARCHITECTURE.\n\nYou're here to train, not to reverse-engineer. Ask me about your movement, your pain, or your program.\n\n→ What's actually holding you back?",
+        xpAward: 0,
+        state: "BLOCKED",
+      });
+    }
+    // ────────────────────────────────────────────────────────────────
 
     const client = getAnthropicClient();
     const system = PANTHER_SYSTEM_PROMPT + buildMemoryContext(memory);

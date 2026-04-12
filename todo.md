@@ -171,3 +171,18 @@
 - [ ] Rewrite system prompt with full Panther Voice Laws (5 laws, HEADLINE/BODY/DIRECTIVE, 3 coaching modes, 40+ context)
 - [ ] Update README.md — replace all Jarvis references with The Panther System
 - [ ] Confirm zero Jarvis string references remain in codebase
+
+## Full QA Pass
+- [ ] Splash screen plays on fresh load
+- [ ] Terms modal appears on first visit
+- [ ] Home Command Center loads with all cards
+- [ ] All nav cards route to correct screens
+- [ ] Panther Brain returns real Claude AI response
+- [ ] BOA Scan camera activates and flip works
+- [ ] 30-Day Challenge screen loads with hero image
+- [ ] Panther Scheduler loads and session creation works
+- [ ] Social footer visible and links present
+- [ ] Backend health endpoint returns anthropic: true
+- [ ] Rate limiter returns 429 after 30 requests
+- [ ] System prompt guard blocks jailbreak attempts
+- [ ] TypeScript zero errors

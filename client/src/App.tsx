@@ -94,10 +94,14 @@ function Router() {
 }
 
 function App() {
-  // Pure in-memory — splash plays on every fresh page load, no storage flag
-  const [splashDone, setSplashDone] = useState(false);
+  // Use sessionStorage so splash plays once per browser session.
+  // Resets when the browser/tab is closed, but not on in-app navigation or URL changes.
+  const [splashDone, setSplashDone] = useState(
+    () => sessionStorage.getItem("tuf_splash_shown") === "1"
+  );
 
   const handleSplashComplete = () => {
+    sessionStorage.setItem("tuf_splash_shown", "1");
     setSplashDone(true);
   };
 
