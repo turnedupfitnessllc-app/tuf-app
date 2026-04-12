@@ -461,42 +461,7 @@ export default function Home() {
           </div>
         </button>
 
-        {/* ─── PANTHER SCHEDULER ─── */}
-        <button
-          className="cmd-card"
-          onClick={() => navigate("/schedule")}
-          style={{ width: "100%", display: "block" }}
-        >
-          <div style={{ padding: "16px", display: "flex", alignItems: "center", gap: 14 }}>
-            <div style={{ marginRight: 0 }}>
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="3" y="5" width="18" height="16" rx="2" stroke="#4a9eff" strokeWidth="1.5"/>
-                <path d="M3 9h18" stroke="#4a9eff" strokeWidth="1.5"/>
-                <path d="M8 3v4M16 3v4" stroke="#4a9eff" strokeWidth="1.5" strokeLinecap="round"/>
-                <circle cx="16" cy="16" r="3" stroke="#4a9eff" strokeWidth="1" fill="rgba(74,158,255,0.1)"/>
-                <path d="M16 14.5v1.5l1 1" stroke="#4a9eff" strokeWidth="1" strokeLinecap="round"/>
-              </svg>
-            </div>
-            <div>
-              <div style={{
-                fontFamily: "'Bebas Neue', sans-serif",
-                fontSize: 18, letterSpacing: "0.06em",
-                color: "#4a9eff",
-              }}>
-                PANTHER SCHEDULER
-              </div>
-              <div style={{
-                fontFamily: "'Barlow Condensed', sans-serif",
-                fontSize: 10, fontWeight: 700,
-                letterSpacing: "0.1em",
-                color: "rgba(255,255,255,0.35)",
-              }}>
-                Training calendar · Push alerts · Device sync
-              </div>
-            </div>
-            <div style={{ marginLeft: "auto", color: "rgba(255,255,255,0.2)", fontSize: 18 }}>›</div>
-          </div>
-        </button>
+        {/* ─── PANTHER SCHEDULER ─── hidden until calendar bugs resolved ─── */}
 
       </main>
 

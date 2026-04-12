@@ -66,7 +66,7 @@ function Router() {
         <Route path={"/profile"} component={Profile} />
         <Route path={"/pricing"} component={Pricing} />
         <Route path={"/challenge"} component={Challenge} />
-        <Route path={"/schedule"} component={Schedule} />
+        {/* <Route path={"/schedule"} component={Schedule} /> */}  {/* hidden — calendar bugs being fixed */}
 
         {/* ── Feature screens ───────────────────────────────── */}
         <Route path={"/boa"} component={BiomechanicalOverlay} />
