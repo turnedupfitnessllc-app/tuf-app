@@ -242,6 +242,62 @@ export interface AnimationJob {
   updated_at: number;
 }
 
+// ─── FEAST Pillar Types ───────────────────────────────────────────────────────
+
+export interface PlannedMeal {
+  mealType: "meal1" | "meal2" | "pre_training" | "post_training" | "pre_sleep";
+  recipeId: string;
+  recipeName: string;
+  calories: number;
+  proteinG: number;
+  carbsG: number;
+  fatG: number;
+  mpsTriggered: boolean;
+  swapped?: boolean;
+}
+
+export interface DayPlan {
+  dayOfWeek: number; // 0 = Monday ... 6 = Sunday
+  dateISO: string;
+  meals: PlannedMeal[];
+  totalCalories: number;
+  totalProteinG: number;
+  totalCarbsG: number;
+  totalFatG: number;
+  macroTargetMet: boolean;
+}
+
+export interface ShoppingItem {
+  name: string;
+  totalAmount: string;
+  unit: string;
+  category: "produce" | "protein" | "dairy" | "pantry" | "supplements" | "other";
+  budgetTier: "budget" | "mid" | "premium";
+  checked: boolean;
+}
+
+export interface WeeklyMealPlan {
+  planId: string;
+  userId: string;
+  weekStartDate: string;
+  days: DayPlan[];
+  weeklyCalories: number;
+  weeklyProteinG: number;
+  weeklyCarbsG: number;
+  weeklyFatG: number;
+  shoppingList: ShoppingItem[];
+  fuelProfileSnapshot: {
+    calorieTarget: number;
+    proteinTarget: number;
+    carbTarget: number;
+    fatTarget: number;
+    goal: string;
+    conditions: string[];
+  };
+  generatedAt: number;
+  lastViewedAt?: number;
+}
+
 // ─── Database Schema ──────────────────────────────────────────────────────────
 
 interface DbSchema {
@@ -257,6 +313,7 @@ interface DbSchema {
   fuel_logs: StoredDailyFuelLog[];
   mindset_challenges: StoredMindsetChallenge[];
   animation_jobs: AnimationJob[];
+  meal_plans: WeeklyMealPlan[];
 }
 
 const defaultData: DbSchema = {
@@ -272,6 +329,7 @@ const defaultData: DbSchema = {
   fuel_logs: [],
   mindset_challenges: [],
   animation_jobs: [],
+  meal_plans: [],
 };
 
 // ─── DB Singleton ─────────────────────────────────────────────────────────────
@@ -292,6 +350,7 @@ async function getDb(): Promise<Low<DbSchema>> {
   if (!_db.data.fuel_logs) _db.data.fuel_logs = [];
   if (!_db.data.mindset_challenges) _db.data.mindset_challenges = [];
   if (!_db.data.animation_jobs) _db.data.animation_jobs = [];
+  if (!_db.data.meal_plans) _db.data.meal_plans = [];
   await _db.write();
   return _db;
 }
@@ -780,4 +839,78 @@ export async function getCachedAnimation(
 export async function getAllCachedAnimations(): Promise<AnimationJob[]> {
   const db = await getDb();
   return db.data.animation_jobs.filter((j) => j.status === "complete" && !!j.url);
+}
+
+// ─── FEAST Pillar — Meal Plan CRUD ────────────────────────────────────────────
+
+export async function saveMealPlan(plan: WeeklyMealPlan): Promise<WeeklyMealPlan> {
+  const db = await getDb();
+  const idx = db.data.meal_plans.findIndex((p) => p.planId === plan.planId);
+  if (idx >= 0) {
+    db.data.meal_plans[idx] = plan;
+  } else {
+    db.data.meal_plans.push(plan);
+  }
+  await db.write();
+  return plan;
+}
+
+export async function getMealPlan(planId: string): Promise<WeeklyMealPlan | undefined> {
+  const db = await getDb();
+  return db.data.meal_plans.find((p) => p.planId === planId);
+}
+
+export async function getLatestMealPlan(userId: string): Promise<WeeklyMealPlan | undefined> {
+  const db = await getDb();
+  const plans = db.data.meal_plans.filter((p) => p.userId === userId);
+  return plans.sort((a, b) => b.generatedAt - a.generatedAt)[0];
+}
+
+export async function updateMealPlanShoppingItem(
+  planId: string,
+  itemName: string,
+  checked: boolean
+): Promise<boolean> {
+  const db = await getDb();
+  const plan = db.data.meal_plans.find((p) => p.planId === planId);
+  if (!plan) return false;
+  const item = plan.shoppingList.find((i) => i.name === itemName);
+  if (item) item.checked = checked;
+  await db.write();
+  return true;
+}
+
+export async function swapPlannedMeal(
+  planId: string,
+  dayOfWeek: number,
+  mealType: PlannedMeal["mealType"],
+  newMeal: PlannedMeal
+): Promise<WeeklyMealPlan | null> {
+  const db = await getDb();
+  const plan = db.data.meal_plans.find((p) => p.planId === planId);
+  if (!plan) return null;
+  const day = plan.days.find((d) => d.dayOfWeek === dayOfWeek);
+  if (!day) return null;
+  const mealIdx = day.meals.findIndex((m) => m.mealType === mealType);
+  if (mealIdx >= 0) {
+    day.meals[mealIdx] = { ...newMeal, swapped: true };
+    day.totalCalories = day.meals.reduce((s, m) => s + m.calories, 0);
+    day.totalProteinG = day.meals.reduce((s, m) => s + m.proteinG, 0);
+    day.totalCarbsG = day.meals.reduce((s, m) => s + m.carbsG, 0);
+    day.totalFatG = day.meals.reduce((s, m) => s + m.fatG, 0);
+    day.macroTargetMet =
+      day.totalCalories >= plan.fuelProfileSnapshot.calorieTarget * 0.9 &&
+      day.totalProteinG >= plan.fuelProfileSnapshot.proteinTarget * 0.85;
+  }
+  await db.write();
+  return plan;
+}
+
+export async function markMealPlanViewed(planId: string): Promise<void> {
+  const db = await getDb();
+  const plan = db.data.meal_plans.find((p) => p.planId === planId);
+  if (plan) {
+    plan.lastViewedAt = Date.now();
+    await db.write();
+  }
 }

@@ -267,3 +267,17 @@
 - [ ] Voice toggle button in PantherBrain UI (speaker icon)
 - [ ] Auto-speak Claude responses via /api/voice/speak when toggle is ON
 - [ ] Voice preference persisted in localStorage
+
+## FEAST Pillar (Docs 10 + 11 + Prompt — April 2026)
+
+- [ ] WeeklyMealPlan, DayPlan, PlannedMeal, ShoppingItem types in db.ts + CRUD helpers
+- [ ] feastEngine.ts — generateWeeklyPlan, swapMeal, generateShoppingList, evaluateFeastLog
+- [ ] Panther FEAST system prompt (PANTHERFEASTPROMPT.pdf) wired into feastEngine.ts
+- [ ] /api/feast server route — generate plan, swap meal, get plan, shopping list, FEAST directive
+- [ ] Feast.tsx v2.0 — 4-tab screen: THIS WEEK, RECIPES, SHOPPING, DATABASE
+- [ ] THIS WEEK tab — 7-day calendar, 5 meal slots/day, macro bar, swap button, Panther directive
+- [ ] RECIPES tab — filter bar, recipe cards, recipe detail with pantherNote, save/add to week
+- [ ] SHOPPING tab — weekly list grouped by category, check-off, budget filter, share
+- [ ] DATABASE tab — 1,800-food search, filter by category/condition/regional, log to FUEL
+- [ ] FEAST + FUEL cross-pillar condition flag sync
+- [ ] Core tier upgrade prompt on FEAST nav icon
