@@ -193,3 +193,63 @@
 - [ ] Expand Home hero image to full-width banner
 - [ ] Fill Panther Brain empty void with panther avatar background
 - [ ] Fix Scheduler calendar date overflow bug (phantom dates 32-37)
+
+## FUEL Pillar (Docs 05 + 06 — April 2026)
+
+- [ ] fuelCalculations.ts — RMR (Mifflin-St Jeor), TDEE (activity multiplier + age adjustment), daily targets, flag evaluation engine
+- [ ] Extend db.ts — UserFuelProfile, DailyFuelLog, MealEntry schemas + CRUD helpers
+- [ ] FUEL server route — /api/fuel/* (profile, log meal, get daily log, generate directive)
+- [ ] Claude FUEL directive generation — flag priority order, FUEL system prompt template
+- [ ] FUEL standalone screen — daily summary rings, meal log, Panther directive card, + Log Meal FAB
+- [ ] FUEL onboarding flow — collect weight/height/age/sex/activity/goal/conditions
+- [ ] FUEL nav card on Home Command Center
+- [ ] /fuel route registered in App.tsx
+- [ ] Condition overlay logic — diabetes, hypertension, joint inflammation stacking
+- [ ] TUTK food database connection — wire 1,800-food database to meal logging
+- [ ] PROFILE screen FUEL tab — targets display, edit button, condition flags
+- [ ] Daily coaching feed FUEL card — flag-triggered directive display
+
+## Auth + Tier Gating (April 2026)
+
+- [ ] Login button on Home / TufHeader — Manus OAuth getLoginUrl()
+- [ ] User session context — read auth state from server
+- [ ] Subscription tier stored in user DB record
+- [ ] Stripe webhook → update user tier in DB on subscription event
+- [ ] Tier gating — lock STEALTH/CONTROLLED/APEX features with upgrade prompts
+- [ ] Migrate XP/streak/stage from localStorage to DB (PantherMemory)
+
+## Panther Brain Voice (April 2026)
+
+- [ ] Voice toggle button in PantherBrain UI (speaker icon)
+- [ ] Auto-speak Claude responses via /api/voice/speak when toggle is ON
+- [ ] Voice preference persisted in localStorage
+
+## FUEL Pillar (Docs 05 + 06 — April 2026)
+
+- [ ] fuelCalculations.ts — RMR (Mifflin-St Jeor), TDEE (activity multiplier + age adjustment), daily targets, flag evaluation engine
+- [ ] Extend db.ts — UserFuelProfile, DailyFuelLog, MealEntry schemas + CRUD helpers
+- [ ] FUEL server route — /api/fuel/* (profile, log meal, get daily log, generate directive)
+- [ ] Claude FUEL directive generation — flag priority order, FUEL system prompt template
+- [ ] FUEL standalone screen — daily summary rings, meal log, Panther directive card, + Log Meal FAB
+- [ ] FUEL onboarding flow — collect weight/height/age/sex/activity/goal/conditions
+- [ ] FUEL nav card on Home Command Center
+- [ ] /fuel route registered in App.tsx
+- [ ] Condition overlay logic — diabetes, hypertension, joint inflammation stacking
+- [ ] TUTK food database connection — wire 1,800-food database to meal logging
+- [ ] PROFILE screen FUEL tab — targets display, edit button, condition flags
+- [ ] Daily coaching feed FUEL card — flag-triggered directive display
+
+## Auth + Tier Gating (April 2026)
+
+- [ ] Login button on Home / TufHeader — Manus OAuth getLoginUrl()
+- [ ] User session context — read auth state from server
+- [ ] Subscription tier stored in user DB record
+- [ ] Stripe webhook updates user tier in DB on subscription event
+- [ ] Tier gating — lock STEALTH/CONTROLLED/APEX features with upgrade prompts
+- [ ] Migrate XP/streak/stage from localStorage to DB (PantherMemory)
+
+## Panther Brain Voice (April 2026)
+
+- [ ] Voice toggle button in PantherBrain UI (speaker icon)
+- [ ] Auto-speak Claude responses via /api/voice/speak when toggle is ON
+- [ ] Voice preference persisted in localStorage

@@ -498,6 +498,75 @@ export default function Home() {
 
         {/* ─── PANTHER SCHEDULER ─── hidden until calendar bugs resolved ─── */}
 
+        {/* ─── FUEL TRACKER ─── */}
+        <button
+          className="cmd-card"
+          onClick={() => navigate("/fuel-track")}
+          style={{ width: "100%", display: "block", marginTop: 10 }}
+        >
+          <div style={{ padding: "16px", display: "flex", alignItems: "center", gap: 14 }}>
+            <div>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="9" stroke="#22c55e" strokeWidth="1.5" fill="rgba(34,197,94,0.08)"/>
+                <path d="M12 8v4l2.5 2.5" stroke="#22c55e" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M7.5 4.5C8.8 3.6 10.3 3 12 3" stroke="#22c55e" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <div style={{
+                fontFamily: "'Bebas Neue', sans-serif",
+                fontSize: 18, letterSpacing: "0.06em",
+                color: "#22c55e",
+              }}>
+                FUEL TRACKER
+              </div>
+              <div style={{
+                fontFamily: "'Barlow Condensed', sans-serif",
+                fontSize: 10, fontWeight: 700,
+                letterSpacing: "0.1em",
+                color: "rgba(255,255,255,0.35)",
+              }}>
+                Macros · Meals · Panther Directive
+              </div>
+            </div>
+            <div style={{ marginLeft: "auto", color: "rgba(255,255,255,0.2)", fontSize: 18 }}>›</div>
+          </div>
+        </button>
+
+        {/* ─── MINDSET CHALLENGE ─── */}
+        <button
+          className="cmd-card"
+          onClick={() => navigate("/mindset")}
+          style={{ width: "100%", display: "block", marginTop: 10 }}
+        >
+          <div style={{ padding: "16px", display: "flex", alignItems: "center", gap: 14 }}>
+            <div>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="9" stroke="#8b5cf6" strokeWidth="1.5" fill="rgba(139,92,246,0.08)"/>
+                <path d="M9 12l2 2 4-4" stroke="#8b5cf6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <div>
+              <div style={{
+                fontFamily: "'Bebas Neue', sans-serif",
+                fontSize: 18, letterSpacing: "0.06em",
+                color: "#8b5cf6",
+              }}>
+                MINDSET CHALLENGE
+              </div>
+              <div style={{
+                fontFamily: "'Barlow Condensed', sans-serif",
+                fontSize: 10, fontWeight: 700,
+                letterSpacing: "0.1em",
+                color: "rgba(255,255,255,0.35)",
+              }}>
+                30 Days · 6 Phases · Identity Transformation
+              </div>
+            </div>
+            <div style={{ marginLeft: "auto", color: "rgba(255,255,255,0.2)", fontSize: 18 }}>›</div>
+          </div>
+        </button>
+
       </main>
 
       {/* ─── STICKY STRIP (Option A) ─── */}

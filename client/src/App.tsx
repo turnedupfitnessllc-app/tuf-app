@@ -41,6 +41,8 @@ import Pricing from "./pages/Pricing";
 // New screens
 import Challenge from "./pages/Challenge";
 import Schedule from "./pages/Schedule";
+import FuelTracker from "./pages/FuelTracker";
+import Mindset from "./pages/Mindset";
 
 // IP Protection
 import { TufTermsModal } from "./components/TufTermsModal";
@@ -67,6 +69,7 @@ function Router() {
         <Route path={"/pricing"} component={Pricing} />
         <Route path={"/challenge"} component={Challenge} />
         {/* <Route path={"/schedule"} component={Schedule} /> */}  {/* hidden — calendar bugs being fixed */}
+        <Route path={"/mindset"} component={Mindset} />
 
         {/* ── Feature screens ───────────────────────────────── */}
         <Route path={"/boa"} component={BiomechanicalOverlay} />
@@ -80,6 +83,7 @@ function Router() {
         {/* ── Legacy screens ────────────────────────────────── */}
         <Route path={"/move"} component={Move} />
         <Route path={"/fuel"} component={Fuel} />
+        <Route path={"/fuel-track"} component={FuelTracker} />
         <Route path={"/feast"} component={Feast} />
         <Route path={"/vault"} component={Vault} />
         <Route path={"/progress"} component={Progress} />

@@ -163,6 +163,64 @@ export interface BodyLog {
   date: number;
 }
 
+// ─── FUEL Pillar Types ───────────────────────────────────────────────────────
+// Re-exported from fuelCalculations.ts for DB storage
+
+export interface StoredFuelProfile {
+  user_id: string;
+  weightKg: number;
+  heightCm: number;
+  age: number;
+  sex: "male" | "female";
+  activityLevel: string;
+  primaryGoal: string;
+  deficitTier: string;
+  isPostMenopausal?: boolean;
+  conditions: string[];
+  calorieTarget: number;
+  proteinTargetG: number;
+  carbTargetG: number;
+  fatTargetG: number;
+  rmr: number;
+  tdee: number;
+  updated_at: number;
+}
+
+export interface StoredDailyFuelLog {
+  log_id: string;
+  user_id: string;
+  date: string;             // YYYY-MM-DD
+  meals: StoredMealEntry[];
+  totalCalories: number;
+  totalProteinG: number;
+  totalCarbsG: number;
+  totalFatG: number;
+  mpsTriggersCount: number;
+  trainingLogged: boolean;
+  flags: string[];
+  pantherDirective?: string;
+  updated_at: number;
+}
+
+export interface StoredMealEntry {
+  mealType: string;
+  timeLogged: string;
+  foods: Array<{
+    name: string;
+    servingG: number;
+    calories: number;
+    proteinG: number;
+    carbsG: number;
+    fatG: number;
+  }>;
+  totalCalories: number;
+  totalProteinG: number;
+  totalCarbsG: number;
+  totalFatG: number;
+  mpsTriggered: boolean;
+  notes?: string;
+}
+
 // ─── Database Schema ──────────────────────────────────────────────────────────
 
 interface DbSchema {
@@ -174,6 +232,9 @@ interface DbSchema {
   panther_memory: PantherMemory[];
   sessions: WorkoutSession[];
   body_logs: BodyLog[];
+  fuel_profiles: StoredFuelProfile[];
+  fuel_logs: StoredDailyFuelLog[];
+  mindset_challenges: StoredMindsetChallenge[];
 }
 
 const defaultData: DbSchema = {
@@ -185,6 +246,9 @@ const defaultData: DbSchema = {
   panther_memory: [],
   sessions: [],
   body_logs: [],
+  fuel_profiles: [],
+  fuel_logs: [],
+  mindset_challenges: [],
 };
 
 // ─── DB Singleton ─────────────────────────────────────────────────────────────
@@ -200,6 +264,10 @@ async function getDb(): Promise<Low<DbSchema>> {
   await _db.read();
   // Ensure all tables exist (migration safety)
   _db.data = { ...defaultData, ..._db.data };
+  // Ensure FUEL tables exist for existing DBs
+  if (!_db.data.fuel_profiles) _db.data.fuel_profiles = [];
+  if (!_db.data.fuel_logs) _db.data.fuel_logs = [];
+  if (!_db.data.mindset_challenges) _db.data.mindset_challenges = [];
   await _db.write();
   return _db;
 }
@@ -478,4 +546,117 @@ export async function getUserStats(user_id: string) {
     latest_pain_level: latestPain?.pain_level,
     latest_pain_location: latestPain?.pain_location,
   };
+}
+
+// ─── FUEL Pillar — Profile ────────────────────────────────────────────────────
+
+export async function upsertFuelProfile(
+  data: StoredFuelProfile
+): Promise<StoredFuelProfile> {
+  const db = await getDb();
+  const idx = db.data.fuel_profiles.findIndex((p) => p.user_id === data.user_id);
+  const record = { ...data, updated_at: Date.now() };
+  if (idx >= 0) {
+    db.data.fuel_profiles[idx] = record;
+  } else {
+    db.data.fuel_profiles.push(record);
+  }
+  await db.write();
+  return record;
+}
+
+export async function getFuelProfile(
+  user_id: string
+): Promise<StoredFuelProfile | undefined> {
+  const db = await getDb();
+  return db.data.fuel_profiles.find((p) => p.user_id === user_id);
+}
+
+// ─── FUEL Pillar — Daily Logs ─────────────────────────────────────────────────
+
+export async function upsertDailyFuelLog(
+  data: StoredDailyFuelLog
+): Promise<StoredDailyFuelLog> {
+  const db = await getDb();
+  const idx = db.data.fuel_logs.findIndex(
+    (l) => l.user_id === data.user_id && l.date === data.date
+  );
+  const record = { ...data, updated_at: Date.now() };
+  if (idx >= 0) {
+    db.data.fuel_logs[idx] = record;
+  } else {
+    db.data.fuel_logs.push(record);
+  }
+  await db.write();
+  return record;
+}
+
+export async function getDailyFuelLog(
+  user_id: string,
+  date: string
+): Promise<StoredDailyFuelLog | undefined> {
+  const db = await getDb();
+  return db.data.fuel_logs.find(
+    (l) => l.user_id === user_id && l.date === date
+  );
+}
+
+export async function getRecentFuelLogs(
+  user_id: string,
+  limit = 7
+): Promise<StoredDailyFuelLog[]> {
+  const db = await getDb();
+  return db.data.fuel_logs
+    .filter((l) => l.user_id === user_id)
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .slice(0, limit);
+}
+
+// ─── MINDSET Pillar — Types & CRUD ────────────────────────────────────────────
+
+export interface StoredMindsetChallenge {
+  user_id: string;
+  startDate: string;
+  currentDay: number;
+  currentPhase: number;
+  streakCurrent: number;
+  streakBest: number;
+  totalCheckIns: number;
+  lastCheckInDate: string | null;
+  isActive: boolean;
+  isCompleted: boolean;
+  checkIns: Array<{
+    day: number;
+    phase: number;
+    completedAt: string;
+    journalEntry: string | null;
+    intentionalDecision: string | null;
+    pantherDirective: string;
+    moveAnchorComplete: boolean;
+    fuelAnchorComplete: boolean;
+    sharedSocial: boolean;
+  }>;
+  updated_at: number;
+}
+
+export async function upsertMindsetChallenge(
+  data: Omit<StoredMindsetChallenge, "updated_at">
+): Promise<StoredMindsetChallenge> {
+  const db = await getDb();
+  const idx = db.data.mindset_challenges.findIndex((c) => c.user_id === data.user_id);
+  const record: StoredMindsetChallenge = { ...data, updated_at: Date.now() };
+  if (idx >= 0) {
+    db.data.mindset_challenges[idx] = record;
+  } else {
+    db.data.mindset_challenges.push(record);
+  }
+  await db.write();
+  return record;
+}
+
+export async function getMindsetChallenge(
+  user_id: string
+): Promise<StoredMindsetChallenge | undefined> {
+  const db = await getDb();
+  return db.data.mindset_challenges.find((c) => c.user_id === user_id);
 }
