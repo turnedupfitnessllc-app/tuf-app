@@ -1,5 +1,5 @@
 /**
- * Enhanced JARVIS API — OpenAI-compatible AI Integration with PopHIVE
+ * Enhanced THE PANTHER SYSTEM API — OpenAI-compatible AI Integration with PopHIVE
  * Handles fitness coaching with evidence-based health data from PopHIVE
  * 
  * Design: "AI that grows with you"
@@ -28,7 +28,7 @@ interface Message {
   timestamp: Date;
 }
 
-interface JarvisRequest {
+interface PantherRequest {
   message: string;
   conversationHistory?: Message[];
   userProfile?: {
@@ -42,7 +42,7 @@ interface JarvisRequest {
   };
 }
 
-interface JarvisResponse {
+interface PantherResponse {
   response: string;
   suggestions?: string[];
   actionItems?: string[];
@@ -52,8 +52,8 @@ interface JarvisResponse {
 /**
  * Build enhanced system prompt with PopHIVE health data
  */
-async function buildEnhancedSystemPrompt(userProfile?: JarvisRequest["userProfile"]): Promise<string> {
-  let systemPrompt = `You are JARVIS, an AI fitness coach specialized in training adults 40+ for sarcopenia prevention and muscle maintenance. You are powered by PopHIVE, a comprehensive health dataset from Yale University.
+async function buildEnhancedSystemPrompt(userProfile?: PantherRequest["userProfile"]): Promise<string> {
+  let systemPrompt = `You are THE PANTHER SYSTEM, an AI fitness coach specialized in training adults 40+ for sarcopenia prevention and muscle maintenance. You are powered by PopHIVE, a comprehensive health dataset from Yale University.
 
 Your expertise includes:
 1. **Fitness & Strength** — Progressive resistance training, sarcopenia prevention, injury prevention
@@ -203,9 +203,9 @@ function getAgeGroup(age: number): string {
 }
 
 /**
- * Generate enhanced JARVIS response with PopHIVE data
+ * Generate enhanced THE PANTHER SYSTEM response with PopHIVE data
  */
-export async function generateJarvisResponse(request: JarvisRequest): Promise<JarvisResponse> {
+export async function generatePantherResponse(request: PantherRequest): Promise<PantherResponse> {
   try {
     // Build conversation history for context
     const messages: OpenAI.Chat.ChatCompletionMessageParam[] = request.conversationHistory?.map((msg) => ({
@@ -264,9 +264,9 @@ export async function generateJarvisResponse(request: JarvisRequest): Promise<Ja
       healthInsights,
     };
   } catch (error) {
-    console.error("JARVIS API Error:", error);
+    console.error("Panther System API Error:", error);
     throw new Error(
-      `Failed to generate JARVIS response: ${error instanceof Error ? error.message : "Unknown error"}`
+      `Failed to generate Panther System response: ${error instanceof Error ? error.message : "Unknown error"}`
     );
   }
 }
@@ -325,6 +325,6 @@ export const QUICK_RESPONSES: {
 };
 
 export default {
-  generateJarvisResponse,
+  generatePantherResponse,
   QUICK_RESPONSES,
 };

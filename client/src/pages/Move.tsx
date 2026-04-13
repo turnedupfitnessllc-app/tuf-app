@@ -16,7 +16,7 @@ interface Exercise {
 }
 
 const EXERCISES: Exercise[] = [
-  { id: "1", name: "JARVIS Squat", category: "Strength", description: "Explosive bodyweight squat with full depth. Drive through your heels, keep chest tall.", reps: "3 × 12-15", difficulty: "Beginner", muscleGroup: "Legs", videoUrl: `${CDN}/jarvis-squat_29894acb.mp4` },
+  { id: "1", name: "Panther Squat", category: "Strength", description: "Explosive bodyweight squat with full depth. Drive through your heels, keep chest tall.", reps: "3 × 12-15", difficulty: "Beginner", muscleGroup: "Legs", videoUrl: `${CDN}/jarvis-squat_29894acb.mp4` },
   { id: "2", name: "Strength Montage", category: "Strength", description: "Full strength circuit — dumbbell lifts, barbell squats, and deadlifts back to back.", reps: "4 × 8-10", difficulty: "Advanced", muscleGroup: "Full Body", videoUrl: `${CDN}/jarvis-strength-montage_89d7eee5.mp4` },
   { id: "3", name: "Squat-Lunge-Flex Combo", category: "Full Body", description: "Dynamic sequence combining squats, lunges, and power flexes. Build total-body strength and coordination.", reps: "3 × 10 each", difficulty: "Intermediate", muscleGroup: "Full Body", videoUrl: `${CDN}/jarvis-squat-lunge-flex_96c7bdc9.mp4` },
   { id: "4", name: "High Knees Cardio Blast", category: "Cardio", description: "Vigorous high knees in place — elevate your heart rate and ignite your core.", duration: "4 × 45 sec", difficulty: "Intermediate", muscleGroup: "Core / Cardio", videoUrl: `${CDN}/jarvis-high-knees_39ea0db8.mp4` },

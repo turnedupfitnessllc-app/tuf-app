@@ -9,16 +9,16 @@ interface Message {
   timestamp: Date
 }
 
-interface JarvisChatProps {
+interface PantherChatWidgetProps {
   className?: string
 }
 
-export const JarvisChat: React.FC<JarvisChatProps> = ({ className = "" }) => {
+export const PantherChatWidget: React.FC<PantherChatWidgetProps> = ({ className = "" }) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
       role: "assistant",
-      content: "Hey there! I'm JARVIS, your AI fitness coach. I'm here to help you with workouts, nutrition, and personalized coaching. What can I help you with today?",
+      content: "Hey there! I'm The Panther System, your AI coach. I'm here to help you with workouts, nutrition, and personalized coaching. What can I help you with today?",
       timestamp: new Date(),
     },
   ])
@@ -63,7 +63,7 @@ export const JarvisChat: React.FC<JarvisChatProps> = ({ className = "" }) => {
       })
 
       if (!response.ok) {
-        throw new Error("Failed to get response from JARVIS")
+        throw new Error("Failed to get response from The Panther System")
       }
 
       const data = await response.json()
@@ -107,7 +107,7 @@ export const JarvisChat: React.FC<JarvisChatProps> = ({ className = "" }) => {
             <Bot className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold">JARVIS</h2>
+            <h2 className="text-2xl font-bold">PANTHER</h2>
             <p className="text-sm text-red-100">Your AI Fitness Coach</p>
           </div>
         </div>
@@ -174,7 +174,7 @@ export const JarvisChat: React.FC<JarvisChatProps> = ({ className = "" }) => {
             <div className="bg-gray-900 text-gray-100 px-4 py-3 rounded-lg border border-gray-800 rounded-bl-none">
               <div className="flex items-center gap-2">
                 <Loader className="w-4 h-4 animate-spin" />
-                <span className="text-sm">JARVIS is thinking...</span>
+                <span className="text-sm">Panther System is analyzing...</span>
               </div>
             </div>
           </div>
@@ -190,7 +190,7 @@ export const JarvisChat: React.FC<JarvisChatProps> = ({ className = "" }) => {
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask JARVIS anything about fitness, nutrition, or workouts..."
+            placeholder="Ask The Panther System anything about fitness, nutrition, or workouts..."
             className="flex-1 px-4 py-3 rounded-lg bg-gray-800 text-white placeholder-gray-500 border border-gray-700 focus:border-red-600 focus:outline-none transition-colors"
             disabled={isLoading}
           />
@@ -210,4 +210,4 @@ export const JarvisChat: React.FC<JarvisChatProps> = ({ className = "" }) => {
   )
 }
 
-export default JarvisChat
+export default PantherChatWidget

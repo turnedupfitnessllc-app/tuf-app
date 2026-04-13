@@ -3,12 +3,12 @@
 ## Critical Issues
 - [ ] **Fix dark mode text color** — Black text should convert to white in dark mode
 - [ ] **Verify theme toggle functionality** — Ensure dark/light mode switching works properly
-- [ ] **Test all pages in both modes** — Home, Move, Feast, Progress, Vault, Jarvis
+- [ ] **Test all pages in both modes** — Home, Move, Feast, Progress, Vault, The Panther System
 
 ## Features to Complete
 - [ ] **Progress page** — Build with Orbitron typography and visual progress rings
 - [ ] **Vault page** — Add achievement tracking and NSV celebrations
-- [ ] **Jarvis Chat** — Integrate Claude API for real AI coaching
+- [ ] **The Panther System Chat** — Integrate Claude API for real AI coaching
 - [ ] **Workout Timer** — Add start/pause/stop controls on Move page with rep counter
 - [ ] **Meal Logging** — Add photo upload to Fuel page
 

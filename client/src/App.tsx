@@ -71,7 +71,7 @@ function Router() {
         {/* ── Feature screens ───────────────────────────────── */}
         <Route path={"/boa"} component={BiomechanicalOverlay} />
         <Route path={"/panther"} component={PantherBrain} />
-        <Route path={"/jarvis"} component={PantherBrain} />      {/* legacy alias */}
+        <Route path={"/jarvis"} component={PantherBrain} />      {/* legacy route alias — Panther System */}
         <Route path={"/panther-brain"} component={PantherBrain} />  {/* alias */}
         <Route path={"/panther-chat"} component={() => <PantherChat className="h-screen" />} />
         <Route path={"/live"} component={LiveCoaching} />

@@ -2,22 +2,22 @@
 
 ## Executive Summary
 
-This document outlines the integration of PopHIVE MCP Connector into the TUF App to provide medical-grade, evidence-based health data for personalized fitness coaching. PopHIVE provides real-time epidemiological data from Yale University that will enhance JARVIS's ability to deliver personalized recommendations for the 40+ demographic.
+This document outlines the integration of PopHIVE MCP Connector into the TUF App to provide medical-grade, evidence-based health data for personalized fitness coaching. PopHIVE provides real-time epidemiological data from Yale University that will enhance THE PANTHER SYSTEM's ability to deliver personalized recommendations for the 40+ demographic.
 
 ## Current State Analysis
 
 ### TUF App Architecture
 - **Frontend**: React 19 with TypeScript, Vite, TailwindCSS
 - **Backend**: Express.js (minimal setup, currently only serves static files)
-- **AI Coach**: JARVIS (Claude 3.5 Sonnet integration)
-- **API Endpoints**: `/api/jarvis` routes defined but not wired into server
+- **AI Coach**: THE PANTHER SYSTEM (Claude 3.5 Sonnet integration)
+- **API Endpoints**: `/api/panther` routes defined but not wired into server
 - **Key Files**:
-  - `server/jarvis-api.ts` - Claude API integration
-  - `server/routes/jarvis.ts` - Express router (not currently mounted)
-  - `client/src/components/JarvisChat.tsx` - Chat UI component
-  - `client/src/pages/JarvisChat.tsx` - Chat page
+  - `server/panther-api.ts` - Claude API integration
+  - `server/routes/panther.ts` - Express router (not currently mounted)
+  - `client/src/components/The Panther SystemChat.tsx` - Chat UI component
+  - `client/src/pages/The Panther SystemChat.tsx` - Chat page
 
-### Current JARVIS Capabilities
+### Current THE PANTHER SYSTEM Capabilities
 - Personalized fitness coaching for 40+ adults
 - Sarcopenia prevention focus
 - Generic health condition modifications
@@ -39,12 +39,12 @@ This document outlines the integration of PopHIVE MCP Connector into the TUF App
 
 #### 1.1 Wire Express Routes
 - **File**: `server/index.ts`
-- **Task**: Mount the JARVIS router to handle `/api/jarvis` endpoints
+- **Task**: Mount the THE PANTHER SYSTEM router to handle `/api/panther` endpoints
 - **Implementation**:
   ```typescript
-  import jarvisRouter from "./routes/jarvis.js";
+  import pantherRouter from "./routes/panther.js";
   app.use(express.json());
-  app.use("/api/jarvis", jarvisRouter);
+  app.use("/api/panther", pantherRouter);
   ```
 
 #### 1.2 Create PopHIVE Service Layer
@@ -57,20 +57,20 @@ This document outlines the integration of PopHIVE MCP Connector into the TUF App
   - `compareHealthMetrics(metric: string, states: string[])`
   - `analyzeHealthTrends(metric: string, timeRange: string)`
 
-#### 1.3 Extend JARVIS System Prompt
-- **File**: `server/jarvis-api.ts`
+#### 1.3 Extend THE PANTHER SYSTEM System Prompt
+- **File**: `server/panther-api.ts`
 - **Task**: Add PopHIVE context to system prompt
 - **Addition**: Include prevalence data and evidence-based guidelines for common 40+ conditions
 
 #### 1.4 Test Basic Integration
-- Test `/api/jarvis` endpoint with simple queries
+- Test `/api/panther` endpoint with simple queries
 - Verify PopHIVE data retrieval
 - Confirm Claude API integration works
 
 ### Phase 2: Personalization (Week 2)
 
 #### 2.1 Enhance User Profile Schema
-- **File**: `server/routes/jarvis.ts` and shared types
+- **File**: `server/routes/panther.ts` and shared types
 - **Task**: Extend user profile to include health conditions
 - **New Fields**:
   ```typescript
@@ -93,9 +93,9 @@ This document outlines the integration of PopHIVE MCP Connector into the TUF App
   - `getNutritionRecommendations(condition: string, ageGroup: string)`
   - `getRecoveryProtocol(condition: string)`
 
-#### 2.3 Integrate PopHIVE into JARVIS Responses
-- **File**: `server/jarvis-api.ts`
-- **Task**: Enhance `generateJarvisResponse()` to include PopHIVE data
+#### 2.3 Integrate PopHIVE into THE PANTHER SYSTEM Responses
+- **File**: `server/panther-api.ts`
+- **Task**: Enhance `generateThe Panther SystemResponse()` to include PopHIVE data
 - **Implementation**:
   - Query PopHIVE for user's health conditions
   - Include prevalence context in system prompt
@@ -103,7 +103,7 @@ This document outlines the integration of PopHIVE MCP Connector into the TUF App
   - Add evidence-based citations
 
 #### 2.4 Update Client to Send Health Data
-- **File**: `client/src/components/JarvisChat.tsx`
+- **File**: `client/src/components/The Panther SystemChat.tsx`
 - **Task**: Collect and send health condition data with messages
 - **UI Addition**: Health condition selector in chat interface
 
@@ -192,9 +192,9 @@ This document outlines the integration of PopHIVE MCP Connector into the TUF App
 ### Files to Modify
 
 1. **`server/index.ts`** - Wire Express routes
-2. **`server/jarvis-api.ts`** - Enhance JARVIS system prompt and response generation
-3. **`server/routes/jarvis.ts`** - Extend user profile schema
-4. **`client/src/components/JarvisChat.tsx`** - Add health condition collection
+2. **`server/panther-api.ts`** - Enhance THE PANTHER SYSTEM system prompt and response generation
+3. **`server/routes/panther.ts`** - Extend user profile schema
+4. **`client/src/components/The Panther SystemChat.tsx`** - Add health condition collection
 5. **`client/src/pages/Home.tsx`** - Add population health context
 6. **`client/src/pages/Progress.tsx`** - Add comparative metrics
 7. **`client/src/App.tsx`** - Add new routes for resources and premium plans
@@ -207,13 +207,13 @@ User: "I have arthritis, how should I modify my workouts?"
   ↓
 Client sends: { message, healthConditions: ["arthritis"], userProfile }
   ↓
-Server receives in /api/jarvis
+Server receives in /api/panther
   ↓
 PopHIVE Service queries: arthritis prevalence, exercise guidelines
   ↓
 Health Condition Service generates modifications
   ↓
-JARVIS System Prompt enriched with:
+THE PANTHER SYSTEM System Prompt enriched with:
   - Arthritis prevalence in user's age group
   - Evidence-based exercise modifications
   - Nutrition recommendations
@@ -232,9 +232,9 @@ Client displays response with health insights
 ## API Endpoints
 
 ### Existing (to be wired)
-- `POST /api/jarvis` - Generate JARVIS response
-- `POST /api/jarvis/quick` - Quick response templates
-- `POST /api/jarvis/health-check` - Health check
+- `POST /api/panther` - Generate THE PANTHER SYSTEM response
+- `POST /api/panther/quick` - Quick response templates
+- `POST /api/panther/health-check` - Health check
 
 ### New Endpoints
 - `GET /api/health/prevalence/:condition` - Get prevalence data
@@ -249,7 +249,7 @@ Client displays response with health insights
 ### Phase 1
 - ✅ Express routes wired and working
 - ✅ PopHIVE data successfully queried
-- ✅ JARVIS responses include PopHIVE context
+- ✅ THE PANTHER SYSTEM responses include PopHIVE context
 
 ### Phase 2
 - ✅ User health conditions stored and used
@@ -327,7 +327,7 @@ Client displays response with health insights
 1. ✅ Review and approve integration plan
 2. ⏳ Create PopHIVE service layer
 3. ⏳ Wire Express routes
-4. ⏳ Extend JARVIS system prompt
+4. ⏳ Extend THE PANTHER SYSTEM system prompt
 5. ⏳ Implement Phase 2-4 features
 6. ⏳ Comprehensive testing
 7. ⏳ Deploy to production

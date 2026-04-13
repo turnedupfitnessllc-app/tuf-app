@@ -114,7 +114,7 @@ This document provides a comprehensive guide to all files in the TUF App reposit
 | `Master_Prompt_Marc_Wilfred2(1).csv` | Data | User configuration and prompts |
 | `TurnedUpFitness_InteractiveDemo.jsx` | Demo | Interactive fitness demo component |
 | `TurnedUp_12Week_Workout_Program(2).pdf` | Program | 12-week progressive workout program |
-| `TUTKJarvisBriefv2.pdf` | Brief | JARVIS AI coaching brief |
+| `TUTKThe Panther SystemBriefv2.pdf` | Brief | THE PANTHER SYSTEM AI coaching brief |
 
 **Location:** `data/`
 
@@ -184,8 +184,8 @@ This document provides a comprehensive guide to all files in the TUF App reposit
 2. Use `TUF_Thumbnails_*.html` for thumbnail templates
 3. Reference `TUTK_All_Social_Cards(1).html` for social media assets
 
-### For AI Coaching (JARVIS)
-1. Review `TUTKJarvisBriefv2.pdf` for coaching framework
+### For AI Coaching (THE PANTHER SYSTEM)
+1. Review `TUTKThe Panther SystemBriefv2.pdf` for coaching framework
 2. Check `Master_Prompt_Marc_Wilfred2(1).csv` for user data structure
 3. Reference `TurnedUpFitness_InteractiveDemo.jsx` for implementation
 
@@ -222,7 +222,7 @@ This document provides a comprehensive guide to all files in the TUF App reposit
 | Health Mods | v2 | `Day2_Health_Condition_Modifications2(1).pdf` |
 | App Framework | v2 | `TurnedUpFitness_App_Framework_V2(1).jsx` |
 | Manus Package | v2 | `TUF_Manus_Package_v2(1).html` |
-| JARVIS Brief | v2 | `TUTKJarvisBriefv2.pdf` |
+| THE PANTHER SYSTEM Brief | v2 | `TUTKThe Panther SystemBriefv2.pdf` |
 
 ---
 
@@ -251,8 +251,8 @@ This document provides a comprehensive guide to all files in the TUF App reposit
 **Get brand guidelines**
 → Review `docs/brand/TurnedUpFitness_Canva_BrandKit(1).pdf`
 
-**Understand JARVIS AI**
-→ Read `data/TUTKJarvisBriefv2.pdf`
+**Understand THE PANTHER SYSTEM AI**
+→ Read `data/TUTKThe Panther SystemBriefv2.pdf`
 
 **Set up meal planning**
 → Use `data/meal_planner_template.html`

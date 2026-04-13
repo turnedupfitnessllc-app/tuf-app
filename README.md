@@ -2,7 +2,7 @@
 
 **AI Fitness Coaching App for Adults 40+**
 
-An intelligent fitness platform combining personalized adaptive workouts, AI-powered coaching via JARVIS, nutrition tracking, and recipe management specifically designed for sarcopenia prevention and muscle maintenance in adults over 40.
+An intelligent fitness platform combining personalized adaptive workouts, AI-powered coaching via THE PANTHER SYSTEM, nutrition tracking, and recipe management specifically designed for sarcopenia prevention and muscle maintenance in adults over 40.
 
 ---
 
@@ -15,7 +15,7 @@ TUF (Turned Up Fitness) is a comprehensive fitness ecosystem built with:
 - **Target:** Adults 40+ focused on muscle maintenance and sarcopenia prevention
 
 ### Key Features
-✅ **JARVIS AI Coaching** — Real-time personalized guidance  
+✅ **THE PANTHER SYSTEM AI Coaching** — Real-time personalized guidance  
 ✅ **Adaptive Workouts** — Progressive strength training programs  
 ✅ **Nutrition Tracking** — Macro-based meal planning  
 ✅ **Recipe Library** — 40+ science-backed recipes  
@@ -37,7 +37,7 @@ tuf-app/
 │   │   │   ├── Feast.tsx           # Recipe library
 │   │   │   ├── Progress.tsx        # Progress tracking
 │   │   │   ├── Vault.tsx           # Data management
-│   │   │   └── JarvisChat.tsx      # AI coaching
+│   │   │   └── The Panther SystemChat.tsx      # AI coaching
 │   │   ├── components/             # Reusable UI components
 │   │   ├── contexts/               # React contexts
 │   │   ├── hooks/                  # Custom hooks
@@ -186,7 +186,7 @@ pnpm lint
 - Achievement badges
 - Progress visualization
 
-### JARVIS Chat
+### THE PANTHER SYSTEM Chat
 - AI-powered coaching
 - Real-time guidance
 - Personalized recommendations
@@ -344,7 +344,7 @@ This project is proprietary to Turned Up Fitness LLC. All rights reserved.
 | **Design System** | ✅ Complete | Blade Runner aesthetic, typography system |
 | **Core Features** | ✅ Complete | Home, Move, Fuel, Feast pages |
 | **Dark Mode** | ✅ Complete | Full light/dark theme support |
-| **AI Coaching** | 🔄 In Progress | JARVIS integration |
+| **AI Coaching** | 🔄 In Progress | THE PANTHER SYSTEM integration |
 | **Data Persistence** | 🔄 In Progress | Backend integration |
 | **Deployment** | 📋 Planned | Production deployment |
 
@@ -353,7 +353,7 @@ This project is proprietary to Turned Up Fitness LLC. All rights reserved.
 ## 🚀 Next Steps
 
 1. **Backend Integration** — Connect to API for data persistence
-2. **JARVIS AI** — Implement Claude API for coaching
+2. **THE PANTHER SYSTEM AI** — Implement Claude API for coaching
 3. **User Authentication** — Add login/signup flow
 4. **Mobile Optimization** — Enhance mobile experience
 5. **Analytics** — Track user engagement

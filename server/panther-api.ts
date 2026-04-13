@@ -266,7 +266,7 @@ export const PANTHER_QUICK_RESPONSES: {
 };
 
 // Legacy export alias for backward compatibility during transition
-export const generateJarvisResponse = generatePantherResponse;
+// Legacy alias removed — use generatePantherResponse directly
 export const QUICK_RESPONSES = PANTHER_QUICK_RESPONSES;
 
 export default {

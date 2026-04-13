@@ -204,6 +204,6 @@ export const PantherChat: React.FC<PantherChatProps> = ({ className = "" }) => {
 }
 
 // Legacy export alias for backward compatibility
-export const JarvisChat = PantherChat
+export const PantherChatWidget = PantherChat
 
 export default PantherChat

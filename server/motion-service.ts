@@ -1,6 +1,6 @@
 /**
- * JARVIS Motion Generation Service
- * Uses Kling AI v3 Motion Control via fal.ai to generate new JARVIS movements on demand.
+ * Panther System Motion Generation Service
+ * Uses Kling AI v3 Motion Control via fal.ai to generate new Panther System movements on demand.
  * The panther character image is used as the base, and a motion reference video drives the animation.
  *
  * IMPORTANT: The motion reference videos must be uploaded to fal.ai storage first
@@ -8,9 +8,9 @@
  * We use fal_client.upload_file() equivalent via the fal.ai upload API.
  */
 
-// JARVIS character reference image — full-body panther with UP logo, clear walking pose
+// Panther character reference image — full-body panther with UP logo, clear walking pose
 // This CDN URL IS publicly accessible (returns HTTP 200)
-const JARVIS_CHARACTER_IMAGE =
+const PANTHER_CHARACTER_IMAGE =
   "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/jarvis_character_reference_6c19ec1b.jpg";
 
 /**
@@ -28,9 +28,9 @@ const MOTION_REFERENCES_FAL: Record<string, string> = {
   squat: "https://v3b.fal.media/files/b/0a95126f/SOWpfQMWCkddexA1SwFp5__users_e72db2bb-567c-4ca9-8c2a-17e00854da58_generated_4538a065-6614-4381-9f9d-d0fa81cf0c40_generated_video.mp4",
 };
 
-// Fallback CDN URLs for the pre-recorded JARVIS videos (used when motion generation fails)
-// These are the 18 JARVIS panther videos already integrated into the app
-const JARVIS_FALLBACK_VIDEOS: Record<string, string> = {
+// Fallback CDN URLs for the pre-recorded Panther System videos (used when motion generation fails)
+// These are the 18 Panther System videos already integrated into the app
+const PANTHER_FALLBACK_VIDEOS: Record<string, string> = {
   squat: "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/jarvis-squat.mp4",
   sprint: "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/jarvis-sprint-stance.mp4",
   highknees: "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/jarvis-high-knees.mp4",
@@ -50,7 +50,7 @@ const JARVIS_FALLBACK_VIDEOS: Record<string, string> = {
 };
 
 /**
- * Picks the best motion type based on keywords in the JARVIS response text.
+ * Picks the best motion type based on keywords in the Panther System response text.
  */
 export function pickMotionForResponse(responseText: string): string {
   const text = responseText.toLowerCase();
@@ -125,23 +125,23 @@ async function uploadVideoToFal(videoUrl: string, falApiKey: string): Promise<st
 }
 
 /**
- * Generates a new JARVIS movement video using Kling AI Motion Control via fal.ai.
+ * Generates a new Panther System movement video using Kling AI Motion Control via fal.ai.
  * Submits the job to the fal.ai queue and polls for completion.
  *
  * The function uses pre-uploaded fal.ai storage URLs when available, falling back to
  * uploading CDN videos on-the-fly if needed.
  *
- * @param responseText - The JARVIS AI response text (used to pick the right motion)
+ * @param responseText - The Panther System AI response text (used to pick the right motion)
  * @returns A result object with the generated video URL or an error
  */
-export async function generateJarvisMotion(
+export async function generatePantherMotion(
   responseText: string
 ): Promise<MotionGenerationResult> {
   // Support both FAL_KEY (new) and FAL_API_KEY (legacy) env var names
   const falApiKey = process.env.FAL_KEY || process.env.FAL_API_KEY;
 
   const motionType = pickMotionForResponse(responseText);
-  const fallbackVideoUrl = JARVIS_FALLBACK_VIDEOS[motionType] || JARVIS_FALLBACK_VIDEOS.idle;
+  const fallbackVideoUrl = PANTHER_FALLBACK_VIDEOS[motionType] || PANTHER_FALLBACK_VIDEOS.idle;
 
   if (!falApiKey) {
     console.warn("[Motion] FAL_KEY not configured — using fallback video");
@@ -158,7 +158,7 @@ export async function generateJarvisMotion(
   const motionVideoUrl = MOTION_REFERENCES_FAL[motionType] || MOTION_REFERENCES_FAL.squat;
 
   try {
-    console.log(`[Motion] Generating JARVIS motion: type=${motionType}`);
+    console.log(`[Motion] Generating Panther System motion: type=${motionType}`);
 
     // Submit job to fal.ai queue
     const submitResponse = await fetch(
@@ -170,7 +170,7 @@ export async function generateJarvisMotion(
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          image_url: JARVIS_CHARACTER_IMAGE,
+          image_url: PANTHER_CHARACTER_IMAGE,
           video_url: motionVideoUrl,
           character_orientation: "video",
           duration: "5",

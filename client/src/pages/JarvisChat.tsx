@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 const CDN = "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR";
-const JARVIS_VIDEOS = {
+const PANTHER_VIDEOS = {
   // Original states
   idle:            `${CDN}/jarvis_idle_420b45a0.mp4`,
   stomp:           `${CDN}/jarvis_stomp_061292f0.mp4`,
@@ -29,7 +29,7 @@ const JARVIS_VIDEOS = {
 } as const;
 
 // Pick a contextual response video based on the user's message keywords
-function pickResponseVideo(msg: string): keyof typeof JARVIS_VIDEOS {
+function pickPantherVideo(msg: string): keyof typeof PANTHER_VIDEOS {
   const m = msg.toLowerCase();
   if (/squat|leg|quad|glute|lower body/.test(m))           return "squat";
   if (/cardio|run|sprint|hiit|endurance|fast/.test(m))     return "sprintStance";
@@ -51,11 +51,11 @@ const ONBOARDING = [
   { key: "conditions", q: "Any health conditions or injuries I should know about? (e.g. arthritis, diabetes, bad knees — or just say none)" },
 ];
 
-type Message = { id: string; role: "user" | "jarvis"; content: string; timestamp: Date };
+type Message = { id: string; role: "user" | "panther"; content: string; timestamp: Date };
 type Profile = { name?: string; goal?: string; conditions?: string };
-type VideoState = keyof typeof JARVIS_VIDEOS;
+type VideoState = keyof typeof PANTHER_VIDEOS;
 
-export default function JarvisChat() {
+export default function PantherSystemChat() {
   const [messages, setMessages]         = useState<Message[]>([]);
   const [input, setInput]               = useState("");
   const [isLoading, setIsLoading]       = useState(false);
@@ -67,7 +67,7 @@ export default function JarvisChat() {
   const [isSpeaking, setIsSpeaking]     = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(false);
   const [profile, setProfile]           = useState<Profile>({});
-  // Fix 3: skip JARVIS onboarding if user already completed main Onboarding.tsx flow
+  // Fix 3: skip Panther System onboarding if user already completed main Onboarding.tsx flow
   const isAlreadyOnboarded = localStorage.getItem("tuf_onboarded") === "true";
   const [onboardStep, setOnboardStep]   = useState<number | null>(isAlreadyOnboarded ? null : 0);
 
@@ -83,8 +83,8 @@ export default function JarvisChat() {
       setVideoState("idle");
       setTimeout(() => {
         const intro: Message = {
-          id: "intro", role: "jarvis",
-          content: "I'm JARVIS — your AI coach built for pressure. Let's build something real. " + ONBOARDING[0].q,
+          id: "intro", role: "panther",
+          content: "I'm The Panther System — your AI coach built for pressure. Let's build something real. " + ONBOARDING[0].q,
           timestamp: new Date(),
         };
         setMessages([intro]);
@@ -96,7 +96,7 @@ export default function JarvisChat() {
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
-    v.src = JARVIS_VIDEOS[videoState];
+    v.src = PANTHER_VIDEOS[videoState];
     v.loop = videoState === "idle";
     v.play().catch(() => {});
     if (videoState !== "idle") {
@@ -172,14 +172,14 @@ export default function JarvisChat() {
     const nextStep = currentStep + 1;
     if (nextStep < ONBOARDING.length) {
       setOnboardStep(nextStep);
-      const reply: Message = { id: Date.now().toString(), role: "jarvis", content: ONBOARDING[nextStep].q, timestamp: new Date() };
+      const reply: Message = { id: Date.now().toString(), role: "panther", content: ONBOARDING[nextStep].q, timestamp: new Date() };
       setMessages(prev => [...prev, reply]);
       if (voiceEnabled) speakText(reply.content);
     } else {
       setOnboardStep(null);
       const name = newProfile.name || "champ";
       const reply: Message = {
-        id: Date.now().toString(), role: "jarvis",
+        id: Date.now().toString(), role: "panther",
         content: `Let's get to work, ${name}. Profile locked in. Ask me anything — workouts, nutrition, recovery. I'm built for this.`,
         timestamp: new Date(),
       };
@@ -228,8 +228,8 @@ export default function JarvisChat() {
       regionsAssessed: progress.regionsAssessed || [],
     };
 
-    const jarvisId = (Date.now() + 1).toString();
-    setMessages(prev => [...prev, { id: jarvisId, role: "jarvis", content: "", timestamp: new Date() }]);
+    const pantherMsgId = (Date.now() + 1).toString();
+    setMessages(prev => [...prev, { id: pantherMsgId, role: "panther", content: "", timestamp: new Date() }]);
 
     try {
       abortRef.current = new AbortController();
@@ -258,14 +258,14 @@ export default function JarvisChat() {
             if (!delta && parsed.choices?.[0]?.delta?.reasoning_content) continue;
             if (delta) {
               fullText += delta;
-              setMessages(prev => prev.map(m => m.id === jarvisId ? { ...m, content: fullText } : m));
+              setMessages(prev => prev.map(m => m.id === pantherMsgId ? { ...m, content: fullText } : m));
             }
           } catch {}
         }
       }
       if (voiceEnabled && fullText) speakText(fullText);
       // Play fallback pre-recorded clip immediately for responsiveness
-      setVideoState(pickResponseVideo(text));
+      setVideoState(pickPantherVideo(text));
       // Asynchronously generate a brand-new Kling AI motion clip in the background
       if (fullText) {
         setIsGeneratingMotion(true);
@@ -286,7 +286,7 @@ export default function JarvisChat() {
       }
     } catch (err: any) {
       if (err.name !== "AbortError") {
-        setMessages(prev => prev.map(m => m.id === jarvisId ? { ...m, content: "Connection issue. Try again." } : m));
+        setMessages(prev => prev.map(m => m.id === pantherMsgId ? { ...m, content: "Connection issue. Try again." } : m));
       }
     } finally {
       setIsLoading(false);
@@ -303,7 +303,7 @@ export default function JarvisChat() {
     <div className="min-h-screen bg-background pb-24">
       <div className="max-w-2xl mx-auto px-4 py-6">
 
-        {/* JARVIS Video Avatar */}
+        {/* Panther System Video Avatar */}
         <div className="relative mb-5 rounded-2xl overflow-hidden border border-border shadow-2xl" style={{ aspectRatio: "9/16", maxHeight: "52vh" }}>
           <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted playsInline />
           <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent pointer-events-none" />
@@ -316,7 +316,7 @@ export default function JarvisChat() {
           </button>
           <div className="absolute bottom-4 left-4">
             <div className="accent-line mb-1.5 w-12" />
-            <h2 className="heading-blade-sm text-white drop-shadow-lg">JARVIS</h2>
+            <h2 className="heading-blade-sm text-white drop-shadow-lg">PANTHER</h2>
             <p className="text-[10px] text-white/60 font-mono tracking-widest">AI COACH · TURNED UP FITNESS</p>
           </div>
         </div>
@@ -354,19 +354,19 @@ export default function JarvisChat() {
         )}
 
         {/* Chat */}
-        <div className="card-jarvis flex flex-col overflow-hidden" style={{ minHeight: "280px", maxHeight: "380px" }}>
+        <div className="card-panther flex flex-col overflow-hidden" style={{ minHeight: "280px", maxHeight: "380px" }}>
           <div className="flex-1 overflow-y-auto p-4 space-y-3">
             {messages.length === 0 && (
               <div className="flex items-center justify-center h-full">
                 <div className="text-center">
                   <Zap className="w-7 h-7 text-primary mx-auto mb-2 glow-pulse" />
-                  <p className="text-xs text-muted-foreground font-mono tracking-widest">INITIALIZING JARVIS...</p>
+                  <p className="text-xs text-muted-foreground font-mono tracking-widest">INITIALIZING PANTHER SYSTEM...</p>
                 </div>
               </div>
             )}
             {messages.map(msg => (
               <div key={msg.id} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                {msg.role === "jarvis" && (
+                {msg.role === "panther" && (
                   <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center mr-2 mt-1 flex-shrink-0">
                     <Zap className="w-3 h-3 text-white" />
                   </div>
@@ -396,7 +396,7 @@ export default function JarvisChat() {
               </div>
             )}
             <form onSubmit={handleSubmit} className="flex gap-2">
-              <Input value={input} onChange={e => setInput(e.target.value)} placeholder={onboardStep !== null ? "Type your answer..." : "Ask JARVIS anything..."} disabled={isLoading} className="flex-1 bg-input border-border text-sm rounded-xl" />
+              <Input value={input} onChange={e => setInput(e.target.value)} placeholder={onboardStep !== null ? "Type your answer..." : "Ask The Panther System anything..."} disabled={isLoading} className="flex-1 bg-input border-border text-sm rounded-xl" />
               <Button type="button" variant="outline" size="icon" onClick={isListening ? stopListening : startListening} className={`rounded-xl border-border flex-shrink-0 ${isListening ? "voice-pulse bg-primary text-white border-primary" : ""}`}>
                 {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
               </Button>
@@ -422,7 +422,7 @@ export default function JarvisChat() {
               <span className="text-lg">📷</span>
               <div>
                 <p className="text-xs font-bold tracking-wider uppercase">Live Coaching</p>
-                <p className="text-[10px] text-muted-foreground">Camera · JARVIS · Voice</p>
+                <p className="text-[10px] text-muted-foreground">Camera · Panther System · Voice</p>
               </div>
             </div>
             <ChevronRight className="w-4 h-4 text-muted-foreground" />

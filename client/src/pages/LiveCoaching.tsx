@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 
 const CDN = "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR";
-const JARVIS_IDLE = `${CDN}/jarvis_idle_420b45a0.mp4`;
+const PANTHER_IDLE = `${CDN}/jarvis_idle_420b45a0.mp4`;
 
-// Pull member data from localStorage (set during JARVIS onboarding)
+// Pull member data from localStorage (set during THE PANTHER SYSTEM onboarding)
 function getMemberContext(): string {
   try {
     const raw = localStorage.getItem("tuf_member");
@@ -61,7 +61,7 @@ export default function LiveCoaching() {
   } | null>(null);
 
   const videoRef = useRef<HTMLVideoElement>(null);
-  const jarvisVideoRef = useRef<HTMLVideoElement>(null);
+  const pantherVideoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -373,8 +373,8 @@ export default function LiveCoaching() {
           {/* Panther Brain avatar */}
           <div className="relative rounded-2xl overflow-hidden bg-black aspect-[4/3]">
             <video
-              ref={jarvisVideoRef}
-              src={JARVIS_IDLE}
+              ref={pantherVideoRef}
+              src={PANTHER_IDLE}
               autoPlay
               loop
               muted
