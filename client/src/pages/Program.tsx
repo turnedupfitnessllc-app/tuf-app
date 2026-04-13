@@ -9,6 +9,50 @@ import { useLocation } from "wouter";
 import { PantherPresence, PantherMessage, V4Card, SceneHeader, XPBar } from "@/components/v4Components";
 import { PROGRAM_WEEKS, ls, getStageFromXP } from "@/data/v4constants";
 
+// Program catalog entry for the selector
+const PROGRAM_CATALOG = [
+  {
+    id: "corrective-4wk",
+    title: "4-WEEK CORRECTIVE",
+    subtitle: "Foundation Program",
+    description: "Mobility, stability, and corrective movement. Fix the patterns before you load them.",
+    duration: "4 Weeks · 3 days/week",
+    tier: "CUB",
+    color: "#4a9eff",
+    phase: "FOUNDATION",
+  },
+  {
+    id: "panther-30",
+    title: "PANTHER 30-DAY SYSTEM",
+    subtitle: "Performance Program",
+    description: "Control → Stability → Strength → Explosion → Evolution. 30 days. 5 phases. One transformation.",
+    duration: "30 Days · Daily",
+    tier: "STEALTH",
+    color: "#FF4500",
+    phase: "PERFORMANCE",
+  },
+  {
+    id: "maximum-overdrive",
+    title: "MAXIMUM OVERDRIVE",
+    subtitle: "6-Week HIIT",
+    description: "High-intensity. 4 rounds. 30 sec on / 10 sec off. 30 minutes. Maximum output.",
+    duration: "6 Weeks · 4 days/week",
+    tier: "CONTROLLED",
+    color: "#C8973A",
+    phase: "HIIT",
+  },
+  {
+    id: "ass-assassination",
+    title: "ASS-ASSASSINATION",
+    subtitle: "6-Week Glute Program",
+    description: "Targeted glute development. Progressive overload. Built for results.",
+    duration: "6 Weeks · 4 days/week",
+    tier: "CONTROLLED",
+    color: "#22c55e",
+    phase: "SCULPT",
+  },
+];
+
 const DAY_LABELS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
 const FEEDBACK_CHIPS = [
   { id: "easy",    label: "Too Easy",   emoji: "😤", xp: 5  },
@@ -20,7 +64,7 @@ const FEEDBACK_CHIPS = [
 
 export default function Program() {
   const [, navigate] = useLocation();
-  const [view, setView] = useState<"overview" | "session">("overview");
+  const [view, setView] = useState<"catalog" | "overview" | "session">("catalog");
   const [activeWeek, setWeek] = useState(0);
   const [activeSession, setSess] = useState<typeof PROGRAM_WEEKS[0]["sessions"][0] | null>(null);
   const [completed, setCompleted] = useState<Set<number>>(new Set());
@@ -84,6 +128,68 @@ export default function Program() {
     prog.xp = (prog.xp || 0) + totalXP;
     ls.set("tuf_progress", prog);
     setShowFB(true);
+  }
+
+  // ── CATALOG VIEW ─────────────────────────────────────────────────────────────
+  if (view === "catalog") {
+    return (
+      <div style={{ minHeight: "100vh", background: "#080808", paddingBottom: 96 }}>
+        <style>{`
+          @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap');
+          @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+        `}</style>
+        <main style={{ maxWidth: 480, margin: "0 auto", padding: "72px 16px 0" }}>
+          <button
+            onClick={() => navigate("/")}
+            style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", marginBottom: 16, borderRadius: 8, border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.03)", fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", color: "rgba(255,255,255,0.45)", cursor: "pointer" }}
+          >
+            ← HOME
+          </button>
+
+          <div style={{ marginBottom: 20, animation: "fadeUp 0.4s ease forwards" }}>
+            <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", color: "#FF4500", marginBottom: 2 }}>PANTHER SYSTEM</p>
+            <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 32, letterSpacing: "0.07em", color: "#fff", lineHeight: 1 }}>SELECT YOUR PROGRAM</h1>
+            <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, color: "rgba(255,255,255,0.35)", marginTop: 2 }}>Choose the program that matches your tier</p>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {PROGRAM_CATALOG.map((prog, i) => (
+              <button
+                key={prog.id}
+                onClick={() => {
+                  if (prog.id === "corrective-4wk") setView("overview");
+                  else if (prog.id === "panther-30") navigate("/panther-30");
+                  else if (prog.id === "maximum-overdrive") navigate("/train");
+                  else if (prog.id === "ass-assassination") navigate("/train");
+                }}
+                style={{
+                  padding: "18px", borderRadius: 16, border: "none",
+                  background: "rgba(13,13,13,0.95)",
+                  outline: `1px solid ${prog.color}33`,
+                  display: "flex", alignItems: "flex-start", gap: 14,
+                  cursor: "pointer", textAlign: "left",
+                  animation: `fadeUp 0.3s ease ${i * 0.08}s both`,
+                }}
+              >
+                <div style={{ width: 4, height: "100%", minHeight: 60, borderRadius: 2, background: prog.color, flexShrink: 0 }} />
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                    <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 18, color: "#fff", letterSpacing: "0.06em", lineHeight: 1 }}>{prog.title}</span>
+                    <span style={{ fontSize: 9, padding: "2px 7px", background: `${prog.color}20`, border: `1px solid ${prog.color}50`, borderRadius: 3, color: prog.color, letterSpacing: "0.08em", fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700 }}>{prog.phase}</span>
+                  </div>
+                  <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, color: "rgba(255,255,255,0.5)", marginBottom: 6, lineHeight: 1.4 }}>{prog.description}</p>
+                  <div style={{ display: "flex", gap: 12, fontSize: 10, letterSpacing: "0.08em" }}>
+                    <span style={{ color: prog.color }}>{prog.duration}</span>
+                    <span style={{ color: "rgba(255,255,255,0.25)" }}>TIER: {prog.tier}+</span>
+                  </div>
+                </div>
+                <span style={{ color: "rgba(255,255,255,0.2)", fontSize: 20, flexShrink: 0 }}>›</span>
+              </button>
+            ))}
+          </div>
+        </main>
+      </div>
+    );
   }
 
   // ── SESSION PLAYER VIEW ────────────────────────────────────────────────────
@@ -303,12 +409,12 @@ export default function Program() {
       `}</style>
       <main style={{ maxWidth: 480, margin: "0 auto", padding: "72px 16px 0" }}>
 
-        {/* Back to Home */}
+        {/* Back to Programs */}
         <button
-          onClick={() => navigate("/")}
+          onClick={() => setView("catalog")}
           style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", marginBottom: 16, borderRadius: 8, border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.03)", fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", color: "rgba(255,255,255,0.45)", cursor: "pointer" }}
         >
-          ← HOME
+          ← PROGRAMS
         </button>
 
         {/* SCENE 1 — HOOK: Header */}

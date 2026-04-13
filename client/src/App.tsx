@@ -43,6 +43,7 @@ import Challenge from "./pages/Challenge";
 import Schedule from "./pages/Schedule";
 import FuelTracker from "./pages/FuelTracker";
 import Mindset from "./pages/Mindset";
+import Panther30 from "./pages/Panther30";
 
 // IP Protection
 import { TufTermsModal } from "./components/TufTermsModal";
@@ -70,6 +71,7 @@ function Router() {
         <Route path={"/challenge"} component={Challenge} />
         {/* <Route path={"/schedule"} component={Schedule} /> */}  {/* hidden — calendar bugs being fixed */}
         <Route path={"/mindset"} component={Mindset} />
+        <Route path={"/panther-30"} component={Panther30} />
 
         {/* ── Feature screens ───────────────────────────────── */}
         <Route path={"/boa"} component={BiomechanicalOverlay} />

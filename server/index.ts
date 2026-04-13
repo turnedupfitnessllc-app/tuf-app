@@ -12,6 +12,7 @@ import videoRouter from "./routes/video.js";
 import stripeRouter from "./routes/stripe.js";
 import fuelRouter from "./routes/fuel.js";
 import mindsetRouter from "./routes/mindset.js";
+import programRouter from "./routes/program.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -37,6 +38,7 @@ async function startServer() {
   app.use("/api/stripe", stripeRouter);
   app.use("/api/fuel", fuelRouter);
   app.use("/api/mindset", mindsetRouter);
+  app.use("/api/program", programRouter);
 
   // Health check endpoint
   app.get("/api/health", (_req, res) => {
