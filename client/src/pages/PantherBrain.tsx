@@ -1,9 +1,10 @@
 /**
- * TUF PANTHER BRAIN — v4.0
+ * TUF PANTHER BRAIN — v5.0
  * Arc: Hook(Panther header) → Messages → Starters → Input
  * Full clinical brain: 7 regions · NASM corrective · XP system · Fallbacks
+ * v5.0: Voice toggle (ElevenLabs TTS) — Panther speaks every response
  */
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useLocation } from "wouter";
 import { PantherPresence, PantherMessage, XPBar } from "@/components/v4Components";
 import { getFallback, ls, getStageFromXP } from "@/data/v4constants";
@@ -58,6 +59,14 @@ export default function PantherBrain() {
   const [thinking, setThinking] = useState(false);
   const [pState, setPState] = useState<"idle" | "coaching" | "activated" | "dominant" | "locked_in">("idle");
   const [history, setHistory] = useState<Array<{ role: string; content: string }>>([]);
+
+  // ── VOICE STATE ──────────────────────────────────────────────────────────────
+  const [voiceEnabled, setVoiceEnabled] = useState(() => {
+    try { return localStorage.getItem("panther_voice") !== "off"; } catch { return true; }
+  });
+  const [speaking, setSpeaking] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -68,6 +77,53 @@ export default function PantherBrain() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, thinking]);
 
+  // ── VOICE TOGGLE ─────────────────────────────────────────────────────────────
+  function toggleVoice() {
+    const next = !voiceEnabled;
+    setVoiceEnabled(next);
+    try { localStorage.setItem("panther_voice", next ? "on" : "off"); } catch {}
+    if (!next && audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+      setSpeaking(false);
+    }
+  }
+
+  // ── SPEAK PANTHER RESPONSE ────────────────────────────────────────────────────
+  const speakResponse = useCallback(async (headline: string, body: string, directive: string) => {
+    if (!voiceEnabled) return;
+    // Build spoken text: headline + body (first sentence) + directive
+    const bodySentence = body ? body.split(".")[0].trim() + "." : "";
+    const spokenText = [headline, bodySentence, directive ? `Directive: ${directive}` : ""]
+      .filter(Boolean)
+      .join(" ")
+      .slice(0, 500);
+
+    try {
+      setSpeaking(true);
+      const res = await fetch("/api/voice/speak", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: spokenText, voiceKey: "panther" }),
+      });
+      if (!res.ok) throw new Error("TTS failed");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      if (audioRef.current) {
+        audioRef.current.pause();
+        URL.revokeObjectURL(audioRef.current.src);
+      }
+      const audio = new Audio(url);
+      audioRef.current = audio;
+      audio.onended = () => { setSpeaking(false); URL.revokeObjectURL(url); };
+      audio.onerror = () => { setSpeaking(false); };
+      await audio.play();
+    } catch {
+      setSpeaking(false);
+    }
+  }, [voiceEnabled]);
+
+  // ── SEND MESSAGE ──────────────────────────────────────────────────────────────
   async function send() {
     const text = input.trim();
     if (!text || thinking) return;
@@ -131,6 +187,8 @@ export default function PantherBrain() {
         .filter((l: string) => !/^DIRECTIVE:/i.test(l) && !l.startsWith("→"));
       if (!directive && body.length > 0) directive = body.pop() || "";
 
+      const bodyText = body.join(" ");
+
       // Award XP
       const prog = ls.get<{ xp: number }>("tuf_progress", { xp: 0 });
       prog.xp = (prog.xp || 0) + xpAward;
@@ -142,22 +200,22 @@ export default function PantherBrain() {
       setMessages(prev => [...prev, {
         role: "panther",
         headline: headline || "READ THIS.",
-        body: body.join(" "),
+        body: bodyText,
         directive,
       }]);
       setTimeout(() => setPState("coaching"), 3000);
+
+      // Speak the response if voice is on
+      speakResponse(headline || "READ THIS.", bodyText, directive || "");
 
     } catch {
       const fb = getFallback(text);
       setThinking(false);
       setPState((fb.s as typeof pState) || "coaching");
-      setMessages(prev => [...prev, {
-        role: "panther",
-        headline: fb.h,
-        body: fb.b,
-        directive: fb.d,
-      }]);
+      const fbMsg = { headline: fb.h, body: fb.b, directive: fb.d };
+      setMessages(prev => [...prev, { role: "panther", ...fbMsg }]);
       setTimeout(() => setPState("idle"), 3000);
+      speakResponse(fb.h, fb.b || "", fb.d || "");
     }
   }
 
@@ -173,6 +231,8 @@ export default function PantherBrain() {
         @keyframes scan    { 0%{top:-2%;opacity:0} 5%{opacity:1} 95%{opacity:1} 100%{top:102%;opacity:0} }
         @keyframes msgIn   { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
         @keyframes dot     { 0%,100%{opacity:0.2;transform:scale(0.7)} 50%{opacity:1;transform:scale(1)} }
+        @keyframes pulse   { 0%,100%{opacity:0.6;transform:scale(1)} 50%{opacity:1;transform:scale(1.08)} }
+        .voice-btn:hover { opacity: 0.85 !important; }
       `}</style>
 
       <div style={{ maxWidth: 480, margin: "0 auto", width: "100%", display: "flex", flexDirection: "column", height: "100vh" }}>
@@ -202,7 +262,32 @@ export default function PantherBrain() {
                 7 REGIONS · NASM CORRECTIVE · FULL CLINICAL BRAIN
               </p>
             </div>
-            <div style={{ width: 120 }}>
+            {/* Voice toggle */}
+            <button
+              className="voice-btn"
+              onClick={toggleVoice}
+              title={voiceEnabled ? "Voice ON — click to mute" : "Voice OFF — click to enable"}
+              style={{
+                display: "flex", flexDirection: "column", alignItems: "center", gap: 2,
+                padding: "6px 10px", borderRadius: 10,
+                border: `1px solid ${voiceEnabled ? "rgba(255,69,0,0.4)" : "rgba(255,255,255,0.1)"}`,
+                background: voiceEnabled ? "rgba(255,69,0,0.1)" : "rgba(255,255,255,0.03)",
+                cursor: "pointer", flexShrink: 0,
+                animation: speaking ? "pulse 0.8s ease-in-out infinite" : "none",
+              }}
+            >
+              <span style={{ fontSize: 16 }}>
+                {speaking ? "🔊" : voiceEnabled ? "🔈" : "🔇"}
+              </span>
+              <span style={{
+                fontFamily: "'Barlow Condensed', sans-serif", fontSize: 8, fontWeight: 700,
+                letterSpacing: "0.1em",
+                color: voiceEnabled ? "rgba(255,69,0,0.7)" : "rgba(255,255,255,0.25)",
+              }}>
+                {speaking ? "SPEAKING" : voiceEnabled ? "VOICE ON" : "MUTED"}
+              </span>
+            </button>
+            <div style={{ width: 100 }}>
               <XPBar xp={progress.xp || 0} stage={getStageFromXP(progress.xp || 0)} />
             </div>
           </div>
@@ -246,29 +331,21 @@ export default function PantherBrain() {
               {/* Panther avatar SVG */}
               <div style={{ position: "relative", marginBottom: 16 }}>
                 <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  {/* Outer glow ring */}
                   <circle cx="40" cy="40" r="38" stroke="rgba(255,69,0,0.15)" strokeWidth="1"/>
                   <circle cx="40" cy="40" r="32" stroke="rgba(255,69,0,0.25)" strokeWidth="1.5"/>
-                  {/* Panther head shape */}
-                  <ellipse cx="40" cy="38" rx="18" ry="20" fill="rgba(255,69,0,0.06)" stroke="rgba(255,69,0,0.4)" strokeWidth="1.5"/>
-                  {/* Ears */}
+                  <ellipse cx="40" cy="38" rx="18" ry="20" fill="rgba(255,69,0,0.06)" stroke="rgba(255,69,0,0.3)" strokeWidth="1.5"/>
                   <path d="M26 24 L22 14 L32 20 Z" fill="rgba(255,69,0,0.3)" stroke="rgba(255,69,0,0.5)" strokeWidth="1"/>
                   <path d="M54 24 L58 14 L48 20 Z" fill="rgba(255,69,0,0.3)" stroke="rgba(255,69,0,0.5)" strokeWidth="1"/>
-                  {/* Eyes — glowing */}
                   <ellipse cx="33" cy="36" rx="3.5" ry="2.5" fill="rgba(255,69,0,0.8)"/>
                   <ellipse cx="47" cy="36" rx="3.5" ry="2.5" fill="rgba(255,69,0,0.8)"/>
                   <ellipse cx="33" cy="36" rx="1.5" ry="2" fill="rgba(255,120,50,1)"/>
                   <ellipse cx="47" cy="36" rx="1.5" ry="2" fill="rgba(255,120,50,1)"/>
-                  {/* Nose */}
                   <path d="M38 43 L40 46 L42 43" stroke="rgba(255,69,0,0.5)" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
-                  {/* Whiskers */}
                   <path d="M22 40 L32 42M22 44 L32 44" stroke="rgba(255,255,255,0.15)" strokeWidth="0.8" strokeLinecap="round"/>
                   <path d="M58 40 L48 42M58 44 L48 44" stroke="rgba(255,255,255,0.15)" strokeWidth="0.8" strokeLinecap="round"/>
-                  {/* Scan lines */}
                   <line x1="10" y1="38" x2="20" y2="38" stroke="rgba(255,69,0,0.3)" strokeWidth="0.8"/>
                   <line x1="60" y1="38" x2="70" y2="38" stroke="rgba(255,69,0,0.3)" strokeWidth="0.8"/>
                 </svg>
-                {/* Pulsing outer ring */}
                 <div style={{
                   position: "absolute", inset: -8,
                   borderRadius: "50%",
@@ -294,6 +371,15 @@ export default function PantherBrain() {
                 letterSpacing: "0.08em",
               }}>
                 Select a prompt below or describe your issue
+              </p>
+              {/* Voice hint */}
+              <p style={{
+                fontFamily: "'Barlow Condensed', sans-serif",
+                fontSize: 9, marginTop: 8,
+                color: voiceEnabled ? "rgba(255,69,0,0.4)" : "rgba(255,255,255,0.15)",
+                textAlign: "center", letterSpacing: "0.08em",
+              }}>
+                {voiceEnabled ? "🔈 PANTHER WILL SPEAK HIS RESPONSE" : "🔇 VOICE MUTED — TAP SPEAKER TO ENABLE"}
               </p>
             </div>
           )}

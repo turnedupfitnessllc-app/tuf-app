@@ -4,6 +4,7 @@
  */
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
+import { getAnimationForDay } from "@/data/pantherAnimations";
 
 const PHASE_COLORS: Record<string, string> = {
   Control: "#4a9eff",
@@ -124,17 +125,55 @@ export default function Panther30() {
   if (view === "session" && activeDay) {
     const color = PHASE_COLORS[activeDay.phase] || "#FF4500";
     const allDone = completed.size === activeDay.exercises.length;
+    // Determine animation context for this session
+    const anim = getAnimationForDay(
+      activeDay.phase,
+      activeDay.focus,
+      activeDay.exercises[0]?.name?.toLowerCase().replace(/\s+/g, "_")
+    );
 
     return (
       <div style={{ minHeight: "100vh", background: "#080808", paddingBottom: 96 }}>
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap');
           @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+          @keyframes animGlow { 0%,100%{opacity:0.6} 50%{opacity:1} }
         `}</style>
         <main style={{ maxWidth: 480, margin: "0 auto", padding: "72px 16px 0" }}>
           <button onClick={() => setView("overview")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", marginBottom: 16, borderRadius: 8, border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.03)", fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", color: "rgba(255,255,255,0.45)", cursor: "pointer" }}>
             ← BACK
           </button>
+
+          {/* Animation Context Banner */}
+          <div style={{
+            borderRadius: 14, marginBottom: 14, overflow: "hidden",
+            background: anim.gradient,
+            border: `1px solid ${color}20`,
+            padding: "16px",
+            display: "flex", alignItems: "center", gap: 14,
+            animation: "animGlow 3s ease-in-out infinite",
+          }}>
+            <div style={{
+              width: 52, height: 52, borderRadius: 12,
+              background: `${color}15`,
+              border: `1px solid ${color}30`,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 28, flexShrink: 0,
+            }}>
+              {anim.emoji}
+            </div>
+            <div style={{ flex: 1 }}>
+              <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: "0.18em", color, marginBottom: 3 }}>
+                PANTHER MODE
+              </p>
+              <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 18, letterSpacing: "0.06em", color: "#fff", lineHeight: 1 }}>
+                {anim.label.toUpperCase()}
+              </p>
+              <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, color: "rgba(255,255,255,0.3)", marginTop: 3, letterSpacing: "0.04em", fontStyle: "italic" }}>
+                {anim.prompt.slice(0, 60)}...
+              </p>
+            </div>
+          </div>
 
           {/* Header */}
           <div style={{ marginBottom: 16 }}>

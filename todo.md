@@ -220,9 +220,21 @@
 
 ## Panther Brain Voice (April 2026)
 
-- [ ] Voice toggle button in PantherBrain UI (speaker icon)
-- [ ] Auto-speak Claude responses via /api/voice/speak when toggle is ON
-- [ ] Voice preference persisted in localStorage
+- [x] Voice toggle button in PantherBrain UI (speaker icon)
+- [x] Auto-speak Claude responses via /api/voice/speak when toggle is ON
+- [x] Voice preference persisted in localStorage
+
+## Panther Animation Library (April 2026)
+
+- [x] pantherAnimations.ts — 8 cinematic prompts with getAnimationForDay() helper
+- [x] Animation Context Banner in Panther30.tsx session view (phase-aware emoji + gradient + label)
+
+## Subscription Tier Gating (April 2026)
+
+- [x] PaywallGate wired to /panther, /jarvis, /panther-brain (core tier)
+- [x] PaywallGate wired to /boa (elite tier)
+- [x] PaywallGate wired to /live (pro tier)
+- [x] PaywallGate wired to /body-comp (core tier)
 
 ## FUEL Pillar (Docs 05 + 06 — April 2026)
 

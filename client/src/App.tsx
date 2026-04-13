@@ -47,6 +47,8 @@ import Panther30 from "./pages/Panther30";
 
 // IP Protection
 import { TufTermsModal } from "./components/TufTermsModal";
+// Tier gating
+import { PaywallGate } from "./components/PaywallGate";
 
 function Router() {
   const isOnboarded = localStorage.getItem("tuf_onboarded") === "true";
@@ -73,14 +75,38 @@ function Router() {
         <Route path={"/mindset"} component={Mindset} />
         <Route path={"/panther-30"} component={Panther30} />
 
-        {/* ── Feature screens ───────────────────────────────── */}
-        <Route path={"/boa"} component={BiomechanicalOverlay} />
-        <Route path={"/panther"} component={PantherBrain} />
-        <Route path={"/jarvis"} component={PantherBrain} />      {/* legacy route alias — Panther System */}
-        <Route path={"/panther-brain"} component={PantherBrain} />  {/* alias */}
+        {/* ── Feature screens (tier-gated) ───────────────────── */}
+        <Route path={"/boa"} component={() => (
+          <PaywallGate requiredTier="elite" feature="Biomechanical Overlay" description="AI-powered real-time movement analysis with biomechanical feedback is an Elite-tier feature.">
+            <BiomechanicalOverlay />
+          </PaywallGate>
+        )} />
+        <Route path={"/panther"} component={() => (
+          <PaywallGate requiredTier="core" feature="Panther AI Brain" description="Full clinical AI coaching with 7 body regions and NASM corrective protocols requires the Core plan.">
+            <PantherBrain />
+          </PaywallGate>
+        )} />
+        <Route path={"/jarvis"} component={() => (
+          <PaywallGate requiredTier="core" feature="Panther AI Brain" description="Full clinical AI coaching requires the Core plan.">
+            <PantherBrain />
+          </PaywallGate>
+        )} />  {/* legacy route alias */}
+        <Route path={"/panther-brain"} component={() => (
+          <PaywallGate requiredTier="core" feature="Panther AI Brain" description="Full clinical AI coaching requires the Core plan.">
+            <PantherBrain />
+          </PaywallGate>
+        )} />  {/* alias */}
         <Route path={"/panther-chat"} component={() => <PantherChat className="h-screen" />} />
-        <Route path={"/live"} component={LiveCoaching} />
-        <Route path={"/body-comp"} component={BodyComposition} />
+        <Route path={"/live"} component={() => (
+          <PaywallGate requiredTier="pro" feature="Live Coaching" description="Real-time 1-on-1 AI coaching sessions are exclusive to the Pro plan.">
+            <LiveCoaching />
+          </PaywallGate>
+        )} />
+        <Route path={"/body-comp"} component={() => (
+          <PaywallGate requiredTier="core" feature="Body Composition Tracker" description="Advanced body composition analysis requires the Core plan.">
+            <BodyComposition />
+          </PaywallGate>
+        )} />
 
         {/* ── Legacy screens ────────────────────────────────── */}
         <Route path={"/move"} component={Move} />
