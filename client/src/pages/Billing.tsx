@@ -54,7 +54,23 @@ export default function Billing() {
 
     fetch(`/api/stripe/subscription/${userId}`)
       .then(r => r.json())
-      .then((data: SubscriptionStatus) => { setSub(data); setLoading(false); })
+      .then((data: SubscriptionStatus) => {
+        setSub(data);
+        setLoading(false);
+        // Sync server tier → localStorage so PaywallGate reads the correct value
+        const serverTier = data.tier || "free";
+        // Map DB tier names (cub/stealth/controlled/apex) → PaywallGate names (free/core/elite/pro)
+        const tierMap: Record<string, string> = {
+          free: "free",
+          cub: "core",
+          stealth: "core",
+          controlled: "elite",
+          apex: "pro",
+        };
+        const gateTier = tierMap[serverTier] ?? "free";
+        localStorage.setItem("tuf_tier", gateTier);
+        localStorage.setItem("tuf_tier_raw", serverTier);
+      })
       .catch(() => { setSub({ tier: "free", status: null }); setLoading(false); });
   }, [userId]);
 

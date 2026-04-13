@@ -3,6 +3,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
 import { Route, Switch, Redirect } from "wouter";
 import { useState } from "react";
+import { useTierSync } from "./hooks/useTierSync";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { TufHeader } from "./components/TufHeader";
@@ -129,6 +130,9 @@ function Router() {
 }
 
 function App() {
+  // Sync subscription tier from server → localStorage on every app mount
+  useTierSync();
+
   // Use sessionStorage so splash plays once per browser session.
   // Resets when the browser/tab is closed, but not on in-app navigation or URL changes.
   const [splashDone, setSplashDone] = useState(
