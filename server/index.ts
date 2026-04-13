@@ -9,6 +9,7 @@ import coachingRouter from "./routes/coaching.js";
 import voiceRouter from "./routes/voice.js";
 import dbRouter from "./routes/database.js";
 import videoRouter from "./routes/video.js";
+import stripeRouter from "./routes/stripe.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,6 +17,9 @@ const __dirname = path.dirname(__filename);
 async function startServer() {
   const app = express();
   const server = createServer(app);
+
+  // Stripe webhook needs raw body BEFORE express.json()
+  app.use("/api/stripe/webhook", express.raw({ type: "application/json" }));
 
   // Middleware
   app.use(express.json());
@@ -28,6 +32,7 @@ async function startServer() {
   app.use("/api/voice", voiceRouter);
   app.use("/api/db", dbRouter);
   app.use("/api/video", videoRouter);
+  app.use("/api/stripe", stripeRouter);
 
   // Health check endpoint
   app.get("/api/health", (_req, res) => {

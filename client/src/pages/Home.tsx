@@ -461,6 +461,41 @@ export default function Home() {
           </div>
         </button>
 
+        {/* ─── MEMBERSHIP ─── */}
+        <button
+          className="cmd-card"
+          onClick={() => navigate("/pricing")}
+          style={{ width: "100%", display: "block" }}
+        >
+          <div style={{ padding: "16px", display: "flex", alignItems: "center", gap: 14 }}>
+            <div style={{ marginRight: 0 }}>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
+                  stroke="#FF4500" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+                  fill="rgba(255,69,0,0.08)"/>
+              </svg>
+            </div>
+            <div>
+              <div style={{
+                fontFamily: "'Bebas Neue', sans-serif",
+                fontSize: 18, letterSpacing: "0.06em",
+                color: "#FF4500",
+              }}>
+                MEMBERSHIP
+              </div>
+              <div style={{
+                fontFamily: "'Barlow Condensed', sans-serif",
+                fontSize: 10, fontWeight: 700,
+                letterSpacing: "0.1em",
+                color: "rgba(255,255,255,0.35)",
+              }}>
+                Plans · Pricing · Prestige Labs
+              </div>
+            </div>
+            <div style={{ marginLeft: "auto", color: "rgba(255,255,255,0.2)", fontSize: 18 }}>›</div>
+          </div>
+        </button>
+
         {/* ─── PANTHER SCHEDULER ─── hidden until calendar bugs resolved ─── */}
 
       </main>
