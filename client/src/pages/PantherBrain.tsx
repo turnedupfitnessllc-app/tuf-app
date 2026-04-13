@@ -8,6 +8,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { useLocation } from "wouter";
 import { PantherPresence, PantherMessage, XPBar } from "@/components/v4Components";
 import { getFallback, ls, getStageFromXP } from "@/data/v4constants";
+import { useProgress } from "@/hooks/useProgress";
 
 interface Message {
   role: "user" | "panther";
@@ -71,7 +72,7 @@ export default function PantherBrain() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const profile  = ls.get<{ name: string }>("tuf_profile", { name: "" });
-  const progress = ls.get<{ xp: number; sessionsCompleted: number }>("tuf_progress", { xp: 0, sessionsCompleted: 0 });
+  const { progress, awardXP } = useProgress();
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -189,10 +190,8 @@ export default function PantherBrain() {
 
       const bodyText = body.join(" ");
 
-      // Award XP
-      const prog = ls.get<{ xp: number }>("tuf_progress", { xp: 0 });
-      prog.xp = (prog.xp || 0) + xpAward;
-      ls.set("tuf_progress", prog);
+      // Award XP — syncs to DB via useProgress
+      awardXP(xpAward);
 
       setHistory([...newHistory, { role: "assistant", content: raw }]);
       setThinking(false);

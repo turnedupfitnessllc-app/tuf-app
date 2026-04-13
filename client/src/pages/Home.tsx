@@ -14,6 +14,7 @@ import { useLocation } from "wouter";
 import { useState, useEffect } from "react";
 import { XPBar } from "@/components/v4Components";
 import { ls, getStageFromXP } from "@/data/v4constants";
+import { useProgress } from "@/hooks/useProgress";
 import { TufSocialStickyStrip } from "@/components/TufSocialFooter";
 
 const CDN = "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR";
@@ -43,9 +44,7 @@ export default function Home() {
     }).catch(() => {});
   }, []);
 
-  const progress = ls.get<{ xp: number; streakDays: number; sessionsCompleted: number }>(
-    "tuf_progress", { xp: 0, streakDays: 0, sessionsCompleted: 0 }
-  );
+  const { progress } = useProgress();
   const painLogs    = ls.get<Array<{ location: string; level: number }>>("tuf_pain_logs", []);
   const correctives = ls.get<{ issue?: { label: string } } | null>("tuf_correctives", null);
 
@@ -580,6 +579,40 @@ export default function Home() {
                 color: "rgba(255,255,255,0.35)",
               }}>
                 Macros · Meals · Panther Directive
+              </div>
+            </div>
+            <div style={{ marginLeft: "auto", color: "rgba(255,255,255,0.2)", fontSize: 18 }}>›</div>
+          </div>
+        </button>
+
+        {/* ─── HEALTH INTELLIGENCE ─── */}
+        <button
+          className="cmd-card"
+          onClick={() => navigate("/health-intel")}
+          style={{ width: "100%", display: "block", marginTop: 10 }}
+        >
+          <div style={{ padding: "16px", display: "flex", alignItems: "center", gap: 14 }}>
+            <div>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 12h4l3-9 4 18 3-9h4" stroke="#06b6d4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <circle cx="12" cy="12" r="9" stroke="#06b6d4" strokeWidth="1" opacity="0.2"/>
+              </svg>
+            </div>
+            <div>
+              <div style={{
+                fontFamily: "'Bebas Neue', sans-serif",
+                fontSize: 18, letterSpacing: "0.06em",
+                color: "#06b6d4",
+              }}>
+                HEALTH INTELLIGENCE
+              </div>
+              <div style={{
+                fontFamily: "'Barlow Condensed', sans-serif",
+                fontSize: 10, fontWeight: 700,
+                letterSpacing: "0.1em",
+                color: "rgba(255,255,255,0.35)",
+              }}>
+                PopHIVE · Obesity · Diabetes · Illness Alerts
               </div>
             </div>
             <div style={{ marginLeft: "auto", color: "rgba(255,255,255,0.2)", fontSize: 18 }}>›</div>

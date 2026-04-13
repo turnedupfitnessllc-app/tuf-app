@@ -298,8 +298,25 @@ export interface WeeklyMealPlan {
   lastViewedAt?: number;
 }
 
-// ─── Database Schema ──────────────────────────────────────────────────────────
+/// ─── User Progress (XP / Streak / Scores) ───────────────────────────────────
+export interface UserProgress {
+  user_id: string;
+  xp: number;                          // total XP earned
+  streak_days: number;                 // current consecutive training days
+  longest_streak: number;              // all-time best streak
+  sessions_completed: number;          // total sessions finished
+  total_minutes: number;               // total training minutes
+  mobility: number;                    // 0-100 NASM mobility score
+  strength: number;                    // 0-100 NASM strength score
+  stability: number;                   // 0-100 NASM stability score
+  last_session_date: string | null;    // YYYY-MM-DD
+  last_issue_id: string | null;        // last corrective issue
+  last_corrective_plan: string[] | null;
+  join_date: number;                   // UTC ms timestamp
+  updated_at: number;
+}
 
+// ─── Database Schema ──────────────────────────────────────────────────────────
 interface DbSchema {
   users: User[];
   pain_logs: PainLog[];
@@ -315,6 +332,7 @@ interface DbSchema {
   animation_jobs: AnimationJob[];
   meal_plans: WeeklyMealPlan[];
   voice_jobs: VoiceJob[];
+  user_progress: UserProgress[];
 }
 
 const defaultData: DbSchema = {
@@ -332,6 +350,7 @@ const defaultData: DbSchema = {
   animation_jobs: [],
   meal_plans: [],
   voice_jobs: [],
+  user_progress: [],
 };
 
 // ─── DB Singleton ─────────────────────────────────────────────────────────────
@@ -354,6 +373,7 @@ async function getDb(): Promise<Low<DbSchema>> {
   if (!_db.data.animation_jobs) _db.data.animation_jobs = [];
   if (!_db.data.meal_plans) _db.data.meal_plans = [];
   if (!_db.data.voice_jobs) _db.data.voice_jobs = [];
+  if (!_db.data.user_progress) _db.data.user_progress = [];
   await _db.write();
   return _db;
 }
@@ -983,4 +1003,63 @@ export async function getCachedVoiceJob(
   return db.data.voice_jobs
     .filter((j) => j.exercise_id === exercise_id && j.difficulty === difficulty && j.status === "complete" && j.url)
     .sort((a, b) => b.created_at - a.created_at)[0];
+}
+
+// ─── User Progress (XP / Streak / Scores) ────────────────────────────────────
+
+const DEFAULT_PROGRESS: Omit<UserProgress, "user_id"> = {
+  xp: 0,
+  streak_days: 0,
+  longest_streak: 0,
+  sessions_completed: 0,
+  total_minutes: 0,
+  mobility: 0,
+  strength: 0,
+  stability: 0,
+  last_session_date: null,
+  last_issue_id: null,
+  last_corrective_plan: null,
+  join_date: Date.now(),
+  updated_at: Date.now(),
+};
+
+export async function getUserProgress(user_id: string): Promise<UserProgress> {
+  const db = await getDb();
+  const existing = db.data.user_progress.find((p) => p.user_id === user_id);
+  if (existing) return existing;
+  // Return default without persisting — only write on first upsert
+  return { user_id, ...DEFAULT_PROGRESS };
+}
+
+export async function upsertUserProgress(
+  user_id: string,
+  data: Partial<Omit<UserProgress, "user_id">>
+): Promise<UserProgress> {
+  const db = await getDb();
+  const now = Date.now();
+  const idx = db.data.user_progress.findIndex((p) => p.user_id === user_id);
+  if (idx >= 0) {
+    db.data.user_progress[idx] = {
+      ...db.data.user_progress[idx],
+      ...data,
+      updated_at: now,
+    };
+    await db.write();
+    return db.data.user_progress[idx];
+  }
+  const record: UserProgress = {
+    user_id,
+    ...DEFAULT_PROGRESS,
+    ...data,
+    join_date: data.join_date ?? now,
+    updated_at: now,
+  };
+  db.data.user_progress.push(record);
+  await db.write();
+  return record;
+}
+
+export async function addXP(user_id: string, amount: number): Promise<UserProgress> {
+  const current = await getUserProgress(user_id);
+  return upsertUserProgress(user_id, { xp: current.xp + amount });
 }

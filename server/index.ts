@@ -15,6 +15,8 @@ import mindsetRouter from "./routes/mindset.js";
 import programRouter from "./routes/program.js";
 import animationRouter from "./routes/animation.js";
 import feastRouter from "./routes/feast.js";
+import progressRouter from "./routes/progress.js";
+import healthintelRouter from "./routes/healthintel.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -43,6 +45,8 @@ async function startServer() {
   app.use("/api/program", programRouter);
   app.use("/api/animation", animationRouter);
   app.use("/api/feast", feastRouter);
+  app.use("/api/progress", progressRouter);
+  app.use("/api/healthintel", healthintelRouter);
 
   // Health check endpoint
   app.get("/api/health", (_req, res) => {

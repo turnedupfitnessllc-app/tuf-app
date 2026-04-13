@@ -8,6 +8,7 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { PantherPresence, PantherMessage, V4Card, SceneHeader, XPBar } from "@/components/v4Components";
 import { PROGRAM_WEEKS, ls, getStageFromXP } from "@/data/v4constants";
+import { useProgress } from "@/hooks/useProgress";
 
 // Program catalog entry for the selector
 const PROGRAM_CATALOG = [
@@ -76,7 +77,7 @@ export default function Program() {
 
   const week = PROGRAM_WEEKS[activeWeek];
   const correctives = ls.get<{ issue?: { label: string; color?: string } } | null>("tuf_correctives", null);
-  const progress = ls.get<{ xp: number; sessionsCompleted: number }>("tuf_progress", { xp: 0, sessionsCompleted: 0 });
+  const { progress, completeSession: recordSession } = useProgress();
 
   // Build 7-day calendar: map sessions to weekdays (Mon=0, Wed=2, Fri=4)
   const SESSION_DAYS = [0, 2, 4]; // Mon, Wed, Fri
@@ -123,10 +124,8 @@ export default function Program() {
     }, 0);
     const baseXP = 20;
     const totalXP = baseXP + bonusXP;
-    const prog = ls.get<{ xp: number; sessionsCompleted: number }>("tuf_progress", { xp: 0, sessionsCompleted: 0 });
-    prog.sessionsCompleted = (prog.sessionsCompleted || 0) + 1;
-    prog.xp = (prog.xp || 0) + totalXP;
-    ls.set("tuf_progress", prog);
+    // Record session to DB via useProgress
+    recordSession([], 30, totalXP);
     setShowFB(true);
   }
 

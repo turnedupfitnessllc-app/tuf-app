@@ -46,6 +46,7 @@ import FuelTracker from "./pages/FuelTracker";
 import Mindset from "./pages/Mindset";
 import Panther30 from "./pages/Panther30";
 import Billing from "./pages/Billing";
+import HealthIntel from "./pages/HealthIntel";
 
 // IP Protection
 import { TufTermsModal } from "./components/TufTermsModal";
@@ -120,6 +121,7 @@ function Router() {
         <Route path={"/progress"} component={Progress} />
         <Route path={"/showcase"} component={ComponentShowcase} />
         <Route path={"/pipeline"} component={PantherPipeline} />
+        <Route path={"/health-intel"} component={HealthIntel} />
 
         <Route path={"/404"} component={NotFound} />
         <Route component={NotFound} />

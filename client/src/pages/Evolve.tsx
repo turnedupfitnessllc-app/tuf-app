@@ -6,6 +6,7 @@
 import { useLocation } from "wouter";
 import { PantherPresence, PantherMessage, V4Card, SceneHeader, XPBar } from "@/components/v4Components";
 import { STAGE_LADDER, ls, getStageFromXP } from "@/data/v4constants";
+import { useProgress } from "@/hooks/useProgress";
 
 const ACHIEVEMENTS = [
   { id: "first_session",   icon: "⚡", label: "FIRST STEP",       desc: "Completed first session",    xp: 10 },
@@ -25,9 +26,7 @@ const ACHIEVEMENTS = [
 export default function Evolve() {
   const [, navigate] = useLocation();
 
-  const progress = ls.get<{ xp: number; sessionsCompleted: number; streakDays: number }>(
-    "tuf_progress", { xp: 0, sessionsCompleted: 0, streakDays: 0 }
-  );
+  const { progress } = useProgress();
   const xp       = progress.xp || 0;
   const sessions = progress.sessionsCompleted || 0;
   const streak   = progress.streakDays || 0;
