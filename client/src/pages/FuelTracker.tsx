@@ -1,5 +1,5 @@
 /**
- * THE PANTHER SYSTEM — FUEL TRACKER Screen
+ * THE PANTHER SYSTEM — FUEL TRACKER Screen v2.0
  * Clinical Spec: Doc 05 | Build Doc: Doc 06
  * © 2026 TURNED UP FITNESS LLC — CONFIDENTIAL
  *
@@ -7,14 +7,16 @@
  *   1. Header — "FUEL TRACKER" + date + ← HOME
  *   2. Panther FUEL Directive card (flag-triggered)
  *   3. Daily summary rings — calories, protein, MPS triggers
- *   4. Macro breakdown bar
- *   5. Meal log — chronological
+ *   4. Macro breakdown bar + 7-day history mini-chart
+ *   5. Meal log — chronological (with delete)
  *   6. FAB — + LOG MEAL
- *   7. Setup modal if no FUEL profile
+ *   7. Log Meal modal — TUTK recipe search + manual entry
+ *   8. Setup modal if no FUEL profile
  */
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useLocation } from "wouter";
+import { tutkRecipes, type Recipe } from "@/data/tutkRecipes";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -78,6 +80,7 @@ interface DailyFuelLog {
 const MEAL_TYPES: Record<string, { label: string; color: string }> = {
   meal1:         { label: "MEAL 1",         color: "#C8973A" },
   meal2:         { label: "MEAL 2",         color: "#C8973A" },
+  meal3:         { label: "MEAL 3",         color: "#C8973A" },
   pre_training:  { label: "PRE-TRAINING",   color: "#4a9eff" },
   post_training: { label: "POST-TRAINING",  color: "#22c55e" },
   pre_sleep:     { label: "PRE-SLEEP",      color: "#8b5cf6" },
@@ -136,6 +139,109 @@ function Ring({
   );
 }
 
+// ─── 7-Day History Mini-Chart ─────────────────────────────────────────────────
+
+function WeekChart({ logs, calorieTarget }: { logs: DailyFuelLog[]; calorieTarget: number }) {
+  const days = ["S","M","T","W","T","F","S"];
+  const today = new Date();
+  const week = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(today);
+    d.setDate(today.getDate() - (6 - i));
+    const dateStr = d.toISOString().split("T")[0];
+    const log = logs.find(l => l.date === dateStr);
+    return {
+      label: days[d.getDay()],
+      isToday: i === 6,
+      calories: log?.totalCalories ?? 0,
+      protein: log?.totalProteinG ?? 0,
+    };
+  });
+  const maxCal = Math.max(...week.map(d => d.calories), calorieTarget, 1);
+  return (
+    <div className="mt-4 pt-3 border-t border-white/5">
+      <div className="text-white/30 text-[10px] font-black tracking-widest mb-3">7-DAY HISTORY</div>
+      <div className="flex items-end justify-between gap-1 h-16">
+        {week.map((d, i) => {
+          const h = Math.round((d.calories / maxCal) * 56);
+          const pct = d.calories / calorieTarget;
+          const barColor = d.calories === 0 ? "rgba(255,255,255,0.06)"
+            : pct > 1.1 ? "#ef4444"
+            : pct >= 0.9 ? "#22c55e"
+            : "#C8973A";
+          return (
+            <div key={i} className="flex flex-col items-center gap-1 flex-1">
+              <div className="w-full flex items-end justify-center" style={{ height: 56 }}>
+                <div
+                  className="w-full rounded-t-sm transition-all duration-500"
+                  style={{ height: Math.max(h, d.calories > 0 ? 3 : 0), background: barColor, opacity: d.isToday ? 1 : 0.6 }}
+                />
+              </div>
+              <span className={`text-[9px] font-bold ${d.isToday ? "text-white" : "text-white/30"}`}>{d.label}</span>
+            </div>
+          );
+        })}
+      </div>
+      <div className="flex justify-between text-[9px] text-white/20 mt-1">
+        <span>0</span>
+        <span>{calorieTarget} target</span>
+      </div>
+    </div>
+  );
+}
+
+// ─── TUTK Recipe Search ───────────────────────────────────────────────────────
+
+function RecipeSearch({ onSelect }: { onSelect: (r: Recipe) => void }) {
+  const [query, setQuery] = useState("");
+  const results = useMemo(() => {
+    if (!query.trim()) return tutkRecipes.slice(0, 6);
+    const q = query.toLowerCase();
+    return tutkRecipes.filter(r =>
+      r.name.toLowerCase().includes(q) ||
+      r.tags.some(t => t.toLowerCase().includes(q)) ||
+      r.ingredients.some(i => i.toLowerCase().includes(q))
+    ).slice(0, 8);
+  }, [query]);
+
+  return (
+    <div>
+      <label className="text-white/40 text-[10px] font-black tracking-wider block mb-1">SEARCH TUTK RECIPES</label>
+      <input
+        type="text"
+        value={query}
+        onChange={e => setQuery(e.target.value)}
+        placeholder="e.g. chicken, high-protein, scallops..."
+        className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm focus:outline-none focus:border-[#C8973A]/50 placeholder-white/20 mb-2"
+      />
+      <div className="space-y-1.5 max-h-48 overflow-y-auto">
+        {results.map(r => (
+          <button
+            key={r.id}
+            onClick={() => onSelect(r)}
+            className="w-full text-left bg-white/4 hover:bg-[#C8973A]/10 border border-white/6 hover:border-[#C8973A]/30 rounded-xl px-3 py-2.5 transition-colors"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-white text-xs font-bold">{r.name}</span>
+              {r.calories && (
+                <span className="text-[#C8973A] text-[10px] font-black">{r.calories} kcal</span>
+              )}
+            </div>
+            <div className="flex gap-3 mt-0.5">
+              {r.protein && <span className="text-[#4a9eff] text-[9px]">{r.protein}g protein</span>}
+              {r.carbs && <span className="text-white/30 text-[9px]">{r.carbs}g carbs</span>}
+              {r.fat && <span className="text-white/30 text-[9px]">{r.fat}g fat</span>}
+              <span className="text-white/20 text-[9px] capitalize">{r.category}</span>
+            </div>
+          </button>
+        ))}
+        {results.length === 0 && (
+          <div className="text-white/25 text-xs text-center py-3">No recipes found. Add manually below.</div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function FuelTracker() {
@@ -145,10 +251,12 @@ export default function FuelTracker() {
 
   const [profile, setProfile] = useState<FuelProfile | null>(null);
   const [log, setLog] = useState<DailyFuelLog | null>(null);
+  const [recentLogs, setRecentLogs] = useState<DailyFuelLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [evaluating, setEvaluating] = useState(false);
   const [showSetup, setShowSetup] = useState(false);
   const [showLogMeal, setShowLogMeal] = useState(false);
+  const [logMealTab, setLogMealTab] = useState<"search" | "manual">("search");
 
   // Setup form
   const [sf, setSf] = useState({
@@ -169,13 +277,31 @@ export default function FuelTracker() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [pRes, lRes] = await Promise.all([
+      const [pRes, lRes, rRes] = await Promise.all([
         fetch(`/api/fuel/profile/${userId}`),
         fetch(`/api/fuel/log/${userId}/${today}`),
+        fetch(`/api/fuel/log/recent/${userId}`),
       ]);
-      if (pRes.ok) setProfile(await pRes.json());
-      else setShowSetup(true);
+      if (pRes.ok) {
+        const p = await pRes.json();
+        setProfile(p);
+        // Pre-fill setup form if editing
+        setSf({
+          weightKg: String(p.weightKg ?? ""),
+          heightCm: String(p.heightCm ?? ""),
+          age: String(p.age ?? ""),
+          sex: p.sex ?? "male",
+          activityLevel: p.activityLevel ?? "moderate",
+          primaryGoal: p.primaryGoal ?? "fat_loss",
+          deficitTier: p.deficitTier ?? "moderate",
+          isPostMenopausal: p.isPostMenopausal ?? false,
+          conditions: p.conditions ?? [],
+        });
+      } else {
+        setShowSetup(true);
+      }
       if (lRes.ok) setLog(await lRes.json());
+      if (rRes.ok) setRecentLogs(await rRes.json());
     } catch (e) { console.error(e); }
     finally { setLoading(false); }
   }, [userId, today]);
@@ -196,6 +322,24 @@ export default function FuelTracker() {
       }),
     });
     if (res.ok) { setProfile(await res.json()); setShowSetup(false); }
+  };
+
+  // ─── Select TUTK recipe ───────────────────────────────────────────────────
+
+  const handleRecipeSelect = (recipe: Recipe) => {
+    setMf(prev => ({
+      ...prev,
+      foods: [{
+        name: recipe.name,
+        calories: String(recipe.calories ?? ""),
+        proteinG: String(recipe.protein ?? ""),
+        carbsG: String(recipe.carbs ?? ""),
+        fatG: String(recipe.fat ?? ""),
+        servingG: String(recipe.servings ? recipe.servings * 100 : ""),
+      }],
+      notes: recipe.scienceNote ? recipe.scienceNote.slice(0, 80) : "",
+    }));
+    setLogMealTab("manual");
   };
 
   // ─── Log meal ─────────────────────────────────────────────────────────────
@@ -221,9 +365,36 @@ export default function FuelTracker() {
     });
     if (res.ok) {
       setLog(await res.json()); setShowLogMeal(false);
+      setLogMealTab("search");
       setMf({ mealType: "meal1", notes: "",
         foods: [{ name: "", calories: "", proteinG: "", carbsG: "", fatG: "", servingG: "" }] });
     }
+  };
+
+  // ─── Delete meal ──────────────────────────────────────────────────────────
+
+  const deleteMeal = async (mealIndex: number) => {
+    if (!log) return;
+    const updatedMeals = log.meals.filter((_, i) => i !== mealIndex);
+    // Recompute totals client-side for instant feedback
+    const totals = updatedMeals.reduce((a, m) => ({
+      totalCalories: a.totalCalories + m.totalCalories,
+      totalProteinG: a.totalProteinG + m.totalProteinG,
+      totalCarbsG: a.totalCarbsG + m.totalCarbsG,
+      totalFatG: a.totalFatG + m.totalFatG,
+    }), { totalCalories: 0, totalProteinG: 0, totalCarbsG: 0, totalFatG: 0 });
+    const mpsCount = updatedMeals.filter(m => m.mpsTriggered).length;
+    setLog({ ...log, meals: updatedMeals, ...totals, mpsTriggersCount: mpsCount });
+    // Persist: log the updated log (server will overwrite)
+    await fetch("/api/fuel/log/meal", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        user_id: userId, date: today,
+        meal: { mealType: "_delete_sync", timeLogged: new Date().toISOString(),
+          foods: [], totalCalories: 0, totalProteinG: 0, totalCarbsG: 0, totalFatG: 0,
+          mpsTriggered: false, notes: `__replace__${JSON.stringify(updatedMeals)}` },
+      }),
+    }).catch(() => {});
   };
 
   // ─── Evaluate ─────────────────────────────────────────────────────────────
@@ -303,7 +474,7 @@ export default function FuelTracker() {
           </div>
         )}
 
-        {/* Summary rings */}
+        {/* Summary rings + 7-day chart */}
         {profile && (
           <div className="bg-[#0d0d0d] border border-white/8 rounded-2xl p-5">
             <div className="flex justify-around items-start mb-4">
@@ -336,8 +507,11 @@ export default function FuelTracker() {
               </div>
             </div>
 
+            {/* 7-day history */}
+            <WeekChart logs={recentLogs} calorieTarget={profile.calorieTarget} />
+
             <button onClick={evaluate} disabled={evaluating}
-              className="mt-3 w-full bg-white/5 hover:bg-white/8 border border-white/8 text-white/60 text-[10px] font-black tracking-widest py-2 rounded-xl transition-colors disabled:opacity-40">
+              className="mt-4 w-full bg-white/5 hover:bg-white/8 border border-white/8 text-white/60 text-[10px] font-black tracking-widest py-2 rounded-xl transition-colors disabled:opacity-40">
               {evaluating ? "ANALYZING..." : "GET PANTHER DIRECTIVE"}
             </button>
           </div>
@@ -370,9 +544,20 @@ export default function FuelTracker() {
                         <span className="text-[9px] bg-green-500/15 text-green-400 px-1.5 py-0.5 rounded font-black">MPS ✓</span>
                       )}
                     </div>
-                    <span className="text-white/25 text-[10px]">
-                      {new Date(meal.timeLogged).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
-                    </span>
+                    <div className="flex items-center gap-3">
+                      <span className="text-white/25 text-[10px]">
+                        {new Date(meal.timeLogged).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
+                      </span>
+                      <button
+                        onClick={() => deleteMeal(i)}
+                        className="text-white/15 hover:text-red-400 transition-colors text-xs"
+                        title="Delete meal"
+                      >
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                          <path d="M2 3h8M5 3V2h2v1M4 3v6h4V3H4z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </button>
+                    </div>
                   </div>
                   <div className="grid grid-cols-4 gap-2 text-center text-xs">
                     <div><div className="text-[#C8973A] font-bold">{Math.round(meal.totalCalories)}</div><div className="text-white/25">kcal</div></div>
@@ -385,12 +570,14 @@ export default function FuelTracker() {
                       {meal.foods.map((f, fi) => (
                         <div key={fi} className="flex justify-between text-[10px] text-white/30 py-0.5">
                           <span>{f.name}</span>
-                          <span>{f.servingG}g · {f.calories} kcal</span>
+                          <span>{f.servingG > 0 ? `${f.servingG}g · ` : ""}{f.calories} kcal</span>
                         </div>
                       ))}
                     </div>
                   )}
-                  {meal.notes && <div className="mt-1.5 text-[10px] text-white/25 italic">{meal.notes}</div>}
+                  {meal.notes && meal.notes !== "" && !meal.notes.startsWith("__replace__") && (
+                    <div className="mt-1.5 text-[10px] text-white/25 italic">{meal.notes}</div>
+                  )}
                 </div>
               );
             })}
@@ -498,56 +685,88 @@ export default function FuelTracker() {
       {/* ── Log Meal Modal ── */}
       {showLogMeal && (
         <div className="fixed inset-0 z-50 bg-black/92 flex items-end justify-center p-4">
-          <div className="bg-[#111] border border-white/10 rounded-3xl w-full max-w-md max-h-[88vh] overflow-y-auto p-6">
-            <div className="flex items-center justify-between mb-5">
+          <div className="bg-[#111] border border-white/10 rounded-3xl w-full max-w-md max-h-[92vh] overflow-y-auto p-6">
+            <div className="flex items-center justify-between mb-4">
               <div className="text-white font-black text-base tracking-widest">LOG MEAL</div>
-              <button onClick={() => setShowLogMeal(false)} className="text-white/35 hover:text-white text-lg">✕</button>
+              <button onClick={() => { setShowLogMeal(false); setLogMealTab("search"); }} className="text-white/35 hover:text-white text-lg">✕</button>
             </div>
-            <div className="space-y-4">
-              <div>
-                <label className="text-white/40 text-[10px] font-black tracking-wider block mb-1">MEAL TYPE</label>
-                <select value={mf.mealType} onChange={e => setMf(p => ({...p, mealType: e.target.value}))}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm focus:outline-none focus:border-[#C8973A]/50">
-                  {Object.entries(MEAL_TYPES).map(([v,{label}]) => <option key={v} value={v}>{label}</option>)}
-                </select>
-              </div>
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label className="text-white/40 text-[10px] font-black tracking-wider">FOODS</label>
-                  <button onClick={() => setMf(p => ({...p, foods: [...p.foods, {name:"",calories:"",proteinG:"",carbsG:"",fatG:"",servingG:""}]}))}
-                    className="text-[#C8973A] text-[10px] font-black tracking-wider">+ ADD FOOD</button>
-                </div>
-                {mf.foods.map((food, fi) => (
-                  <div key={fi} className="bg-white/4 rounded-xl p-3 mb-2 space-y-2">
-                    <input type="text" placeholder="Food name (e.g. Grilled chicken breast)" value={food.name}
-                      onChange={e => { const f=[...mf.foods]; f[fi]={...f[fi],name:e.target.value}; setMf(p=>({...p,foods:f})); }}
-                      className="w-full bg-transparent border-b border-white/10 pb-1 text-white text-sm focus:outline-none focus:border-[#C8973A]/40 placeholder-white/20"/>
-                    <div className="grid grid-cols-3 gap-2">
-                      {(["calories","proteinG","carbsG"] as const).map(field => (
-                        <div key={field}>
-                          <div className="text-white/25 text-[9px] mb-0.5">
-                            {field==="calories"?"kcal":field==="proteinG"?"protein g":"carbs g"}
-                          </div>
-                          <input type="number" placeholder="0" value={(food as any)[field]}
-                            onChange={e => { const f=[...mf.foods]; (f[fi] as any)[field]=e.target.value; setMf(p=>({...p,foods:f})); }}
-                            className="w-full bg-transparent border-b border-white/10 pb-1 text-white text-sm focus:outline-none focus:border-[#C8973A]/40 placeholder-white/20"/>
-                        </div>
-                      ))}
-                    </div>
+
+            {/* Meal type */}
+            <div className="mb-4">
+              <label className="text-white/40 text-[10px] font-black tracking-wider block mb-1">MEAL TYPE</label>
+              <select value={mf.mealType} onChange={e => setMf(p => ({...p, mealType: e.target.value}))}
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm focus:outline-none focus:border-[#C8973A]/50">
+                {Object.entries(MEAL_TYPES).map(([v,{label}]) => <option key={v} value={v}>{label}</option>)}
+              </select>
+            </div>
+
+            {/* Tab switcher */}
+            <div className="flex gap-2 mb-4">
+              {(["search","manual"] as const).map(tab => (
+                <button key={tab} onClick={() => setLogMealTab(tab)}
+                  className={`flex-1 py-2 rounded-xl text-[10px] font-black tracking-widest transition-colors ${
+                    logMealTab === tab
+                      ? "bg-[#C8973A] text-black"
+                      : "bg-white/5 text-white/40 hover:text-white/60"
+                  }`}>
+                  {tab === "search" ? "🔍 TUTK RECIPES" : "✏️ MANUAL ENTRY"}
+                </button>
+              ))}
+            </div>
+
+            {/* Recipe search tab */}
+            {logMealTab === "search" && (
+              <RecipeSearch onSelect={handleRecipeSelect} />
+            )}
+
+            {/* Manual entry tab */}
+            {logMealTab === "manual" && (
+              <div className="space-y-3">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-white/40 text-[10px] font-black tracking-wider">FOODS</label>
+                    <button onClick={() => setMf(p => ({...p, foods: [...p.foods, {name:"",calories:"",proteinG:"",carbsG:"",fatG:"",servingG:""}]}))}
+                      className="text-[#C8973A] text-[10px] font-black tracking-wider">+ ADD FOOD</button>
                   </div>
-                ))}
+                  {mf.foods.map((food, fi) => (
+                    <div key={fi} className="bg-white/4 rounded-xl p-3 mb-2 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <input type="text" placeholder="Food name" value={food.name}
+                          onChange={e => { const f=[...mf.foods]; f[fi]={...f[fi],name:e.target.value}; setMf(p=>({...p,foods:f})); }}
+                          className="flex-1 bg-transparent border-b border-white/10 pb-1 text-white text-sm focus:outline-none focus:border-[#C8973A]/40 placeholder-white/20"/>
+                        {mf.foods.length > 1 && (
+                          <button onClick={() => setMf(p => ({...p, foods: p.foods.filter((_,i) => i !== fi)}))}
+                            className="text-white/20 hover:text-red-400 text-xs">✕</button>
+                        )}
+                      </div>
+                      <div className="grid grid-cols-4 gap-2">
+                        {(["calories","proteinG","carbsG","fatG"] as const).map(field => (
+                          <div key={field}>
+                            <div className="text-white/25 text-[9px] mb-0.5">
+                              {field==="calories"?"kcal":field==="proteinG"?"prot g":field==="carbsG"?"carb g":"fat g"}
+                            </div>
+                            <input type="number" placeholder="0" value={(food as any)[field]}
+                              onChange={e => { const f=[...mf.foods]; (f[fi] as any)[field]=e.target.value; setMf(p=>({...p,foods:f})); }}
+                              className="w-full bg-transparent border-b border-white/10 pb-1 text-white text-sm focus:outline-none focus:border-[#C8973A]/40 placeholder-white/20"/>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div>
+                  <label className="text-white/40 text-[10px] font-black tracking-wider block mb-1">NOTES (optional)</label>
+                  <input type="text" value={mf.notes} onChange={e => setMf(p => ({...p, notes: e.target.value}))}
+                    placeholder="e.g. post-workout, restaurant meal"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm focus:outline-none focus:border-[#C8973A]/50 placeholder-white/20"/>
+                </div>
               </div>
-              <div>
-                <label className="text-white/40 text-[10px] font-black tracking-wider block mb-1">NOTES (optional)</label>
-                <input type="text" value={mf.notes} onChange={e => setMf(p => ({...p, notes: e.target.value}))}
-                  placeholder="e.g. post-workout, restaurant meal"
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm focus:outline-none focus:border-[#C8973A]/50 placeholder-white/20"/>
-              </div>
-              <button onClick={logMeal}
-                className="w-full bg-[#C8973A] text-black font-black py-3.5 rounded-xl tracking-widest hover:bg-[#d4a44a] transition-colors">
-                LOG THIS MEAL
-              </button>
-            </div>
+            )}
+
+            <button onClick={logMeal}
+              className="w-full bg-[#C8973A] text-black font-black py-3.5 rounded-xl tracking-widest hover:bg-[#d4a44a] transition-colors mt-4">
+              LOG THIS MEAL
+            </button>
           </div>
         </div>
       )}

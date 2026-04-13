@@ -11,6 +11,7 @@
  *   - Full-width: 30-DAY CHALLENGE
  */
 import { useLocation } from "wouter";
+import { useState, useEffect } from "react";
 import { XPBar } from "@/components/v4Components";
 import { ls, getStageFromXP } from "@/data/v4constants";
 import { TufSocialStickyStrip } from "@/components/TufSocialFooter";
@@ -21,6 +22,26 @@ const CHALLENGE_IMG  = "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978
 
 export default function Home() {
   const [, navigate] = useLocation();
+  const [fuelDirective, setFuelDirective] = useState<string | null>(null);
+  const [fuelSummary, setFuelSummary] = useState<{ calories: number; protein: number; target: number } | null>(null);
+
+  useEffect(() => {
+    const userId = localStorage.getItem("tuf_user_id") || "guest";
+    const today = new Date().toISOString().split("T")[0];
+    Promise.all([
+      fetch(`/api/fuel/log/${userId}/${today}`).then(r => r.ok ? r.json() : null),
+      fetch(`/api/fuel/profile/${userId}`).then(r => r.ok ? r.json() : null),
+    ]).then(([log, profile]) => {
+      if (log?.pantherDirective) setFuelDirective(log.pantherDirective);
+      if (log && profile) {
+        setFuelSummary({
+          calories: Math.round(log.totalCalories ?? 0),
+          protein: Math.round(log.totalProteinG ?? 0),
+          target: profile.calorieTarget,
+        });
+      }
+    }).catch(() => {});
+  }, []);
 
   const progress = ls.get<{ xp: number; streakDays: number; sessionsCompleted: number }>(
     "tuf_progress", { xp: 0, streakDays: 0, sessionsCompleted: 0 }
@@ -497,6 +518,38 @@ export default function Home() {
         </button>
 
         {/* ─── PANTHER SCHEDULER ─── hidden until calendar bugs resolved ─── */}
+
+        {/* ─── FUEL DIRECTIVE MINI-CARD ─── */}
+        {(fuelDirective || fuelSummary) && (
+          <button
+            onClick={() => navigate("/fuel-track")}
+            style={{
+              width: "100%", display: "block", marginTop: 10,
+              background: "linear-gradient(135deg, rgba(34,197,94,0.08) 0%, rgba(34,197,94,0.03) 100%)",
+              border: "1px solid rgba(34,197,94,0.25)",
+              borderRadius: 16, padding: "14px 16px", cursor: "pointer", textAlign: "left",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: fuelDirective ? 8 : 0 }}>
+              <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e" }}/>
+              <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: "0.12em", color: "#22c55e" }}>PANTHER FUEL DIRECTIVE</span>
+              {fuelSummary && (
+                <span style={{ marginLeft: "auto", fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, color: "rgba(255,255,255,0.4)" }}>
+                  {fuelSummary.calories} / {fuelSummary.target} kcal · {fuelSummary.protein}g protein
+                </span>
+              )}
+            </div>
+            {fuelDirective && (
+              <div style={{
+                fontFamily: "'Barlow', sans-serif", fontSize: 12,
+                color: "rgba(255,255,255,0.65)", lineHeight: 1.5,
+                display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden",
+              }}>
+                {fuelDirective}
+              </div>
+            )}
+          </button>
+        )}
 
         {/* ─── FUEL TRACKER ─── */}
         <button

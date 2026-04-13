@@ -7,6 +7,16 @@ import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { PantherAvatar } from '@/components/PantherAvatar';
 
+interface FuelProfile {
+  calorieTarget: number;
+  proteinTargetG: number;
+  carbTargetG: number;
+  fatTargetG: number;
+  tdee: number;
+  primaryGoal: string;
+  conditions: string[];
+}
+
 interface UserProfile {
   name: string;
   goal: string;
@@ -70,6 +80,15 @@ export default function Profile() {
   const [editing, setEditing] = useState(false);
   const [editName, setEditName] = useState('');
   const [editGoal, setEditGoal] = useState('');
+  const [fuelProfile, setFuelProfile] = useState<FuelProfile | null>(null);
+  const userId = localStorage.getItem('tuf_user_id') || 'guest';
+
+  useEffect(() => {
+    fetch(`/api/fuel/profile/${userId}`)
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (d) setFuelProfile(d); })
+      .catch(() => {});
+  }, [userId]);
 
   useEffect(() => {
     const stored = localStorage.getItem('tuf_profile');
@@ -236,6 +255,50 @@ export default function Profile() {
             </div>
           )}
         </div>
+
+        {/* ── FUEL Targets ──────────────────────────────────────────── */}
+        {fuelProfile && (
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-xs font-black tracking-widest text-muted-foreground">FUEL TARGETS</p>
+              <button
+                onClick={() => navigate('/fuel-track')}
+                className="text-xs font-bold text-primary hover:text-primary/80 transition-colors"
+              >
+                Edit
+              </button>
+            </div>
+            <div className="grid grid-cols-2 gap-2 mb-2">
+              {[
+                { label: 'Calories', value: `${fuelProfile.calorieTarget} kcal`, color: 'text-amber-400' },
+                { label: 'Protein', value: `${fuelProfile.proteinTargetG}g`, color: 'text-blue-400' },
+                { label: 'Carbs', value: `${fuelProfile.carbTargetG}g`, color: 'text-foreground' },
+                { label: 'Fat', value: `${fuelProfile.fatTargetG}g`, color: 'text-foreground' },
+              ].map(({ label, value, color }) => (
+                <div key={label} className="flex items-center justify-between p-3 rounded-xl bg-card border border-border">
+                  <span className="text-xs font-bold text-muted-foreground">{label}</span>
+                  <span className={`text-sm font-black ${color}`}>{value}</span>
+                </div>
+              ))}
+            </div>
+            <div className="flex items-center justify-between p-3 rounded-xl bg-card border border-border mb-2">
+              <span className="text-xs font-bold text-muted-foreground">TDEE</span>
+              <span className="text-sm font-bold text-foreground">{fuelProfile.tdee} kcal/day</span>
+            </div>
+            {fuelProfile.conditions.length > 0 && (
+              <div className="p-3 rounded-xl bg-card border border-border">
+                <span className="text-xs font-bold text-muted-foreground block mb-1.5">CONDITIONS</span>
+                <div className="flex flex-wrap gap-1.5">
+                  {fuelProfile.conditions.map(c => (
+                    <span key={c} className="text-[10px] bg-primary/15 text-primary px-2 py-0.5 rounded-full font-bold capitalize">
+                      {c.replace('_', ' ')}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* ── Quick Links ───────────────────────────────────────────── */}
         <div className="space-y-2">

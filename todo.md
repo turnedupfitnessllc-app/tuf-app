@@ -196,18 +196,19 @@
 
 ## FUEL Pillar (Docs 05 + 06 — April 2026)
 
-- [ ] fuelCalculations.ts — RMR (Mifflin-St Jeor), TDEE (activity multiplier + age adjustment), daily targets, flag evaluation engine
-- [ ] Extend db.ts — UserFuelProfile, DailyFuelLog, MealEntry schemas + CRUD helpers
-- [ ] FUEL server route — /api/fuel/* (profile, log meal, get daily log, generate directive)
-- [ ] Claude FUEL directive generation — flag priority order, FUEL system prompt template
-- [ ] FUEL standalone screen — daily summary rings, meal log, Panther directive card, + Log Meal FAB
-- [ ] FUEL onboarding flow — collect weight/height/age/sex/activity/goal/conditions
-- [ ] FUEL nav card on Home Command Center
-- [ ] /fuel route registered in App.tsx
-- [ ] Condition overlay logic — diabetes, hypertension, joint inflammation stacking
-- [ ] TUTK food database connection — wire 1,800-food database to meal logging
-- [ ] PROFILE screen FUEL tab — targets display, edit button, condition flags
-- [ ] Daily coaching feed FUEL card — flag-triggered directive display
+- [x] fuelCalculations.ts — RMR (Mifflin-St Jeor), TDEE (activity multiplier + age adjustment), daily targets, flag evaluation engine
+- [x] Extend db.ts — UserFuelProfile, DailyFuelLog, MealEntry schemas + CRUD helpers
+- [x] FUEL server route — /api/fuel/* (profile, log meal, get daily log, generate directive)
+- [x] Claude FUEL directive generation — flag priority order, FUEL system prompt template
+- [x] FUEL standalone screen — daily summary rings, meal log, Panther directive card, + Log Meal FAB
+- [x] FUEL onboarding flow — collect weight/height/age/sex/activity/goal/conditions
+- [x] FUEL nav card on Home Command Center
+- [x] /fuel route registered in App.tsx
+- [x] Condition overlay logic — diabetes, hypertension, joint inflammation stacking
+- [x] TUTK food database connection — 43-recipe TUTK search in Log Meal modal
+- [x] PROFILE screen FUEL tab — targets display, edit button, condition flags
+- [x] Daily coaching feed FUEL card — flag-triggered directive display on Home
+- [x] FuelTracker v2.0 — TUTK recipe search, delete meal, 7-day history bar chart
 
 ## Auth + Tier Gating (April 2026)
 
@@ -238,18 +239,19 @@
 
 ## FUEL Pillar (Docs 05 + 06 — April 2026)
 
-- [ ] fuelCalculations.ts — RMR (Mifflin-St Jeor), TDEE (activity multiplier + age adjustment), daily targets, flag evaluation engine
-- [ ] Extend db.ts — UserFuelProfile, DailyFuelLog, MealEntry schemas + CRUD helpers
-- [ ] FUEL server route — /api/fuel/* (profile, log meal, get daily log, generate directive)
-- [ ] Claude FUEL directive generation — flag priority order, FUEL system prompt template
-- [ ] FUEL standalone screen — daily summary rings, meal log, Panther directive card, + Log Meal FAB
-- [ ] FUEL onboarding flow — collect weight/height/age/sex/activity/goal/conditions
-- [ ] FUEL nav card on Home Command Center
-- [ ] /fuel route registered in App.tsx
-- [ ] Condition overlay logic — diabetes, hypertension, joint inflammation stacking
-- [ ] TUTK food database connection — wire 1,800-food database to meal logging
-- [ ] PROFILE screen FUEL tab — targets display, edit button, condition flags
-- [ ] Daily coaching feed FUEL card — flag-triggered directive display
+- [x] fuelCalculations.ts — RMR (Mifflin-St Jeor), TDEE (activity multiplier + age adjustment), daily targets, flag evaluation engine
+- [x] Extend db.ts — UserFuelProfile, DailyFuelLog, MealEntry schemas + CRUD helpers
+- [x] FUEL server route — /api/fuel/* (profile, log meal, get daily log, generate directive)
+- [x] Claude FUEL directive generation — flag priority order, FUEL system prompt template
+- [x] FUEL standalone screen — daily summary rings, meal log, Panther directive card, + Log Meal FAB
+- [x] FUEL onboarding flow — collect weight/height/age/sex/activity/goal/conditions
+- [x] FUEL nav card on Home Command Center
+- [x] /fuel route registered in App.tsx
+- [x] Condition overlay logic — diabetes, hypertension, joint inflammation stacking
+- [x] TUTK food database connection — 43-recipe TUTK search in Log Meal modal
+- [x] PROFILE screen FUEL tab — targets display, edit button, condition flags
+- [x] Daily coaching feed FUEL card — flag-triggered directive display on Home
+- [x] FuelTracker v2.0 — TUTK recipe search, delete meal, 7-day history bar chart
 
 ## Auth + Tier Gating (April 2026)
 
