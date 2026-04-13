@@ -44,6 +44,7 @@ import Schedule from "./pages/Schedule";
 import FuelTracker from "./pages/FuelTracker";
 import Mindset from "./pages/Mindset";
 import Panther30 from "./pages/Panther30";
+import Billing from "./pages/Billing";
 
 // IP Protection
 import { TufTermsModal } from "./components/TufTermsModal";
@@ -70,6 +71,7 @@ function Router() {
         <Route path={"/evolve"} component={Evolve} />
         <Route path={"/profile"} component={Profile} />
         <Route path={"/pricing"} component={Pricing} />
+        <Route path={"/billing"} component={Billing} />
         <Route path={"/challenge"} component={Challenge} />
         {/* <Route path={"/schedule"} component={Schedule} /> */}  {/* hidden — calendar bugs being fixed */}
         <Route path={"/mindset"} component={Mindset} />

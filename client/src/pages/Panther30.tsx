@@ -2,9 +2,103 @@
  * Panther 30-Day Training System — Session Player
  * 5 phases: Control → Stability → Strength → Explosion → Evolution
  */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
-import { getAnimationForDay } from "@/data/pantherAnimations";
+import { getAnimationForDay, type PantherAnimation } from "@/data/pantherAnimations";
+import { useAnimationPlayer, FALLBACK_VIDEO_URL } from "@/hooks/useAnimationPlayer";
+
+const PANTHER_MASCOT = "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/panther-mascot-gym_27e64ae1.png";
+
+/** Live Panther Animation Card — polls /api/animation until video is ready, then plays it */
+function AnimationCard({ anim, color, animationId, difficulty }: {
+  anim: PantherAnimation;
+  color: string;
+  animationId: string;
+  difficulty?: "beginner" | "normal" | "intermediate" | "advanced";
+}) {
+  const player = useAnimationPlayer(animationId, difficulty || "normal", true);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (player.url && videoRef.current) {
+      videoRef.current.play().catch(() => {});
+    }
+  }, [player.url]);
+
+  return (
+    <div style={{
+      position: "relative", borderRadius: 16, overflow: "hidden",
+      height: 160, marginBottom: 14,
+      background: anim.gradient,
+      border: `1px solid ${color}30`,
+    }}>
+      {/* Live AI video (fades in when ready) */}
+      {player.url && (
+        <video
+          ref={videoRef}
+          src={player.url}
+          loop muted playsInline autoPlay
+          style={{
+            position: "absolute", inset: 0, width: "100%", height: "100%",
+            objectFit: "cover", opacity: 0.55,
+          }}
+        />
+      )}
+      {/* Fallback/loading video (always shown until AI video is ready) */}
+      {(!player.url || player.source === "fallback") && (
+        <video
+          src={FALLBACK_VIDEO_URL}
+          loop muted playsInline autoPlay
+          style={{
+            position: "absolute", inset: 0, width: "100%", height: "100%",
+            objectFit: "cover", opacity: 0.22,
+          }}
+        />
+      )}
+      {/* Left fade overlay */}
+      <div style={{
+        position: "absolute", inset: 0,
+        background: "linear-gradient(to right, rgba(8,8,8,0.92) 0%, rgba(8,8,8,0.55) 50%, transparent 100%)",
+        pointerEvents: "none",
+      }} />
+      {/* Pulse ring */}
+      <div style={{
+        position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)",
+        width: 64, height: 64, border: `2px solid ${color}`,
+        borderRadius: "50%", opacity: 0.35,
+        animation: "animRing 2s ease-in-out infinite",
+        pointerEvents: "none",
+      }} />
+      {/* Emoji */}
+      <div style={{
+        position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)",
+        width: 64, height: 64,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        fontSize: 30, animation: "animGlow 3s ease-in-out infinite",
+      }}>{anim.emoji}</div>
+      {/* Text */}
+      <div style={{ position: "absolute", left: 96, top: "50%", transform: "translateY(-50%)", right: 16 }}>
+        <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: "0.2em", color, marginBottom: 4, textTransform: "uppercase" }}>PANTHER MODE</p>
+        <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 24, letterSpacing: "0.06em", color: "#fff", lineHeight: 1, marginBottom: 6 }}>{anim.label.toUpperCase()}</p>
+        {player.status === "loading" && (
+          <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, color, letterSpacing: "0.1em", animation: "animGlow 1.5s ease-in-out infinite" }}>GENERATING VIDEO...</p>
+        )}
+        {player.status === "complete" && (
+          <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, color, letterSpacing: "0.04em" }}>LIVE · {player.source === "cache" ? "CACHED" : "AI GENERATED"}</p>
+        )}
+        {(player.status === "failed" || player.status === "idle") && (
+          <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, color: "rgba(255,255,255,0.28)", letterSpacing: "0.04em", fontStyle: "italic", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{anim.prompt}</p>
+        )}
+      </div>
+      {/* Scan line */}
+      <div style={{
+        position: "absolute", bottom: 0, left: 0, right: 0, height: 2,
+        background: `linear-gradient(to right, transparent, ${color}80, transparent)`,
+        animation: "scanLine 3s ease-in-out infinite",
+      }} />
+    </div>
+  );
+}
 
 const PHASE_COLORS: Record<string, string> = {
   Control: "#4a9eff",
@@ -138,42 +232,20 @@ export default function Panther30() {
           @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap');
           @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
           @keyframes animGlow { 0%,100%{opacity:0.6} 50%{opacity:1} }
+          @keyframes animRing { 0%,100%{transform:translateY(-50%) scale(1);opacity:0.35} 50%{transform:translateY(-50%) scale(1.18);opacity:0.7} }
+          @keyframes scanLine { 0%{opacity:0.3} 50%{opacity:0.9} 100%{opacity:0.3} }
         `}</style>
         <main style={{ maxWidth: 480, margin: "0 auto", padding: "72px 16px 0" }}>
           <button onClick={() => setView("overview")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", marginBottom: 16, borderRadius: 8, border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.03)", fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", color: "rgba(255,255,255,0.45)", cursor: "pointer" }}>
             ← BACK
           </button>
 
-          {/* Animation Context Banner */}
-          <div style={{
-            borderRadius: 14, marginBottom: 14, overflow: "hidden",
-            background: anim.gradient,
-            border: `1px solid ${color}20`,
-            padding: "16px",
-            display: "flex", alignItems: "center", gap: 14,
-            animation: "animGlow 3s ease-in-out infinite",
-          }}>
-            <div style={{
-              width: 52, height: 52, borderRadius: 12,
-              background: `${color}15`,
-              border: `1px solid ${color}30`,
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: 28, flexShrink: 0,
-            }}>
-              {anim.emoji}
-            </div>
-            <div style={{ flex: 1 }}>
-              <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: "0.18em", color, marginBottom: 3 }}>
-                PANTHER MODE
-              </p>
-              <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 18, letterSpacing: "0.06em", color: "#fff", lineHeight: 1 }}>
-                {anim.label.toUpperCase()}
-              </p>
-              <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, color: "rgba(255,255,255,0.3)", marginTop: 3, letterSpacing: "0.04em", fontStyle: "italic" }}>
-                {anim.prompt.slice(0, 60)}...
-              </p>
-            </div>
-          </div>
+          {/* Live Panther Animation Card — AI video via FAL.ai Kling */}
+          <AnimationCard
+            anim={anim}
+            color={color}
+            animationId={anim.key}
+          />
 
           {/* Header */}
           <div style={{ marginBottom: 16 }}>

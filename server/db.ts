@@ -38,6 +38,12 @@ export interface User {
   height?: number;
   created_at: number;
   updated_at: number;
+  // ── Subscription / billing ──────────────────────────────────────────────────
+  tier?: "free" | "cub" | "stealth" | "controlled" | "apex";
+  stripe_customer_id?: string;
+  stripe_subscription_id?: string;
+  subscription_status?: "active" | "cancelled" | "past_due" | "trialing";
+  tier_updated_at?: number;
 }
 
 export interface PainLog {
@@ -221,6 +227,21 @@ export interface StoredMealEntry {
   notes?: string;
 }
 
+// ─── Animation Jobs ─────────────────────────────────────────────────────────
+
+export interface AnimationJob {
+  job_id: string;           // UUID
+  animation_id: string;     // e.g. "panther_squat_control"
+  difficulty: string;       // "beginner" | "normal" | "advanced"
+  prompt_used: string;      // final prompt sent to generation API
+  status: "pending" | "processing" | "complete" | "failed";
+  url?: string;             // CDN URL when complete
+  source: "cache" | "generated" | "fallback";
+  error?: string;
+  created_at: number;
+  updated_at: number;
+}
+
 // ─── Database Schema ──────────────────────────────────────────────────────────
 
 interface DbSchema {
@@ -235,6 +256,7 @@ interface DbSchema {
   fuel_profiles: StoredFuelProfile[];
   fuel_logs: StoredDailyFuelLog[];
   mindset_challenges: StoredMindsetChallenge[];
+  animation_jobs: AnimationJob[];
 }
 
 const defaultData: DbSchema = {
@@ -249,6 +271,7 @@ const defaultData: DbSchema = {
   fuel_profiles: [],
   fuel_logs: [],
   mindset_challenges: [],
+  animation_jobs: [],
 };
 
 // ─── DB Singleton ─────────────────────────────────────────────────────────────
@@ -268,6 +291,7 @@ async function getDb(): Promise<Low<DbSchema>> {
   if (!_db.data.fuel_profiles) _db.data.fuel_profiles = [];
   if (!_db.data.fuel_logs) _db.data.fuel_logs = [];
   if (!_db.data.mindset_challenges) _db.data.mindset_challenges = [];
+  if (!_db.data.animation_jobs) _db.data.animation_jobs = [];
   await _db.write();
   return _db;
 }
@@ -301,6 +325,39 @@ export async function upsertUser(data: Partial<User> & { user_id: string }): Pro
 export async function getUser(user_id: string): Promise<User | undefined> {
   const db = await getDb();
   return db.data.users.find((u) => u.user_id === user_id);
+}
+
+/** Update a user's subscription tier after a Stripe webhook event */
+export async function updateUserTier(
+  identifier: { email?: string; user_id?: string },
+  update: {
+    tier: User["tier"];
+    stripe_customer_id?: string;
+    stripe_subscription_id?: string;
+    subscription_status?: User["subscription_status"];
+  }
+): Promise<User | null> {
+  const db = await getDb();
+  const now = Date.now();
+  const idx = identifier.user_id
+    ? db.data.users.findIndex((u) => u.user_id === identifier.user_id)
+    : db.data.users.findIndex((u) => u.email === identifier.email);
+  if (idx < 0) return null;
+  db.data.users[idx] = {
+    ...db.data.users[idx],
+    ...update,
+    tier_updated_at: now,
+    updated_at: now,
+  };
+  await db.write();
+  console.log(`[DB] Tier updated → user ${db.data.users[idx].user_id}: ${update.tier} (${update.subscription_status})`);
+  return db.data.users[idx];
+}
+
+/** Look up a user by Stripe customer ID */
+export async function getUserByStripeCustomer(stripe_customer_id: string): Promise<User | undefined> {
+  const db = await getDb();
+  return db.data.users.find((u) => u.stripe_customer_id === stripe_customer_id);
 }
 
 // ─── Pain Logs ────────────────────────────────────────────────────────────────
@@ -659,4 +716,68 @@ export async function getMindsetChallenge(
 ): Promise<StoredMindsetChallenge | undefined> {
   const db = await getDb();
   return db.data.mindset_challenges.find((c) => c.user_id === user_id);
+}
+
+// ─── Animation Jobs ───────────────────────────────────────────────────────────
+
+/** Create a new animation job record */
+export async function createAnimationJob(
+  data: Omit<AnimationJob, "job_id" | "created_at" | "updated_at">
+): Promise<AnimationJob> {
+  const db = await getDb();
+  const job: AnimationJob = {
+    job_id: randomUUID(),
+    ...data,
+    created_at: Date.now(),
+    updated_at: Date.now(),
+  };
+  db.data.animation_jobs.push(job);
+  await db.write();
+  return job;
+}
+
+/** Update an existing animation job (status, url, error) */
+export async function updateAnimationJob(
+  job_id: string,
+  update: Partial<Pick<AnimationJob, "status" | "url" | "error" | "source">>
+): Promise<AnimationJob | null> {
+  const db = await getDb();
+  const idx = db.data.animation_jobs.findIndex((j) => j.job_id === job_id);
+  if (idx < 0) return null;
+  db.data.animation_jobs[idx] = {
+    ...db.data.animation_jobs[idx],
+    ...update,
+    updated_at: Date.now(),
+  };
+  await db.write();
+  return db.data.animation_jobs[idx];
+}
+
+/** Get a job by its UUID */
+export async function getAnimationJob(job_id: string): Promise<AnimationJob | undefined> {
+  const db = await getDb();
+  return db.data.animation_jobs.find((j) => j.job_id === job_id);
+}
+
+/** Get the most recent completed job for an animation_id (cache lookup) */
+export async function getCachedAnimation(
+  animation_id: string,
+  difficulty: string
+): Promise<AnimationJob | undefined> {
+  const db = await getDb();
+  return db.data.animation_jobs
+    .filter(
+      (j) =>
+        j.animation_id === animation_id &&
+        j.difficulty === difficulty &&
+        j.status === "complete" &&
+        !!j.url
+    )
+    .sort((a, b) => b.created_at - a.created_at)[0];
+}
+
+/** Get all completed animation jobs (for preload status check) */
+export async function getAllCachedAnimations(): Promise<AnimationJob[]> {
+  const db = await getDb();
+  return db.data.animation_jobs.filter((j) => j.status === "complete" && !!j.url);
 }
