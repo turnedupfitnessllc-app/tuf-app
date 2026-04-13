@@ -405,6 +405,12 @@ export default function BiomechanicalOverlay() {
   const lastVoiceRef = useRef<number>(0);
   const lastVoiceTextRef = useRef<string>("");
 
+  // ── Rep Counter ─────────────────────────────────────────────────────────────
+  const [repCount, setRepCount] = useState(0);
+  const [repStage, setRepStage] = useState<"up" | "down">("up");
+  const repStageRef = useRef<"up" | "down">("up");
+  const lastRepVoiceRef = useRef<number>(0);
+
   const currentMode = EXERCISE_MODES.find(m => m.id === scanMode)!;
 
   // ── Angle Math ──────────────────────────────────────────────────────────────
@@ -465,6 +471,35 @@ export default function BiomechanicalOverlay() {
       faults,
       status: detectedCount > 0 ? "DETECTED" : "CLEAR",
     });
+
+    // ── Rep counting (SQUAT, LUNGE, HINGE modes) ──────────────────────────────
+    if (scanMode === "SQUAT" || scanMode === "LUNGE" || scanMode === "HINGE") {
+      // kneeAngle < 100 = bottom position; > 160 = top position
+      const depthThreshold = scanMode === "HINGE" ? 80 : 100;
+      const topThreshold = scanMode === "HINGE" ? 150 : 160;
+      if (kneeAngle < depthThreshold && repStageRef.current === "up") {
+        repStageRef.current = "down";
+        setRepStage("down");
+      }
+      if (kneeAngle > topThreshold && repStageRef.current === "down") {
+        repStageRef.current = "up";
+        setRepStage("up");
+        setRepCount(prev => prev + 1);
+        // Voice cue on rep completion (debounced 3s)
+        const repNow = Date.now();
+        if (voiceEnabled && repNow - lastRepVoiceRef.current > 3000) {
+          lastRepVoiceRef.current = repNow;
+          const voiceId = scanMode === "SQUAT" ? "sq_slow" : scanMode === "HINGE" ? "rdl" : "split_squat";
+          fetch("/api/voice/generate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ exercise_id: voiceId, difficulty: "normal" }),
+          }).then(r => r.json()).then(d => {
+            if (d.audio_url) { const a = new Audio(d.audio_url); a.play().catch(() => {}); }
+          }).catch(() => {});
+        }
+      }
+    }
 
     // Voice cue throttle — 8 seconds between cues
     const now = Date.now();
@@ -1002,6 +1037,39 @@ export default function BiomechanicalOverlay() {
                 </div>
               ))}
             </div>
+          </V4Card>
+        )}
+
+        {/* SCENE 5b — Rep Counter (SQUAT / LUNGE / HINGE) */}
+        {isActive && (scanMode === "SQUAT" || scanMode === "LUNGE" || scanMode === "HINGE") && (
+          <V4Card style={{ marginBottom: 14 }}>
+            <SceneHeader num="05b" label="REP COUNTER" color={currentMode.color} />
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
+              <div style={{ textAlign: "center", padding: "10px 8px", borderRadius: 10, background: "rgba(255,255,255,0.02)", border: `1px solid ${currentMode.color}44` }}>
+                <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 36, color: currentMode.color, lineHeight: 1 }}>
+                  {repCount}
+                </p>
+                <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: "0.1em", color: "rgba(255,255,255,0.3)", marginTop: 2 }}>REPS</p>
+              </div>
+              <div style={{ textAlign: "center", padding: "10px 8px", borderRadius: 10, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}>
+                <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 22, color: repStage === "down" ? "#ef4444" : "#22c55e", lineHeight: 1 }}>
+                  {repStage.toUpperCase()}
+                </p>
+                <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: "0.1em", color: "rgba(255,255,255,0.3)", marginTop: 2 }}>STAGE</p>
+              </div>
+              <div style={{ textAlign: "center", padding: "10px 8px", borderRadius: 10, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}>
+                <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 22, color: angles.knee > 0 ? "#facc15" : "#333", lineHeight: 1 }}>
+                  {angles.knee > 0 ? `${angles.knee}°` : "—"}
+                </p>
+                <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: "0.1em", color: "rgba(255,255,255,0.3)", marginTop: 2 }}>KNEE ANGLE</p>
+              </div>
+            </div>
+            <button
+              onClick={() => { setRepCount(0); repStageRef.current = "up"; setRepStage("up"); }}
+              style={{ marginTop: 10, width: "100%", padding: "6px 0", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", color: "rgba(255,255,255,0.4)", cursor: "pointer" }}
+            >
+              RESET REPS
+            </button>
           </V4Card>
         )}
 

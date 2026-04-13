@@ -314,6 +314,7 @@ interface DbSchema {
   mindset_challenges: StoredMindsetChallenge[];
   animation_jobs: AnimationJob[];
   meal_plans: WeeklyMealPlan[];
+  voice_jobs: VoiceJob[];
 }
 
 const defaultData: DbSchema = {
@@ -330,6 +331,7 @@ const defaultData: DbSchema = {
   mindset_challenges: [],
   animation_jobs: [],
   meal_plans: [],
+  voice_jobs: [],
 };
 
 // ─── DB Singleton ─────────────────────────────────────────────────────────────
@@ -351,6 +353,7 @@ async function getDb(): Promise<Low<DbSchema>> {
   if (!_db.data.mindset_challenges) _db.data.mindset_challenges = [];
   if (!_db.data.animation_jobs) _db.data.animation_jobs = [];
   if (!_db.data.meal_plans) _db.data.meal_plans = [];
+  if (!_db.data.voice_jobs) _db.data.voice_jobs = [];
   await _db.write();
   return _db;
 }
@@ -913,4 +916,71 @@ export async function markMealPlanViewed(planId: string): Promise<void> {
     plan.lastViewedAt = Date.now();
     await db.write();
   }
+}
+
+// ─── Voice Jobs ──────────────────────────────────────────────────────────────
+
+export interface VoiceJob {
+  job_id: string;
+  exercise_id: string;
+  difficulty: string;
+  voice_key: string;
+  text: string;
+  status: "pending" | "complete" | "failed";
+  url?: string;           // S3 URL once uploaded
+  source?: "generated" | "cache";
+  error?: string;
+  created_at: number;
+  updated_at: number;
+}
+
+export async function createVoiceJob(
+  data: Omit<VoiceJob, "job_id" | "created_at" | "updated_at">
+): Promise<VoiceJob> {
+  const db = await getDb();
+  const now = Date.now();
+  const job: VoiceJob = {
+    job_id: randomUUID(),
+    created_at: now,
+    updated_at: now,
+    ...data,
+  };
+  if (!db.data.voice_jobs) db.data.voice_jobs = [];
+  db.data.voice_jobs.push(job);
+  await db.write();
+  return job;
+}
+
+export async function updateVoiceJob(
+  job_id: string,
+  update: Partial<Pick<VoiceJob, "status" | "url" | "error" | "source">>
+): Promise<VoiceJob | null> {
+  const db = await getDb();
+  if (!db.data.voice_jobs) db.data.voice_jobs = [];
+  const idx = db.data.voice_jobs.findIndex((j) => j.job_id === job_id);
+  if (idx < 0) return null;
+  db.data.voice_jobs[idx] = {
+    ...db.data.voice_jobs[idx],
+    ...update,
+    updated_at: Date.now(),
+  };
+  await db.write();
+  return db.data.voice_jobs[idx];
+}
+
+export async function getVoiceJob(job_id: string): Promise<VoiceJob | undefined> {
+  const db = await getDb();
+  if (!db.data.voice_jobs) return undefined;
+  return db.data.voice_jobs.find((j) => j.job_id === job_id);
+}
+
+export async function getCachedVoiceJob(
+  exercise_id: string,
+  difficulty: string
+): Promise<VoiceJob | undefined> {
+  const db = await getDb();
+  if (!db.data.voice_jobs) return undefined;
+  return db.data.voice_jobs
+    .filter((j) => j.exercise_id === exercise_id && j.difficulty === difficulty && j.status === "complete" && j.url)
+    .sort((a, b) => b.created_at - a.created_at)[0];
 }

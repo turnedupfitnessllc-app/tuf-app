@@ -281,3 +281,21 @@
 - [ ] DATABASE tab — 1,800-food search, filter by category/condition/regional, log to FUEL
 - [ ] FEAST + FUEL cross-pillar condition flag sync
 - [ ] Core tier upgrade prompt on FEAST nav icon
+
+## Bugs (April 2026)
+
+- [ ] Purchase error — "reading error" when trying to buy a program/subscription on Pricing/Billing screen
+
+## Voice API (April 2026)
+
+- [ ] POST /api/voice/generate — ElevenLabs TTS, async job, returns { voice_id, status }
+- [ ] GET /api/voice/:id — poll job status, returns { status, url } when audio ready
+- [ ] Client-side useVoicePlayer hook — polls until complete, plays audio
+
+## BOA Biomechanical Overlay Analysis (April 2026)
+
+- [ ] Install @tensorflow/tfjs and @tensorflow-models/pose-detection
+- [ ] BOA.tsx — camera feed + MoveNet pose detection + keypoint canvas overlay
+- [ ] Rep counter — joint angle calculation (hip-knee-ankle) for squat depth
+- [ ] Dysfunction scoring — UCS/LCS/knee/shoulder flags from keypoint deviations
+- [ ] Voice cue on rep completion — calls /api/voice/generate with exercise_id
