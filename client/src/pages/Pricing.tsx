@@ -384,16 +384,19 @@ export default function Pricing() {
           <div className="prestige-card">
             <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 14 }}>
               <div style={{
-                width: 44, height: 44, borderRadius: 10,
-                background: "rgba(200,151,58,0.15)",
+                width: 56, height: 56, borderRadius: 10,
+                background: "#fff",
                 border: "1px solid rgba(200,151,58,0.3)",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 flexShrink: 0,
+                overflow: "hidden",
+                padding: 4,
               }}>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                  <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
-                    stroke="#C8973A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+                <img
+                  src="https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/prestige-labs-logo_c463f182.jpg"
+                  alt="Prestige Labs"
+                  style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                />
               </div>
               <div>
                 <div style={{
