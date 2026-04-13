@@ -79,7 +79,7 @@ function AnimationCard({ anim, color, animationId, difficulty }: {
       {/* Text */}
       <div style={{ position: "absolute", left: 96, top: "50%", transform: "translateY(-50%)", right: 16 }}>
         <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: "0.2em", color, marginBottom: 4, textTransform: "uppercase" }}>PANTHER MODE</p>
-        <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 24, letterSpacing: "0.06em", color: "#fff", lineHeight: 1, marginBottom: 6 }}>{anim.label.toUpperCase()}</p>
+        <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 24, letterSpacing: "0.06em", color: "var(--text-primary)", lineHeight: 1, marginBottom: 6 }}>{anim.label.toUpperCase()}</p>
         {player.status === "loading" && (
           <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, color, letterSpacing: "0.1em", animation: "animGlow 1.5s ease-in-out infinite" }}>GENERATING VIDEO...</p>
         )}
@@ -209,7 +209,7 @@ export default function Panther30() {
 
   if (loading) {
     return (
-      <div style={{ minHeight: "100vh", background: "#080808", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ minHeight: "100vh", background: "var(--bg-primary)", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <p style={{ fontFamily: "'Barlow Condensed', sans-serif", color: "rgba(255,255,255,0.4)", letterSpacing: "0.1em" }}>LOADING PROGRAM...</p>
       </div>
     );
@@ -227,7 +227,7 @@ export default function Panther30() {
     );
 
     return (
-      <div style={{ minHeight: "100vh", background: "#080808", paddingBottom: 96 }}>
+      <div style={{ minHeight: "100vh", background: "var(--bg-primary)", paddingBottom: 96 }}>
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap');
           @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
@@ -252,7 +252,7 @@ export default function Panther30() {
             <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", color, marginBottom: 2 }}>
               DAY {activeDay.day} · {activeDay.phase.toUpperCase()}
             </p>
-            <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 28, letterSpacing: "0.07em", color: "#fff", lineHeight: 1 }}>
+            <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 28, letterSpacing: "0.07em", color: "var(--text-primary)", lineHeight: 1 }}>
               {activeDay.focus.toUpperCase()}
             </h1>
             <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, color: "rgba(255,255,255,0.35)", marginTop: 2 }}>
@@ -300,7 +300,7 @@ export default function Panther30() {
                   }}
                 >
                   <div style={{ width: 24, height: 24, borderRadius: 8, background: done ? color : "rgba(255,255,255,0.06)", border: `1px solid ${done ? color : "rgba(255,255,255,0.1)"}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                    {done && <span style={{ color: "#fff", fontSize: 12 }}>✓</span>}
+                    {done && <span style={{ color: "var(--text-primary)", fontSize: 12 }}>✓</span>}
                   </div>
                   <div style={{ flex: 1 }}>
                     <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 14, fontWeight: 700, color: done ? "rgba(255,255,255,0.5)" : "#fff", letterSpacing: "0.04em", textDecoration: done ? "line-through" : "none" }}>
@@ -339,7 +339,7 @@ export default function Panther30() {
   const currentDay = totalDone + 1;
 
   return (
-    <div style={{ minHeight: "100vh", background: "#080808", paddingBottom: 96 }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg-primary)", paddingBottom: 96 }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap');
         @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
@@ -352,7 +352,7 @@ export default function Panther30() {
         {/* Header */}
         <div style={{ marginBottom: 16, animation: "fadeUp 0.4s ease forwards" }}>
           <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", color: "#FF4500", marginBottom: 2 }}>PANTHER SYSTEM</p>
-          <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 32, letterSpacing: "0.07em", color: "#fff", lineHeight: 1 }}>30-DAY PROGRAM</h1>
+          <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 32, letterSpacing: "0.07em", color: "var(--text-primary)", lineHeight: 1 }}>30-DAY PROGRAM</h1>
           <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, color: "rgba(255,255,255,0.35)", marginTop: 2 }}>
             Day {Math.min(currentDay, 30)} of 30 · {totalDone} sessions complete
           </p>

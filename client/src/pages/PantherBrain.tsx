@@ -221,7 +221,7 @@ export default function PantherBrain() {
 
   return (
     <div style={{
-      minHeight: "100vh", background: "#080808",
+      minHeight: "100vh", background: "var(--bg-primary)",
       display: "flex", flexDirection: "column",
     }}>
       <style>{`
@@ -251,7 +251,7 @@ export default function PantherBrain() {
             <div style={{ flex: 1 }}>
               <p style={{
                 fontFamily: "'Bebas Neue', sans-serif", fontSize: 24, letterSpacing: "0.06em",
-                color: "#fff", lineHeight: 1,
+                color: "var(--text-primary)", lineHeight: 1,
               }}>
                 PANTHER <span style={{ color: "#FF4500" }}>AI</span>
               </p>
@@ -446,7 +446,7 @@ export default function PantherBrain() {
               rows={1}
               style={{
                 flex: 1, background: "transparent", border: "none", outline: "none",
-                resize: "none", color: "#fff", fontSize: 14, lineHeight: 1.5,
+                resize: "none", color: "var(--text-primary)", fontSize: 14, lineHeight: 1.5,
                 fontFamily: "inherit", maxHeight: 120, overflow: "auto",
               }}
               onInput={e => {
@@ -465,7 +465,7 @@ export default function PantherBrain() {
                   : "linear-gradient(135deg, #FF4500, #8B0000)",
                 cursor: thinking || !input.trim() ? "not-allowed" : "pointer",
                 display: "flex", alignItems: "center", justifyContent: "center",
-                color: "#fff", fontSize: 16,
+                color: "var(--text-primary)", fontSize: 16,
               }}
             >
               ↑

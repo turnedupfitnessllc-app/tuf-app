@@ -100,7 +100,7 @@ export function PaywallGate({
   return (
     <div
       className="min-h-screen flex flex-col items-center justify-center px-6 text-center pb-24"
-      style={{ background: "#080808" }}
+      style={{ background: "var(--bg-primary)" }}
     >
       {/* Panther icon */}
       <div

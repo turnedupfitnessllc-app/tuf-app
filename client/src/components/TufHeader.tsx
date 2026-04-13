@@ -1,5 +1,6 @@
 /**
- * TUF Header — v4.2
+ * TUF Header — v4.3
+ * Theme-aware: uses CSS variable tokens (--nav-bg, --text-primary, etc.)
  * Logo: panther mascot image with blended overlay treatment
  *  - Full panther visible (darkened)
  *  - Red glow halo spotlights the UP logo on the jersey
@@ -23,6 +24,8 @@ export function TufHeader() {
     } catch {}
   }, []);
 
+  const isDark = theme === 'dark';
+
   return (
     <>
       <style>{`
@@ -42,13 +45,18 @@ export function TufHeader() {
         }
       `}</style>
       <header style={{
-        background: 'rgba(8,8,8,0.95)',
-        borderBottom: '1px solid rgba(255,69,0,0.15)',
+        background: isDark
+          ? 'rgba(8,8,8,0.95)'
+          : 'rgba(255,255,255,0.95)',
+        borderBottom: isDark
+          ? '1px solid rgba(255,69,0,0.15)'
+          : '1px solid rgba(232,57,14,0.12)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
         position: 'sticky',
         top: 0,
         zIndex: 50,
+        transition: 'background 0.3s ease, border-color 0.3s ease',
       }}>
         <div style={{
           maxWidth: 480,
@@ -87,7 +95,9 @@ export function TufHeader() {
             <div style={{
               position: 'absolute',
               inset: 0,
-              background: 'radial-gradient(ellipse 65% 60% at 50% 45%, transparent 0%, rgba(8,8,8,0.4) 60%, rgba(8,8,8,0.8) 100%)',
+              background: isDark
+                ? 'radial-gradient(ellipse 65% 60% at 50% 45%, transparent 0%, rgba(8,8,8,0.4) 60%, rgba(8,8,8,0.8) 100%)'
+                : 'radial-gradient(ellipse 65% 60% at 50% 45%, transparent 0%, rgba(255,255,255,0.2) 60%, rgba(255,255,255,0.5) 100%)',
               pointerEvents: 'none',
             }} />
             {/* Spotlight on chest */}
@@ -134,9 +144,10 @@ export function TufHeader() {
               fontFamily: "'Bebas Neue', sans-serif",
               fontSize: 18,
               letterSpacing: '0.06em',
-              color: '#fff',
+              color: 'var(--text-primary)',
               lineHeight: 1,
-              textShadow: '0 0 8px rgba(255,69,0,0.4)',
+              textShadow: isDark ? '0 0 8px rgba(255,69,0,0.4)' : '0 0 8px rgba(232,57,14,0.2)',
+              transition: 'color 0.3s ease',
             }}>
               TURNED UP FITNESS
             </div>
@@ -145,8 +156,9 @@ export function TufHeader() {
               fontSize: 9,
               fontWeight: 700,
               letterSpacing: '0.18em',
-              color: 'rgba(255,255,255,0.3)',
+              color: 'var(--text-tertiary)',
               marginTop: 2,
+              transition: 'color 0.3s ease',
             }}>
               AI PERFORMANCE COACHING
             </div>
@@ -157,27 +169,28 @@ export function TufHeader() {
             <button
               onClick={toggleTheme}
               style={{
-                background: 'transparent',
-                border: 'none',
+                background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
+                border: isDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(0,0,0,0.08)',
                 padding: 6,
                 borderRadius: 8,
                 cursor: 'pointer',
-                color: 'rgba(255,255,255,0.5)',
+                color: 'var(--text-secondary)',
                 display: 'flex',
                 alignItems: 'center',
+                transition: 'background 0.2s ease, color 0.2s ease',
               }}
-              aria-label="Toggle theme"
+              aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
             >
-              {theme === 'light'
-                ? <Moon style={{ width: 18, height: 18 }} />
-                : <Sun style={{ width: 18, height: 18 }} />
+              {isDark
+                ? <Sun style={{ width: 18, height: 18 }} />
+                : <Moon style={{ width: 18, height: 18 }} />
               }
             </button>
             <div style={{
               width: 36,
               height: 36,
               borderRadius: '50%',
-              background: '#FF4500',
+              background: 'var(--accent-primary)',
               color: '#fff',
               display: 'flex',
               alignItems: 'center',

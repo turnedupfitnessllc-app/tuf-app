@@ -57,7 +57,7 @@ export default function Fuel() {
   });
 
   return (
-    <div className="min-h-screen pb-24" style={{ background: "#080808" }}>
+    <div className="min-h-screen pb-24" style={{ background: "var(--bg-primary)" }}>
       {/* Header */}
       <div className="px-4 pt-6 pb-4">
         <div className="flex items-center justify-between mb-1">
@@ -573,12 +573,12 @@ export default function Fuel() {
       {selectedRecipe && (
         <div
           className="fixed inset-0 z-50 flex flex-col overflow-y-auto"
-          style={{ background: "#080808" }}
+          style={{ background: "var(--bg-primary)" }}
         >
           {/* Modal Header */}
           <div
             className="sticky top-0 z-10 px-4 py-4 flex items-center gap-3 border-b"
-            style={{ background: "#080808", borderColor: "rgba(255,255,255,0.08)" }}
+            style={{ background: "var(--bg-primary)", borderColor: "rgba(255,255,255,0.08)" }}
           >
             <button
               onClick={() => setSelectedRecipe(null)}

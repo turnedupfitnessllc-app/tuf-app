@@ -294,8 +294,21 @@
 
 ## BOA Biomechanical Overlay Analysis (April 2026)
 
-- [ ] Install @tensorflow/tfjs and @tensorflow-models/pose-detection
-- [ ] BOA.tsx — camera feed + MoveNet pose detection + keypoint canvas overlay
-- [ ] Rep counter — joint angle calculation (hip-knee-ankle) for squat depth
+- [x] Install @tensorflow/tfjs and @tensorflow-models/pose-detection
+- [x] BOA.tsx — camera feed + MoveNet pose detection + keypoint canvas overlay
+- [ ] Rep counter — getAngle(a,b,c) joint angle function in BiomechanicalOverlay.tsx
+- [ ] Stage tracking (up/down) per exercise mode using knee/hip/elbow angles
+- [ ] repCount state + stageRef wired into analyzePose loop
+- [ ] Voice cue trigger on rep completion (playVoiceCue via /api/voice/generate)
+- [ ] Rep counter UI card: live count, stage indicator, reset button
 - [ ] Dysfunction scoring — UCS/LCS/knee/shoulder flags from keypoint deviations
-- [ ] Voice cue on rep completion — calls /api/voice/generate with exercise_id
+
+## Theme Toggle Fix (Doc 12 — April 2026)
+
+- [ ] ThemeContext.tsx — toggleTheme(), isDark, localStorage persistence
+- [ ] CSS variable system in index.css — 17 dark + 17 light tokens
+- [ ] Theme toggle button — calls toggleTheme() from context, Sun/Moon icon swap
+- [ ] Nav bar — use var(--nav-bg), var(--nav-active), var(--nav-inactive) tokens
+- [ ] Screen backgrounds — replace hardcoded #0A0A0A with var(--bg-primary)
+- [ ] Text colors — replace hardcoded #FFFFFF/#AAAAAA with var(--text-primary)/var(--text-secondary)
+- [ ] Verification checklist: toggle works, persists on reload, all screens respond

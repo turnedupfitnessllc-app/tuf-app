@@ -337,7 +337,7 @@ export default function Schedule() {
   const DAY_LABELS  = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
   return (
-    <div style={{ minHeight: "100vh", background: "#080808", paddingBottom: 80 }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg-primary)", paddingBottom: 80 }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap');
         @keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
@@ -348,10 +348,10 @@ export default function Schedule() {
         .day-cell:active { transform: scale(0.92); }
         .roar-banner { animation: roarIn 0.4s ease both; }
         .modal-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;display:flex;align-items:flex-end;justify-content:center; }
-        .modal-sheet { background:#111;border-radius:24px 24px 0 0;width:100%;max-width:480px;padding:24px 20px 40px;max-height:85vh;overflow-y:auto; }
-        .input-field { width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 14px;color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;outline:none;box-sizing:border-box; }
+        .modal-sheet { background:var(--bg-secondary);border-radius:24px 24px 0 0;width:100%;max-width:480px;padding:24px 20px 40px;max-height:85vh;overflow-y:auto; }
+        .input-field { width:100%;background:rgba(128,128,128,0.1);border:1px solid var(--border-primary);border-radius:12px;padding:12px 14px;color:var(--text-primary);font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;outline:none;box-sizing:border-box; }
         .input-field:focus { border-color:rgba(255,69,0,0.5); }
-        select.input-field option { background:#111;color:#fff; }
+        select.input-field option { background:var(--bg-secondary);color:var(--text-primary); }
       `}</style>
 
       <div className="sched-page" style={{ maxWidth: 480, margin: "0 auto", padding: "0 16px" }}>
@@ -370,7 +370,7 @@ export default function Schedule() {
           <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: "0.22em", color: "#FF4500", marginBottom: 2 }}>
             TURNED UP FITNESS
           </div>
-          <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 32, letterSpacing: "0.04em", color: "#fff", lineHeight: 1 }}>
+          <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 32, letterSpacing: "0.04em", color: "var(--text-primary)", lineHeight: 1 }}>
             PANTHER SCHEDULER
           </div>
           <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", color: "rgba(255,255,255,0.35)", marginTop: 4 }}>
@@ -394,7 +394,7 @@ export default function Schedule() {
             <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: "0.2em", color: "#FF4500", marginBottom: 4 }}>
               🐾 PANTHER SAYS
             </div>
-            <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 20, letterSpacing: "0.06em", color: "#fff", lineHeight: 1.2 }}>
+            <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 20, letterSpacing: "0.06em", color: "var(--text-primary)", lineHeight: 1.2 }}>
               {roarMsg}
             </div>
             <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: "0.1em", color: "rgba(255,255,255,0.3)", marginTop: 6 }}>
@@ -449,7 +449,7 @@ export default function Schedule() {
               <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: "0.2em", color: "rgba(255,255,255,0.35)", marginBottom: 2 }}>
                 THIS WEEK
               </div>
-              <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 22, color: "#fff", lineHeight: 1 }}>
+              <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 22, color: "var(--text-primary)", lineHeight: 1 }}>
                 {weekCompleted} / {state.goalDaysPerWeek} <span style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>SESSIONS</span>
               </div>
             </div>
@@ -507,7 +507,7 @@ export default function Schedule() {
                 display: "flex", alignItems: "center", gap: 12,
               }}>
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 16, color: "#fff", letterSpacing: "0.06em" }}>{s.program}</div>
+                  <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 16, color: "var(--text-primary)", letterSpacing: "0.06em" }}>{s.program}</div>
                   <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: 11, color: "rgba(255,255,255,0.4)", fontWeight: 600 }}>{s.time}{s.notes ? ` · ${s.notes}` : ""}</div>
                 </div>
                 {s.completed ? (
@@ -538,7 +538,7 @@ export default function Schedule() {
               onClick={() => { if (viewMonth === 0) { setViewMonth(11); setViewYear(y => y - 1); } else setViewMonth(m => m - 1); }}
               style={{ background: "none", border: "none", color: "rgba(255,255,255,0.4)", fontSize: 18, cursor: "pointer", padding: "0 8px" }}
             >‹</button>
-            <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 18, color: "#fff", letterSpacing: "0.08em" }}>
+            <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 18, color: "var(--text-primary)", letterSpacing: "0.08em" }}>
               {MONTH_NAMES[viewMonth]} {viewYear}
             </div>
             <button
@@ -626,7 +626,7 @@ export default function Schedule() {
                 display: "flex", alignItems: "center", gap: 10,
               }}>
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 15, color: "#fff", letterSpacing: "0.06em" }}>{s.program}</div>
+                  <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 15, color: "var(--text-primary)", letterSpacing: "0.06em" }}>{s.program}</div>
                   <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: 10, color: "rgba(255,255,255,0.4)", fontWeight: 600 }}>
                     {formatDate(s.date)} · {s.time}
                   </div>
@@ -679,7 +679,7 @@ export default function Schedule() {
       {showAdd && (
         <div className="modal-overlay" onClick={() => setShowAdd(false)}>
           <div className="modal-sheet" onClick={e => e.stopPropagation()}>
-            <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 22, color: "#fff", letterSpacing: "0.06em", marginBottom: 20 }}>
+            <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 22, color: "var(--text-primary)", letterSpacing: "0.06em", marginBottom: 20 }}>
               SCHEDULE SESSION
             </div>
 
@@ -723,7 +723,7 @@ export default function Schedule() {
             <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: "0.2em", color: "#FF4500", marginBottom: 4 }}>
               SESSION CHECK-IN
             </div>
-            <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 24, color: "#fff", letterSpacing: "0.06em", marginBottom: 4 }}>
+            <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 24, color: "var(--text-primary)", letterSpacing: "0.06em", marginBottom: 4 }}>
               {showCheckin.program}
             </div>
             <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: 11, color: "rgba(255,255,255,0.4)", marginBottom: 20 }}>
@@ -774,7 +774,7 @@ export default function Schedule() {
       {showSettings && (
         <div className="modal-overlay" onClick={() => setShowSettings(false)}>
           <div className="modal-sheet" onClick={e => e.stopPropagation()}>
-            <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 22, color: "#fff", letterSpacing: "0.06em", marginBottom: 20 }}>
+            <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 22, color: "var(--text-primary)", letterSpacing: "0.06em", marginBottom: 20 }}>
               SCHEDULER SETTINGS
             </div>
 

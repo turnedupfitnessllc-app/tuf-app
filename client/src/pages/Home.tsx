@@ -75,7 +75,7 @@ export default function Home() {
     : "START WORKOUT →";
 
   return (
-    <div style={{ minHeight: "100vh", background: "#080808", paddingBottom: 80 }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg-primary)", paddingBottom: 80 }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap');
 
@@ -202,7 +202,7 @@ export default function Home() {
               <div style={{
                 fontFamily: "'Bebas Neue', sans-serif",
                 fontSize: 28, letterSpacing: "0.06em",
-                color: "#fff", lineHeight: 1,
+                color: "var(--text-primary)", lineHeight: 1,
               }}>
                 THE PANTHER <span style={{ color: "#FF4500" }}>SYSTEM</span>
               </div>
@@ -228,7 +228,7 @@ export default function Home() {
           <h1 style={{
             fontFamily: "'Bebas Neue', sans-serif",
             fontSize: 36, letterSpacing: "0.04em",
-            color: "#fff", lineHeight: 1.08, margin: 0,
+            color: "var(--text-primary)", lineHeight: 1.08, margin: 0,
           }}>
             READY TO MOVE<br />
             <span style={{ color: "#FF4500" }}>WITH PRECISION?</span>
@@ -303,7 +303,7 @@ export default function Home() {
               </div>
               <div style={{
                 fontFamily: "'Bebas Neue', sans-serif",
-                fontSize: 18, letterSpacing: "0.06em", color: "#fff",
+                fontSize: 18, letterSpacing: "0.06em", color: "var(--text-primary)",
               }}>ASSESS</div>
               <div style={{
                 fontFamily: "'Barlow Condensed', sans-serif",
@@ -328,7 +328,7 @@ export default function Home() {
               </div>
               <div style={{
                 fontFamily: "'Bebas Neue', sans-serif",
-                fontSize: 18, letterSpacing: "0.06em", color: "#fff",
+                fontSize: 18, letterSpacing: "0.06em", color: "var(--text-primary)",
               }}>PROGRAM</div>
               <div style={{
                 fontFamily: "'Barlow Condensed', sans-serif",
@@ -429,7 +429,7 @@ export default function Home() {
               <div style={{
                 fontFamily: "'Bebas Neue', sans-serif",
                 fontSize: 22, letterSpacing: "0.06em",
-                color: "#fff", lineHeight: 1,
+                color: "var(--text-primary)", lineHeight: 1,
               }}>
                 30-DAY PANTHER<br />MINDSET CHALLENGE
               </div>

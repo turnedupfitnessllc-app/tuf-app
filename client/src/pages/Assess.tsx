@@ -49,7 +49,7 @@ export default function Assess() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#080808", paddingBottom: 96 }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg-primary)", paddingBottom: 96 }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap');
         @keyframes ambient { 0%,100%{opacity:0.4} 50%{opacity:0.7} }
@@ -80,7 +80,7 @@ export default function Assess() {
               </p>
               <h1 style={{
                 fontFamily: "'Bebas Neue', sans-serif", fontSize: 40, letterSpacing: "0.07em",
-                color: "#fff", lineHeight: 1.05,
+                color: "var(--text-primary)", lineHeight: 1.05,
               }}>
                 ASSESS YOUR <span style={{ color: "#FF4500" }}>MOVEMENT</span>
               </h1>
@@ -158,7 +158,7 @@ export default function Assess() {
                 <div>
                   <p style={{
                     fontFamily: "'Barlow Condensed', sans-serif", fontSize: 18, fontWeight: 900,
-                    letterSpacing: "0.04em", color: "#fff", lineHeight: 1.2, marginBottom: 4,
+                    letterSpacing: "0.04em", color: "var(--text-primary)", lineHeight: 1.2, marginBottom: 4,
                   }}>
                     {issue.verdict}
                   </p>
@@ -221,7 +221,7 @@ export default function Assess() {
                     <div style={{ flex: 1 }}>
                       <p style={{
                         fontFamily: "'Barlow Condensed', sans-serif", fontSize: 14, fontWeight: 700,
-                        color: "#fff",
+                        color: "var(--text-primary)",
                       }}>
                         {ex.name}
                       </p>
@@ -256,7 +256,7 @@ export default function Assess() {
                   ? "linear-gradient(135deg, #22c55e, #16a34a)"
                   : "linear-gradient(135deg, #FF4500, #8B0000)",
                 fontFamily: "'Bebas Neue', sans-serif", fontSize: 20, letterSpacing: "0.1em",
-                color: "#fff", cursor: "pointer",
+                color: "var(--text-primary)", cursor: "pointer",
                 boxShadow: "0 4px 32px rgba(255,69,0,0.35)",
                 transition: "background 0.3s ease",
               }}

@@ -134,7 +134,7 @@ export default function Billing() {
     : null;
 
   return (
-    <div style={{ minHeight: "100vh", background: "#080808", paddingBottom: 80 }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg-primary)", paddingBottom: 80 }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap');
         @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }

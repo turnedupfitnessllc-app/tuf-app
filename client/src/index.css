@@ -74,6 +74,23 @@
   --sidebar-accent-foreground: #000;
   --sidebar-border: #E0E0E0;
   --sidebar-ring: #E8390E;
+  /* TUF Panther System Tokens — Light */
+  --bg-primary: #F5F5F5;
+  --bg-secondary: #FFFFFF;
+  --bg-tertiary: #EBEBEB;
+  --text-primary: #0A0A0A;
+  --text-secondary: #444444;
+  --text-tertiary: #888888;
+  --accent-primary: #E8390E;
+  --accent-secondary: #C0392B;
+  --border-primary: #DDDDDD;
+  --border-accent: #E8390E;
+  --nav-bg: #FFFFFF;
+  --nav-active: #E8390E;
+  --nav-inactive: #AAAAAA;
+  --success: #00AA55;
+  --warning: #CC8800;
+  --danger: #CC0000;
 }
 .dark {
   --primary: #FF4500;
@@ -108,6 +125,23 @@
   --chart-3: #E8390E;
   --chart-4: #C0392B;
   --chart-5: #A93226;
+  /* TUF Panther System Tokens — Dark */
+  --bg-primary: #0A0A0A;
+  --bg-secondary: #1A1A1A;
+  --bg-tertiary: #2A2A2A;
+  --text-primary: #FFFFFF;
+  --text-secondary: #AAAAAA;
+  --text-tertiary: #666666;
+  --accent-primary: #FF4500;
+  --accent-secondary: #CC4400;
+  --border-primary: #333333;
+  --border-accent: #FF4500;
+  --nav-bg: #111111;
+  --nav-active: #FF4500;
+  --nav-inactive: #555555;
+  --success: #00CC66;
+  --warning: #FFAA00;
+  --danger: #FF3333;
 }
 @layer base {
   * { @apply border-border outline-ring/50; }

@@ -161,7 +161,7 @@ export default function Mindset() {
   // ─── LOADING ───────────────────────────────────────────────────────────────
   if (screen === "loading") {
     return (
-      <div style={{ minHeight: "100vh", background: "#080808", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ minHeight: "100vh", background: "var(--bg-primary)", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 24, color: "rgba(255,255,255,0.3)", letterSpacing: "0.1em" }}>
           LOADING...
         </div>
@@ -172,7 +172,7 @@ export default function Mindset() {
   // ─── START SCREEN ──────────────────────────────────────────────────────────
   if (screen === "start") {
     return (
-      <div style={{ minHeight: "100vh", background: "#080808", padding: "0 16px 80px" }}>
+      <div style={{ minHeight: "100vh", background: "var(--bg-primary)", padding: "0 16px 80px" }}>
         <style>{`@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap');`}</style>
         <div style={{ maxWidth: 480, margin: "0 auto" }}>
           {/* Back */}
@@ -185,7 +185,7 @@ export default function Mindset() {
             <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: "0.22em", color: "#FF4500", marginBottom: 12 }}>
               THE PANTHER SYSTEM
             </div>
-            <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 48, letterSpacing: "0.04em", color: "#fff", lineHeight: 1 }}>
+            <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 48, letterSpacing: "0.04em", color: "var(--text-primary)", lineHeight: 1 }}>
               30-DAY MINDSET<br /><span style={{ color: "#FF4500" }}>CHALLENGE</span>
             </div>
             <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 16, color: "rgba(255,255,255,0.5)", marginTop: 16, lineHeight: 1.5 }}>
@@ -207,7 +207,7 @@ export default function Mindset() {
                 <div style={{ width: 4, height: 32, borderRadius: 2, background: p.color, flexShrink: 0 }} />
                 <div>
                   <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: "0.14em", color: p.color }}>{p.days}</div>
-                  <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 16, color: "#fff", letterSpacing: "0.04em" }}>{p.theme}</div>
+                  <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 16, color: "var(--text-primary)", letterSpacing: "0.04em" }}>{p.theme}</div>
                 </div>
               </div>
             ))}
@@ -230,12 +230,12 @@ export default function Mindset() {
   if (screen === "phase_unlock" && phaseUnlockData) {
     const { config } = phaseUnlockData;
     return (
-      <div style={{ minHeight: "100vh", background: "#080808", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "0 24px", textAlign: "center" }}>
+      <div style={{ minHeight: "100vh", background: "var(--bg-primary)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "0 24px", textAlign: "center" }}>
         <style>{`@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap');`}</style>
         <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: "0.22em", color: config.color, marginBottom: 16 }}>
           PHASE {config.phase} UNLOCKED
         </div>
-        <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 42, color: "#fff", letterSpacing: "0.04em", lineHeight: 1, marginBottom: 24 }}>
+        <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 42, color: "var(--text-primary)", letterSpacing: "0.04em", lineHeight: 1, marginBottom: 24 }}>
           {config.theme.toUpperCase()}
         </div>
         <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 16, color: "rgba(255,255,255,0.6)", maxWidth: 320, lineHeight: 1.6, marginBottom: 32, fontStyle: "italic" }}>
@@ -248,7 +248,7 @@ export default function Mindset() {
         </div>
         <button
           onClick={() => setScreen("daily")}
-          style={{ padding: "16px 40px", background: config.color, border: "none", borderRadius: 12, color: "#fff", fontFamily: "'Barlow Condensed', sans-serif", fontSize: 16, fontWeight: 900, letterSpacing: "0.12em", cursor: "pointer" }}
+          style={{ padding: "16px 40px", background: config.color, border: "none", borderRadius: 12, color: "var(--text-primary)", fontFamily: "'Barlow Condensed', sans-serif", fontSize: 16, fontWeight: 900, letterSpacing: "0.12em", cursor: "pointer" }}
         >
           ENTER PHASE {config.phase} →
         </button>
@@ -259,12 +259,12 @@ export default function Mindset() {
   // ─── COMPLETED SCREEN ──────────────────────────────────────────────────────
   if (screen === "completed") {
     return (
-      <div style={{ minHeight: "100vh", background: "#080808", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "0 24px", textAlign: "center" }}>
+      <div style={{ minHeight: "100vh", background: "var(--bg-primary)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "0 24px", textAlign: "center" }}>
         <style>{`@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap');`}</style>
         <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: "0.22em", color: "#FF4500", marginBottom: 16 }}>
           DAY 30 COMPLETE
         </div>
-        <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 52, color: "#fff", letterSpacing: "0.04em", lineHeight: 1, marginBottom: 8 }}>
+        <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 52, color: "var(--text-primary)", letterSpacing: "0.04em", lineHeight: 1, marginBottom: 8 }}>
           YOU BECAME<br /><span style={{ color: "#FF4500" }}>DANGEROUS.</span>
         </div>
         <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 16, color: "rgba(255,255,255,0.5)", marginTop: 16, marginBottom: 32, lineHeight: 1.6 }}>
@@ -294,7 +294,7 @@ export default function Mindset() {
 
   // ─── DAILY CHECK-IN SCREEN ─────────────────────────────────────────────────
   return (
-    <div style={{ minHeight: "100vh", background: "#080808", paddingBottom: 80 }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg-primary)", paddingBottom: 80 }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap');
         @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
@@ -363,7 +363,7 @@ export default function Mindset() {
               return (
                 <div key={i} style={{ marginBottom: 6 }}>
                   <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: "0.14em", color: phaseColor }}>{label}: </span>
-                  <span style={{ fontFamily: label === "HEADLINE" ? "'Bebas Neue', sans-serif" : "'Barlow Condensed', sans-serif", fontSize: label === "HEADLINE" ? 18 : 14, color: "#fff", letterSpacing: label === "HEADLINE" ? "0.04em" : "0" }}>{text}</span>
+                  <span style={{ fontFamily: label === "HEADLINE" ? "'Bebas Neue', sans-serif" : "'Barlow Condensed', sans-serif", fontSize: label === "HEADLINE" ? 18 : 14, color: "var(--text-primary)", letterSpacing: label === "HEADLINE" ? "0.04em" : "0" }}>{text}</span>
                 </div>
               );
             })}
@@ -383,7 +383,7 @@ export default function Mindset() {
                 value={intentionalDecision}
                 onChange={e => setIntentionalDecision(e.target.value)}
                 placeholder="What one decision defines today?"
-                style={{ width: "100%", padding: "12px 14px", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 10, color: "#fff", fontFamily: "'Barlow Condensed', sans-serif", fontSize: 15, outline: "none", boxSizing: "border-box" }}
+                style={{ width: "100%", padding: "12px 14px", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 10, color: "var(--text-primary)", fontFamily: "'Barlow Condensed', sans-serif", fontSize: 15, outline: "none", boxSizing: "border-box" }}
               />
             </div>
 
@@ -427,7 +427,7 @@ export default function Mindset() {
                 onChange={e => setJournalEntry(e.target.value)}
                 placeholder="What did today teach you?"
                 rows={3}
-                style={{ width: "100%", padding: "12px 14px", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 10, color: "#fff", fontFamily: "'Barlow Condensed', sans-serif", fontSize: 15, outline: "none", resize: "none", boxSizing: "border-box" }}
+                style={{ width: "100%", padding: "12px 14px", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 10, color: "var(--text-primary)", fontFamily: "'Barlow Condensed', sans-serif", fontSize: 15, outline: "none", resize: "none", boxSizing: "border-box" }}
               />
             </div>
 
@@ -437,7 +437,7 @@ export default function Mindset() {
             <button
               onClick={handleCheckIn}
               disabled={isCheckingIn}
-              style={{ width: "100%", padding: "18px 24px", background: isCheckingIn ? "rgba(255,69,0,0.5)" : phaseColor, border: "none", borderRadius: 14, color: "#fff", fontFamily: "'Barlow Condensed', sans-serif", fontSize: 18, fontWeight: 900, letterSpacing: "0.12em", cursor: isCheckingIn ? "not-allowed" : "pointer", transition: "background 0.15s ease" }}
+              style={{ width: "100%", padding: "18px 24px", background: isCheckingIn ? "rgba(255,69,0,0.5)" : phaseColor, border: "none", borderRadius: 14, color: "var(--text-primary)", fontFamily: "'Barlow Condensed', sans-serif", fontSize: 18, fontWeight: 900, letterSpacing: "0.12em", cursor: isCheckingIn ? "not-allowed" : "pointer", transition: "background 0.15s ease" }}
             >
               {isCheckingIn ? "CHECKING IN..." : `CHECK IN — DAY ${(challenge?.currentDay ?? 0) + 1} →`}
             </button>

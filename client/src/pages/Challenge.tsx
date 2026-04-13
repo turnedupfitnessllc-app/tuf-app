@@ -108,7 +108,7 @@ export default function Challenge() {
   const pct = Math.round((currentDay / 30) * 100);
 
   return (
-    <div style={{ minHeight: "100vh", background: "#080808", paddingBottom: 48 }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg-primary)", paddingBottom: 48 }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap');
         @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }

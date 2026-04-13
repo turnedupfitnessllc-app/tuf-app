@@ -55,7 +55,7 @@ export default function Evolve() {
   if (Object.keys(progDone).length >= 12) unlocked.add("week4_done");
 
   return (
-    <div style={{ minHeight: "100vh", background: "#080808", paddingBottom: 96 }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg-primary)", paddingBottom: 96 }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap');
         @keyframes ambient { 0%,100%{opacity:0.4} 50%{opacity:0.7} }
@@ -85,7 +85,7 @@ export default function Evolve() {
           </p>
           <h1 style={{
             fontFamily: "'Bebas Neue', sans-serif", fontSize: 40, letterSpacing: "0.07em",
-            color: "#fff", lineHeight: 1.05,
+            color: "var(--text-primary)", lineHeight: 1.05,
           }}>
             STAGE: <span style={{ color: currentStageData.color }}>{stage}</span>
           </h1>
@@ -120,7 +120,7 @@ export default function Evolve() {
                 SESSIONS
               </p>
               <p style={{
-                fontFamily: "'Bebas Neue', sans-serif", fontSize: 28, color: "#fff",
+                fontFamily: "'Bebas Neue', sans-serif", fontSize: 28, color: "var(--text-primary)",
               }}>
                 {sessions}
               </p>
@@ -272,7 +272,7 @@ export default function Evolve() {
             width: "100%", padding: "18px", borderRadius: 20, border: "none",
             background: "linear-gradient(135deg, #FF4500, #8B0000)",
             fontFamily: "'Bebas Neue', sans-serif", fontSize: 20, letterSpacing: "0.1em",
-            color: "#fff", cursor: "pointer",
+            color: "var(--text-primary)", cursor: "pointer",
             boxShadow: "0 4px 32px rgba(255,69,0,0.35)",
           }}
         >

@@ -133,7 +133,7 @@ export default function Program() {
   // ── CATALOG VIEW ─────────────────────────────────────────────────────────────
   if (view === "catalog") {
     return (
-      <div style={{ minHeight: "100vh", background: "#080808", paddingBottom: 96 }}>
+      <div style={{ minHeight: "100vh", background: "var(--bg-primary)", paddingBottom: 96 }}>
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap');
           @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
@@ -148,7 +148,7 @@ export default function Program() {
 
           <div style={{ marginBottom: 20, animation: "fadeUp 0.4s ease forwards" }}>
             <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", color: "#FF4500", marginBottom: 2 }}>PANTHER SYSTEM</p>
-            <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 32, letterSpacing: "0.07em", color: "#fff", lineHeight: 1 }}>SELECT YOUR PROGRAM</h1>
+            <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 32, letterSpacing: "0.07em", color: "var(--text-primary)", lineHeight: 1 }}>SELECT YOUR PROGRAM</h1>
             <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, color: "rgba(255,255,255,0.35)", marginTop: 2 }}>Choose the program that matches your tier</p>
           </div>
 
@@ -174,7 +174,7 @@ export default function Program() {
                 <div style={{ width: 4, height: "100%", minHeight: 60, borderRadius: 2, background: prog.color, flexShrink: 0 }} />
                 <div style={{ flex: 1 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                    <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 18, color: "#fff", letterSpacing: "0.06em", lineHeight: 1 }}>{prog.title}</span>
+                    <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 18, color: "var(--text-primary)", letterSpacing: "0.06em", lineHeight: 1 }}>{prog.title}</span>
                     <span style={{ fontSize: 9, padding: "2px 7px", background: `${prog.color}20`, border: `1px solid ${prog.color}50`, borderRadius: 3, color: prog.color, letterSpacing: "0.08em", fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700 }}>{prog.phase}</span>
                   </div>
                   <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, color: "rgba(255,255,255,0.5)", marginBottom: 6, lineHeight: 1.4 }}>{prog.description}</p>
@@ -199,7 +199,7 @@ export default function Program() {
     const allDone = completed.size === allIds.length;
 
     return (
-      <div style={{ minHeight: "100vh", background: "#080808", paddingBottom: 96 }}>
+      <div style={{ minHeight: "100vh", background: "var(--bg-primary)", paddingBottom: 96 }}>
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap');
           @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
@@ -220,7 +220,7 @@ export default function Program() {
               <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: "0.15em", color: week.color }}>
                 WEEK {week.week} · DAY {activeSession.day}
               </p>
-              <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 22, color: "#fff", letterSpacing: "0.06em", lineHeight: 1 }}>
+              <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 22, color: "var(--text-primary)", letterSpacing: "0.06em", lineHeight: 1 }}>
                 {activeSession.label}
               </p>
             </div>
@@ -272,7 +272,7 @@ export default function Program() {
                     display: "flex", alignItems: "center", justifyContent: "center",
                     transition: "all 0.2s ease",
                   }}>
-                    {done && <span style={{ color: "#fff", fontSize: 13, fontWeight: 700 }}>✓</span>}
+                    {done && <span style={{ color: "var(--text-primary)", fontSize: 13, fontWeight: 700 }}>✓</span>}
                   </div>
 
                   {/* Exercise info */}
@@ -335,7 +335,7 @@ export default function Program() {
                   width: "100%", padding: "14px", borderRadius: 14, border: "none",
                   background: `linear-gradient(135deg, ${week.color}, ${week.color}88)`,
                   fontFamily: "'Bebas Neue', sans-serif", fontSize: 18, letterSpacing: "0.1em",
-                  color: "#fff", cursor: "pointer",
+                  color: "var(--text-primary)", cursor: "pointer",
                 }}
               >
                 COMPLETE SESSION +{20 + feedback.reduce((s, id) => s + (FEEDBACK_CHIPS.find(c => c.id === id)?.xp || 0), 0)} XP
@@ -372,7 +372,7 @@ export default function Program() {
                     flex: 1, padding: "12px", borderRadius: 14, border: "none",
                     background: "linear-gradient(135deg, #FF4500, #8B0000)",
                     fontFamily: "'Barlow Condensed', sans-serif", fontSize: 13, fontWeight: 700,
-                    letterSpacing: "0.08em", color: "#fff", cursor: "pointer",
+                    letterSpacing: "0.08em", color: "var(--text-primary)", cursor: "pointer",
                   }}
                 >
                   ANALYZE FORM →
@@ -401,7 +401,7 @@ export default function Program() {
   const completedCount = Object.keys(sessionDone).filter(k => sessionDone[k]).length;
 
   return (
-    <div style={{ minHeight: "100vh", background: "#080808", paddingBottom: 96 }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg-primary)", paddingBottom: 96 }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap');
         @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
@@ -422,7 +422,7 @@ export default function Program() {
           <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", color: "#FF4500", marginBottom: 2 }}>
             YOUR PROGRAM
           </p>
-          <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 32, letterSpacing: "0.07em", color: "#fff", lineHeight: 1 }}>
+          <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 32, letterSpacing: "0.07em", color: "var(--text-primary)", lineHeight: 1 }}>
             4-WEEK <span style={{ color: week.color }}>CORRECTIVE</span>
           </h1>
           <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, color: "rgba(255,255,255,0.35)", marginTop: 2 }}>
@@ -465,7 +465,7 @@ export default function Program() {
                   {weekComplete && (
                     <div style={{
                       position: "absolute", top: -4, right: -4, width: 12, height: 12,
-                      borderRadius: "50%", background: "#22c55e", border: "2px solid #080808",
+                      borderRadius: "50%", background: "#22c55e", border: "2px solid var(--bg-primary)",
                     }} />
                   )}
                   <span style={{ fontSize: 16 }}>{w.icon}</span>

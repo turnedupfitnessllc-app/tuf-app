@@ -255,7 +255,7 @@ export default function Goals() {
   return (
     <div
       className="min-h-screen pb-24 pt-16"
-      style={{ background: "#080808" }}
+      style={{ background: "var(--bg-primary)" }}
     >
       {/* ── Stats Bar ─────────────────────────────────────────────────────── */}
       <div

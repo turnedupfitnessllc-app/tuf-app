@@ -727,7 +727,7 @@ export default function BiomechanicalOverlay() {
   const pantherState = !isActive ? "idle" : detectedFaults.length === 0 ? "coaching" : detectedFaults.length >= 2 ? "activated" : "coaching";
 
   return (
-    <div style={{ minHeight: "100vh", background: "#080808", paddingBottom: 96 }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg-primary)", paddingBottom: 96 }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap');
         @keyframes ambient { 0%,100%{opacity:0.4} 50%{opacity:0.7} }
@@ -744,7 +744,7 @@ export default function BiomechanicalOverlay() {
           <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", color: "#FF4500", marginBottom: 2 }}>
             BIOMECHANICAL OVERLAY
           </p>
-          <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 32, letterSpacing: "0.07em", color: "#fff", lineHeight: 1 }}>
+          <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 32, letterSpacing: "0.07em", color: "var(--text-primary)", lineHeight: 1 }}>
             MOVEMENT <span style={{ color: currentMode.color }}>ANALYSIS</span>
           </h1>
           <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, color: "rgba(255,255,255,0.35)", marginTop: 2 }}>
@@ -865,7 +865,7 @@ export default function BiomechanicalOverlay() {
                     flex: 1, padding: "12px", borderRadius: 14, border: "none",
                     background: `linear-gradient(135deg, ${currentMode.color}, ${currentMode.color}88)`,
                     fontFamily: "'Bebas Neue', sans-serif", fontSize: 16, letterSpacing: "0.1em",
-                    color: "#fff", cursor: "pointer",
+                    color: "var(--text-primary)", cursor: "pointer",
                   }}
                 >
                   ACTIVATE {scanMode} SCAN
@@ -894,7 +894,7 @@ export default function BiomechanicalOverlay() {
                     flex: 1, padding: "12px", borderRadius: 14, border: "none",
                     background: isAnalyzing ? "rgba(255,255,255,0.06)" : "linear-gradient(135deg, #FF4500, #8B0000)",
                     fontFamily: "'Bebas Neue', sans-serif", fontSize: 14, letterSpacing: "0.1em",
-                    color: "#fff", cursor: isAnalyzing ? "not-allowed" : "pointer",
+                    color: "var(--text-primary)", cursor: isAnalyzing ? "not-allowed" : "pointer",
                   }}
                 >
                   {isAnalyzing ? "ANALYZING..." : "AI SNAPSHOT"}
