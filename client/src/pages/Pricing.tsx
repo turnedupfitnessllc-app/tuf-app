@@ -19,6 +19,8 @@ interface Tier {
   glow: string;
   badge?: string;
   features: string[];
+  monthlyLink: string; // Stripe Payment Link
+  annualLink: string;  // Stripe Payment Link
 }
 
 const TIERS: Tier[] = [
@@ -31,6 +33,8 @@ const TIERS: Tier[] = [
     annualMonthly: 16.58,
     color: "#FF6600",
     glow: "rgba(255,102,0,0.15)",
+    monthlyLink: "https://buy.stripe.com/6oUcN54zMa2E8s8bDAfUQ00",
+    annualLink: "https://buy.stripe.com/cNi3cveama2EgYE374fUQ01",
     features: [
       "AI Corrective Coaching",
       "MOVE Pillar",
@@ -49,6 +53,8 @@ const TIERS: Tier[] = [
     color: "#C8973A",
     glow: "rgba(200,151,58,0.18)",
     badge: "MOST POPULAR",
+    monthlyLink: "https://buy.stripe.com/00weVdeam0s4aAgbDAfUQ02",
+    annualLink: "https://buy.stripe.com/cNieVd8Q23Eg9wcfTQfUQ03",
     features: [
       "Everything in Core",
       "FEAST Pillar — TUTK Recipes",
@@ -67,6 +73,8 @@ const TIERS: Tier[] = [
     color: "#AA44FF",
     glow: "rgba(170,68,255,0.18)",
     badge: "ELITE",
+    monthlyLink: "https://buy.stripe.com/4gM7sL4zM3EggYE4b8fUQ04",
+    annualLink: "https://buy.stripe.com/cNicN5eamgr25fWgXUfUQ05",
     features: [
       "Everything in Elite",
       "MINDSET Pillar",
@@ -137,33 +145,10 @@ export default function Pricing() {
     }
   };
 
-  const handleCheckout = async (tierId: string) => {
-    setLoading(tierId);
-    try {
-      const res = await fetch("/api/stripe/create-checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          tierId,
-          interval: billing,
-          origin: window.location.origin,
-          userId: userId || undefined,
-          userEmail: userEmail || undefined,
-          userName: userName || undefined,
-        }),
-      });
-      const data = await res.json() as { url?: string; error?: string };
-      if (data.url) {
-        showToast("Redirecting to secure checkout…");
-        setTimeout(() => window.open(data.url, "_blank"), 600);
-      } else {
-        showToast(data.error || "Checkout failed. Please try again.");
-      }
-    } catch {
-      showToast("Network error. Please try again.");
-    } finally {
-      setLoading(null);
-    }
+  const handleCheckout = (tier: Tier) => {
+    const link = billing === "annual" ? tier.annualLink : tier.monthlyLink;
+    showToast("Redirecting to secure checkout…");
+    setTimeout(() => window.open(link, "_blank"), 400);
   };
 
   return (
@@ -393,7 +378,7 @@ export default function Pricing() {
                 <button
                   className="checkout-btn"
                   disabled={isLoading}
-                  onClick={() => handleCheckout(tier.id)}
+                  onClick={() => handleCheckout(tier)}
                   style={{
                     background: tier.badge ? tier.color : "transparent",
                     color: tier.badge ? (tier.id === "controlled" ? "#000" : "#fff") : tier.color,
