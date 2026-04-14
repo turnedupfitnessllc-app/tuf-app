@@ -7,6 +7,7 @@ import { useLocation } from "wouter";
 import { PantherPresence, PantherMessage, V4Card, SceneHeader, XPBar } from "@/components/v4Components";
 import { STAGE_LADDER, ls, getStageFromXP } from "@/data/v4constants";
 import { useProgress } from "@/hooks/useProgress";
+import { useReferral } from "@/hooks/useReferral";
 
 const ACHIEVEMENTS = [
   { id: "first_session",   icon: "⚡", label: "FIRST STEP",       desc: "Completed first session",    xp: 10 },
@@ -28,6 +29,8 @@ export default function Evolve() {
 
   const { progress } = useProgress();
   const xp       = progress.xp || 0;
+  const userId   = localStorage.getItem("tuf_user_id") || null;
+  const { shareLink, stats: refStats, loading: refLoading } = useReferral(userId);
   const sessions = progress.sessionsCompleted || 0;
   const streak   = progress.streakDays || 0;
   const stage    = getStageFromXP(xp);
@@ -291,6 +294,47 @@ export default function Evolve() {
         >
           UPGRADE YOUR PLAN →
         </button>
+
+        {/* Referral Card */}
+        <V4Card style={{ marginTop: 14, marginBottom: 0 }}>
+          <SceneHeader num="07" label="INVITE & EARN" color="#FF6600" />
+          <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, color: "rgba(255,255,255,0.45)", marginBottom: 12, lineHeight: 1.5 }}>
+            Share your link — earn <strong style={{ color: "#FF6600" }}>+100 XP</strong> for every athlete you bring in.
+          </p>
+          {refLoading ? (
+            <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, color: "rgba(255,102,0,0.5)", letterSpacing: "0.1em" }}>GENERATING LINK...</p>
+          ) : shareLink ? (
+            <>
+              <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 10 }}>
+                <div style={{ flex: 1, padding: "10px 12px", borderRadius: 8, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", overflow: "hidden" }}>
+                  <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, color: "rgba(255,255,255,0.5)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{shareLink}</p>
+                </div>
+                <button
+                  onClick={() => { navigator.clipboard.writeText(shareLink); }}
+                  style={{ padding: "10px 14px", borderRadius: 8, border: "1px solid rgba(255,102,0,0.3)", background: "rgba(255,102,0,0.08)", fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", color: "#FF6600", cursor: "pointer", flexShrink: 0 }}
+                >
+                  COPY
+                </button>
+              </div>
+              <div style={{ display: "flex", gap: 16 }}>
+                <div style={{ textAlign: "center" }}>
+                  <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 22, color: "#fff", letterSpacing: "0.04em" }}>{refStats.visits}</p>
+                  <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: "0.1em", color: "rgba(255,255,255,0.3)" }}>VISITS</p>
+                </div>
+                <div style={{ textAlign: "center" }}>
+                  <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 22, color: "#FF6600", letterSpacing: "0.04em" }}>{refStats.conversions}</p>
+                  <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: "0.1em", color: "rgba(255,255,255,0.3)" }}>JOINED</p>
+                </div>
+                <div style={{ textAlign: "center" }}>
+                  <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 22, color: "#FF6600", letterSpacing: "0.04em" }}>+{refStats.xp_earned}</p>
+                  <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: "0.1em", color: "rgba(255,255,255,0.3)" }}>XP EARNED</p>
+                </div>
+              </div>
+            </>
+          ) : (
+            <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, color: "rgba(255,255,255,0.3)" }}>Log in to get your referral link.</p>
+          )}
+        </V4Card>
 
         {/* Leaderboard CTA */}
         <button

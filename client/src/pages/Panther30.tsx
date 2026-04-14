@@ -8,6 +8,7 @@ import { useLocation } from "wouter";
 import { getAnimationForDay, type PantherAnimation } from "@/data/pantherAnimations";
 import { useAnimationPlayer, FALLBACK_VIDEO_URL } from "@/hooks/useAnimationPlayer";
 import SuccessScreen from "@/components/SuccessScreen";
+import { useReferral } from "@/hooks/useReferral";
 
 const PANTHER_MASCOT = "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/panther-mascot-gym_27e64ae1.png";
 
@@ -160,6 +161,7 @@ export default function Panther30() {
   // Program state (DB-backed)
   const [programState, setProgramState] = useState<ProgramState | null>(null);
   const userId = localStorage.getItem("tuf_user_id") || "guest";
+  const { refCode } = useReferral(userId !== "guest" ? userId : null);
 
   // Derived
   const doneDays = new Set<number>(programState?.completed_days ?? []);
@@ -326,6 +328,7 @@ export default function Panther30() {
               totalDone={doneDays.size}
               phase={activeDay?.phase ?? "Control"}
               workoutStats={{ reps: repsDone.size * 10, time: activeDay?.duration_min ?? 30 }}
+              refCode={refCode}
               onContinue={() => {
                 setShowSuccess(false);
                 setSuccessData(null);

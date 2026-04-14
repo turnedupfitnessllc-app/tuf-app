@@ -11,7 +11,7 @@
  *   - Badge unlock animation (if any)
  *   - 30-day progress bar with milestone icons
  *   - Phase coach message
- *   - Share button (Web Share API)
+ *   - Share button (Web Share API) — uses exact generateShareText() spec
  *   - Continue CTA
  *
  * Web equivalent of the React Native SuccessScreen component.
@@ -23,6 +23,39 @@ import ProgramProgressBar from "./ProgramProgressBar";
 
 const PANTHER_VIDEO_URL =
   "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/panther-hero-splash_7a05a834.mp4";
+
+// ── Share text functions (exact spec from user) ───────────────────────────────
+
+function getMotivation(streak: number): string {
+  if (streak >= 14) return "Apex discipline unlocked.";
+  if (streak >= 7)  return "Momentum is building.";
+  return "Consistency is power.";
+}
+
+function generateShareText(user: {
+  day: number;
+  streak: number;
+  xp_earned: number;
+  ref_link?: string;
+}): string {
+  const refLine = user.ref_link ? `\n\n🔗 Join me: ${user.ref_link}` : "";
+  return `🐆 Panther Training Update:\n\nDay ${user.day} Complete\n🔥 Streak: ${user.streak}\n⚡ XP: ${user.xp_earned}\n\n"${getMotivation(user.streak)}"${refLine}`;
+}
+
+// ── Phase coach messages ──────────────────────────────────────────────────────
+
+function getCoachMessage(phase: string): string {
+  const messages: Record<string, string> = {
+    Control:   "Control is improving.",
+    Stability: "Your balance is stronger.",
+    Strength:  "You're building real power.",
+    Explosion: "Speed is increasing.",
+    Evolution: "You've transformed.",
+  };
+  return messages[phase] || "Keep going.";
+}
+
+// ── Types ─────────────────────────────────────────────────────────────────────
 
 interface WorkoutStats {
   reps: number;
@@ -41,25 +74,11 @@ interface SuccessScreenProps {
   phase: string;
   workoutStats: WorkoutStats;
   coachMessage?: string;
+  refCode?: string | null;   // referral code — appended to share text as join link
   onContinue: () => void;
 }
 
-function getCoachMessage(phase: string): string {
-  const messages: Record<string, string> = {
-    Control:   "Control is improving.",
-    Stability: "Your balance is stronger.",
-    Strength:  "You're building real power.",
-    Explosion: "Speed is increasing.",
-    Evolution: "You've transformed.",
-  };
-  return messages[phase] || "Keep going.";
-}
-
-function getMotivation(streak: number): string {
-  if (streak >= 14) return "Apex discipline unlocked.";
-  if (streak >= 7)  return "Momentum is building.";
-  return "Consistency is power.";
-}
+// ── Component ─────────────────────────────────────────────────────────────────
 
 export default function SuccessScreen({
   completedDay,
@@ -72,6 +91,7 @@ export default function SuccessScreen({
   phase,
   workoutStats,
   coachMessage,
+  refCode,
   onContinue,
 }: SuccessScreenProps) {
   const [visible, setVisible] = useState(false);
@@ -79,14 +99,23 @@ export default function SuccessScreen({
   const [shared, setShared] = useState(false);
 
   useEffect(() => {
-    // Stagger entrance
     const t1 = setTimeout(() => setVisible(true), 80);
     const t2 = setTimeout(() => setBadgeVisible(true), 600);
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, []);
 
   const shareWorkout = async () => {
-    const text = `🐆 Panther Training Update:\n\nDay ${completedDay} Complete\n🔥 Streak: ${streak}\n⚡ XP: +${xpAwarded}\n\n"${getMotivation(streak)}"`;
+    const refLink = refCode
+      ? `${window.location.origin}/join?ref=${refCode}`
+      : undefined;
+
+    const text = generateShareText({
+      day:      completedDay,
+      streak,
+      xp_earned: xpAwarded,
+      ref_link:  refLink,
+    });
+
     try {
       if (navigator.share) {
         await navigator.share({ title: "Panther Training", text });
@@ -127,18 +156,13 @@ export default function SuccessScreen({
         <div style={{ position: "relative", width: "100%", height: 220, overflow: "hidden" }}>
           <video
             src={PANTHER_VIDEO_URL}
-            autoPlay
-            loop
-            muted
-            playsInline
+            autoPlay loop muted playsInline
             style={{ width: "100%", height: "100%", objectFit: "cover" }}
           />
-          {/* Gradient overlay */}
           <div style={{
             position: "absolute", inset: 0,
             background: "linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.85) 100%)",
           }} />
-          {/* Phase badge */}
           <div style={{
             position: "absolute", top: 16, left: 16,
             fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700,

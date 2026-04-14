@@ -18,6 +18,7 @@ import feastRouter from "./routes/feast.js";
 import progressRouter from "./routes/progress.js";
 import healthintelRouter from "./routes/healthintel.js";
 import pantherProgramRouter from "./routes/panther-program.js";
+import referralRouter from "./routes/referral.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -49,6 +50,7 @@ async function startServer() {
   app.use("/api/progress", progressRouter);
   app.use("/api/healthintel", healthintelRouter);
   app.use("/api/panther-program", pantherProgramRouter);
+  app.use("/api/referral", referralRouter);
 
   // Health check endpoint
   app.get("/api/health", (_req, res) => {

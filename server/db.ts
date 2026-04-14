@@ -1158,3 +1158,95 @@ export async function upsertUserProgramState(
   await db.write();
   return record;
 }
+
+// ─── REFERRAL SYSTEM ─────────────────────────────────────────────────────────
+
+export interface ReferralCode {
+  ref_code: string;       // e.g. "marc123a"
+  referrer_id: string;    // user_id of the person who owns this code
+  visits: number;         // total link visits
+  conversions: number;    // total successful sign-ups
+  converted_users: string[]; // user_ids of converted new users
+  created_at: number;
+  updated_at: number;
+}
+
+/** Get a user's referral code record (or undefined if none yet) */
+export async function getReferralCode(referrer_id: string): Promise<ReferralCode | undefined> {
+  const db = await getDb();
+  const raw = (db.data as unknown) as Record<string, unknown>;
+  if (!raw.referral_codes) raw.referral_codes = [];
+  return (raw.referral_codes as ReferralCode[]).find((r) => r.referrer_id === referrer_id);
+}
+
+/** Create a new referral code for a user */
+export async function createReferralCode(referrer_id: string, ref_code: string): Promise<ReferralCode> {
+  const db = await getDb();
+  const raw = (db.data as unknown) as Record<string, unknown>;
+  if (!raw.referral_codes) raw.referral_codes = [];
+  const codes = raw.referral_codes as ReferralCode[];
+  const now = Date.now();
+  const record: ReferralCode = {
+    ref_code,
+    referrer_id,
+    visits: 0,
+    conversions: 0,
+    converted_users: [],
+    created_at: now,
+    updated_at: now,
+  };
+  codes.push(record);
+  await db.write();
+  return record;
+}
+
+/** Increment visit count for a ref code */
+export async function trackReferralVisit(ref_code: string): Promise<void> {
+  const db = await getDb();
+  const raw = (db.data as unknown) as Record<string, unknown>;
+  if (!raw.referral_codes) return;
+  const codes = raw.referral_codes as ReferralCode[];
+  const idx = codes.findIndex((r) => r.ref_code === ref_code);
+  if (idx >= 0) {
+    codes[idx].visits += 1;
+    codes[idx].updated_at = Date.now();
+    await db.write();
+  }
+}
+
+/** Mark a referral as converted (new user completed onboarding) */
+export async function convertReferral(
+  ref_code: string,
+  new_user_id: string
+): Promise<ReferralCode | null> {
+  const db = await getDb();
+  const raw = (db.data as unknown) as Record<string, unknown>;
+  if (!raw.referral_codes) return null;
+  const codes = raw.referral_codes as ReferralCode[];
+  const idx = codes.findIndex((r) => r.ref_code === ref_code);
+  if (idx < 0) return null;
+  // Idempotent — don't double-count
+  if (!codes[idx].converted_users.includes(new_user_id)) {
+    codes[idx].conversions += 1;
+    codes[idx].converted_users.push(new_user_id);
+    codes[idx].updated_at = Date.now();
+    await db.write();
+  }
+  return codes[idx];
+}
+
+/** Get referral stats for a user */
+export async function getReferralStats(referrer_id: string): Promise<{
+  ref_code: string | null;
+  visits: number;
+  conversions: number;
+  xp_earned: number;
+}> {
+  const code = await getReferralCode(referrer_id);
+  return {
+    ref_code:    code?.ref_code ?? null,
+    visits:      code?.visits ?? 0,
+    conversions: code?.conversions ?? 0,
+    xp_earned:   (code?.conversions ?? 0) * 100,
+  };
+}
