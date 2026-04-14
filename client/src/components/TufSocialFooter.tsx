@@ -119,7 +119,7 @@ export function TufSocialStickyStrip() {
         background: "rgba(8,8,8,0.92)",
         backdropFilter: "blur(16px)",
         WebkitBackdropFilter: "blur(16px)",
-        borderTop: "1px solid rgba(255,69,0,0.12)",
+        borderTop: "1px solid rgba(255,102,0,0.12)",
         boxShadow: "0 -4px 24px rgba(0,0,0,0.5)",
       }}>
         <div style={{
@@ -185,8 +185,8 @@ export function TufSocialInlineFooter() {
     <>
       <style>{`
         @keyframes inlineHover {
-          0%,100% { box-shadow: 0 0 0 rgba(255,69,0,0); }
-          50%      { box-shadow: 0 0 14px rgba(255,69,0,0.2); }
+          0%,100% { box-shadow: 0 0 0 rgba(255,102,0,0); }
+          50%      { box-shadow: 0 0 14px rgba(255,102,0,0.2); }
         }
         .social-inline-btn {
           display: flex;
@@ -205,7 +205,7 @@ export function TufSocialInlineFooter() {
         }
         .social-inline-btn:hover {
           background: rgba(255,255,255,0.08);
-          border-color: rgba(255,69,0,0.3);
+          border-color: rgba(255,102,0,0.3);
           transform: translateY(-3px);
         }
         .social-inline-btn:active {
@@ -229,7 +229,7 @@ export function TufSocialInlineFooter() {
           <div style={{
             height: 1,
             flex: 1,
-            background: "rgba(255,69,0,0.2)",
+            background: "rgba(255,102,0,0.2)",
           }} />
           <span style={{
             fontFamily: "'Barlow Condensed', sans-serif",
@@ -244,7 +244,7 @@ export function TufSocialInlineFooter() {
           <div style={{
             height: 1,
             flex: 1,
-            background: "rgba(255,69,0,0.2)",
+            background: "rgba(255,102,0,0.2)",
           }} />
         </div>
 

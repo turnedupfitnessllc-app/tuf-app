@@ -97,7 +97,7 @@ export default function Onboarding() {
             {/* Ambient glow */}
             <div style={{
               position: "absolute", inset: -40,
-              background: "radial-gradient(circle, rgba(255,69,0,0.18) 0%, transparent 65%)",
+              background: "radial-gradient(circle, rgba(255,102,0,0.18) 0%, transparent 65%)",
               borderRadius: "50%",
               pointerEvents: "none",
             }} />
@@ -105,12 +105,12 @@ export default function Onboarding() {
               fontFamily: "'Bebas Neue', sans-serif",
               fontSize: 120,
               lineHeight: 1,
-              color: "#FF4500",
+              color: "#FF6600",
               letterSpacing: "-0.02em",
               textShadow: [
-                "0 0 20px rgba(255,69,0,0.95)",
-                "0 0 50px rgba(255,69,0,0.65)",
-                "0 0 100px rgba(255,69,0,0.35)",
+                "0 0 20px rgba(255,102,0,0.95)",
+                "0 0 50px rgba(255,102,0,0.65)",
+                "0 0 100px rgba(255,102,0,0.35)",
               ].join(", "),
               position: "relative",
             }}>
@@ -128,8 +128,8 @@ export default function Onboarding() {
             onClick={() => setStep(1)}
             className="w-full py-4 rounded-2xl text-white font-black text-base tracking-wide active:scale-[0.98] transition-all"
             style={{
-              background: 'linear-gradient(135deg, #FF4500, #DC2626)',
-              boxShadow: '0 4px 24px rgba(255,69,0,0.4)',
+              background: 'linear-gradient(135deg, #FF6600, #DC2626)',
+              boxShadow: '0 4px 24px rgba(255,102,0,0.4)',
             }}
           >
             GET STARTED →

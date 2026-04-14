@@ -196,7 +196,7 @@ export default function HealthIntel() {
               )}
             </div>
 
-            <div className="hi-card" style={{ borderColor: "rgba(255,69,0,0.3)", background: "rgba(255,69,0,0.05)" }}>
+            <div className="hi-card" style={{ borderColor: "rgba(255,102,0,0.3)", background: "rgba(255,102,0,0.05)" }}>
               <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 14, color: "var(--accent-primary)", letterSpacing: "0.1em", marginBottom: 8 }}>
                 🐆 PANTHER READS THE DATA
               </div>
@@ -244,7 +244,7 @@ export default function HealthIntel() {
               )}
             </div>
 
-            <div className="hi-card" style={{ borderColor: "rgba(255,69,0,0.3)", background: "rgba(255,69,0,0.05)" }}>
+            <div className="hi-card" style={{ borderColor: "rgba(255,102,0,0.3)", background: "rgba(255,102,0,0.05)" }}>
               <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 14, color: "var(--accent-primary)", letterSpacing: "0.1em", marginBottom: 8 }}>
                 🐆 METABOLIC TRUTH
               </div>
@@ -306,7 +306,7 @@ export default function HealthIntel() {
               )}
             </div>
 
-            <div className="hi-card" style={{ borderColor: "rgba(255,69,0,0.3)", background: "rgba(255,69,0,0.05)" }}>
+            <div className="hi-card" style={{ borderColor: "rgba(255,102,0,0.3)", background: "rgba(255,102,0,0.05)" }}>
               <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 14, color: "var(--accent-primary)", letterSpacing: "0.1em", marginBottom: 8 }}>
                 🐆 IMMUNE INTELLIGENCE
               </div>

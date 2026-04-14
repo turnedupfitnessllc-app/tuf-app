@@ -1,10 +1,17 @@
+/**
+ * TUF THEME CONTEXT — v2.0
+ * Doc 12 compliant: uses data-theme attribute on documentElement
+ * localStorage key: "tuf-theme"
+ * Default: dark
+ */
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 type Theme = "light" | "dark";
 
 interface ThemeContextType {
   theme: Theme;
-  toggleTheme?: () => void;
+  toggleTheme: () => void;
+  isDark: boolean;
   switchable: boolean;
 }
 
@@ -18,19 +25,27 @@ interface ThemeProviderProps {
 
 export function ThemeProvider({
   children,
-  defaultTheme = "light",
+  defaultTheme = "dark",
   switchable = true,
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(() => {
     if (switchable) {
-      const stored = localStorage.getItem("theme");
-      return (stored as Theme) || defaultTheme;
+      // Support both old key ("theme") and new key ("tuf-theme") for migration
+      const stored =
+        (localStorage.getItem("tuf-theme") as Theme) ||
+        (localStorage.getItem("theme") as Theme);
+      return stored || defaultTheme;
     }
     return defaultTheme;
   });
 
   useEffect(() => {
     const root = document.documentElement;
+
+    // Doc 12 spec: set data-theme attribute
+    root.setAttribute("data-theme", theme);
+
+    // Also keep .dark class for Tailwind @custom-variant dark compatibility
     if (theme === "dark") {
       root.classList.add("dark");
     } else {
@@ -38,18 +53,25 @@ export function ThemeProvider({
     }
 
     if (switchable) {
-      localStorage.setItem("theme", theme);
+      localStorage.setItem("tuf-theme", theme);
     }
   }, [theme, switchable]);
 
-  const toggleTheme = switchable
-    ? () => {
-        setTheme(prev => (prev === "light" ? "dark" : "light"));
-      }
-    : undefined;
+  const toggleTheme = () => {
+    if (switchable) {
+      setTheme(prev => (prev === "dark" ? "light" : "dark"));
+    }
+  };
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, switchable }}>
+    <ThemeContext.Provider
+      value={{
+        theme,
+        toggleTheme,
+        isDark: theme === "dark",
+        switchable: switchable ?? true,
+      }}
+    >
       {children}
     </ThemeContext.Provider>
   );
@@ -62,3 +84,5 @@ export function useTheme() {
   }
   return context;
 }
+
+export default ThemeContext;

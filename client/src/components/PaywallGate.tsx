@@ -17,7 +17,7 @@ const TIER_ORDER: Tier[] = ["free", "core", "elite", "pro"];
 const TIER_COLORS: Record<Tier, string> = {
   free:  "#A0A0A0",
   core:  "#4a9eff",
-  elite: "#FF4500",
+  elite: "#FF6600",
   pro:   "#C8973A",
 };
 

@@ -103,7 +103,7 @@ function AnimationCard({ anim, color, animationId, difficulty }: {
 const PHASE_COLORS: Record<string, string> = {
   Control: "#4a9eff",
   Stability: "#C8973A",
-  Strength: "#FF4500",
+  Strength: "#FF6600",
   Explosion: "#ff6b00",
   Evolution: "#22c55e",
 };
@@ -217,7 +217,7 @@ export default function Panther30() {
 
   // ── SESSION VIEW ─────────────────────────────────────────────────────────────
   if (view === "session" && activeDay) {
-    const color = PHASE_COLORS[activeDay.phase] || "#FF4500";
+    const color = PHASE_COLORS[activeDay.phase] || "#FF6600";
     const allDone = completed.size === activeDay.exercises.length;
     // Determine animation context for this session
     const anim = getAnimationForDay(
@@ -351,7 +351,7 @@ export default function Panther30() {
 
         {/* Header */}
         <div style={{ marginBottom: 16, animation: "fadeUp 0.4s ease forwards" }}>
-          <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", color: "#FF4500", marginBottom: 2 }}>PANTHER SYSTEM</p>
+          <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", color: "#FF6600", marginBottom: 2 }}>PANTHER SYSTEM</p>
           <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 32, letterSpacing: "0.07em", color: "var(--text-primary)", lineHeight: 1 }}>30-DAY PROGRAM</h1>
           <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, color: "rgba(255,255,255,0.35)", marginTop: 2 }}>
             Day {Math.min(currentDay, 30)} of 30 · {totalDone} sessions complete
@@ -360,7 +360,7 @@ export default function Panther30() {
 
         {/* Overall progress */}
         <div style={{ height: 4, borderRadius: 2, background: "rgba(255,255,255,0.06)", overflow: "hidden", marginBottom: 20 }}>
-          <div style={{ height: "100%", borderRadius: 2, background: "linear-gradient(90deg, #FF4500, #22c55e)", width: `${Math.round((totalDone / 30) * 100)}%`, transition: "width 0.6s ease" }} />
+          <div style={{ height: "100%", borderRadius: 2, background: "linear-gradient(90deg, #FF6600, #22c55e)", width: `${Math.round((totalDone / 30) * 100)}%`, transition: "width 0.6s ease" }} />
         </div>
 
         {/* Phase tabs */}
@@ -387,7 +387,7 @@ export default function Panther30() {
           {phaseDays.map((day, i) => {
             const done = doneDays.has(day.day);
             const isNext = day.day === currentDay;
-            const color = PHASE_COLORS[day.phase] || "#FF4500";
+            const color = PHASE_COLORS[day.phase] || "#FF6600";
             return (
               <button
                 key={day.day}

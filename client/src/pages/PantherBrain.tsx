@@ -252,7 +252,7 @@ export default function PantherBrain() {
                 fontFamily: "'Bebas Neue', sans-serif", fontSize: 24, letterSpacing: "0.06em",
                 color: "var(--text-primary)", lineHeight: 1,
               }}>
-                PANTHER <span style={{ color: "#FF4500" }}>AI</span>
+                PANTHER <span style={{ color: "#FF6600" }}>AI</span>
               </p>
               <p style={{
                 fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, fontWeight: 700,
@@ -269,8 +269,8 @@ export default function PantherBrain() {
               style={{
                 display: "flex", flexDirection: "column", alignItems: "center", gap: 2,
                 padding: "6px 10px", borderRadius: 10,
-                border: `1px solid ${voiceEnabled ? "rgba(255,69,0,0.4)" : "rgba(255,255,255,0.1)"}`,
-                background: voiceEnabled ? "rgba(255,69,0,0.1)" : "rgba(255,255,255,0.03)",
+                border: `1px solid ${voiceEnabled ? "rgba(255,102,0,0.4)" : "rgba(255,255,255,0.1)"}`,
+                background: voiceEnabled ? "rgba(255,102,0,0.1)" : "rgba(255,255,255,0.03)",
                 cursor: "pointer", flexShrink: 0,
                 animation: speaking ? "pulse 0.8s ease-in-out infinite" : "none",
               }}
@@ -281,7 +281,7 @@ export default function PantherBrain() {
               <span style={{
                 fontFamily: "'Barlow Condensed', sans-serif", fontSize: 8, fontWeight: 700,
                 letterSpacing: "0.1em",
-                color: voiceEnabled ? "rgba(255,69,0,0.7)" : "rgba(255,255,255,0.25)",
+                color: voiceEnabled ? "rgba(255,102,0,0.7)" : "rgba(255,255,255,0.25)",
               }}>
                 {speaking ? "SPEAKING" : voiceEnabled ? "VOICE ON" : "MUTED"}
               </span>
@@ -308,8 +308,8 @@ export default function PantherBrain() {
               ) : (
                 <div style={{ display: "flex", justifyContent: "flex-end" }}>
                   <div style={{
-                    background: "linear-gradient(135deg, rgba(139,0,0,0.28), rgba(255,69,0,0.15))",
-                    border: "1px solid rgba(255,69,0,0.2)",
+                    background: "linear-gradient(135deg, rgba(139,0,0,0.28), rgba(255,102,0,0.15))",
+                    border: "1px solid rgba(255,102,0,0.2)",
                     borderRadius: "16px 16px 4px 16px",
                     padding: "10px 14px", maxWidth: "80%",
                     fontSize: 14, color: "rgba(255,255,255,0.85)", lineHeight: 1.5,
@@ -330,25 +330,25 @@ export default function PantherBrain() {
               {/* Panther avatar SVG */}
               <div style={{ position: "relative", marginBottom: 16 }}>
                 <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="40" cy="40" r="38" stroke="rgba(255,69,0,0.15)" strokeWidth="1"/>
-                  <circle cx="40" cy="40" r="32" stroke="rgba(255,69,0,0.25)" strokeWidth="1.5"/>
-                  <ellipse cx="40" cy="38" rx="18" ry="20" fill="rgba(255,69,0,0.06)" stroke="rgba(255,69,0,0.3)" strokeWidth="1.5"/>
-                  <path d="M26 24 L22 14 L32 20 Z" fill="rgba(255,69,0,0.3)" stroke="rgba(255,69,0,0.5)" strokeWidth="1"/>
-                  <path d="M54 24 L58 14 L48 20 Z" fill="rgba(255,69,0,0.3)" stroke="rgba(255,69,0,0.5)" strokeWidth="1"/>
-                  <ellipse cx="33" cy="36" rx="3.5" ry="2.5" fill="rgba(255,69,0,0.8)"/>
-                  <ellipse cx="47" cy="36" rx="3.5" ry="2.5" fill="rgba(255,69,0,0.8)"/>
+                  <circle cx="40" cy="40" r="38" stroke="rgba(255,102,0,0.15)" strokeWidth="1"/>
+                  <circle cx="40" cy="40" r="32" stroke="rgba(255,102,0,0.25)" strokeWidth="1.5"/>
+                  <ellipse cx="40" cy="38" rx="18" ry="20" fill="rgba(255,102,0,0.06)" stroke="rgba(255,102,0,0.3)" strokeWidth="1.5"/>
+                  <path d="M26 24 L22 14 L32 20 Z" fill="rgba(255,102,0,0.3)" stroke="rgba(255,102,0,0.5)" strokeWidth="1"/>
+                  <path d="M54 24 L58 14 L48 20 Z" fill="rgba(255,102,0,0.3)" stroke="rgba(255,102,0,0.5)" strokeWidth="1"/>
+                  <ellipse cx="33" cy="36" rx="3.5" ry="2.5" fill="rgba(255,102,0,0.8)"/>
+                  <ellipse cx="47" cy="36" rx="3.5" ry="2.5" fill="rgba(255,102,0,0.8)"/>
                   <ellipse cx="33" cy="36" rx="1.5" ry="2" fill="rgba(255,120,50,1)"/>
                   <ellipse cx="47" cy="36" rx="1.5" ry="2" fill="rgba(255,120,50,1)"/>
-                  <path d="M38 43 L40 46 L42 43" stroke="rgba(255,69,0,0.5)" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M38 43 L40 46 L42 43" stroke="rgba(255,102,0,0.5)" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
                   <path d="M22 40 L32 42M22 44 L32 44" stroke="rgba(255,255,255,0.15)" strokeWidth="0.8" strokeLinecap="round"/>
                   <path d="M58 40 L48 42M58 44 L48 44" stroke="rgba(255,255,255,0.15)" strokeWidth="0.8" strokeLinecap="round"/>
-                  <line x1="10" y1="38" x2="20" y2="38" stroke="rgba(255,69,0,0.3)" strokeWidth="0.8"/>
-                  <line x1="60" y1="38" x2="70" y2="38" stroke="rgba(255,69,0,0.3)" strokeWidth="0.8"/>
+                  <line x1="10" y1="38" x2="20" y2="38" stroke="rgba(255,102,0,0.3)" strokeWidth="0.8"/>
+                  <line x1="60" y1="38" x2="70" y2="38" stroke="rgba(255,102,0,0.3)" strokeWidth="0.8"/>
                 </svg>
                 <div style={{
                   position: "absolute", inset: -8,
                   borderRadius: "50%",
-                  border: "1px solid rgba(255,69,0,0.2)",
+                  border: "1px solid rgba(255,102,0,0.2)",
                   animation: "ring 2.5s ease-in-out infinite",
                 }} />
               </div>
@@ -356,7 +356,7 @@ export default function PantherBrain() {
                 fontFamily: "'Barlow Condensed', sans-serif",
                 fontSize: 11, fontWeight: 700,
                 letterSpacing: "0.2em",
-                color: "rgba(255,69,0,0.5)",
+                color: "rgba(255,102,0,0.5)",
                 textAlign: "center",
                 marginBottom: 6,
               }}>
@@ -375,7 +375,7 @@ export default function PantherBrain() {
               <p style={{
                 fontFamily: "'Barlow Condensed', sans-serif",
                 fontSize: 9, marginTop: 8,
-                color: voiceEnabled ? "rgba(255,69,0,0.4)" : "rgba(255,255,255,0.15)",
+                color: voiceEnabled ? "rgba(255,102,0,0.4)" : "rgba(255,255,255,0.15)",
                 textAlign: "center", letterSpacing: "0.08em",
               }}>
                 {voiceEnabled ? "🔈 PANTHER WILL SPEAK HIS RESPONSE" : "🔇 VOICE MUTED — TAP SPEAKER TO ENABLE"}
@@ -389,7 +389,7 @@ export default function PantherBrain() {
                 <div
                   key={i}
                   style={{
-                    width: 7, height: 7, borderRadius: "50%", background: "#FF4500",
+                    width: 7, height: 7, borderRadius: "50%", background: "#FF6600",
                     animation: `dot 1.2s ease-in-out ${i * 0.2}s infinite`,
                   }}
                 />
@@ -461,7 +461,7 @@ export default function PantherBrain() {
                 width: 40, height: 40, borderRadius: 12, border: "none", flexShrink: 0,
                 background: thinking || !input.trim()
                   ? "rgba(255,255,255,0.06)"
-                  : "linear-gradient(135deg, #FF4500, #8B0000)",
+                  : "linear-gradient(135deg, #FF6600, #8B0000)",
                 cursor: thinking || !input.trim() ? "not-allowed" : "pointer",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 color: "var(--text-primary)", fontSize: 16,

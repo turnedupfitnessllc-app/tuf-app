@@ -66,7 +66,7 @@ export default function Fuel() {
               className="text-3xl font-black tracking-wider text-white uppercase"
               style={{ fontFamily: "Barlow Condensed, sans-serif", letterSpacing: "0.05em" }}
             >
-              TURNED UP <span style={{ color: "#FF4500" }}>IN THE KITCHEN</span>
+              TURNED UP <span style={{ color: "#FF6600" }}>IN THE KITCHEN</span>
             </h1>
             <p className="text-sm mt-0.5" style={{ color: "rgba(255,255,255,0.5)" }}>
               {tutkRecipes.length} recipes · Optimized for 40+ athletes
@@ -78,8 +78,8 @@ export default function Fuel() {
         <div
           className="mt-3 px-4 py-3 rounded-xl border text-sm italic"
           style={{
-            background: "rgba(255,69,0,0.08)",
-            borderColor: "rgba(255,69,0,0.25)",
+            background: "rgba(255,102,0,0.08)",
+            borderColor: "rgba(255,102,0,0.25)",
             color: "rgba(255,255,255,0.7)",
           }}
         >
@@ -108,7 +108,7 @@ export default function Fuel() {
                 fontFamily: "Barlow Condensed, sans-serif",
                 background:
                   activeTab === tab.key
-                    ? "linear-gradient(135deg, #FF4500, #DC2626)"
+                    ? "linear-gradient(135deg, #FF6600, #DC2626)"
                     : "transparent",
                 color: activeTab === tab.key ? "white" : "rgba(255,255,255,0.5)",
               }}
@@ -148,7 +148,7 @@ export default function Fuel() {
                   fontFamily: "Barlow Condensed, sans-serif",
                   background:
                     activeCategory === cat.key
-                      ? "linear-gradient(135deg, #FF4500, #DC2626)"
+                      ? "linear-gradient(135deg, #FF6600, #DC2626)"
                       : "rgba(255,255,255,0.05)",
                   borderColor:
                     activeCategory === cat.key ? "transparent" : "rgba(255,255,255,0.1)",
@@ -171,11 +171,11 @@ export default function Fuel() {
                   fontFamily: "Barlow Condensed, sans-serif",
                   background:
                     conditionFilter === cf.key
-                      ? "rgba(255,69,0,0.2)"
+                      ? "rgba(255,102,0,0.2)"
                       : "rgba(255,255,255,0.03)",
                   borderColor:
                     conditionFilter === cf.key
-                      ? "rgba(255,69,0,0.5)"
+                      ? "rgba(255,102,0,0.5)"
                       : "rgba(255,255,255,0.08)",
                   color: conditionFilter === cf.key ? "#FF6B35" : "rgba(255,255,255,0.5)",
                 }}
@@ -209,7 +209,7 @@ export default function Fuel() {
                       <span
                         className="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
                         style={{
-                          background: "rgba(255,69,0,0.15)",
+                          background: "rgba(255,102,0,0.15)",
                           color: "#FF6B35",
                           fontFamily: "Barlow Condensed, sans-serif",
                         }}
@@ -299,8 +299,8 @@ export default function Fuel() {
                   <div
                     className="rounded-2xl p-4 mb-4 border"
                     style={{
-                      background: "rgba(255,69,0,0.08)",
-                      borderColor: "rgba(255,69,0,0.2)",
+                      background: "rgba(255,102,0,0.08)",
+                      borderColor: "rgba(255,102,0,0.2)",
                     }}
                   >
                     <h2
@@ -393,7 +393,7 @@ export default function Fuel() {
                         <div className="flex items-center gap-2 mb-1">
                           <span
                             className="text-xs font-bold px-2 py-0.5 rounded-full"
-                            style={{ background: "rgba(255,69,0,0.2)", color: "#FF6B35" }}
+                            style={{ background: "rgba(255,102,0,0.2)", color: "#FF6B35" }}
                           >
                             {phase.week}
                           </span>
@@ -483,7 +483,7 @@ export default function Fuel() {
                   <div className="mt-3 flex items-center gap-3">
                     <span
                       className="text-xs px-2 py-1 rounded-full"
-                      style={{ background: "rgba(255,69,0,0.15)", color: "#FF6B35" }}
+                      style={{ background: "rgba(255,102,0,0.15)", color: "#FF6B35" }}
                     >
                       ⏱ {mod.recoveryTimeline}
                     </span>
@@ -506,7 +506,7 @@ export default function Fuel() {
         <div className="px-4">
           <div
             className="rounded-2xl p-4 mb-4 border"
-            style={{ background: "rgba(255,69,0,0.08)", borderColor: "rgba(255,69,0,0.2)" }}
+            style={{ background: "rgba(255,102,0,0.08)", borderColor: "rgba(255,102,0,0.2)" }}
           >
             <h2
               className="text-xl font-black text-white uppercase mb-1"
@@ -618,8 +618,8 @@ export default function Fuel() {
                     key={macro.label}
                     className="p-3 rounded-xl text-center border"
                     style={{
-                      background: "rgba(255,69,0,0.08)",
-                      borderColor: "rgba(255,69,0,0.2)",
+                      background: "rgba(255,102,0,0.08)",
+                      borderColor: "rgba(255,102,0,0.2)",
                     }}
                   >
                     <div
@@ -694,7 +694,7 @@ export default function Fuel() {
               </h3>
               {selectedRecipe.ingredients.map((ing, i) => (
                 <div key={i} className="flex items-start gap-2 mb-2">
-                  <span style={{ color: "#FF4500" }}>■</span>
+                  <span style={{ color: "#FF6600" }}>■</span>
                   <span className="text-sm text-white">{ing}</span>
                 </div>
               ))}
@@ -718,7 +718,7 @@ export default function Fuel() {
                 <div key={i} className="flex gap-3 mb-3">
                   <span
                     className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white"
-                    style={{ background: "linear-gradient(135deg, #FF4500, #DC2626)" }}
+                    style={{ background: "linear-gradient(135deg, #FF6600, #DC2626)" }}
                   >
                     {i + 1}
                   </span>
@@ -732,8 +732,8 @@ export default function Fuel() {
               <div
                 className="rounded-2xl p-4 mb-3 border"
                 style={{
-                  background: "rgba(255,69,0,0.08)",
-                  borderColor: "rgba(255,69,0,0.2)",
+                  background: "rgba(255,102,0,0.08)",
+                  borderColor: "rgba(255,102,0,0.2)",
                 }}
               >
                 <h3

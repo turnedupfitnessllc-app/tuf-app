@@ -233,14 +233,14 @@ function buildSessionTemplates(input: UserInput, patterns: any, corrIds: string[
         duration:"25-30 min",
         blockDefs:[
           { label:"INHIBIT + LENGTHEN", phase:"INHIBIT",   color:"#C8973A", exIds:corrIds.slice(0,2) },
-          { label:"ACTIVATION BLOCK",  phase:"ACTIVATE",   color:"#FF4500", exIds:corrIds.slice(2)   },
+          { label:"ACTIVATION BLOCK",  phase:"ACTIVATE",   color:"#FF6600", exIds:corrIds.slice(2)   },
         ],
       },
       {
         label:"CORRECTIVE B", focus:"Reinforce the activation. Add one more exercise.",
         duration:"25-30 min",
         blockDefs:[
-          { label:"CORRECTIVE SEQUENCE", phase:"ACTIVATE",  color:"#FF4500", exIds:corrIds },
+          { label:"CORRECTIVE SEQUENCE", phase:"ACTIVATE",  color:"#FF6600", exIds:corrIds },
           { label:"CORE STABILITY",      phase:"INTEGRATE",  color:"#2563eb", exIds:['dead_bug','bird_dog'] },
         ],
       },
@@ -263,7 +263,7 @@ function buildSessionTemplates(input: UserInput, patterns: any, corrIds: string[
       duration:"45-50 min",
       blockDefs:[
         { label:"CORRECTIVE BLOCK",  phase:"ACTIVATE",  color:"#C8973A", exIds:corrIds           },
-        { label:"PRIMARY PATTERN",   phase:"INTEGRATE", color:"#FF4500", exIds:hingeExs           },
+        { label:"PRIMARY PATTERN",   phase:"INTEGRATE", color:"#FF6600", exIds:hingeExs           },
         { label:"GLUTE FINISHER",    phase:"INTEGRATE", color:"#7c3aed", exIds:['hip_thrust','lateral_band_walk'] },
       ],
     },
@@ -274,7 +274,7 @@ function buildSessionTemplates(input: UserInput, patterns: any, corrIds: string[
       blockDefs:[
         { label:"SHOULDER CORRECTIVE",phase:"ACTIVATE",  color:"#C8973A", exIds:['wall_slide','band_pull_apart'] },
         { label:"PULL PATTERN",       phase:"INTEGRATE", color:"#2563eb", exIds:pullExs             },
-        { label:"PUSH PATTERN",       phase:"INTEGRATE", color:"#FF4500", exIds:patterns.avoid === 'overhead_press' ? ['landmine_press'] : ['landmine_press'] },
+        { label:"PUSH PATTERN",       phase:"INTEGRATE", color:"#FF6600", exIds:patterns.avoid === 'overhead_press' ? ['landmine_press'] : ['landmine_press'] },
       ],
     },
     {
@@ -283,7 +283,7 @@ function buildSessionTemplates(input: UserInput, patterns: any, corrIds: string[
       duration:"50 min",
       blockDefs:[
         { label:"CORRECTIVE WARM-UP", phase:"ACTIVATE",  color:"#C8973A", exIds:corrIds.slice(0,2) },
-        { label:"LOWER BODY",         phase:"INTEGRATE", color:"#FF4500", exIds:squatExs            },
+        { label:"LOWER BODY",         phase:"INTEGRATE", color:"#FF6600", exIds:squatExs            },
         { label:"UPPER BODY",         phase:"INTEGRATE", color:"#2563eb", exIds:pullExs.slice(0,1)  },
         { label:"CORE FINISHER",      phase:"INTEGRATE", color:"#16a34a", exIds:['dead_bug','bird_dog'] },
       ],
@@ -304,7 +304,7 @@ function buildSessionTemplates(input: UserInput, patterns: any, corrIds: string[
       duration:"50 min",
       blockDefs:[
         { label:"ACTIVATION PREP",   phase:"ACTIVATE",  color:"#C8973A", exIds:corrIds.slice(0,2)  },
-        { label:"COMPOUND LOWER",    phase:"INTEGRATE", color:"#FF4500", exIds:hingeExs             },
+        { label:"COMPOUND LOWER",    phase:"INTEGRATE", color:"#FF6600", exIds:hingeExs             },
         { label:"COMPOUND UPPER",    phase:"INTEGRATE", color:"#2563eb", exIds:pullExs              },
         { label:"LOADED CARRY",      phase:"INTEGRATE", color:"#16a34a", exIds:['single_leg_balance_ankle'] },
       ],

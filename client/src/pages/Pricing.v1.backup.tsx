@@ -77,8 +77,8 @@ const TIERS: Tier[] = [
     price: 39.99,
     interval: "month",
     tagline: "Train with precision AI coaching",
-    color: "#FF4500",
-    glow: "rgba(255,69,0,0.25)",
+    color: "#FF6600",
+    glow: "rgba(255,102,0,0.25)",
     badge: "MOST POPULAR",
     stripePriceId: "price_elite_monthly", // replace with real Stripe price ID
     features: [
@@ -233,7 +233,7 @@ export default function Pricing() {
         </button>
         <div
           className="text-xs font-black tracking-[0.3em] mb-1"
-          style={{ color: "#FF4500" }}
+          style={{ color: "#FF6600" }}
         >
           TURNED UP FITNESS
         </div>
@@ -260,7 +260,7 @@ export default function Pricing() {
               onClick={() => setBillingCycle(cycle)}
               className="px-5 py-1.5 rounded-full text-xs font-black tracking-wider transition-all"
               style={{
-                background: billingCycle === cycle ? "#FF4500" : "transparent",
+                background: billingCycle === cycle ? "#FF6600" : "transparent",
                 color: billingCycle === cycle ? "#fff" : "#A0A0A0",
               }}
             >
@@ -381,7 +381,7 @@ export default function Pricing() {
       <div className="px-4 mb-8">
         <div
           className="text-xs font-black tracking-[0.3em] mb-4"
-          style={{ color: "#FF4500" }}
+          style={{ color: "#FF6600" }}
         >
           POWER-UPS & ADD-ONS
         </div>
@@ -398,9 +398,9 @@ export default function Pricing() {
                 className="rounded-xl p-4 flex items-center gap-4 transition-all"
                 style={{
                   background: isSelected
-                    ? "rgba(255,69,0,0.08)"
+                    ? "rgba(255,102,0,0.08)"
                     : "rgba(255,255,255,0.02)",
-                  border: `1px solid ${isSelected ? "#FF4500" : "rgba(255,255,255,0.07)"}`,
+                  border: `1px solid ${isSelected ? "#FF6600" : "rgba(255,255,255,0.07)"}`,
                   opacity: isAvailable ? 1 : 0.5,
                   cursor: isAvailable ? "pointer" : "not-allowed",
                 }}
@@ -410,7 +410,7 @@ export default function Pricing() {
                   <div className="text-sm font-black text-white tracking-wider">{addon.name}</div>
                   <div className="text-xs text-muted-foreground mt-0.5 leading-snug">{addon.description}</div>
                   {!isAvailable && (
-                    <div className="text-[10px] mt-1" style={{ color: "#FF4500" }}>
+                    <div className="text-[10px] mt-1" style={{ color: "#FF6600" }}>
                       Requires {addon.requiresTier.toUpperCase()} plan
                     </div>
                   )}
@@ -418,7 +418,7 @@ export default function Pricing() {
                 <div className="text-right shrink-0">
                   <div className="text-sm font-black text-white">${addon.price}/mo</div>
                   {isSelected && (
-                    <div className="text-[10px] mt-0.5" style={{ color: "#FF4500" }}>ADDED</div>
+                    <div className="text-[10px] mt-0.5" style={{ color: "#FF6600" }}>ADDED</div>
                   )}
                 </div>
               </div>
@@ -456,7 +456,7 @@ export default function Pricing() {
 
       {/* ── FAQ ── */}
       <div className="px-4 mb-8 space-y-3">
-        <div className="text-xs font-black tracking-[0.3em] mb-4" style={{ color: "#FF4500" }}>
+        <div className="text-xs font-black tracking-[0.3em] mb-4" style={{ color: "#FF6600" }}>
           COMMON QUESTIONS
         </div>
         {[

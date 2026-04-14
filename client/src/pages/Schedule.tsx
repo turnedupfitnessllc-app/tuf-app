@@ -232,7 +232,7 @@ export default function Schedule() {
   }
 
   const DAY_COLORS: Record<string, string> = {
-    training:  "#FF4500",
+    training:  "#FF6600",
     completed: "#22c55e",
     missed:    "#ef4444",
     rest:      "rgba(255,255,255,0.06)",
@@ -342,7 +342,7 @@ export default function Schedule() {
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap');
         @keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
         @keyframes roarIn { 0%{opacity:0;transform:scale(0.85)} 20%{opacity:1;transform:scale(1.04)} 100%{opacity:1;transform:scale(1)} }
-        @keyframes glowPulse { 0%,100%{box-shadow:0 0 20px rgba(255,69,0,0.3)} 50%{box-shadow:0 0 40px rgba(255,69,0,0.6)} }
+        @keyframes glowPulse { 0%,100%{box-shadow:0 0 20px rgba(255,102,0,0.3)} 50%{box-shadow:0 0 40px rgba(255,102,0,0.6)} }
         .sched-page { animation: fadeUp 0.35s ease both; }
         .day-cell { transition: transform 0.12s; cursor: pointer; }
         .day-cell:active { transform: scale(0.92); }
@@ -350,7 +350,7 @@ export default function Schedule() {
         .modal-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;display:flex;align-items:flex-end;justify-content:center; }
         .modal-sheet { background:var(--bg-secondary);border-radius:24px 24px 0 0;width:100%;max-width:480px;padding:24px 20px 40px;max-height:85vh;overflow-y:auto; }
         .input-field { width:100%;background:rgba(128,128,128,0.1);border:1px solid var(--border-primary);border-radius:12px;padding:12px 14px;color:var(--text-primary);font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;outline:none;box-sizing:border-box; }
-        .input-field:focus { border-color:rgba(255,69,0,0.5); }
+        .input-field:focus { border-color:rgba(255,102,0,0.5); }
         select.input-field option { background:var(--bg-secondary);color:var(--text-primary); }
       `}</style>
 
@@ -367,7 +367,7 @@ export default function Schedule() {
         </div>
 
         <div style={{ marginBottom: 20 }}>
-          <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: "0.22em", color: "#FF4500", marginBottom: 2 }}>
+          <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: "0.22em", color: "#FF6600", marginBottom: 2 }}>
             TURNED UP FITNESS
           </div>
           <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 32, letterSpacing: "0.04em", color: "var(--text-primary)", lineHeight: 1 }}>
@@ -385,13 +385,13 @@ export default function Schedule() {
             onClick={() => setRoarMsg(null)}
             style={{
               marginBottom: 16, padding: "16px 20px", borderRadius: 16,
-              background: "linear-gradient(135deg, rgba(255,69,0,0.2), rgba(139,0,0,0.3))",
-              border: "1px solid rgba(255,69,0,0.4)",
+              background: "linear-gradient(135deg, rgba(255,102,0,0.2), rgba(139,0,0,0.3))",
+              border: "1px solid rgba(255,102,0,0.4)",
               animation: "glowPulse 2s ease-in-out infinite",
               cursor: "pointer",
             }}
           >
-            <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: "0.2em", color: "#FF4500", marginBottom: 4 }}>
+            <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: "0.2em", color: "#FF6600", marginBottom: 4 }}>
               🐾 PANTHER SAYS
             </div>
             <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 20, letterSpacing: "0.06em", color: "var(--text-primary)", lineHeight: 1.2 }}>
@@ -457,7 +457,7 @@ export default function Schedule() {
               <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: "0.2em", color: "rgba(255,255,255,0.35)", marginBottom: 2 }}>
                 STREAK
               </div>
-              <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 22, color: "#FF4500", lineHeight: 1 }}>
+              <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 22, color: "#FF6600", lineHeight: 1 }}>
                 {state.streak} <span style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>DAYS</span>
               </div>
             </div>
@@ -467,7 +467,7 @@ export default function Schedule() {
             <div style={{
               height: "100%", borderRadius: 3,
               width: `${Math.min(weekPct, 100)}%`,
-              background: weekPct >= 100 ? "#22c55e" : "#FF4500",
+              background: weekPct >= 100 ? "#22c55e" : "#FF6600",
               transition: "width 0.5s ease",
             }} />
           </div>
@@ -517,7 +517,7 @@ export default function Schedule() {
                     onClick={() => setShowCheckin(s)}
                     style={{
                       padding: "8px 14px", borderRadius: 10, border: "none",
-                      background: "#FF4500", color: "#fff",
+                      background: "#FF6600", color: "#fff",
                       fontFamily: "'Barlow Condensed',sans-serif", fontSize: 12, fontWeight: 700,
                       letterSpacing: "0.08em", cursor: "pointer",
                     }}
@@ -588,7 +588,7 @@ export default function Schedule() {
                     {dayNum}
                   </span>
                   {hasSession && dayState !== "completed" && dayState !== "missed" && (
-                    <div style={{ position: "absolute", bottom: 2, right: 2, width: 4, height: 4, borderRadius: "50%", background: "#FF4500" }} />
+                    <div style={{ position: "absolute", bottom: 2, right: 2, width: 4, height: 4, borderRadius: "50%", background: "#FF6600" }} />
                   )}
                 </div>
               );
@@ -600,7 +600,7 @@ export default function Schedule() {
           {/* Legend */}
           <div style={{ padding: "0 16px 14px", display: "flex", gap: 12, flexWrap: "wrap" }}>
             {[
-              { color: "#FF4500", label: "Scheduled" },
+              { color: "#FF6600", label: "Scheduled" },
               { color: "#22c55e", label: "Completed" },
               { color: "#ef4444", label: "Missed" },
               { color: "#4a9eff", label: "Today" },
@@ -664,10 +664,10 @@ export default function Schedule() {
           onClick={() => { setNewDate(todayStr()); setShowAdd(true); }}
           style={{
             width: "100%", padding: "16px", borderRadius: 16, border: "none",
-            background: "linear-gradient(135deg, #FF4500, #8B0000)",
+            background: "linear-gradient(135deg, #FF6600, #8B0000)",
             fontFamily: "'Bebas Neue',sans-serif", fontSize: 18, letterSpacing: "0.1em",
             color: "#fff", cursor: "pointer",
-            boxShadow: "0 4px 24px rgba(255,69,0,0.3)",
+            boxShadow: "0 4px 24px rgba(255,102,0,0.3)",
           }}
         >
           + SCHEDULE TRAINING SESSION
@@ -708,7 +708,7 @@ export default function Schedule() {
               <button onClick={() => setShowAdd(false)} style={{ flex: 1, padding: "14px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "transparent", color: "rgba(255,255,255,0.5)", fontFamily: "'Barlow Condensed',sans-serif", fontSize: 14, fontWeight: 700, letterSpacing: "0.08em", cursor: "pointer" }}>
                 CANCEL
               </button>
-              <button onClick={handleAddSession} style={{ flex: 2, padding: "14px", borderRadius: 12, border: "none", background: "#FF4500", color: "#fff", fontFamily: "'Bebas Neue',sans-serif", fontSize: 16, letterSpacing: "0.1em", cursor: "pointer" }}>
+              <button onClick={handleAddSession} style={{ flex: 2, padding: "14px", borderRadius: 12, border: "none", background: "#FF6600", color: "#fff", fontFamily: "'Bebas Neue',sans-serif", fontSize: 16, letterSpacing: "0.1em", cursor: "pointer" }}>
                 ADD TO SCHEDULE
               </button>
             </div>
@@ -720,7 +720,7 @@ export default function Schedule() {
       {showCheckin && (
         <div className="modal-overlay" onClick={() => setShowCheckin(null)}>
           <div className="modal-sheet" onClick={e => e.stopPropagation()}>
-            <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: "0.2em", color: "#FF4500", marginBottom: 4 }}>
+            <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: "0.2em", color: "#FF6600", marginBottom: 4 }}>
               SESSION CHECK-IN
             </div>
             <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 24, color: "var(--text-primary)", letterSpacing: "0.06em", marginBottom: 4 }}>
@@ -741,8 +741,8 @@ export default function Schedule() {
                     onClick={() => setCheckinRating(r)}
                     style={{
                       width: 48, height: 48, borderRadius: 12,
-                      border: checkinRating >= r ? "2px solid #FF4500" : "1px solid rgba(255,255,255,0.1)",
-                      background: checkinRating >= r ? "rgba(255,69,0,0.2)" : "rgba(255,255,255,0.04)",
+                      border: checkinRating >= r ? "2px solid #FF6600" : "1px solid rgba(255,255,255,0.1)",
+                      background: checkinRating >= r ? "rgba(255,102,0,0.2)" : "rgba(255,255,255,0.04)",
                       fontSize: 20, cursor: "pointer",
                     }}
                   >
@@ -759,7 +759,7 @@ export default function Schedule() {
               onClick={() => handleCheckin(showCheckin)}
               style={{
                 width: "100%", padding: "16px", borderRadius: 14, border: "none",
-                background: "linear-gradient(135deg, #FF4500, #8B0000)",
+                background: "linear-gradient(135deg, #FF6600, #8B0000)",
                 fontFamily: "'Bebas Neue',sans-serif", fontSize: 18, letterSpacing: "0.1em",
                 color: "#fff", cursor: "pointer",
               }}
@@ -786,7 +786,7 @@ export default function Schedule() {
                 <input
                   type="range" min={1} max={7} value={state.goalDaysPerWeek}
                   onChange={e => save({ ...state, goalDaysPerWeek: Number(e.target.value) })}
-                  style={{ width: "100%", accentColor: "#FF4500" }}
+                  style={{ width: "100%", accentColor: "#FF6600" }}
                 />
                 <div style={{ display: "flex", justifyContent: "space-between", fontFamily: "'Barlow Condensed',sans-serif", fontSize: 9, color: "rgba(255,255,255,0.3)", marginTop: 4 }}>
                   <span>1 DAY</span><span>7 DAYS</span>
@@ -821,7 +821,7 @@ export default function Schedule() {
                 <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: "0.15em", color: "rgba(255,255,255,0.4)", marginBottom: 4 }}>
                   LONGEST STREAK
                 </div>
-                <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 24, color: "#FF4500" }}>
+                <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 24, color: "#FF6600" }}>
                   {state.longestStreak} DAYS
                 </div>
               </div>
@@ -829,7 +829,7 @@ export default function Schedule() {
 
             <button
               onClick={() => setShowSettings(false)}
-              style={{ width: "100%", marginTop: 20, padding: "14px", borderRadius: 12, border: "none", background: "#FF4500", color: "#fff", fontFamily: "'Bebas Neue',sans-serif", fontSize: 16, letterSpacing: "0.1em", cursor: "pointer" }}
+              style={{ width: "100%", marginTop: 20, padding: "14px", borderRadius: 12, border: "none", background: "#FF6600", color: "#fff", fontFamily: "'Bebas Neue',sans-serif", fontSize: 16, letterSpacing: "0.1em", cursor: "pointer" }}
             >
               SAVE SETTINGS
             </button>

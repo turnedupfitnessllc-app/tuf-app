@@ -41,7 +41,7 @@ export default function Assess() {
 
   const hexRgbLocal = (hex: string): string => {
     const m: Record<string, string> = {
-      "#FF4500": "255,69,0", "#2563eb": "37,99,235", "#C8973A": "200,151,58",
+      "#FF6600": "255,69,0", "#2563eb": "37,99,235", "#C8973A": "200,151,58",
       "#7c3aed": "124,58,237", "#0d9488": "13,148,136", "#16a34a": "22,163,74",
       "#dc2626": "220,38,38", "#9333ea": "147,51,234",
     };
@@ -74,7 +74,7 @@ export default function Assess() {
             <div style={{ marginBottom: 20, animation: "fadeUp 0.4s ease forwards" }}>
               <p style={{
                 fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700,
-                letterSpacing: "0.18em", color: "#FF4500", marginBottom: 4,
+                letterSpacing: "0.18em", color: "#FF6600", marginBottom: 4,
               }}>
                 MOVEMENT ASSESSMENT
               </p>
@@ -82,7 +82,7 @@ export default function Assess() {
                 fontFamily: "'Bebas Neue', sans-serif", fontSize: 40, letterSpacing: "0.07em",
                 color: "var(--text-primary)", lineHeight: 1.05,
               }}>
-                ASSESS YOUR <span style={{ color: "#FF4500" }}>MOVEMENT</span>
+                ASSESS YOUR <span style={{ color: "#FF6600" }}>MOVEMENT</span>
               </h1>
               <p style={{ fontSize: 13, color: "rgba(255,255,255,0.45)", marginTop: 6 }}>
                 Find the root cause. Build the corrective plan. Fix it permanently.
@@ -90,7 +90,7 @@ export default function Assess() {
             </div>
 
             {/* SCENE 2 — PROBLEM: Pain selector */}
-            <V4Card accent="#FF4500" style={{ marginBottom: 16 }}>
+            <V4Card accent="#FF6600" style={{ marginBottom: 16 }}>
               <SceneHeader num="02" label="WHERE IS YOUR PAIN?" />
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                 {ISSUES.map(iss => (
@@ -206,14 +206,14 @@ export default function Assess() {
                   >
                     <div style={{
                       width: 24, height: 24, borderRadius: "50%",
-                      background: `${PHASE_COLORS[ex.phase] || "#FF4500"}22`,
-                      border: `1px solid ${PHASE_COLORS[ex.phase] || "#FF4500"}44`,
+                      background: `${PHASE_COLORS[ex.phase] || "#FF6600"}22`,
+                      border: `1px solid ${PHASE_COLORS[ex.phase] || "#FF6600"}44`,
                       display: "flex", alignItems: "center", justifyContent: "center",
                       flexShrink: 0,
                     }}>
                       <span style={{
                         fontFamily: "'Bebas Neue', sans-serif", fontSize: 10,
-                        color: PHASE_COLORS[ex.phase] || "#FF4500",
+                        color: PHASE_COLORS[ex.phase] || "#FF6600",
                       }}>
                         {i + 1}
                       </span>
@@ -229,9 +229,9 @@ export default function Assess() {
                     </div>
                     <span style={{
                       fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, fontWeight: 700,
-                      letterSpacing: "0.1em", color: PHASE_COLORS[ex.phase] || "#FF4500",
+                      letterSpacing: "0.1em", color: PHASE_COLORS[ex.phase] || "#FF6600",
                       padding: "2px 6px", borderRadius: 4,
-                      background: `${PHASE_COLORS[ex.phase] || "#FF4500"}18`,
+                      background: `${PHASE_COLORS[ex.phase] || "#FF6600"}18`,
                     }}>
                       {ex.phase}
                     </span>
@@ -254,10 +254,10 @@ export default function Assess() {
                 width: "100%", padding: "18px", borderRadius: 20, border: "none",
                 background: saved
                   ? "linear-gradient(135deg, #22c55e, #16a34a)"
-                  : "linear-gradient(135deg, #FF4500, #8B0000)",
+                  : "linear-gradient(135deg, #FF6600, #8B0000)",
                 fontFamily: "'Bebas Neue', sans-serif", fontSize: 20, letterSpacing: "0.1em",
                 color: "var(--text-primary)", cursor: "pointer",
-                boxShadow: "0 4px 32px rgba(255,69,0,0.35)",
+                boxShadow: "0 4px 32px rgba(255,102,0,0.35)",
                 transition: "background 0.3s ease",
               }}
             >

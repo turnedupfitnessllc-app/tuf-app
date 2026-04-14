@@ -20,7 +20,7 @@ const TIER_META: Record<string, { name: string; color: string; price: string; ta
   cub:        { name: "CUB",           color: "#A0A0A0",  price: "$9.99",  tagline: "Start your movement journey" },
   stealth:    { name: "STEALTH",       color: "#4a9eff",  price: "$19.99", tagline: "Build your corrective foundation" },
   controlled: { name: "CONTROLLED",    color: "#C8973A",  price: "$34.99", tagline: "Precision training at full capacity" },
-  apex:       { name: "APEX PREDATOR", color: "#FF4500",  price: "$59.99", tagline: "Elite performance, no limits" },
+  apex:       { name: "APEX PREDATOR", color: "#FF6600",  price: "$59.99", tagline: "Elite performance, no limits" },
 };
 
 const UPGRADE_TIERS = ["cub", "stealth", "controlled", "apex"] as const;
@@ -152,7 +152,7 @@ export default function Billing() {
 
         {/* Header */}
         <div style={{ marginBottom: 28, animation: "fadeUp 0.4s ease forwards" }}>
-          <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: "0.2em", color: "#FF4500", marginBottom: 4 }}>MEMBERSHIP</p>
+          <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: "0.2em", color: "#FF6600", marginBottom: 4 }}>MEMBERSHIP</p>
           <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 32, letterSpacing: "0.07em", color: "#fff", lineHeight: 1 }}>BILLING & PLAN</h1>
         </div>
 
@@ -167,8 +167,8 @@ export default function Billing() {
 
         {/* Error banner */}
         {error && (
-          <div style={{ padding: "12px 16px", borderRadius: 12, background: "#FF450015", border: "1px solid #FF450040", marginBottom: 16 }}>
-            <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, color: "#FF4500" }}>{error}</p>
+          <div style={{ padding: "12px 16px", borderRadius: 12, background: "#FF660015", border: "1px solid #FF660040", marginBottom: 16 }}>
+            <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, color: "#FF6600" }}>{error}</p>
           </div>
         )}
 
@@ -193,7 +193,7 @@ export default function Billing() {
                     <span style={{ display: "inline-block", padding: "2px 8px", borderRadius: 20, background: "#22c55e20", border: "1px solid #22c55e40", fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: "0.1em", color: "#22c55e" }}>ACTIVE</span>
                   )}
                   {isPastDue && (
-                    <span style={{ display: "inline-block", padding: "2px 8px", borderRadius: 20, background: "#FF450020", border: "1px solid #FF450040", fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: "0.1em", color: "#FF4500" }}>PAST DUE</span>
+                    <span style={{ display: "inline-block", padding: "2px 8px", borderRadius: 20, background: "#FF660020", border: "1px solid #FF660040", fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: "0.1em", color: "#FF6600" }}>PAST DUE</span>
                   )}
                   {isCancelled && (
                     <span style={{ display: "inline-block", padding: "2px 8px", borderRadius: 20, background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: "0.1em", color: "rgba(255,255,255,0.4)" }}>CANCELLED</span>
@@ -213,8 +213,8 @@ export default function Billing() {
 
               {/* Past due warning */}
               {isPastDue && (
-                <div style={{ padding: "10px 12px", borderRadius: 10, background: "#FF450015", border: "1px solid #FF450030", marginBottom: 12 }}>
-                  <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, color: "#FF4500" }}>
+                <div style={{ padding: "10px 12px", borderRadius: 10, background: "#FF660015", border: "1px solid #FF660030", marginBottom: 12 }}>
+                  <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, color: "#FF6600" }}>
                     ⚠ Payment failed. Update your payment method to keep access.
                   </p>
                 </div>
@@ -268,8 +268,8 @@ export default function Billing() {
 
             {/* Already on top tier */}
             {currentTier === "apex" && isActive && (
-              <div style={{ padding: "16px", borderRadius: 14, background: "#FF450010", border: "1px solid #FF450030", textAlign: "center", animation: "fadeUp 0.5s ease 0.1s both" }}>
-                <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 18, color: "#FF4500", letterSpacing: "0.06em" }}>APEX PREDATOR</p>
+              <div style={{ padding: "16px", borderRadius: 14, background: "#FF660010", border: "1px solid #FF660030", textAlign: "center", animation: "fadeUp 0.5s ease 0.1s both" }}>
+                <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 18, color: "#FF6600", letterSpacing: "0.06em" }}>APEX PREDATOR</p>
                 <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, color: "rgba(255,255,255,0.4)", marginTop: 4 }}>You're on the highest tier. No limits.</p>
               </div>
             )}

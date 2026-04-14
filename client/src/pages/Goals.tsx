@@ -34,7 +34,7 @@ const GOAL_TYPE_CONFIG: Record<
   fat_loss: {
     label: "Fat Loss",
     icon: "🔥",
-    color: "#FF4500",
+    color: "#FF6600",
     defaultUnit: "lbs",
     examples: ["Lose 20 lbs by June", "Drop to 185 lbs", "Lose 15% body fat"],
   },
@@ -149,7 +149,7 @@ function bmiCategory(bmi: number): { label: string; color: string } {
   if (bmi < 18.5) return { label: "Underweight", color: "#2563EB" };
   if (bmi < 25) return { label: "Normal Weight", color: "#16A34A" };
   if (bmi < 30) return { label: "Overweight", color: "#C8973A" };
-  return { label: "Obese", color: "#FF4500" };
+  return { label: "Obese", color: "#FF6600" };
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -289,7 +289,7 @@ export default function Goals() {
             className="flex-1 py-2.5 text-xs font-black uppercase tracking-widest transition-all"
             style={{
               background: activeTab === tab
-                ? "linear-gradient(135deg, #FF4500, #DC2626)"
+                ? "linear-gradient(135deg, #FF6600, #DC2626)"
                 : "rgba(255,255,255,0.02)",
               color: activeTab === tab ? "#fff" : "#888",
             }}
@@ -330,7 +330,7 @@ export default function Goals() {
             <button
               onClick={() => setShowForm(true)}
               className="w-full py-3.5 rounded-xl font-black text-sm uppercase tracking-widest text-white transition-all active:scale-95"
-              style={{ background: "linear-gradient(135deg, #FF4500, #DC2626)" }}
+              style={{ background: "linear-gradient(135deg, #FF6600, #DC2626)" }}
             >
               + SET A NEW GOAL
             </button>
@@ -448,7 +448,7 @@ export default function Goals() {
                   onClick={handleAddGoal}
                   disabled={!formName || !formStart || !formTarget || !formCurrent}
                   className="flex-1 py-3 rounded-xl font-black text-sm uppercase tracking-widest text-white transition-all active:scale-95 disabled:opacity-40"
-                  style={{ background: "linear-gradient(135deg, #FF4500, #DC2626)" }}
+                  style={{ background: "linear-gradient(135deg, #FF6600, #DC2626)" }}
                 >
                   ADD GOAL
                 </button>
@@ -714,7 +714,7 @@ export default function Goals() {
                 { range: "Below 18.5", label: "Underweight", color: "#2563EB" },
                 { range: "18.5 – 24.9", label: "Normal Weight", color: "#16A34A" },
                 { range: "25.0 – 29.9", label: "Overweight", color: "#C8973A" },
-                { range: "30.0+", label: "Obese", color: "#FF4500" },
+                { range: "30.0+", label: "Obese", color: "#FF6600" },
               ].map((row) => (
                 <div key={row.label} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">

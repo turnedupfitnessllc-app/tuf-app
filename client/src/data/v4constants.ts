@@ -8,7 +8,7 @@
 export const WEEK_THEMES: Record<number, { label: string; color: string; focus: string; icon: string }> = {
   1: { label: "MOBILITY + ACTIVATION", color: "#4a9eff", focus: "Tissue quality. Motor pattern. Move without restriction.", icon: "💧" },
   2: { label: "STABILITY + CONTROL",   color: "#C8973A", focus: "Neuromuscular control. Single leg. Anti-rotation.", icon: "⚖️" },
-  3: { label: "STRENGTH",              color: "#FF4500", focus: "Progressive load. Compound movements. Mechanical tension.", icon: "🔥" },
+  3: { label: "STRENGTH",              color: "#FF6600", focus: "Progressive load. Compound movements. Mechanical tension.", icon: "🔥" },
   4: { label: "PERFORMANCE",           color: "#22c55e", focus: "Top-end intensity. Power expression. Test your output.", icon: "⚡" },
 };
 
@@ -45,7 +45,7 @@ export const ISSUES: Issue[] = [
     id: "anterior_knee",
     label: "Anterior Knee",
     icon: "🦵",
-    color: "#FF4500",
+    color: "#FF6600",
     verdict: "YOUR GLUTES AREN'T FIRING. YOUR KNEE IS PAYING.",
     pattern: "Lower Crossed Syndrome — weak glutes/VMO, tight TFL/IT band",
     cue: "Drive your knees OUT over your toes. Feel your glutes — if you don't, stop and reset.",
@@ -384,7 +384,7 @@ export function getFallback(text: string): Fallback {
 export const PHASE_COLORS: Record<string, string> = {
   INHIBIT: "#C8973A",
   LENGTHEN: "#4a9eff",
-  ACTIVATE: "#FF4500",
+  ACTIVATE: "#FF6600",
   INTEGRATE: "#22c55e",
 };
 
@@ -402,7 +402,7 @@ export const ls = {
 export const STAGES: Record<string, [number, number, string]> = {
   "CUB":           [0,   100,  "#555"],
   "STEALTH":       [100, 300,  "#4a9eff"],
-  "CONTROLLED":    [300, 600,  "#FF4500"],
+  "CONTROLLED":    [300, 600,  "#FF6600"],
   "DOMINANT":      [600, 1000, "#C8973A"],
   "APEX PREDATOR": [1000, 1000, "#22c55e"],
 };
@@ -417,7 +417,7 @@ export function getStageFromXP(xp: number): string {
 
 export function hexRgb(hex: string): string {
   const m: Record<string, string> = {
-    "#FF4500": "255,69,0",
+    "#FF6600": "255,69,0",
     "#8B0000": "139,0,0",
     "#C8973A": "200,151,58",
     "#4a9eff": "74,158,255",
@@ -459,7 +459,7 @@ export const STAGE_LADDER: StageLadderItem[] = [
   {
     id: "CONTROLLED",
     xpMin: 300,
-    color: "#FF4500",
+    color: "#FF6600",
     icon: "🔥",
     description: "You own your movement. Compensations are gone. You're loading patterns that are clean and powerful.",
   },

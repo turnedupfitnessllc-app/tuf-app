@@ -232,7 +232,7 @@ function buildWorkout(
 const CATEGORY_CONFIG = {
   inhibit:   { label: "INHIBIT",   color: "#ef4444", bg: "rgba(239,68,68,0.1)" },
   lengthen:  { label: "LENGTHEN",  color: "#f97316", bg: "rgba(249,115,22,0.1)" },
-  activate:  { label: "ACTIVATE",  color: "#FF4500", bg: "rgba(255,69,0,0.15)" },
+  activate:  { label: "ACTIVATE",  color: "#FF6600", bg: "rgba(255,102,0,0.15)" },
   integrate: { label: "INTEGRATE", color: "#22c55e", bg: "rgba(34,197,94,0.1)" },
 };
 
@@ -386,10 +386,10 @@ export default function PantherPipeline() {
     <div style={{ minHeight: "100vh", background: "#0a0a0a", color: "#fff", fontFamily: "'Barlow Condensed', 'Arial Narrow', sans-serif", paddingBottom: "100px" }}>
 
       {/* Header */}
-      <div style={{ padding: "20px 20px 0", borderBottom: "1px solid rgba(255,69,0,0.2)" }}>
+      <div style={{ padding: "20px 20px 0", borderBottom: "1px solid rgba(255,102,0,0.2)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "4px" }}>
-          <div style={{ width: "8px", height: "32px", background: "#FF4500", borderRadius: "2px" }} />
-          <h1 style={{ margin: 0, fontSize: "22px", fontWeight: 700, letterSpacing: "0.1em", color: "#FF4500" }}>PANTHER PIPELINE</h1>
+          <div style={{ width: "8px", height: "32px", background: "#FF6600", borderRadius: "2px" }} />
+          <h1 style={{ margin: 0, fontSize: "22px", fontWeight: 700, letterSpacing: "0.1em", color: "#FF6600" }}>PANTHER PIPELINE</h1>
         </div>
         <p style={{ margin: "0 0 16px 20px", fontSize: "13px", color: "#888", letterSpacing: "0.05em" }}>AI WORKOUT GENERATION ENGINE · 8-STEP PROTOCOL</p>
       </div>
@@ -398,8 +398,8 @@ export default function PantherPipeline() {
 
         {/* Input Form */}
         {pipelineStatus === "idle" && (
-          <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,69,0,0.2)", borderRadius: "12px", padding: "20px", marginBottom: "20px" }}>
-            <h2 style={{ margin: "0 0 16px", fontSize: "14px", letterSpacing: "0.15em", color: "#FF4500" }}>CLIENT INPUT</h2>
+          <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,102,0,0.2)", borderRadius: "12px", padding: "20px", marginBottom: "20px" }}>
+            <h2 style={{ margin: "0 0 16px", fontSize: "14px", letterSpacing: "0.15em", color: "#FF6600" }}>CLIENT INPUT</h2>
 
             {/* Pain Location */}
             <div style={{ marginBottom: "16px" }}>
@@ -420,7 +420,7 @@ export default function PantherPipeline() {
               <input
                 type="range" min={0} max={10} value={painLevel}
                 onChange={e => setPainLevel(parseInt(e.target.value))}
-                style={{ width: "100%", accentColor: "#FF4500" }}
+                style={{ width: "100%", accentColor: "#FF6600" }}
               />
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: "10px", color: "#555", marginTop: "2px" }}>
                 <span>NO PAIN</span><span>MODERATE</span><span>SEVERE</span>
@@ -433,7 +433,7 @@ export default function PantherPipeline() {
               <div style={{ display: "flex", gap: "8px" }}>
                 {(["beginner", "intermediate", "advanced"] as const).map(level => (
                   <button key={level} onClick={() => setFitnessLevel(level)}
-                    style={{ flex: 1, padding: "8px", borderRadius: "6px", border: `1px solid ${fitnessLevel === level ? "#FF4500" : "rgba(255,255,255,0.1)"}`, background: fitnessLevel === level ? "rgba(255,69,0,0.15)" : "transparent", color: fitnessLevel === level ? "#FF4500" : "#888", fontSize: "11px", letterSpacing: "0.08em", cursor: "pointer", textTransform: "uppercase" }}>
+                    style={{ flex: 1, padding: "8px", borderRadius: "6px", border: `1px solid ${fitnessLevel === level ? "#FF6600" : "rgba(255,255,255,0.1)"}`, background: fitnessLevel === level ? "rgba(255,102,0,0.15)" : "transparent", color: fitnessLevel === level ? "#FF6600" : "#888", fontSize: "11px", letterSpacing: "0.08em", cursor: "pointer", textTransform: "uppercase" }}>
                     {level}
                   </button>
                 ))}
@@ -452,7 +452,7 @@ export default function PantherPipeline() {
                   { value: "general_fitness", label: "GENERAL" },
                 ].map(g => (
                   <button key={g.value} onClick={() => setGoal(g.value)}
-                    style={{ padding: "6px 12px", borderRadius: "6px", border: `1px solid ${goal === g.value ? "#FF4500" : "rgba(255,255,255,0.1)"}`, background: goal === g.value ? "rgba(255,69,0,0.15)" : "transparent", color: goal === g.value ? "#FF4500" : "#888", fontSize: "11px", letterSpacing: "0.08em", cursor: "pointer" }}>
+                    style={{ padding: "6px 12px", borderRadius: "6px", border: `1px solid ${goal === g.value ? "#FF6600" : "rgba(255,255,255,0.1)"}`, background: goal === g.value ? "rgba(255,102,0,0.15)" : "transparent", color: goal === g.value ? "#FF6600" : "#888", fontSize: "11px", letterSpacing: "0.08em", cursor: "pointer" }}>
                     {g.label}
                   </button>
                 ))}
@@ -462,7 +462,7 @@ export default function PantherPipeline() {
             <button
               onClick={runPipeline}
               disabled={!painLocation.trim()}
-              style={{ width: "100%", padding: "14px", background: painLocation.trim() ? "#FF4500" : "#333", border: "none", borderRadius: "8px", color: "#fff", fontSize: "14px", fontWeight: 700, letterSpacing: "0.15em", cursor: painLocation.trim() ? "pointer" : "not-allowed" }}>
+              style={{ width: "100%", padding: "14px", background: painLocation.trim() ? "#FF6600" : "#333", border: "none", borderRadius: "8px", color: "#fff", fontSize: "14px", fontWeight: 700, letterSpacing: "0.15em", cursor: painLocation.trim() ? "pointer" : "not-allowed" }}>
               RUN PIPELINE
             </button>
           </div>
@@ -470,18 +470,18 @@ export default function PantherPipeline() {
 
         {/* Pipeline Progress */}
         {(pipelineStatus === "running" || pipelineStatus === "complete") && (
-          <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,69,0,0.2)", borderRadius: "12px", padding: "20px", marginBottom: "20px" }}>
-            <h2 style={{ margin: "0 0 16px", fontSize: "14px", letterSpacing: "0.15em", color: "#FF4500" }}>PIPELINE RUNNING</h2>
+          <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,102,0,0.2)", borderRadius: "12px", padding: "20px", marginBottom: "20px" }}>
+            <h2 style={{ margin: "0 0 16px", fontSize: "14px", letterSpacing: "0.15em", color: "#FF6600" }}>PIPELINE RUNNING</h2>
             {steps.map(step => (
               <div key={step.id} style={{ display: "flex", gap: "12px", marginBottom: "12px", opacity: step.status === "pending" ? 0.3 : 1, transition: "opacity 0.3s" }}>
                 {/* Step indicator */}
-                <div style={{ width: "28px", height: "28px", borderRadius: "50%", border: `2px solid ${step.status === "done" ? "#22c55e" : step.status === "active" ? "#FF4500" : "rgba(255,255,255,0.2)"}`, background: step.status === "done" ? "rgba(34,197,94,0.15)" : step.status === "active" ? "rgba(255,69,0,0.15)" : "transparent", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: "11px", color: step.status === "done" ? "#22c55e" : step.status === "active" ? "#FF4500" : "#555" }}>
+                <div style={{ width: "28px", height: "28px", borderRadius: "50%", border: `2px solid ${step.status === "done" ? "#22c55e" : step.status === "active" ? "#FF6600" : "rgba(255,255,255,0.2)"}`, background: step.status === "done" ? "rgba(34,197,94,0.15)" : step.status === "active" ? "rgba(255,102,0,0.15)" : "transparent", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: "11px", color: step.status === "done" ? "#22c55e" : step.status === "active" ? "#FF6600" : "#555" }}>
                   {step.status === "done" ? "✓" : step.status === "active" ? "●" : step.id}
                 </div>
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: "12px", fontWeight: 700, letterSpacing: "0.08em", color: step.status === "active" ? "#FF4500" : step.status === "done" ? "#fff" : "#555" }}>{step.label}</div>
+                  <div style={{ fontSize: "12px", fontWeight: 700, letterSpacing: "0.08em", color: step.status === "active" ? "#FF6600" : step.status === "done" ? "#fff" : "#555" }}>{step.label}</div>
                   {step.result && <div style={{ fontSize: "11px", color: "#888", marginTop: "2px" }}>{step.result}</div>}
-                  {!step.result && step.status === "active" && <div style={{ fontSize: "11px", color: "#FF4500", marginTop: "2px" }}>{step.description}</div>}
+                  {!step.result && step.status === "active" && <div style={{ fontSize: "11px", color: "#FF6600", marginTop: "2px" }}>{step.description}</div>}
                 </div>
               </div>
             ))}
@@ -492,8 +492,8 @@ export default function PantherPipeline() {
         {workout && pipelineStatus === "complete" && (
           <>
             {/* Diagnosis Card */}
-            <div style={{ background: "rgba(255,69,0,0.08)", border: "1px solid rgba(255,69,0,0.3)", borderRadius: "12px", padding: "16px", marginBottom: "16px" }}>
-              <div style={{ fontSize: "11px", letterSpacing: "0.1em", color: "#FF4500", marginBottom: "6px" }}>DIAGNOSIS</div>
+            <div style={{ background: "rgba(255,102,0,0.08)", border: "1px solid rgba(255,102,0,0.3)", borderRadius: "12px", padding: "16px", marginBottom: "16px" }}>
+              <div style={{ fontSize: "11px", letterSpacing: "0.1em", color: "#FF6600", marginBottom: "6px" }}>DIAGNOSIS</div>
               <div style={{ fontSize: "14px", fontWeight: 700, color: "#fff", marginBottom: "8px" }}>{workout.diagnosis}</div>
               <div style={{ fontSize: "12px", color: "#aaa", fontStyle: "italic" }}>{workout.coachingNote}</div>
               {workout.painAdaptations.map((a, i) => (

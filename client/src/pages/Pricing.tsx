@@ -81,8 +81,8 @@ const TIERS: Tier[] = [
     monthlyPrice: 59.99,
     annualPrice: 575,
     annualMonthly: 47.92,
-    color: "#FF4500",
-    glow: "rgba(255,69,0,0.18)",
+    color: "#FF6600",
+    glow: "rgba(255,102,0,0.18)",
     badge: "ELITE",
     features: [
       "Everything in CONTROLLED",
@@ -136,7 +136,7 @@ export default function Pricing() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap');
         @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
-        @keyframes glowPulse { 0%,100%{box-shadow:0 4px 24px rgba(255,69,0,0.4)} 50%{box-shadow:0 4px 56px rgba(255,69,0,0.75)} }
+        @keyframes glowPulse { 0%,100%{box-shadow:0 4px 24px rgba(255,102,0,0.4)} 50%{box-shadow:0 4px 56px rgba(255,102,0,0.75)} }
         .pricing-page { animation: fadeUp 0.4s ease both; }
         .tier-card {
           border-radius: 18px;
@@ -215,7 +215,7 @@ export default function Pricing() {
           <p style={{
             fontFamily: "'Barlow Condensed', sans-serif",
             fontSize: 11, fontWeight: 700, letterSpacing: "0.2em",
-            color: "rgba(255,69,0,0.7)", margin: "0 0 6px",
+            color: "rgba(255,102,0,0.7)", margin: "0 0 6px",
           }}>
             TURNED UP FITNESS
           </p>
@@ -225,7 +225,7 @@ export default function Pricing() {
             color: "#fff", lineHeight: 1.05, margin: "0 0 8px",
           }}>
             CHOOSE YOUR<br />
-            <span style={{ color: "#FF4500" }}>STAGE</span>
+            <span style={{ color: "#FF6600" }}>STAGE</span>
           </h1>
           <p style={{
             fontFamily: "'Barlow Condensed', sans-serif",
@@ -243,7 +243,7 @@ export default function Pricing() {
               className="toggle-option"
               onClick={() => setBilling("monthly")}
               style={{
-                background: billing === "monthly" ? "#FF4500" : "transparent",
+                background: billing === "monthly" ? "#FF6600" : "transparent",
                 color: billing === "monthly" ? "#fff" : "rgba(255,255,255,0.4)",
               }}
             >
@@ -253,7 +253,7 @@ export default function Pricing() {
               className="toggle-option"
               onClick={() => setBilling("annual")}
               style={{
-                background: billing === "annual" ? "#FF4500" : "transparent",
+                background: billing === "annual" ? "#FF6600" : "transparent",
                 color: billing === "annual" ? "#fff" : "rgba(255,255,255,0.4)",
               }}
             >

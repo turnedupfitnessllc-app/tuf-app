@@ -628,7 +628,7 @@ export default function Correct() {
             <a
               href="/boa"
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black uppercase tracking-widest"
-              style={{ background: 'rgba(255,69,0,0.15)', border: '1px solid rgba(255,69,0,0.4)', color: '#FF4500' }}
+              style={{ background: 'rgba(255,102,0,0.15)', border: '1px solid rgba(255,102,0,0.4)', color: '#FF6600' }}
             >
               <span>📐</span>
               <span>FORM ANALYSIS</span>

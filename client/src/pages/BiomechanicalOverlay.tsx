@@ -113,7 +113,7 @@ DIRECTIVE: [one action starting with a verb]`,
     id: "SQUAT",
     icon: "🏋️",
     label: "SQUAT",
-    color: "#FF4500",
+    color: "#FF6600",
     description: "Squat pattern — depth, knee tracking, spine neutrality",
     standingCue: "Stand 6 ft from camera. Side view preferred. Feet hip-width.",
     faultDefinitions: [
@@ -721,7 +721,7 @@ export default function BiomechanicalOverlay() {
   useEffect(() => () => { handleStop(); }, [handleStop]);
 
   // ── Score Color ──────────────────────────────────────────────────────────────
-  const scoreColor = (s: number) => s >= 80 ? "#22c55e" : s >= 60 ? "#C8973A" : "#FF4500";
+  const scoreColor = (s: number) => s >= 80 ? "#22c55e" : s >= 60 ? "#C8973A" : "#FF6600";
 
   const detectedFaults = analysis.faults.filter(f => f.detected);
   const pantherState = !isActive ? "idle" : detectedFaults.length === 0 ? "coaching" : detectedFaults.length >= 2 ? "activated" : "coaching";
@@ -741,7 +741,7 @@ export default function BiomechanicalOverlay() {
 
         {/* SCENE 1 — HOOK: Header */}
         <div style={{ marginBottom: 16, animation: "fadeUp 0.4s ease forwards" }}>
-          <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", color: "#FF4500", marginBottom: 2 }}>
+          <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", color: "#FF6600", marginBottom: 2 }}>
             BIOMECHANICAL OVERLAY
           </p>
           <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 32, letterSpacing: "0.07em", color: "var(--text-primary)", lineHeight: 1 }}>
@@ -876,7 +876,7 @@ export default function BiomechanicalOverlay() {
                   style={{
                     padding: "12px", borderRadius: 14,
                     border: "1px solid rgba(255,255,255,0.15)",
-                    background: facingMode === "environment" ? "rgba(255,69,0,0.12)" : "rgba(255,255,255,0.05)",
+                    background: facingMode === "environment" ? "rgba(255,102,0,0.12)" : "rgba(255,255,255,0.05)",
                     fontSize: 18, cursor: "pointer",
                     display: "flex", alignItems: "center", justifyContent: "center",
                     minWidth: 44,
@@ -892,7 +892,7 @@ export default function BiomechanicalOverlay() {
                   disabled={isAnalyzing}
                   style={{
                     flex: 1, padding: "12px", borderRadius: 14, border: "none",
-                    background: isAnalyzing ? "rgba(255,255,255,0.06)" : "linear-gradient(135deg, #FF4500, #8B0000)",
+                    background: isAnalyzing ? "rgba(255,255,255,0.06)" : "linear-gradient(135deg, #FF6600, #8B0000)",
                     fontFamily: "'Bebas Neue', sans-serif", fontSize: 14, letterSpacing: "0.1em",
                     color: "var(--text-primary)", cursor: isAnalyzing ? "not-allowed" : "pointer",
                   }}
@@ -929,8 +929,8 @@ export default function BiomechanicalOverlay() {
                   onClick={() => setVoiceEnabled(v => !v)}
                   style={{
                     padding: "12px", borderRadius: 14,
-                    border: `1px solid ${voiceEnabled ? "#FF450044" : "rgba(255,255,255,0.1)"}`,
-                    background: voiceEnabled ? "rgba(255,69,0,0.1)" : "rgba(255,255,255,0.03)",
+                    border: `1px solid ${voiceEnabled ? "#FF660044" : "rgba(255,255,255,0.1)"}`,
+                    background: voiceEnabled ? "rgba(255,102,0,0.1)" : "rgba(255,255,255,0.03)",
                     fontSize: 16, cursor: "pointer",
                   }}
                 >
@@ -958,17 +958,17 @@ export default function BiomechanicalOverlay() {
                   style={{
                     display: "flex", alignItems: "center", gap: 12, padding: "10px 12px",
                     borderRadius: 12,
-                    background: fault.detected ? "rgba(255,69,0,0.06)" : "rgba(34,197,94,0.04)",
-                    border: `1px solid ${fault.detected ? "rgba(255,69,0,0.2)" : "rgba(34,197,94,0.15)"}`,
+                    background: fault.detected ? "rgba(255,102,0,0.06)" : "rgba(34,197,94,0.04)",
+                    border: `1px solid ${fault.detected ? "rgba(255,102,0,0.2)" : "rgba(34,197,94,0.15)"}`,
                   }}
                 >
                   <div style={{
                     width: 8, height: 8, borderRadius: "50%", flexShrink: 0,
-                    background: fault.detected ? "#FF4500" : "#22c55e",
+                    background: fault.detected ? "#FF6600" : "#22c55e",
                     animation: fault.detected ? "pulse 1.5s ease-in-out infinite" : "none",
                   }} />
                   <div style={{ flex: 1 }}>
-                    <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, fontWeight: 700, letterSpacing: "0.06em", color: fault.detected ? "#FF4500" : "#22c55e" }}>
+                    <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, fontWeight: 700, letterSpacing: "0.06em", color: fault.detected ? "#FF6600" : "#22c55e" }}>
                       {fault.label}
                     </p>
                     {fault.detected && (
@@ -980,8 +980,8 @@ export default function BiomechanicalOverlay() {
                   <span style={{
                     fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, fontWeight: 700,
                     letterSpacing: "0.1em", padding: "2px 8px", borderRadius: 4,
-                    background: fault.detected ? "rgba(255,69,0,0.15)" : "rgba(34,197,94,0.1)",
-                    color: fault.detected ? "#FF4500" : "#22c55e",
+                    background: fault.detected ? "rgba(255,102,0,0.15)" : "rgba(34,197,94,0.1)",
+                    color: fault.detected ? "#FF6600" : "#22c55e",
                   }}>
                     {fault.detected ? "FAULT" : "CLEAR"}
                   </span>
@@ -1075,8 +1075,8 @@ export default function BiomechanicalOverlay() {
 
         {/* AI Analysis Result */}
         {aiAnalysis && (
-          <V4Card accent="#FF4500" style={{ marginBottom: 14 }}>
-            <SceneHeader num="AI" label="PANTHER ANALYSIS" color="#FF4500" />
+          <V4Card accent="#FF6600" style={{ marginBottom: 14 }}>
+            <SceneHeader num="AI" label="PANTHER ANALYSIS" color="#FF6600" />
             <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 13, color: "rgba(255,255,255,0.75)", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>
               {aiAnalysis}
             </div>

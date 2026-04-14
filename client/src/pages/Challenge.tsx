@@ -19,7 +19,7 @@ const PHASES = [
     days: [1, 7],
     label: "CONTROL > CHAOS",
     sub: "Days 1–7",
-    color: "#FF4500",
+    color: "#FF6600",
     img: `${CDN}/days-1-7-control_c943c70a.jpg`,
     quote: "Chaos is the enemy of progress. Control your breath, your form, your mind.",
     focus: ["Breathing mechanics", "Movement patterns", "Morning routine discipline"],
@@ -69,7 +69,7 @@ const PHASES = [
     days: [29, 30],
     label: "BECOME DANGEROUS",
     sub: "Days 29–30",
-    color: "#FF4500",
+    color: "#FF6600",
     img: `${CDN}/days-29-30-dangerous_9858af1a.jpg`,
     quote: "You are not the same athlete who started Day 1. You are dangerous now.",
     focus: ["Max effort testing", "Full integration", "Celebrate the evolution"],
@@ -112,12 +112,12 @@ export default function Challenge() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap');
         @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
-        @keyframes glowPulse { 0%,100%{box-shadow:0 4px 24px rgba(255,69,0,0.4)} 50%{box-shadow:0 4px 56px rgba(255,69,0,0.75)} }
+        @keyframes glowPulse { 0%,100%{box-shadow:0 4px 24px rgba(255,102,0,0.4)} 50%{box-shadow:0 4px 56px rgba(255,102,0,0.75)} }
         .challenge-page { animation: fadeUp 0.4s ease both; }
         .btn-primary {
           display: block; width: 100%;
           padding: 18px 24px;
-          background: #FF4500;
+          background: #FF6600;
           border: none; border-radius: 14px;
           color: #fff;
           font-family: 'Barlow Condensed', sans-serif;
@@ -173,8 +173,8 @@ export default function Challenge() {
           borderRadius: 20, overflow: "hidden",
           position: "relative", height: 320,
           marginBottom: 20,
-          border: "1px solid rgba(255,69,0,0.25)",
-          boxShadow: "0 8px 40px rgba(255,69,0,0.2)",
+          border: "1px solid rgba(255,102,0,0.25)",
+          boxShadow: "0 8px 40px rgba(255,102,0,0.2)",
         }}>
           <img
             src="https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/challenge-hero-panther_60538eb1.jpg"
@@ -200,7 +200,7 @@ export default function Challenge() {
             <div style={{
               fontFamily: "'Barlow Condensed', sans-serif",
               fontSize: 10, fontWeight: 700,
-              letterSpacing: "0.22em", color: "#FF4500",
+              letterSpacing: "0.22em", color: "#FF6600",
               marginBottom: 4,
             }}>
               PANTHER MINDSET PROGRAM
@@ -251,7 +251,7 @@ export default function Challenge() {
               <span style={{
                 fontFamily: "'Barlow Condensed', sans-serif",
                 fontSize: 11, fontWeight: 700,
-                letterSpacing: "0.16em", color: "#FF4500",
+                letterSpacing: "0.16em", color: "#FF6600",
               }}>
                 {pct}% COMPLETE
               </span>
@@ -264,7 +264,7 @@ export default function Challenge() {
               <div style={{
                 height: "100%",
                 width: `${pct}%`,
-                background: "linear-gradient(to right, #FF4500, #ff6a35)",
+                background: "linear-gradient(to right, #FF6600, #ff6a35)",
                 borderRadius: 3,
                 transition: "width 0.6s ease",
               }} />

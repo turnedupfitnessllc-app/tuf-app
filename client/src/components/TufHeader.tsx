@@ -30,8 +30,8 @@ export function TufHeader() {
     <>
       <style>{`
         @keyframes ringPulse {
-          0%, 100% { box-shadow: 0 0 10px rgba(255,69,0,0.5), inset 0 0 8px rgba(255,69,0,0.08); }
-          50%       { box-shadow: 0 0 20px rgba(255,69,0,0.85), inset 0 0 12px rgba(255,69,0,0.15); }
+          0%, 100% { box-shadow: 0 0 10px rgba(255,102,0,0.5), inset 0 0 8px rgba(255,102,0,0.08); }
+          50%       { box-shadow: 0 0 20px rgba(255,102,0,0.85), inset 0 0 12px rgba(255,102,0,0.15); }
         }
         @keyframes haloPulse {
           0%, 100% { opacity: 1; }
@@ -49,8 +49,8 @@ export function TufHeader() {
           ? 'rgba(8,8,8,0.95)'
           : 'rgba(255,255,255,0.95)',
         borderBottom: isDark
-          ? '1px solid rgba(255,69,0,0.15)'
-          : '1px solid rgba(232,57,14,0.12)',
+          ? '1px solid rgba(255,102,0,0.15)'
+          : '1px solid rgba(255,102,0,0.12)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
         position: 'sticky',
@@ -75,7 +75,7 @@ export function TufHeader() {
             overflow: 'hidden',
             position: 'relative',
             flexShrink: 0,
-            border: '1px solid rgba(255,69,0,0.2)',
+            border: '1px solid rgba(255,102,0,0.2)',
           }}>
             {/* Panther image — full body, gently darkened */}
             <img
@@ -118,7 +118,7 @@ export function TufHeader() {
                 left: '50%', top: '58%',
                 transform: 'translate(-50%, -50%)',
                 width: 34, height: 24,
-                background: 'radial-gradient(ellipse at center, rgba(255,69,0,0.55) 0%, rgba(255,69,0,0.15) 55%, transparent 80%)',
+                background: 'radial-gradient(ellipse at center, rgba(255,102,0,0.55) 0%, rgba(255,102,0,0.15) 55%, transparent 80%)',
                 borderRadius: '50%',
                 pointerEvents: 'none',
               }}
@@ -131,7 +131,7 @@ export function TufHeader() {
                 left: '50%', top: '58%',
                 transform: 'translate(-50%, -50%)',
                 width: 28, height: 20,
-                border: '1px solid rgba(255,69,0,0.65)',
+                border: '1px solid rgba(255,102,0,0.65)',
                 borderRadius: 4,
                 pointerEvents: 'none',
               }}
@@ -146,7 +146,7 @@ export function TufHeader() {
               letterSpacing: '0.06em',
               color: 'var(--text-primary)',
               lineHeight: 1,
-              textShadow: isDark ? '0 0 8px rgba(255,69,0,0.4)' : '0 0 8px rgba(232,57,14,0.2)',
+              textShadow: isDark ? '0 0 8px rgba(255,102,0,0.4)' : '0 0 8px rgba(255,102,0,0.2)',
               transition: 'color 0.3s ease',
             }}>
               TURNED UP FITNESS
@@ -199,7 +199,7 @@ export function TufHeader() {
               fontSize: 15,
               fontWeight: 900,
               cursor: 'pointer',
-              boxShadow: '0 0 12px rgba(255,69,0,0.4)',
+              boxShadow: '0 0 12px rgba(255,102,0,0.4)',
             }}>
               {initial}
             </div>

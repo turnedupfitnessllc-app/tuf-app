@@ -29,7 +29,7 @@ const PROGRAM_CATALOG = [
     description: "Control → Stability → Strength → Explosion → Evolution. 30 days. 5 phases. One transformation.",
     duration: "30 Days · Daily",
     tier: "STEALTH",
-    color: "#FF4500",
+    color: "#FF6600",
     phase: "PERFORMANCE",
   },
   {
@@ -146,7 +146,7 @@ export default function Program() {
           </button>
 
           <div style={{ marginBottom: 20, animation: "fadeUp 0.4s ease forwards" }}>
-            <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", color: "#FF4500", marginBottom: 2 }}>PANTHER SYSTEM</p>
+            <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", color: "#FF6600", marginBottom: 2 }}>PANTHER SYSTEM</p>
             <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 32, letterSpacing: "0.07em", color: "var(--text-primary)", lineHeight: 1 }}>SELECT YOUR PROGRAM</h1>
             <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, color: "rgba(255,255,255,0.35)", marginTop: 2 }}>Choose the program that matches your tier</p>
           </div>
@@ -369,7 +369,7 @@ export default function Program() {
                   onClick={() => navigate("/boa")}
                   style={{
                     flex: 1, padding: "12px", borderRadius: 14, border: "none",
-                    background: "linear-gradient(135deg, #FF4500, #8B0000)",
+                    background: "linear-gradient(135deg, #FF6600, #8B0000)",
                     fontFamily: "'Barlow Condensed', sans-serif", fontSize: 13, fontWeight: 700,
                     letterSpacing: "0.08em", color: "var(--text-primary)", cursor: "pointer",
                   }}
@@ -418,7 +418,7 @@ export default function Program() {
 
         {/* SCENE 1 — HOOK: Header */}
         <div style={{ marginBottom: 16, animation: "fadeUp 0.4s ease forwards" }}>
-          <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", color: "#FF4500", marginBottom: 2 }}>
+          <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", color: "#FF6600", marginBottom: 2 }}>
             YOUR PROGRAM
           </p>
           <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 32, letterSpacing: "0.07em", color: "var(--text-primary)", lineHeight: 1 }}>
@@ -434,7 +434,7 @@ export default function Program() {
           <div style={{ height: 4, borderRadius: 2, background: "rgba(255,255,255,0.06)", overflow: "hidden" }}>
             <div style={{
               height: "100%", borderRadius: 2,
-              background: `linear-gradient(90deg, #FF4500, #C8973A)`,
+              background: `linear-gradient(90deg, #FF6600, #C8973A)`,
               width: `${Math.round((completedCount / totalSessions) * 100)}%`,
               transition: "width 0.6s ease",
             }} />
@@ -614,11 +614,11 @@ export default function Program() {
 
         {/* Corrective program notice */}
         {correctives?.issue && (
-          <V4Card accent={correctives.issue.color || "#FF4500"} style={{ marginBottom: 14 }}>
+          <V4Card accent={correctives.issue.color || "#FF6600"} style={{ marginBottom: 14 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <div style={{ width: 8, height: 8, borderRadius: "50%", background: correctives.issue.color || "#FF4500", animation: "pulse 1.5s ease-in-out infinite" }} />
+              <div style={{ width: 8, height: 8, borderRadius: "50%", background: correctives.issue.color || "#FF6600", animation: "pulse 1.5s ease-in-out infinite" }} />
               <div>
-                <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", color: correctives.issue.color || "#FF4500" }}>
+                <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", color: correctives.issue.color || "#FF6600" }}>
                   ACTIVE CORRECTIVE PROTOCOL
                 </p>
                 <p style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", marginTop: 1 }}>

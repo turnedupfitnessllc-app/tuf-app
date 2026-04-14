@@ -78,7 +78,7 @@ export default function Evolve() {
         <div style={{ marginBottom: 20, animation: "fadeUp 0.4s ease forwards" }}>
           <p style={{
             fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700,
-            letterSpacing: "0.18em", color: "#FF4500", marginBottom: 4,
+            letterSpacing: "0.18em", color: "#FF6600", marginBottom: 4,
           }}>
             YOUR EVOLUTION
           </p>
@@ -269,10 +269,10 @@ export default function Evolve() {
           onClick={() => navigate("/program")}
           style={{
             width: "100%", padding: "18px", borderRadius: 20, border: "none",
-            background: "linear-gradient(135deg, #FF4500, #8B0000)",
+            background: "linear-gradient(135deg, #FF6600, #8B0000)",
             fontFamily: "'Bebas Neue', sans-serif", fontSize: 20, letterSpacing: "0.1em",
             color: "var(--text-primary)", cursor: "pointer",
-            boxShadow: "0 4px 32px rgba(255,69,0,0.35)",
+            boxShadow: "0 4px 32px rgba(255,102,0,0.35)",
           }}
         >
           EARN MORE XP — TRAIN NOW →

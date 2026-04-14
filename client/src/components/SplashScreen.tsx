@@ -69,8 +69,8 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@700;900&display=swap');
         @keyframes splashRingPulse {
-          0%,100% { box-shadow: 0 0 20px rgba(255,69,0,0.5), inset 0 0 12px rgba(255,69,0,0.08); }
-          50%     { box-shadow: 0 0 45px rgba(255,69,0,0.9), inset 0 0 22px rgba(255,69,0,0.18); }
+          0%,100% { box-shadow: 0 0 20px rgba(255,102,0,0.5), inset 0 0 12px rgba(255,102,0,0.08); }
+          50%     { box-shadow: 0 0 45px rgba(255,102,0,0.9), inset 0 0 22px rgba(255,102,0,0.18); }
         }
         @keyframes splashHaloPulse { 0%,100%{opacity:1} 50%{opacity:0.55} }
         @keyframes splashFadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
@@ -129,7 +129,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
               left: "50%", top: "55%",
               transform: "translate(-50%, -50%)",
               width: 170, height: 110,
-              background: "radial-gradient(ellipse at center, rgba(255,69,0,0.55) 0%, rgba(255,69,0,0.15) 55%, transparent 80%)",
+              background: "radial-gradient(ellipse at center, rgba(255,102,0,0.55) 0%, rgba(255,102,0,0.15) 55%, transparent 80%)",
               borderRadius: "50%",
             }} />
             {/* Scan ring */}
@@ -137,7 +137,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
               left: "50%", top: "55%",
               transform: "translate(-50%, -50%)",
               width: 130, height: 88,
-              border: "2px solid rgba(255,69,0,0.7)",
+              border: "2px solid rgba(255,102,0,0.7)",
               borderRadius: 14,
             }} />
             {/* Corner ticks */}
@@ -145,16 +145,16 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
               left: "50%", top: "55%",
               transform: "translate(calc(-50% - 65px), calc(-50% - 44px))",
               width: 16, height: 16,
-              borderTop: "2px solid #FF4500",
-              borderLeft: "2px solid #FF4500",
+              borderTop: "2px solid #FF6600",
+              borderLeft: "2px solid #FF6600",
               borderRadius: "4px 0 0 0",
             }} />
             <div className="absolute pointer-events-none" style={{
               left: "50%", top: "55%",
               transform: "translate(calc(-50% + 49px), calc(-50% + 28px))",
               width: 16, height: 16,
-              borderBottom: "2px solid #FF4500",
-              borderRight: "2px solid #FF4500",
+              borderBottom: "2px solid #FF6600",
+              borderRight: "2px solid #FF6600",
               borderRadius: "0 0 4px 0",
             }} />
             {/* Scan label */}
@@ -164,7 +164,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
               fontFamily: "'Barlow Condensed', sans-serif",
               fontSize: 10, fontWeight: 700,
               letterSpacing: "0.22em",
-              color: "rgba(255,69,0,0.7)",
+              color: "rgba(255,102,0,0.7)",
               whiteSpace: "nowrap",
             }}>
               ▸ UP MARK IDENTIFIED
@@ -193,7 +193,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
               fontSize: 28,
               letterSpacing: "0.1em",
               color: "#fff",
-              textShadow: "0 0 16px rgba(255,69,0,0.7), 0 0 40px rgba(255,69,0,0.3)",
+              textShadow: "0 0 16px rgba(255,102,0,0.7), 0 0 40px rgba(255,102,0,0.3)",
               lineHeight: 1,
             }}>
               TURNED UP FITNESS
@@ -215,7 +215,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
               background: "rgba(0,0,0,0.55)",
               backdropFilter: "blur(16px)",
               WebkitBackdropFilter: "blur(16px)",
-              border: "1px solid rgba(255,69,0,0.45)",
+              border: "1px solid rgba(255,102,0,0.45)",
               borderRadius: 40,
               padding: "12px 40px",
               color: "rgba(255,255,255,0.85)",
@@ -223,7 +223,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
               fontWeight: 700,
               letterSpacing: "0.22em",
               fontFamily: "'Barlow Condensed', sans-serif",
-              boxShadow: "0 0 24px rgba(255,69,0,0.2)",
+              boxShadow: "0 0 24px rgba(255,102,0,0.2)",
               cursor: "pointer",
             }}
           >

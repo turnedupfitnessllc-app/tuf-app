@@ -22,18 +22,18 @@ interface PantherPresenceProps {
 
 export function PantherPresence({ state = "idle", size = 180, showScan = false }: PantherPresenceProps) {
   const glows: Record<string, string> = {
-    idle:      "rgba(255,69,0,0.12)",
-    coaching:  "rgba(255,69,0,0.28)",
-    activated: "rgba(255,69,0,0.45)",
+    idle:      "rgba(255,102,0,0.12)",
+    coaching:  "rgba(255,102,0,0.28)",
+    activated: "rgba(255,102,0,0.45)",
     dominant:  "rgba(200,151,58,0.45)",
-    locked_in: "rgba(255,69,0,0.55)",
+    locked_in: "rgba(255,102,0,0.55)",
   };
   const borders: Record<string, string> = {
-    idle:      "rgba(255,69,0,0.2)",
-    coaching:  "rgba(255,69,0,0.45)",
-    activated: "rgba(255,69,0,0.7)",
+    idle:      "rgba(255,102,0,0.2)",
+    coaching:  "rgba(255,102,0,0.45)",
+    activated: "rgba(255,102,0,0.7)",
     dominant:  "rgba(200,151,58,0.7)",
-    locked_in: "rgba(255,69,0,0.85)",
+    locked_in: "rgba(255,102,0,0.85)",
   };
   const g = glows[state] || glows.idle;
   const b = borders[state] || borders.idle;
@@ -79,7 +79,7 @@ export function PantherPresence({ state = "idle", size = 180, showScan = false }
         {(showScan || state === "locked_in") && (
           <div style={{
             position: "absolute", left: 0, right: 0, height: 2,
-            background: "linear-gradient(90deg, transparent, #FF4500, transparent)",
+            background: "linear-gradient(90deg, transparent, #FF6600, transparent)",
             animation: "scan 2s linear infinite",
             top: "50%",
           }} />
@@ -95,13 +95,13 @@ export function PantherPresence({ state = "idle", size = 180, showScan = false }
       <div style={{
         position: "absolute", bottom: -10, left: "50%", transform: "translateX(-50%)",
         display: "flex", alignItems: "center", gap: 4,
-        background: "rgba(8,8,8,0.9)", border: "1px solid rgba(255,69,0,0.3)",
+        background: "rgba(8,8,8,0.9)", border: "1px solid rgba(255,102,0,0.3)",
         borderRadius: 20, padding: "2px 8px",
       }}>
         <div style={{
           width: 5, height: 5, borderRadius: "50%",
-          background: state === "activated" || state === "dominant" ? "#C8973A" : "#FF4500",
-          boxShadow: `0 0 6px ${state === "activated" || state === "dominant" ? "#C8973A" : "#FF4500"}`,
+          background: state === "activated" || state === "dominant" ? "#C8973A" : "#FF6600",
+          boxShadow: `0 0 6px ${state === "activated" || state === "dominant" ? "#C8973A" : "#FF6600"}`,
         }} />
         <span style={{
           fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, fontWeight: 700,
@@ -168,11 +168,11 @@ export function PantherMessage({ headline, body, directive }: PantherMessageProp
       {/* Left accent bar */}
       <div style={{
         position: "absolute", left: 0, top: 0, bottom: 0, width: 3,
-        background: "linear-gradient(to bottom, #FF4500, #8B0000)",
+        background: "linear-gradient(to bottom, #FF6600, #8B0000)",
       }} />
       <div style={{
         fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, fontWeight: 700,
-        letterSpacing: "0.15em", color: "#FF4500", marginBottom: 4,
+        letterSpacing: "0.15em", color: "#FF6600", marginBottom: 4,
       }}>
         PANTHER SAYS
       </div>
@@ -189,8 +189,8 @@ export function PantherMessage({ headline, body, directive }: PantherMessageProp
       )}
       {directive && (
         <div style={{
-          padding: "8px 12px", borderLeft: "2px solid #FF4500",
-          background: "rgba(255,69,0,0.06)", borderRadius: "0 8px 8px 0",
+          padding: "8px 12px", borderLeft: "2px solid #FF6600",
+          background: "rgba(255,102,0,0.06)", borderRadius: "0 8px 8px 0",
           fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,0.85)",
           fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: "0.04em",
         }}>
@@ -208,7 +208,7 @@ interface SceneHeaderProps {
   color?: string;
 }
 
-export function SceneHeader({ num, label, color = "#FF4500" }: SceneHeaderProps) {
+export function SceneHeader({ num, label, color = "#FF6600" }: SceneHeaderProps) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
       <div style={{

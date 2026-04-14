@@ -59,7 +59,7 @@ export function TufTermsModal() {
           width: "100%",
           maxWidth: 480,
           background: "#0d0d0d",
-          borderTop: "2px solid rgba(255,69,0,0.5)",
+          borderTop: "2px solid rgba(255,102,0,0.5)",
           borderRadius: "20px 20px 0 0",
           padding: "24px 20px 32px",
           boxShadow: "0 -12px 48px rgba(0,0,0,0.8)",
@@ -78,7 +78,7 @@ export function TufTermsModal() {
                 fontSize: 11,
                 fontWeight: 700,
                 letterSpacing: "0.2em",
-                color: "rgba(255,69,0,0.8)",
+                color: "rgba(255,102,0,0.8)",
               }}>
                 TURNED UP FITNESS LLC
               </span>
@@ -91,7 +91,7 @@ export function TufTermsModal() {
               lineHeight: 1.1,
             }}>
               TERMS OF USE &<br />
-              <span style={{ color: "#ff4500" }}>PROPRIETARY NOTICE</span>
+              <span style={{ color: "#FF6600" }}>PROPRIETARY NOTICE</span>
             </h2>
           </div>
 
@@ -140,7 +140,7 @@ export function TufTermsModal() {
                   fontSize: 11,
                   fontWeight: 700,
                   letterSpacing: "0.12em",
-                  color: "rgba(255,69,0,0.9)",
+                  color: "rgba(255,102,0,0.9)",
                   margin: "0 0 3px",
                 }}>
                   {item.title.toUpperCase()}
@@ -174,7 +174,7 @@ export function TufTermsModal() {
             style={{
               width: "100%",
               padding: "14px 0",
-              background: "linear-gradient(135deg, #ff4500, #cc2200)",
+              background: "linear-gradient(135deg, #FF6600, #cc2200)",
               border: "none",
               borderRadius: 10,
               fontFamily: "'Bebas Neue', sans-serif",
@@ -182,7 +182,7 @@ export function TufTermsModal() {
               letterSpacing: "0.12em",
               color: "#fff",
               cursor: "pointer",
-              boxShadow: "0 4px 20px rgba(255,69,0,0.4)",
+              boxShadow: "0 4px 20px rgba(255,102,0,0.4)",
             }}
           >
             I ACCEPT — ENTER THE PROGRAM

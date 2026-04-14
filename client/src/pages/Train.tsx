@@ -114,7 +114,7 @@ const PROGRAM_STYLES: Record<string, { color: string; glow: string; accent: stri
   'maximum-overdrive': {
     color: 'from-red-700 via-orange-600 to-amber-500',
     glow: 'rgba(220,38,38,0.35)',
-    accent: '#FF4500',
+    accent: '#FF6600',
     icon: '⚡',
   },
   'ass-assassination': {
@@ -194,7 +194,7 @@ export default function Train() {
           {/* Warm-up */}
           <div
             className="flex items-center gap-2 px-4 py-3 rounded-xl mb-4"
-            style={{ background: 'rgba(255,69,0,0.08)', border: '1px solid rgba(255,69,0,0.2)' }}
+            style={{ background: 'rgba(255,102,0,0.08)', border: '1px solid rgba(255,102,0,0.2)' }}
           >
             <span className="text-xs font-black tracking-widest text-primary">WARM-UP</span>
             <span className="ml-auto text-xs text-muted-foreground">{workout.warmup}</span>
@@ -244,7 +244,7 @@ export default function Train() {
             onClick={() => handleStartWarmup(['glute-bridge', 'hip-flexor-stretch', 'thoracic-extension'], workout.title)}
             className="w-full py-4 rounded-2xl text-white font-black active:scale-[0.98] transition-all"
             style={{
-              background: `linear-gradient(135deg, ${style.accent}, #FF4500)`,
+              background: `linear-gradient(135deg, ${style.accent}, #FF6600)`,
               boxShadow: `0 4px 24px ${style.glow}`,
               fontFamily: "'Barlow Condensed', sans-serif",
               fontSize: '1.1rem',
@@ -382,7 +382,7 @@ export default function Train() {
           {/* Schedule */}
           <div
             className="flex items-start gap-3 p-4 rounded-2xl mb-6"
-            style={{ background: 'rgba(255,69,0,0.06)', border: '1px solid rgba(255,69,0,0.15)' }}
+            style={{ background: 'rgba(255,102,0,0.06)', border: '1px solid rgba(255,102,0,0.15)' }}
           >
             <span className="text-primary text-lg flex-shrink-0">📅</span>
             <div>
@@ -480,7 +480,7 @@ export default function Train() {
             <p className="text-xs font-black tracking-widest text-muted-foreground mb-3">CORRECTIVE WARM-UP</p>
             <div className="space-y-2">
               {program.warmup.map((id, i) => (
-                <div key={id} className="flex items-center gap-3 p-3 rounded-xl" style={{ background: 'rgba(255,69,0,0.05)', border: '1px solid rgba(255,69,0,0.15)' }}>
+                <div key={id} className="flex items-center gap-3 p-3 rounded-xl" style={{ background: 'rgba(255,102,0,0.05)', border: '1px solid rgba(255,102,0,0.15)' }}>
                   <span className="w-6 h-6 rounded-full text-xs font-black flex items-center justify-center flex-shrink-0 text-white" style={{ background: program.accent }}>{i + 1}</span>
                   <p className="text-sm font-bold text-foreground capitalize">{id.replace(/-/g, ' ')}</p>
                 </div>
@@ -511,7 +511,7 @@ export default function Train() {
           <button
             onClick={() => handleStartWarmup(program.warmup, program.name)}
             className="w-full py-4 rounded-2xl text-white font-black active:scale-[0.98] transition-all"
-            style={{ background: `linear-gradient(135deg, ${program.accent}, #FF4500)`, boxShadow: `0 4px 24px ${program.glow}`, fontFamily: "'Barlow Condensed', sans-serif", fontSize: '1.1rem', letterSpacing: '0.1em' }}
+            style={{ background: `linear-gradient(135deg, ${program.accent}, #FF6600)`, boxShadow: `0 4px 24px ${program.glow}`, fontFamily: "'Barlow Condensed', sans-serif", fontSize: '1.1rem', letterSpacing: '0.1em' }}
           >
             START WARM-UP
           </button>
@@ -543,7 +543,7 @@ export default function Train() {
             <p className="text-xs font-black tracking-widest text-muted-foreground">TUF PROGRAMS</p>
             <span
               className="text-xs font-black px-2 py-0.5 rounded-full"
-              style={{ background: 'rgba(255,69,0,0.15)', color: '#FF4500', border: '1px solid rgba(255,69,0,0.3)' }}
+              style={{ background: 'rgba(255,102,0,0.15)', color: '#FF6600', border: '1px solid rgba(255,102,0,0.3)' }}
             >
               OFFICIAL
             </span>
@@ -583,7 +583,7 @@ export default function Train() {
                   </div>
                   <div
                     className="flex items-center gap-2 px-5 py-3"
-                    style={{ background: 'rgba(255,69,0,0.12)', backdropFilter: 'blur(12px)', borderTop: '1px solid rgba(255,69,0,0.25)' }}
+                    style={{ background: 'rgba(255,102,0,0.12)', backdropFilter: 'blur(12px)', borderTop: '1px solid rgba(255,102,0,0.25)' }}
                   >
                     <span className="text-xs font-black tracking-widest text-primary">
                       {program.weeks.length} WEEKS · {program.daysPerWeek}x/WEEK · {program.level.toUpperCase()}
@@ -642,9 +642,9 @@ export default function Train() {
           <button
             onClick={() => navigate('/live')}
             className="w-full flex items-center gap-4 p-4 rounded-2xl active:scale-[0.98] transition-all"
-            style={{ background: 'rgba(255,69,0,0.06)', border: '1.5px dashed rgba(255,69,0,0.35)' }}
+            style={{ background: 'rgba(255,102,0,0.06)', border: '1.5px dashed rgba(255,102,0,0.35)' }}
           >
-            <div className="w-10 h-10 rounded-full flex items-center justify-center text-xl flex-shrink-0" style={{ background: 'rgba(255,69,0,0.12)' }}>
+            <div className="w-10 h-10 rounded-full flex items-center justify-center text-xl flex-shrink-0" style={{ background: 'rgba(255,102,0,0.12)' }}>
               📷
             </div>
             <div className="flex-1 text-left">

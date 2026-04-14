@@ -79,10 +79,10 @@ export default function Home() {
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap');
 
         @keyframes fadeUp    { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
-        @keyframes glowPulse { 0%,100%{box-shadow:0 4px 24px rgba(255,69,0,0.4)} 50%{box-shadow:0 4px 56px rgba(255,69,0,0.75)} }
+        @keyframes glowPulse { 0%,100%{box-shadow:0 4px 24px rgba(255,102,0,0.4)} 50%{box-shadow:0 4px 56px rgba(255,102,0,0.75)} }
         @keyframes ringPulse {
-          0%,100% { box-shadow: 0 0 14px rgba(255,69,0,0.5), inset 0 0 10px rgba(255,69,0,0.08); }
-          50%     { box-shadow: 0 0 30px rgba(255,69,0,0.9), inset 0 0 18px rgba(255,69,0,0.18); }
+          0%,100% { box-shadow: 0 0 14px rgba(255,102,0,0.5), inset 0 0 10px rgba(255,102,0,0.08); }
+          50%     { box-shadow: 0 0 30px rgba(255,102,0,0.9), inset 0 0 18px rgba(255,102,0,0.18); }
         }
         @keyframes haloPulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
 
@@ -91,7 +91,7 @@ export default function Home() {
         .btn-primary {
           display: block; width: 100%;
           padding: 18px 24px;
-          background: #FF4500;
+          background: #FF6600;
           border: none; border-radius: 14px;
           color: #fff;
           font-family: 'Barlow Condensed', sans-serif;
@@ -113,7 +113,7 @@ export default function Home() {
           background: rgba(255,255,255,0.03);
         }
         .cmd-card:active { transform: scale(0.97); }
-        .cmd-card:hover  { border-color: rgba(255,69,0,0.3); }
+        .cmd-card:hover  { border-color: rgba(255,102,0,0.3); }
 
         .logo-ring { animation: ringPulse 2.5s ease-in-out infinite; }
         .logo-halo { animation: haloPulse 2.5s ease-in-out infinite; }
@@ -129,8 +129,8 @@ export default function Home() {
             borderRadius: 20,
             overflow: "hidden",
             position: "relative",
-            border: "1px solid rgba(255,69,0,0.2)",
-            boxShadow: "0 0 40px rgba(255,69,0,0.12), 0 12px 40px rgba(0,0,0,0.6)",
+            border: "1px solid rgba(255,102,0,0.2)",
+            boxShadow: "0 0 40px rgba(255,102,0,0.12), 0 12px 40px rgba(0,0,0,0.6)",
           }}>
             {/* Panther mascot — full body, darkened */}
             <img
@@ -166,7 +166,7 @@ export default function Home() {
                 right: "30%", top: "55%",
                 transform: "translate(50%, -50%)",
                 width: 100, height: 70,
-                background: "radial-gradient(ellipse at center, rgba(255,69,0,0.45) 0%, rgba(255,69,0,0.1) 55%, transparent 80%)",
+                background: "radial-gradient(ellipse at center, rgba(255,102,0,0.45) 0%, rgba(255,102,0,0.1) 55%, transparent 80%)",
                 borderRadius: "50%",
                 pointerEvents: "none",
               }}
@@ -179,7 +179,7 @@ export default function Home() {
                 right: "30%", top: "55%",
                 transform: "translate(50%, -50%)",
                 width: 72, height: 50,
-                border: "1.5px solid rgba(255,69,0,0.6)",
+                border: "1.5px solid rgba(255,102,0,0.6)",
                 borderRadius: 8,
                 pointerEvents: "none",
               }}
@@ -193,7 +193,7 @@ export default function Home() {
                 fontFamily: "'Barlow Condensed', sans-serif",
                 fontSize: 9, fontWeight: 700,
                 letterSpacing: "0.22em",
-                color: "rgba(255,69,0,0.85)",
+                color: "rgba(255,102,0,0.85)",
                 marginBottom: 3,
               }}>
                 TURNED UP FITNESS
@@ -203,7 +203,7 @@ export default function Home() {
                 fontSize: 28, letterSpacing: "0.06em",
                 color: "var(--text-primary)", lineHeight: 1,
               }}>
-                THE PANTHER <span style={{ color: "#FF4500" }}>SYSTEM</span>
+                THE PANTHER <span style={{ color: "#FF6600" }}>SYSTEM</span>
               </div>
             </div>
           </div>
@@ -230,7 +230,7 @@ export default function Home() {
             color: "var(--text-primary)", lineHeight: 1.08, margin: 0,
           }}>
             READY TO MOVE<br />
-            <span style={{ color: "#FF4500" }}>WITH PRECISION?</span>
+            <span style={{ color: "#FF6600" }}>WITH PRECISION?</span>
           </h1>
         </div>
 
@@ -262,7 +262,7 @@ export default function Home() {
             <span style={{
               fontFamily: "'Barlow Condensed', sans-serif",
               fontSize: 10, fontWeight: 700,
-              letterSpacing: "0.14em", color: "#FF4500",
+              letterSpacing: "0.14em", color: "#FF6600",
             }}>
               {stage}
             </span>
@@ -294,10 +294,10 @@ export default function Home() {
             <div style={{ padding: "18px 14px" }}>
               <div style={{ marginBottom: 6 }}>
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="4" y="3" width="16" height="18" rx="2" stroke="#FF4500" strokeWidth="1.5"/>
-                  <path d="M8 8h8M8 12h8M8 16h5" stroke="#FF4500" strokeWidth="1.5" strokeLinecap="round"/>
-                  <circle cx="17" cy="16" r="3" fill="#FF4500" opacity="0.3" stroke="#FF4500" strokeWidth="1"/>
-                  <path d="M15.5 16l1 1 2-2" stroke="#FF4500" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
+                  <rect x="4" y="3" width="16" height="18" rx="2" stroke="#FF6600" strokeWidth="1.5"/>
+                  <path d="M8 8h8M8 12h8M8 16h5" stroke="#FF6600" strokeWidth="1.5" strokeLinecap="round"/>
+                  <circle cx="17" cy="16" r="3" fill="#FF6600" opacity="0.3" stroke="#FF6600" strokeWidth="1"/>
+                  <path d="M15.5 16l1 1 2-2" stroke="#FF6600" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
               <div style={{
@@ -420,7 +420,7 @@ export default function Home() {
                 fontFamily: "'Barlow Condensed', sans-serif",
                 fontSize: 9, fontWeight: 700,
                 letterSpacing: "0.22em",
-                color: "#FF4500",
+                color: "#FF6600",
                 marginBottom: 4,
               }}>
                 NEW PROGRAM
@@ -491,15 +491,15 @@ export default function Home() {
             <div style={{ marginRight: 0 }}>
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
-                  stroke="#FF4500" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
-                  fill="rgba(255,69,0,0.08)"/>
+                  stroke="#FF6600" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+                  fill="rgba(255,102,0,0.08)"/>
               </svg>
             </div>
             <div>
               <div style={{
                 fontFamily: "'Bebas Neue', sans-serif",
                 fontSize: 18, letterSpacing: "0.06em",
-                color: "#FF4500",
+                color: "#FF6600",
               }}>
                 MEMBERSHIP
               </div>
