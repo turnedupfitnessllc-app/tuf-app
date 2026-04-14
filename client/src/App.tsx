@@ -79,12 +79,10 @@ function Router() {
         <Route path={"/mindset"} component={Mindset} />
         <Route path={"/panther-30"} component={Panther30} />
 
-        {/* ── Feature screens (tier-gated) ───────────────────── */}
-        <Route path={"/boa"} component={() => (
-          <PaywallGate requiredTier="elite" feature="Biomechanical Overlay" description="AI-powered real-time movement analysis with biomechanical feedback is an Elite-tier feature.">
-            <BiomechanicalOverlay />
-          </PaywallGate>
-        )} />
+        {/* ── Feature screens ───────────────────────────────── */}
+        {/* BOA SCAN — accessible on all levels (tier gate removed per user request) */}
+        <Route path={"/boa"} component={BiomechanicalOverlay} />
+
         <Route path={"/panther"} component={() => (
           <PaywallGate requiredTier="core" feature="Panther AI Brain" description="Full clinical AI coaching with 7 body regions and NASM corrective protocols requires the Core plan.">
             <PantherBrain />

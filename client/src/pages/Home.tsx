@@ -1,6 +1,6 @@
 /**
- * TUF HOME — v5.0 Command Center
- * Doc 14 — Button Design Fix
+ * TUF HOME — v6.0 Command Center
+ * Doc 15 — Gradient Image Buttons
  * © 2026 Turned Up Fitness LLC. All rights reserved.
  *
  * Layout (corrected order per Doc 14):
@@ -20,47 +20,24 @@ import { XPBar } from "@/components/v4Components";
 import { ls, getStageFromXP } from "@/data/v4constants";
 import { useProgress } from "@/hooks/useProgress";
 import { TufSocialStickyStrip } from "@/components/TufSocialFooter";
-import NavCard from "@/components/NavCard";
-import PantherBrainCard from "@/components/PantherBrainCard";
-import EvolveCard from "@/components/EvolveCard";
+import GradientNavCard from "@/components/GradientNavCard";
+import { HOME_BUTTONS } from "@/config/homeButtonConfig";
+import { Brain, Zap, Flame, Camera, Utensils, Activity, Star } from "lucide-react";
+
+// Icon map for homeButtonConfig
+const ICON_MAP: Record<string, React.ReactNode> = {
+  Brain: <Brain size={28} />,
+  Zap: <Zap size={24} />,
+  Flame: <Flame size={24} />,
+  Camera: <Camera size={24} />,
+  Utensils: <Utensils size={24} />,
+  Activity: <Activity size={24} />,
+  Star: <Star size={24} />,
+};
 
 const CDN = "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR";
 const PANTHER_MASCOT = `${CDN}/panther-mascot-gym_27e64ae1.png`;
-const CHALLENGE_IMG  = "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/challenge-hero-panther_60538eb1.jpg";
 
-// ── SVG ICONS ──────────────────────────────────────────────────────────────────
-
-const BoaIcon = () => (
-  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect x="2" y="7" width="20" height="14" rx="2" stroke="#00CC66" strokeWidth="1.5"/>
-    <circle cx="12" cy="14" r="3.5" stroke="#00CC66" strokeWidth="1.5"/>
-    <path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7" stroke="#00CC66" strokeWidth="1.5"/>
-    <path d="M5 5h1M5 19h1M18 5h1M18 19h1" stroke="#00CC66" strokeWidth="1" strokeLinecap="round" opacity="0.5"/>
-  </svg>
-);
-
-const FuelIcon = () => (
-  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="12" cy="12" r="9" stroke="#00CC66" strokeWidth="1.5" fill="rgba(0,204,102,0.08)"/>
-    <path d="M12 8v4l2.5 2.5" stroke="#00CC66" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M7.5 4.5C8.8 3.6 10.3 3 12 3" stroke="#00CC66" strokeWidth="1.5" strokeLinecap="round"/>
-  </svg>
-);
-
-const HealthIcon = () => (
-  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M3 12h4l3-9 4 18 3-9h4" stroke="#4488FF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-    <circle cx="12" cy="12" r="9" stroke="#4488FF" strokeWidth="1" opacity="0.2"/>
-  </svg>
-);
-
-const MembershipIcon = () => (
-  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
-      stroke="#C8973A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
-      fill="rgba(200,151,58,0.08)"/>
-  </svg>
-);
 
 // ── COMPONENT ──────────────────────────────────────────────────────────────────
 
@@ -392,143 +369,22 @@ export default function Home() {
           COMMAND CENTER
         </p>
 
-        {/* ── 1. PANTHER BRAIN — Hero Card (most important) ── */}
-        <PantherBrainCard onClick={() => navigate("/panther")} />
-
-        {/* ── 2. EVOLVE — Full-width gold card ── */}
-        <EvolveCard
-          xpPoints={xp}
-          xpLevel={stage}
-          onClick={() => navigate("/evolve")}
-        />
-
-        {/* ── 3. 30-DAY PANTHER MINDSET CHALLENGE — Image card ── */}
-        <button
-          className="challenge-card"
-          onClick={() => navigate("/challenge")}
-        >
-          <div style={{ position: "relative", height: 120, overflow: "hidden" }}>
-            <img
-              src={CHALLENGE_IMG}
-              alt="30-Day Challenge"
-              style={{
-                position: "absolute", inset: 0,
-                width: "100%", height: "100%",
-                objectFit: "cover",
-                objectPosition: "center 30%",
-                filter: "brightness(0.45) saturate(1.1)",
-              }}
-            />
-            <div style={{
-              position: "absolute", inset: 0,
-              background: "linear-gradient(to right, rgba(8,8,8,0.9) 0%, rgba(8,8,8,0.4) 60%, transparent 100%)",
-              pointerEvents: "none",
-            }} />
-            <div style={{
-              position: "absolute",
-              left: 16, top: "50%",
-              transform: "translateY(-50%)",
-            }}>
-              <div style={{
-                fontFamily: "'Barlow Condensed', sans-serif",
-                fontSize: 9, fontWeight: 700,
-                letterSpacing: "0.22em",
-                color: "#FF6600",
-                marginBottom: 4,
-              }}>
-                NEW PROGRAM
-              </div>
-              <div style={{
-                fontFamily: "'Bebas Neue', sans-serif",
-                fontSize: 22, letterSpacing: "0.06em",
-                color: "var(--text-primary)", lineHeight: 1,
-              }}>
-                30-DAY PANTHER<br />MINDSET CHALLENGE
-              </div>
-              <div style={{
-                fontFamily: "'Barlow Condensed', sans-serif",
-                fontSize: 10, fontWeight: 700,
-                letterSpacing: "0.1em",
-                color: "rgba(255,255,255,0.4)",
-                marginTop: 4,
-              }}>
-                Control · Patience · Precision · Power
-              </div>
-            </div>
-          </div>
-        </button>
-
-        {/* ── 4. BOA SCAN — Green border ── */}
-        <NavCard
-          icon={<BoaIcon />}
-          title="BOA SCAN"
-          subtitle="Biomechanical Overlay Analysis"
-          titleColor="#00CC66"
-          borderColor="#00CC66"
-          onClick={() => navigate("/boa")}
-        />
-
-        {/* ── 5. FUEL TRACKER — Orange border (reference standard) ── */}
-        {(fuelDirective || fuelSummary) && (
-          <button
-            onClick={() => navigate("/fuel-track")}
-            style={{
-              width: "100%", display: "block",
-              background: "linear-gradient(135deg, rgba(0,204,102,0.08) 0%, rgba(0,204,102,0.03) 100%)",
-              border: "1px solid rgba(0,204,102,0.25)",
-              borderRadius: 12, padding: "12px 16px", cursor: "pointer", textAlign: "left",
-              marginBottom: 8,
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: fuelDirective ? 6 : 0 }}>
-              <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#00CC66" }}/>
-              <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: "0.12em", color: "#00CC66" }}>PANTHER FUEL DIRECTIVE</span>
-              {fuelSummary && (
-                <span style={{ marginLeft: "auto", fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, color: "var(--text-tertiary)" }}>
-                  {fuelSummary.calories} / {fuelSummary.target} kcal · {fuelSummary.protein}g protein
-                </span>
-              )}
-            </div>
-            {fuelDirective && (
-              <div style={{
-                fontFamily: "'Barlow', sans-serif", fontSize: 12,
-                color: "var(--text-secondary)", lineHeight: 1.5,
-                display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden",
-              }}>
-                {fuelDirective}
-              </div>
-            )}
-          </button>
-        )}
-
-        <NavCard
-          icon={<FuelIcon />}
-          title="FUEL TRACKER"
-          subtitle="Macros · Meals · Panther Directive"
-          titleColor="#FF6600"
-          borderColor="#FF6600"
-          onClick={() => navigate("/fuel-track")}
-        />
-
-        {/* ── 6. HEALTH INTELLIGENCE — Blue border ── */}
-        <NavCard
-          icon={<HealthIcon />}
-          title="HEALTH INTELLIGENCE"
-          subtitle="PopHIVE · Obesity · Diabetes · Illness Alerts"
-          titleColor="#4488FF"
-          borderColor="#4488FF"
-          onClick={() => navigate("/health-intel")}
-        />
-
-        {/* ── 7. MEMBERSHIP — Gold border (moved to bottom) ── */}
-        <NavCard
-          icon={<MembershipIcon />}
-          title="MEMBERSHIP"
-          subtitle="Plans · Pricing · Prestige Labs"
-          titleColor="#C8973A"
-          borderColor="#C8973A"
-          onClick={() => navigate("/pricing")}
-        />
+        {/* ── GRADIENT IMAGE BUTTONS — Doc 15 ── */}
+        {HOME_BUTTONS.map((btn) => (
+          <GradientNavCard
+            key={btn.id}
+            icon={ICON_MAP[btn.iconName] || <Brain size={24} />}
+            title={btn.title}
+            subtitle={btn.id === "evolve" ? `${stage} · ${xp} XP` : btn.subtitle}
+            titleColor={btn.titleColor}
+            borderColor={btn.borderColor}
+            gradientColor={btn.gradientColor}
+            imageSrc={btn.imageSrc}
+            hero={btn.hero}
+            locked={btn.locked}
+            onClick={() => navigate(btn.route)}
+          />
+        ))}
 
       </main>
 
