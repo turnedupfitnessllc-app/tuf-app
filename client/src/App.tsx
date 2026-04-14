@@ -47,6 +47,8 @@ import Mindset from "./pages/Mindset";
 import Panther30 from "./pages/Panther30";
 import Billing from "./pages/Billing";
 import HealthIntel from "./pages/HealthIntel";
+import PaymentSuccess from "./pages/PaymentSuccess";
+import PaymentCancelled from "./pages/PaymentCancelled";
 
 // IP Protection
 import { TufTermsModal } from "./components/TufTermsModal";
@@ -76,7 +78,11 @@ function Router() {
         <Route path={"/billing"} component={Billing} />
         <Route path={"/challenge"} component={Challenge} />
         {/* <Route path={"/schedule"} component={Schedule} /> */}  {/* hidden — calendar bugs being fixed */}
-        <Route path={"/mindset"} component={Mindset} />
+        <Route path={"/mindset"} component={() => (
+          <PaywallGate requiredTier="elite" feature="30-Day Mindset Challenge" description="The Panther Mindset Challenge is available on the CONTROLLED plan and above.">
+            <Mindset />
+          </PaywallGate>
+        )} />
         <Route path={"/panther-30"} component={Panther30} />
 
         {/* ── Feature screens ───────────────────────────────── */}
@@ -114,12 +120,18 @@ function Router() {
         <Route path={"/move"} component={Move} />
         <Route path={"/fuel"} component={Fuel} />
         <Route path={"/fuel-track"} component={FuelTracker} />
-        <Route path={"/feast"} component={Feast} />
+        <Route path={"/feast"} component={() => (
+          <PaywallGate requiredTier="elite" feature="FEAST Regional Intelligence" description="FEAST regional food coaching is available on the CONTROLLED plan and above.">
+            <Feast />
+          </PaywallGate>
+        )} />
         <Route path={"/vault"} component={Vault} />
         <Route path={"/progress"} component={Progress} />
         <Route path={"/showcase"} component={ComponentShowcase} />
         <Route path={"/pipeline"} component={PantherPipeline} />
         <Route path={"/health-intel"} component={HealthIntel} />
+        <Route path={"/payment-success"} component={PaymentSuccess} />
+        <Route path={"/payment-cancelled"} component={PaymentCancelled} />
 
         <Route path={"/404"} component={NotFound} />
         <Route component={NotFound} />

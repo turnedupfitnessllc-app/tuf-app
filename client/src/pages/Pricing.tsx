@@ -1,9 +1,9 @@
 /**
- * TUF PRICING — v2.0
- * 4 membership tiers aligned to the Panther Stage Ladder
+ * TUF PRICING — v3.0 (Doc 16 v2)
+ * 3-tier structure: Panther Core | Panther Elite | Panther Pro
  * Monthly / Annual toggle  |  Stripe Checkout  |  Prestige Labs affiliate
  */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 
 const PRESTIGE_AFFILIATE = "https://refer.prestigelabs.com/?af=wg2ztkai";
@@ -23,73 +23,56 @@ interface Tier {
 
 const TIERS: Tier[] = [
   {
-    id: "cub",
-    name: "CUB",
-    tagline: "Start your movement journey",
-    monthlyPrice: 9.99,
-    annualPrice: 95,
-    annualMonthly: 7.92,
-    color: "#A0A0A0",
-    glow: "rgba(160,160,160,0.12)",
-    features: [
-      "Pain & movement assessment",
-      "Basic 4-week corrective program",
-      "XP tracking & stage system",
-      "Movement streak tracking",
-      "Community access",
-    ],
-  },
-  {
-    id: "stealth",
-    name: "STEALTH",
-    tagline: "Build your corrective foundation",
+    id: "core",
+    name: "PANTHER CORE",
+    tagline: "AI corrective coaching + nutrition",
     monthlyPrice: 19.99,
-    annualPrice: 191,
-    annualMonthly: 15.92,
-    color: "#4a9eff",
-    glow: "rgba(74,158,255,0.15)",
+    annualPrice: 199,
+    annualMonthly: 16.58,
+    color: "#FF6600",
+    glow: "rgba(255,102,0,0.15)",
     features: [
-      "Everything in CUB",
-      "Panther Brain AI coach (Claude)",
-      "BOA Scan — biomechanical analysis",
-      "Evolve stage unlocks",
-      "Unlimited AI coaching sessions",
+      "AI Corrective Coaching",
+      "MOVE Pillar",
+      "FUEL Pillar",
+      "Pain Diagnostics",
+      "Full Exercise Library",
     ],
   },
   {
-    id: "controlled",
-    name: "CONTROLLED",
-    tagline: "Precision training at full capacity",
-    monthlyPrice: 34.99,
-    annualPrice: 335,
-    annualMonthly: 27.92,
+    id: "elite",
+    name: "PANTHER ELITE",
+    tagline: "Adds full TUTK food system",
+    monthlyPrice: 39.99,
+    annualPrice: 399,
+    annualMonthly: 33.25,
     color: "#C8973A",
     glow: "rgba(200,151,58,0.18)",
     badge: "MOST POPULAR",
     features: [
-      "Everything in STEALTH",
-      "30-Day Panther Mindset Challenge",
-      "Advanced program variations",
-      "Nutrition & supplementation guidance",
-      "Priority AI response speed",
+      "Everything in Core",
+      "FEAST Pillar — TUTK Recipes",
+      "100-Recipe Library",
+      "1,800-Food Database",
+      "Georgia/Southern Food Intelligence",
     ],
   },
   {
-    id: "apex",
-    name: "APEX PREDATOR",
-    tagline: "Elite performance — no limits",
-    monthlyPrice: 59.99,
-    annualPrice: 575,
-    annualMonthly: 47.92,
-    color: "#FF6600",
-    glow: "rgba(255,102,0,0.18)",
+    id: "pro",
+    name: "PANTHER PRO",
+    tagline: "All pillars + trainer tools",
+    monthlyPrice: 79.99,
+    annualPrice: 799,
+    annualMonthly: 66.58,
+    color: "#AA44FF",
+    glow: "rgba(170,68,255,0.18)",
     badge: "ELITE",
     features: [
-      "Everything in CONTROLLED",
-      "Live coaching session queue",
-      "Custom program builds",
-      "Direct trainer access",
-      "Early access to new features",
+      "Everything in Elite",
+      "MINDSET Pillar",
+      "30-Day Challenge",
+      "Trainer Tools",
+      "Client Management",
     ],
   },
 ];
@@ -99,10 +82,59 @@ export default function Pricing() {
   const [billing, setBilling] = useState<"monthly" | "annual">("monthly");
   const [loading, setLoading] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+  const [userId, setUserId] = useState("");
+  const [userEmail, setUserEmail] = useState("");
+  const [userName, setUserName] = useState("");
+  const [stripeCustomerId, setStripeCustomerId] = useState("");
+  const [currentTier, setCurrentTier] = useState("");
+  const [portalLoading, setPortalLoading] = useState(false);
+
+  useEffect(() => {
+    const id = localStorage.getItem("tuf_user_id") || "";
+    setUserId(id);
+    try {
+      const profile = JSON.parse(localStorage.getItem("tuf_profile") || "{}");
+      setUserEmail(profile.email || "");
+      setUserName(profile.name || "");
+    } catch { /* ignore */ }
+    const tier = localStorage.getItem("tuf_tier_raw") || localStorage.getItem("tuf_tier") || "";
+    setCurrentTier(tier);
+    if (id) {
+      fetch(`/api/stripe/subscription/${id}`)
+        .then(r => r.ok ? r.json() : null)
+        .then((data: { tier?: string; stripe_customer_id?: string } | null) => {
+          if (data?.stripe_customer_id) setStripeCustomerId(data.stripe_customer_id);
+          if (data?.tier) setCurrentTier(data.tier);
+        })
+        .catch(() => {});
+    }
+  }, []);
 
   const showToast = (msg: string) => {
     setToast(msg);
     setTimeout(() => setToast(null), 3500);
+  };
+
+  const handleManageSubscription = async () => {
+    if (!stripeCustomerId) {
+      showToast("No active subscription found.");
+      return;
+    }
+    setPortalLoading(true);
+    try {
+      const res = await fetch("/api/stripe/customer-portal", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ stripeCustomerId, origin: window.location.origin }),
+      });
+      const data = await res.json() as { url?: string; error?: string };
+      if (data.url) window.open(data.url, "_blank");
+      else showToast(data.error || "Could not open portal.");
+    } catch {
+      showToast("Network error.");
+    } finally {
+      setPortalLoading(false);
+    }
   };
 
   const handleCheckout = async (tierId: string) => {
@@ -115,6 +147,9 @@ export default function Pricing() {
           tierId,
           interval: billing,
           origin: window.location.origin,
+          userId: userId || undefined,
+          userEmail: userEmail || undefined,
+          userName: userName || undefined,
         }),
       });
       const data = await res.json() as { url?: string; error?: string };
@@ -440,6 +475,29 @@ export default function Pricing() {
             </a>
           </div>
         </div>
+
+        {/* ─── MANAGE SUBSCRIPTION ─── */}
+        {stripeCustomerId && (
+          <div style={{ marginTop: 16 }}>
+            <button
+              onClick={handleManageSubscription}
+              disabled={portalLoading}
+              style={{
+                width: "100%", padding: "13px",
+                background: "transparent",
+                border: "1px solid rgba(255,255,255,0.15)",
+                borderRadius: 12,
+                fontFamily: "'Barlow Condensed', sans-serif",
+                fontSize: 14, fontWeight: 700, letterSpacing: "0.1em",
+                color: "rgba(255,255,255,0.4)",
+                cursor: portalLoading ? "not-allowed" : "pointer",
+                boxSizing: "border-box",
+              }}
+            >
+              {portalLoading ? "LOADING…" : "MANAGE SUBSCRIPTION →"}
+            </button>
+          </div>
+        )}
 
         {/* ─── TEST MODE NOTICE ─── */}
         <div style={{

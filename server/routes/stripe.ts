@@ -79,8 +79,8 @@ router.post("/create-checkout", express.json(), async (req: Request, res: Respon
         customer_email: userEmail || "",
         customer_name: userName || "",
       },
-      success_url: `${origin}/billing?success=1&tier=${tierId}`,
-      cancel_url: `${origin}/pricing?cancelled=1`,
+      success_url: `${origin}/payment-success?session_id={CHECKOUT_SESSION_ID}&tier=${tierId}`,
+      cancel_url: `${origin}/payment-cancelled`,
     });
 
     return res.json({ url: session.url });

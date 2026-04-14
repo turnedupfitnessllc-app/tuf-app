@@ -43,6 +43,9 @@ export interface User {
   stripe_customer_id?: string;
   stripe_subscription_id?: string;
   subscription_status?: "active" | "cancelled" | "past_due" | "trialing";
+  billing_period?: "monthly" | "annual";
+  subscription_start_date?: number; // Unix ms
+  subscription_end_date?: number;   // Unix ms — current period end
   tier_updated_at?: number;
 }
 
@@ -417,6 +420,9 @@ export async function updateUserTier(
     stripe_customer_id?: string;
     stripe_subscription_id?: string;
     subscription_status?: User["subscription_status"];
+    billing_period?: User["billing_period"];
+    subscription_start_date?: number;
+    subscription_end_date?: number;
   }
 ): Promise<User | null> {
   const db = await getDb();
