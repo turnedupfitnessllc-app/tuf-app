@@ -1069,3 +1069,64 @@ export async function addXP(user_id: string, amount: number): Promise<UserProgre
   const current = await getUserProgress(user_id);
   return upsertUserProgress(user_id, { xp: current.xp + amount });
 }
+
+// ─── USER PROGRAM STATE (30-Day Panther Program) ─────────────────────────────
+
+export interface UserProgramState {
+  user_id: string;
+  level: "Cub" | "Hunter" | "Apex";
+  goal: string;
+  days_per_week: number;
+  session_length: number;
+  current_day: number;
+  phase: string;
+  start_date: string;
+  completed_days: number[];
+  streak: number;
+  last_completed_date?: string;
+  updated_at: number;
+}
+
+const DEFAULT_PROGRAM_STATE: Omit<UserProgramState, "user_id" | "updated_at"> = {
+  level: "Hunter",
+  goal: "Athletic Performance",
+  days_per_week: 4,
+  session_length: 30,
+  current_day: 1,
+  phase: "Control",
+  start_date: new Date().toISOString().split("T")[0],
+  completed_days: [],
+  streak: 0,
+};
+
+export async function getUserProgramState(user_id: string): Promise<UserProgramState | undefined> {
+  const db = await getDb();
+  const states = ((db.data as unknown) as Record<string, unknown>).user_program_states as UserProgramState[] | undefined;
+  return states?.find((p) => p.user_id === user_id);
+}
+
+export async function upsertUserProgramState(
+  user_id: string,
+  data: Partial<Omit<UserProgramState, "user_id">>
+): Promise<UserProgramState> {
+  const db = await getDb();
+  const raw = (db.data as unknown) as Record<string, unknown>;
+  if (!raw.user_program_states) raw.user_program_states = [];
+  const states = raw.user_program_states as UserProgramState[];
+  const idx = states.findIndex((p) => p.user_id === user_id);
+  const now = Date.now();
+  if (idx >= 0) {
+    states[idx] = { ...states[idx], ...data, updated_at: now };
+    await db.write();
+    return states[idx];
+  }
+  const record: UserProgramState = {
+    user_id,
+    ...DEFAULT_PROGRAM_STATE,
+    ...data,
+    updated_at: now,
+  };
+  states.push(record);
+  await db.write();
+  return record;
+}
