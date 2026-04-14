@@ -49,6 +49,7 @@ import Billing from "./pages/Billing";
 import HealthIntel from "./pages/HealthIntel";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentCancelled from "./pages/PaymentCancelled";
+import Leaderboard from "./pages/Leaderboard";
 
 // IP Protection
 import { TufTermsModal } from "./components/TufTermsModal";
@@ -132,6 +133,7 @@ function Router() {
         <Route path={"/health-intel"} component={HealthIntel} />
         <Route path={"/payment-success"} component={PaymentSuccess} />
         <Route path={"/payment-cancelled"} component={PaymentCancelled} />
+        <Route path={"/leaderboard"} component={Leaderboard} />
 
         <Route path={"/404"} component={NotFound} />
         <Route component={NotFound} />

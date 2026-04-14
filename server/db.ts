@@ -1084,6 +1084,11 @@ export interface UserProgramState {
   completed_days: number[];
   streak: number;
   last_completed_date?: string;
+  xp: number;
+  earned_badges: string[];
+  last_performance_score: number | null;
+  workouts_completed: number;
+  name: string;
   updated_at: number;
 }
 
@@ -1097,7 +1102,30 @@ const DEFAULT_PROGRAM_STATE: Omit<UserProgramState, "user_id" | "updated_at"> = 
   start_date: new Date().toISOString().split("T")[0],
   completed_days: [],
   streak: 0,
+  xp: 0,
+  earned_badges: [],
+  last_performance_score: null,
+  workouts_completed: 0,
+  name: "",
 };
+
+export async function getLeaderboard(limit = 50): Promise<Array<{ user_id: string; name: string; xp: number; streak: number; workouts_completed: number; rank: number }>> {
+  const db = await getDb();
+  const raw = (db.data as unknown) as Record<string, unknown>;
+  const states = (raw.user_program_states ?? []) as UserProgramState[];
+  return states
+    .filter((s) => (s.xp ?? 0) > 0 || (s.workouts_completed ?? 0) > 0)
+    .sort((a, b) => (b.xp ?? 0) - (a.xp ?? 0))
+    .slice(0, limit)
+    .map((s, i) => ({
+      user_id:            s.user_id,
+      name:               s.name || `Panther ${s.user_id.slice(0, 6)}`,
+      xp:                 s.xp ?? 0,
+      streak:             s.streak ?? 0,
+      workouts_completed: s.workouts_completed ?? 0,
+      rank:               i + 1,
+    }));
+}
 
 export async function getUserProgramState(user_id: string): Promise<UserProgramState | undefined> {
   const db = await getDb();

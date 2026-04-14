@@ -292,6 +292,20 @@ export default function Evolve() {
           UPGRADE YOUR PLAN →
         </button>
 
+        {/* Leaderboard CTA */}
+        <button
+          onClick={() => navigate("/leaderboard")}
+          style={{
+            width: "100%", padding: "14px", borderRadius: 20, marginTop: 12,
+            background: "rgba(255,102,0,0.06)",
+            border: "1px solid rgba(255,102,0,0.25)",
+            fontFamily: "'Bebas Neue', sans-serif", fontSize: 16, letterSpacing: "0.1em",
+            color: "#FF6600", cursor: "pointer",
+          }}
+        >
+          🏆 VIEW LEADERBOARD →
+        </button>
+
       </main>
     </div>
   );

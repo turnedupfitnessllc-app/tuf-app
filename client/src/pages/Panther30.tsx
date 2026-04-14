@@ -7,6 +7,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useLocation } from "wouter";
 import { getAnimationForDay, type PantherAnimation } from "@/data/pantherAnimations";
 import { useAnimationPlayer, FALLBACK_VIDEO_URL } from "@/hooks/useAnimationPlayer";
+import SuccessScreen from "@/components/SuccessScreen";
 
 const PANTHER_MASCOT = "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/panther-mascot-gym_27e64ae1.png";
 
@@ -154,6 +155,7 @@ export default function Panther30() {
   const [activePhase, setActivePhase] = useState<string>("Control");
   const [completing, setCompleting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [successData, setSuccessData] = useState<{ xpAwarded: number; xpMultiplier: number; unlockedBadges: string[]; performanceScore: number; completedDay: number; streak: number } | null>(null);
 
   // Program state (DB-backed)
   const [programState, setProgramState] = useState<ProgramState | null>(null);
@@ -237,12 +239,18 @@ export default function Panther30() {
     try {
       const res = await fetch(`/api/panther-program/${userId}/complete`, { method: "POST" });
       const data = await res.json();
-      if (data.success) {
+        if (data.success) {
         setProgramState(data.data);
-        // Also update localStorage fallback
         localStorage.setItem("tuf_p30_done", JSON.stringify(data.data.completed_days));
+        setSuccessData({
+          xpAwarded: data.xpAwarded ?? 50,
+          xpMultiplier: data.xpMultiplier ?? 1,
+          unlockedBadges: data.unlockedBadges ?? [],
+          performanceScore: data.performanceScore ?? 85,
+          completedDay: activeDay?.day ?? 1,
+          streak: data.data.streak ?? 1,
+        });
         setShowSuccess(true);
-        setTimeout(() => { setShowSuccess(false); setView("overview"); setActivePhase(getPhaseForDay(data.data.current_day)); }, 2200);
       }
     } catch {
       // Offline fallback
@@ -251,8 +259,15 @@ export default function Panther30() {
       const arr = Array.from(next);
       localStorage.setItem("tuf_p30_done", JSON.stringify(arr));
       setProgramState(prev => prev ? { ...prev, completed_days: arr, current_day: Math.min(activeDay.day + 1, 30) } : null);
+      setSuccessData({
+        xpAwarded: 50,
+        xpMultiplier: 1,
+        unlockedBadges: [],
+        performanceScore: 85,
+        completedDay: activeDay?.day ?? 1,
+        streak: 1,
+      });
       setShowSuccess(true);
-      setTimeout(() => { setShowSuccess(false); setView("overview"); }, 2200);
     } finally {
       setCompleting(false);
     }
@@ -299,13 +314,25 @@ export default function Panther30() {
             ← BACK
           </button>
 
-          {/* Success overlay */}
-          {showSuccess && (
-            <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", zIndex: 999, animation: "successPop 0.4s ease forwards" }}>
-              <div style={{ fontSize: 72 }}>🐆</div>
-              <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 36, color: "#22c55e", letterSpacing: "0.08em", marginTop: 12 }}>DAY {activeDay.day} COMPLETE</p>
-              <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 14, color: "rgba(255,255,255,0.5)", marginTop: 4 }}>+50 XP · Streak: {(programState?.streak ?? 0)} days</p>
-            </div>
+          {/* ── Full Success Screen ── */}
+          {showSuccess && successData && (
+            <SuccessScreen
+              completedDay={successData.completedDay}
+              xpAwarded={successData.xpAwarded}
+              xpMultiplier={successData.xpMultiplier}
+              unlockedBadges={successData.unlockedBadges}
+              performanceScore={successData.performanceScore}
+              streak={successData.streak}
+              totalDone={doneDays.size}
+              phase={activeDay?.phase ?? "Control"}
+              workoutStats={{ reps: repsDone.size * 10, time: activeDay?.duration_min ?? 30 }}
+              onContinue={() => {
+                setShowSuccess(false);
+                setSuccessData(null);
+                setView("overview");
+                setActivePhase(getPhaseForDay(programState?.current_day ?? 1));
+              }}
+            />
           )}
 
           {/* Animation card */}
