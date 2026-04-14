@@ -1,14 +1,18 @@
 /**
- * TUF HOME — v4.2 Command Center
- * Logo: panther mascot image with blended overlay (full body + glow halo + scan ring)
- * Layout:
- *   - Hero logo (panther mascot with UP overlay)
- *   - Greeting + tagline
- *   - XP / Stage bar
- *   - Full-width START WORKOUT CTA
- *   - 2-col section cards: ASSESS | PROGRAM
- *   - 2-col section cards: PANTHER BRAIN | EVOLVE
- *   - Full-width: 30-DAY CHALLENGE
+ * TUF HOME — v5.0 Command Center
+ * Doc 14 — Button Design Fix
+ * © 2026 Turned Up Fitness LLC. All rights reserved.
+ *
+ * Layout (corrected order per Doc 14):
+ *   1. Header — TUF logo + theme toggle + M button (TufHeader handles this)
+ *   2. PANTHER BRAIN hero card — full width, orange border 2px + glow
+ *   3. EVOLVE card — full width, gold border
+ *   4. 30-Day Panther Mindset Challenge — full width, image card
+ *   5. BOA SCAN — NavCard, green border
+ *   6. FUEL TRACKER — NavCard, orange border (reference standard)
+ *   7. HEALTH INTELLIGENCE — NavCard, blue border
+ *   8. MEMBERSHIP — NavCard, gold border (moved to bottom)
+ *   9. Social media icons row
  */
 import { useLocation } from "wouter";
 import { useState, useEffect } from "react";
@@ -16,10 +20,49 @@ import { XPBar } from "@/components/v4Components";
 import { ls, getStageFromXP } from "@/data/v4constants";
 import { useProgress } from "@/hooks/useProgress";
 import { TufSocialStickyStrip } from "@/components/TufSocialFooter";
+import NavCard from "@/components/NavCard";
+import PantherBrainCard from "@/components/PantherBrainCard";
+import EvolveCard from "@/components/EvolveCard";
 
 const CDN = "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR";
 const PANTHER_MASCOT = `${CDN}/panther-mascot-gym_27e64ae1.png`;
 const CHALLENGE_IMG  = "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/challenge-hero-panther_60538eb1.jpg";
+
+// ── SVG ICONS ──────────────────────────────────────────────────────────────────
+
+const BoaIcon = () => (
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="2" y="7" width="20" height="14" rx="2" stroke="#00CC66" strokeWidth="1.5"/>
+    <circle cx="12" cy="14" r="3.5" stroke="#00CC66" strokeWidth="1.5"/>
+    <path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7" stroke="#00CC66" strokeWidth="1.5"/>
+    <path d="M5 5h1M5 19h1M18 5h1M18 19h1" stroke="#00CC66" strokeWidth="1" strokeLinecap="round" opacity="0.5"/>
+  </svg>
+);
+
+const FuelIcon = () => (
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="12" r="9" stroke="#00CC66" strokeWidth="1.5" fill="rgba(0,204,102,0.08)"/>
+    <path d="M12 8v4l2.5 2.5" stroke="#00CC66" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M7.5 4.5C8.8 3.6 10.3 3 12 3" stroke="#00CC66" strokeWidth="1.5" strokeLinecap="round"/>
+  </svg>
+);
+
+const HealthIcon = () => (
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M3 12h4l3-9 4 18 3-9h4" stroke="#4488FF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <circle cx="12" cy="12" r="9" stroke="#4488FF" strokeWidth="1" opacity="0.2"/>
+  </svg>
+);
+
+const MembershipIcon = () => (
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
+      stroke="#C8973A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+      fill="rgba(200,151,58,0.08)"/>
+  </svg>
+);
+
+// ── COMPONENT ──────────────────────────────────────────────────────────────────
 
 export default function Home() {
   const [, navigate] = useLocation();
@@ -85,6 +128,7 @@ export default function Home() {
           50%     { box-shadow: 0 0 30px rgba(255,102,0,0.9), inset 0 0 18px rgba(255,102,0,0.18); }
         }
         @keyframes haloPulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
         .tuf-home  { animation: fadeUp 0.45s ease both; }
 
@@ -103,6 +147,25 @@ export default function Home() {
         }
         .btn-primary:active { transform: scale(0.97); background: #cc3700; animation: none; }
 
+        .logo-ring { animation: ringPulse 2.5s ease-in-out infinite; }
+        .logo-halo { animation: haloPulse 2.5s ease-in-out infinite; }
+
+        /* Challenge card */
+        .challenge-card {
+          position: relative;
+          border-radius: 16px;
+          overflow: hidden;
+          cursor: pointer;
+          border: 1px solid rgba(255,102,0,0.3);
+          transition: transform 0.15s ease;
+          background: var(--bg-secondary);
+          width: 100%;
+          display: block;
+          margin-bottom: 8px;
+        }
+        .challenge-card:active { transform: scale(0.98); }
+
+        /* 2-col assess/program cards */
         .cmd-card {
           position: relative;
           border-radius: 16px;
@@ -110,13 +173,10 @@ export default function Home() {
           cursor: pointer;
           border: 1px solid rgba(255,255,255,0.07);
           transition: transform 0.15s ease, border-color 0.15s ease;
-          background: rgba(255,255,255,0.03);
+          background: var(--bg-secondary);
         }
         .cmd-card:active { transform: scale(0.97); }
         .cmd-card:hover  { border-color: rgba(255,102,0,0.3); }
-
-        .logo-ring { animation: ringPulse 2.5s ease-in-out infinite; }
-        .logo-halo { animation: haloPulse 2.5s ease-in-out infinite; }
       `}</style>
 
       <main className="tuf-home" style={{ maxWidth: 480, margin: "0 auto", padding: "0 16px" }}>
@@ -132,7 +192,6 @@ export default function Home() {
             border: "1px solid rgba(255,102,0,0.2)",
             boxShadow: "0 0 40px rgba(255,102,0,0.12), 0 12px 40px rgba(0,0,0,0.6)",
           }}>
-            {/* Panther mascot — full body, darkened */}
             <img
               src={PANTHER_MASCOT}
               alt="TUF Panther"
@@ -144,13 +203,11 @@ export default function Home() {
                 filter: "brightness(0.45) saturate(1.3)",
               }}
             />
-            {/* Left-to-right gradient overlay */}
             <div style={{
               position: "absolute", inset: 0,
               background: "linear-gradient(to right, rgba(8,8,8,0.85) 0%, rgba(8,8,8,0.3) 50%, transparent 100%)",
               pointerEvents: "none",
             }} />
-            {/* Bottom fade */}
             <div style={{
               position: "absolute",
               bottom: 0, left: 0, right: 0,
@@ -158,7 +215,6 @@ export default function Home() {
               background: "linear-gradient(to top, rgba(8,8,8,0.9) 0%, transparent 100%)",
               pointerEvents: "none",
             }} />
-            {/* Red glow halo on chest */}
             <div
               className="logo-halo"
               style={{
@@ -171,7 +227,6 @@ export default function Home() {
                 pointerEvents: "none",
               }}
             />
-            {/* Scan ring */}
             <div
               className="logo-ring"
               style={{
@@ -184,11 +239,7 @@ export default function Home() {
                 pointerEvents: "none",
               }}
             />
-            {/* TUF branding text — left side */}
-            <div style={{
-              position: "absolute",
-              left: 18, bottom: 18,
-            }}>
+            <div style={{ position: "absolute", left: 18, bottom: 18 }}>
               <div style={{
                 fontFamily: "'Barlow Condensed', sans-serif",
                 fontSize: 9, fontWeight: 700,
@@ -215,7 +266,7 @@ export default function Home() {
             fontFamily: "'Barlow Condensed', sans-serif",
             fontSize: 11, fontWeight: 700,
             letterSpacing: "0.2em",
-            color: "rgba(255,255,255,0.35)",
+            color: "var(--text-tertiary)",
             margin: 0,
           }}>
             {greeting}
@@ -254,7 +305,7 @@ export default function Home() {
                 fontFamily: "'Barlow Condensed', sans-serif",
                 fontSize: 10, fontWeight: 700,
                 letterSpacing: "0.14em",
-                color: "rgba(255,255,255,0.3)",
+                color: "var(--text-tertiary)",
               }}>
                 {sessions} SESSION{sessions !== 1 ? "S" : ""}
               </span>
@@ -277,19 +328,8 @@ export default function Home() {
           </button>
         </div>
 
-        {/* ─── SECTION LABEL ─── */}
-        <p style={{
-          fontFamily: "'Barlow Condensed', sans-serif",
-          fontSize: 10, fontWeight: 700,
-          letterSpacing: "0.2em",
-          color: "rgba(255,255,255,0.25)",
-          marginBottom: 10,
-        }}>
-          COMMAND CENTER
-        </p>
-
         {/* ─── 2-COL CARDS: ASSESS | PROGRAM ─── */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
           <button className="cmd-card" onClick={() => navigate("/assess")} style={{ height: 110 }}>
             <div style={{ padding: "18px 14px" }}>
               <div style={{ marginBottom: 6 }}>
@@ -308,7 +348,7 @@ export default function Home() {
                 fontFamily: "'Barlow Condensed', sans-serif",
                 fontSize: 10, fontWeight: 700,
                 letterSpacing: "0.1em",
-                color: "rgba(255,255,255,0.35)",
+                color: "var(--text-tertiary)",
                 marginTop: 2,
               }}>Pain · Movement</div>
             </div>
@@ -333,66 +373,39 @@ export default function Home() {
                 fontFamily: "'Barlow Condensed', sans-serif",
                 fontSize: 10, fontWeight: 700,
                 letterSpacing: "0.1em",
-                color: "rgba(255,255,255,0.35)",
+                color: "var(--text-tertiary)",
                 marginTop: 2,
               }}>4-Week Plan</div>
             </div>
           </button>
         </div>
 
-        {/* ─── 2-COL CARDS: PANTHER BRAIN | EVOLVE ─── */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
-          <button className="cmd-card" onClick={() => navigate("/panther")} style={{ height: 110 }}>
-            <div style={{ padding: "18px 14px" }}>
-              <div style={{ marginBottom: 6 }}>
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 3C8.5 3 6 5.5 6 8.5c0 1.5.5 2.8 1.4 3.8C6.5 13.2 6 14.3 6 15.5 6 18 7.8 20 10 20h4c2.2 0 4-2 4-4.5 0-1.2-.5-2.3-1.4-3.2C17.5 11.3 18 10 18 8.5 18 5.5 15.5 3 12 3z" stroke="#4a9eff" strokeWidth="1.5"/>
-                  <path d="M9 10.5c0 0 1-1 3-1s3 1 3 1" stroke="#4a9eff" strokeWidth="1" strokeLinecap="round" opacity="0.6"/>
-                  <circle cx="12" cy="8" r="1" fill="#4a9eff" opacity="0.8"/>
-                  <path d="M10 15h4" stroke="#4a9eff" strokeWidth="1" strokeLinecap="round" opacity="0.5"/>
-                </svg>
-              </div>
-              <div style={{
-                fontFamily: "'Bebas Neue', sans-serif",
-                fontSize: 18, letterSpacing: "0.06em", color: "#4a9eff",
-              }}>PANTHER BRAIN</div>
-              <div style={{
-                fontFamily: "'Barlow Condensed', sans-serif",
-                fontSize: 10, fontWeight: 700,
-                letterSpacing: "0.1em",
-                color: "rgba(255,255,255,0.35)",
-                marginTop: 2,
-              }}>AI Coach</div>
-            </div>
-          </button>
+        {/* ─── SECTION LABEL ─── */}
+        <p style={{
+          fontFamily: "'Barlow Condensed', sans-serif",
+          fontSize: 10, fontWeight: 700,
+          letterSpacing: "0.2em",
+          color: "var(--text-tertiary)",
+          marginBottom: 10,
+          marginTop: 0,
+        }}>
+          COMMAND CENTER
+        </p>
 
-          <button className="cmd-card" onClick={() => navigate("/evolve")} style={{ height: 110 }}>
-            <div style={{ padding: "18px 14px" }}>
-              <div style={{ marginBottom: 6 }}>
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M13 3L6 13h6l-1 8 9-10h-6l1-8z" stroke="#C8973A" strokeWidth="1.5" strokeLinejoin="round" fill="rgba(200,151,58,0.15)"/>
-                </svg>
-              </div>
-              <div style={{
-                fontFamily: "'Bebas Neue', sans-serif",
-                fontSize: 18, letterSpacing: "0.06em", color: "#C8973A",
-              }}>EVOLVE</div>
-              <div style={{
-                fontFamily: "'Barlow Condensed', sans-serif",
-                fontSize: 10, fontWeight: 700,
-                letterSpacing: "0.1em",
-                color: "rgba(255,255,255,0.35)",
-                marginTop: 2,
-              }}>XP · Stages</div>
-            </div>
-          </button>
-        </div>
+        {/* ── 1. PANTHER BRAIN — Hero Card (most important) ── */}
+        <PantherBrainCard onClick={() => navigate("/panther")} />
 
-        {/* ─── FULL-WIDTH: 30-DAY CHALLENGE ─── */}
+        {/* ── 2. EVOLVE — Full-width gold card ── */}
+        <EvolveCard
+          xpPoints={xp}
+          xpLevel={stage}
+          onClick={() => navigate("/evolve")}
+        />
+
+        {/* ── 3. 30-DAY PANTHER MINDSET CHALLENGE — Image card ── */}
         <button
-          className="cmd-card"
+          className="challenge-card"
           onClick={() => navigate("/challenge")}
-          style={{ width: "100%", marginBottom: 10, display: "block" }}
         >
           <div style={{ position: "relative", height: 120, overflow: "hidden" }}>
             <img
@@ -445,95 +458,33 @@ export default function Home() {
           </div>
         </button>
 
-        {/* ─── BOA SCAN ─── */}
-        <button
-          className="cmd-card"
+        {/* ── 4. BOA SCAN — Green border ── */}
+        <NavCard
+          icon={<BoaIcon />}
+          title="BOA SCAN"
+          subtitle="Biomechanical Overlay Analysis"
+          titleColor="#00CC66"
+          borderColor="#00CC66"
           onClick={() => navigate("/boa")}
-          style={{ width: "100%", display: "block" }}
-        >
-          <div style={{ padding: "16px", display: "flex", alignItems: "center", gap: 14 }}>
-            <div style={{ marginRight: 0 }}>
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="2" y="7" width="20" height="14" rx="2" stroke="#22c55e" strokeWidth="1.5"/>
-                <circle cx="12" cy="14" r="3.5" stroke="#22c55e" strokeWidth="1.5"/>
-                <path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7" stroke="#22c55e" strokeWidth="1.5"/>
-                <path d="M5 5h1M5 19h1M18 5h1M18 19h1" stroke="#22c55e" strokeWidth="1" strokeLinecap="round" opacity="0.5"/>
-              </svg>
-            </div>
-            <div>
-              <div style={{
-                fontFamily: "'Bebas Neue', sans-serif",
-                fontSize: 18, letterSpacing: "0.06em",
-                color: "#22c55e",
-              }}>
-                BOA SCAN
-              </div>
-              <div style={{
-                fontFamily: "'Barlow Condensed', sans-serif",
-                fontSize: 10, fontWeight: 700,
-                letterSpacing: "0.1em",
-                color: "rgba(255,255,255,0.35)",
-              }}>
-                Biomechanical Overlay Analysis
-              </div>
-            </div>
-            <div style={{ marginLeft: "auto", color: "rgba(255,255,255,0.2)", fontSize: 18 }}>›</div>
-          </div>
-        </button>
+        />
 
-        {/* ─── MEMBERSHIP ─── */}
-        <button
-          className="cmd-card"
-          onClick={() => navigate("/pricing")}
-          style={{ width: "100%", display: "block" }}
-        >
-          <div style={{ padding: "16px", display: "flex", alignItems: "center", gap: 14 }}>
-            <div style={{ marginRight: 0 }}>
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
-                  stroke="#FF6600" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
-                  fill="rgba(255,102,0,0.08)"/>
-              </svg>
-            </div>
-            <div>
-              <div style={{
-                fontFamily: "'Bebas Neue', sans-serif",
-                fontSize: 18, letterSpacing: "0.06em",
-                color: "#FF6600",
-              }}>
-                MEMBERSHIP
-              </div>
-              <div style={{
-                fontFamily: "'Barlow Condensed', sans-serif",
-                fontSize: 10, fontWeight: 700,
-                letterSpacing: "0.1em",
-                color: "rgba(255,255,255,0.35)",
-              }}>
-                Plans · Pricing · Prestige Labs
-              </div>
-            </div>
-            <div style={{ marginLeft: "auto", color: "rgba(255,255,255,0.2)", fontSize: 18 }}>›</div>
-          </div>
-        </button>
-
-        {/* ─── PANTHER SCHEDULER ─── hidden until calendar bugs resolved ─── */}
-
-        {/* ─── FUEL DIRECTIVE MINI-CARD ─── */}
+        {/* ── 5. FUEL TRACKER — Orange border (reference standard) ── */}
         {(fuelDirective || fuelSummary) && (
           <button
             onClick={() => navigate("/fuel-track")}
             style={{
-              width: "100%", display: "block", marginTop: 10,
-              background: "linear-gradient(135deg, rgba(34,197,94,0.08) 0%, rgba(34,197,94,0.03) 100%)",
-              border: "1px solid rgba(34,197,94,0.25)",
-              borderRadius: 16, padding: "14px 16px", cursor: "pointer", textAlign: "left",
+              width: "100%", display: "block",
+              background: "linear-gradient(135deg, rgba(0,204,102,0.08) 0%, rgba(0,204,102,0.03) 100%)",
+              border: "1px solid rgba(0,204,102,0.25)",
+              borderRadius: 12, padding: "12px 16px", cursor: "pointer", textAlign: "left",
+              marginBottom: 8,
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: fuelDirective ? 8 : 0 }}>
-              <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e" }}/>
-              <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: "0.12em", color: "#22c55e" }}>PANTHER FUEL DIRECTIVE</span>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: fuelDirective ? 6 : 0 }}>
+              <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#00CC66" }}/>
+              <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: "0.12em", color: "#00CC66" }}>PANTHER FUEL DIRECTIVE</span>
               {fuelSummary && (
-                <span style={{ marginLeft: "auto", fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, color: "rgba(255,255,255,0.4)" }}>
+                <span style={{ marginLeft: "auto", fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, color: "var(--text-tertiary)" }}>
                   {fuelSummary.calories} / {fuelSummary.target} kcal · {fuelSummary.protein}g protein
                 </span>
               )}
@@ -541,7 +492,7 @@ export default function Home() {
             {fuelDirective && (
               <div style={{
                 fontFamily: "'Barlow', sans-serif", fontSize: 12,
-                color: "rgba(255,255,255,0.65)", lineHeight: 1.5,
+                color: "var(--text-secondary)", lineHeight: 1.5,
                 display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden",
               }}>
                 {fuelDirective}
@@ -550,112 +501,38 @@ export default function Home() {
           </button>
         )}
 
-        {/* ─── FUEL TRACKER ─── */}
-        <button
-          className="cmd-card"
+        <NavCard
+          icon={<FuelIcon />}
+          title="FUEL TRACKER"
+          subtitle="Macros · Meals · Panther Directive"
+          titleColor="#FF6600"
+          borderColor="#FF6600"
           onClick={() => navigate("/fuel-track")}
-          style={{ width: "100%", display: "block", marginTop: 10 }}
-        >
-          <div style={{ padding: "16px", display: "flex", alignItems: "center", gap: 14 }}>
-            <div>
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="12" r="9" stroke="#22c55e" strokeWidth="1.5" fill="rgba(34,197,94,0.08)"/>
-                <path d="M12 8v4l2.5 2.5" stroke="#22c55e" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M7.5 4.5C8.8 3.6 10.3 3 12 3" stroke="#22c55e" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
-            </div>
-            <div>
-              <div style={{
-                fontFamily: "'Bebas Neue', sans-serif",
-                fontSize: 18, letterSpacing: "0.06em",
-                color: "#22c55e",
-              }}>
-                FUEL TRACKER
-              </div>
-              <div style={{
-                fontFamily: "'Barlow Condensed', sans-serif",
-                fontSize: 10, fontWeight: 700,
-                letterSpacing: "0.1em",
-                color: "rgba(255,255,255,0.35)",
-              }}>
-                Macros · Meals · Panther Directive
-              </div>
-            </div>
-            <div style={{ marginLeft: "auto", color: "rgba(255,255,255,0.2)", fontSize: 18 }}>›</div>
-          </div>
-        </button>
+        />
 
-        {/* ─── HEALTH INTELLIGENCE ─── */}
-        <button
-          className="cmd-card"
+        {/* ── 6. HEALTH INTELLIGENCE — Blue border ── */}
+        <NavCard
+          icon={<HealthIcon />}
+          title="HEALTH INTELLIGENCE"
+          subtitle="PopHIVE · Obesity · Diabetes · Illness Alerts"
+          titleColor="#4488FF"
+          borderColor="#4488FF"
           onClick={() => navigate("/health-intel")}
-          style={{ width: "100%", display: "block", marginTop: 10 }}
-        >
-          <div style={{ padding: "16px", display: "flex", alignItems: "center", gap: 14 }}>
-            <div>
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M3 12h4l3-9 4 18 3-9h4" stroke="#06b6d4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                <circle cx="12" cy="12" r="9" stroke="#06b6d4" strokeWidth="1" opacity="0.2"/>
-              </svg>
-            </div>
-            <div>
-              <div style={{
-                fontFamily: "'Bebas Neue', sans-serif",
-                fontSize: 18, letterSpacing: "0.06em",
-                color: "#06b6d4",
-              }}>
-                HEALTH INTELLIGENCE
-              </div>
-              <div style={{
-                fontFamily: "'Barlow Condensed', sans-serif",
-                fontSize: 10, fontWeight: 700,
-                letterSpacing: "0.1em",
-                color: "rgba(255,255,255,0.35)",
-              }}>
-                PopHIVE · Obesity · Diabetes · Illness Alerts
-              </div>
-            </div>
-            <div style={{ marginLeft: "auto", color: "rgba(255,255,255,0.2)", fontSize: 18 }}>›</div>
-          </div>
-        </button>
+        />
 
-        {/* ─── MINDSET CHALLENGE ─── */}
-        <button
-          className="cmd-card"
-          onClick={() => navigate("/mindset")}
-          style={{ width: "100%", display: "block", marginTop: 10 }}
-        >
-          <div style={{ padding: "16px", display: "flex", alignItems: "center", gap: 14 }}>
-            <div>
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="12" r="9" stroke="#8b5cf6" strokeWidth="1.5" fill="rgba(139,92,246,0.08)"/>
-                <path d="M9 12l2 2 4-4" stroke="#8b5cf6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </div>
-            <div>
-              <div style={{
-                fontFamily: "'Bebas Neue', sans-serif",
-                fontSize: 18, letterSpacing: "0.06em",
-                color: "#8b5cf6",
-              }}>
-                MINDSET CHALLENGE
-              </div>
-              <div style={{
-                fontFamily: "'Barlow Condensed', sans-serif",
-                fontSize: 10, fontWeight: 700,
-                letterSpacing: "0.1em",
-                color: "rgba(255,255,255,0.35)",
-              }}>
-                30 Days · 6 Phases · Identity Transformation
-              </div>
-            </div>
-            <div style={{ marginLeft: "auto", color: "rgba(255,255,255,0.2)", fontSize: 18 }}>›</div>
-          </div>
-        </button>
+        {/* ── 7. MEMBERSHIP — Gold border (moved to bottom) ── */}
+        <NavCard
+          icon={<MembershipIcon />}
+          title="MEMBERSHIP"
+          subtitle="Plans · Pricing · Prestige Labs"
+          titleColor="#C8973A"
+          borderColor="#C8973A"
+          onClick={() => navigate("/pricing")}
+        />
 
       </main>
 
-      {/* ─── STICKY STRIP (Option A) ─── */}
+      {/* ─── STICKY STRIP ─── */}
       <TufSocialStickyStrip />
     </div>
   );
