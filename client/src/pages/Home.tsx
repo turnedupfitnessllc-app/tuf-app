@@ -23,6 +23,8 @@ import { TufSocialStickyStrip } from "@/components/TufSocialFooter";
 import GradientNavCard from "@/components/GradientNavCard";
 import { HOME_BUTTONS } from "@/config/homeButtonConfig";
 import { Brain, Zap, Flame, Camera, Utensils, Activity, Star } from "lucide-react";
+import { useUpsell } from "@/hooks/useUpsell";
+import UpsellModal from "@/components/UpsellModal";
 
 // Icon map for homeButtonConfig
 const ICON_MAP: Record<string, React.ReactNode> = {
@@ -74,12 +76,31 @@ export default function Home() {
   const stage    = getStageFromXP(xp);
   const isNew    = sessions === 0;
 
+  // Upsell trigger
+  const { shouldShow: showUpsell, tier: upsellTier, dismiss: dismissUpsell } = useUpsell();
+
+  // Profile data
+  const rawProfile = localStorage.getItem("tuf_profile");
+  const profile = rawProfile ? JSON.parse(rawProfile) : {};
+  const tier = localStorage.getItem("tuf_tier") || "free";
+  const mobilityScore = profile.mobilityScore ?? 7;
+  const strengthScore = profile.strengthScore ?? 6;
+  const workoutsCompleted = profile.workoutsCompleted ?? sessions;
+  const userName = profile.name || "Athlete";
+
+  const TIER_LABELS: Record<string, string> = {
+    free: "FREE", starter: "STARTER", advanced: "ADVANCED", member: "MEMBER"
+  };
+  const TIER_COLORS: Record<string, string> = {
+    free: "#666", starter: "#FF6600", advanced: "#C8973A", member: "#FF6600"
+  };
+
   const hour = new Date().getHours();
   const greeting =
-    hour < 5  ? "STILL UP, ATHLETE?" :
-    hour < 12 ? "GOOD MORNING, ATHLETE." :
-    hour < 17 ? "GOOD AFTERNOON, ATHLETE." :
-    hour < 21 ? "GOOD EVENING, ATHLETE." : "LATE SESSION, ATHLETE.";
+    hour < 5  ? `STILL UP, ${userName.toUpperCase()}?` :
+    hour < 12 ? `GOOD MORNING, ${userName.toUpperCase()}.` :
+    hour < 17 ? `GOOD AFTERNOON, ${userName.toUpperCase()}.` :
+    hour < 21 ? `GOOD EVENING, ${userName.toUpperCase()}.` : `LATE SESSION, ${userName.toUpperCase()}.`;
 
   const handleStart = () => {
     if (isNew) navigate("/assess");
@@ -95,6 +116,7 @@ export default function Home() {
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg-primary)", paddingBottom: 80 }}>
+      {showUpsell && <UpsellModal tier={upsellTier} onDismiss={dismissUpsell} />}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap');
 
@@ -260,6 +282,59 @@ export default function Home() {
             READY TO MOVE<br />
             <span style={{ color: "#FF6600" }}>WITH PRECISION?</span>
           </h1>
+        </div>
+
+        {/* ─── STATS ROW ─── */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 8, marginBottom: 16 }}>
+          {[
+            { label: "STREAK", value: `${streak}🔥`, color: streak >= 7 ? "#FF2D2D" : streak >= 3 ? "#FF6600" : "#888" },
+            { label: "WORKOUTS", value: workoutsCompleted, color: "#fff" },
+            { label: "MOBILITY", value: `${mobilityScore}/10`, color: mobilityScore >= 8 ? "#00cc66" : mobilityScore >= 6 ? "#FF6600" : "#FF4444" },
+            { label: "STRENGTH", value: `${strengthScore}/10`, color: strengthScore >= 8 ? "#00cc66" : strengthScore >= 6 ? "#FF6600" : "#FF4444" },
+          ].map(stat => (
+            <div key={stat.label} style={{
+              background: "rgba(255,255,255,0.04)",
+              border: "1px solid rgba(255,255,255,0.07)",
+              borderRadius: 12, padding: "10px 8px", textAlign: "center",
+            }}>
+              <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 20, color: stat.color, lineHeight: 1 }}>{stat.value}</div>
+              <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: 2, color: "#555", marginTop: 3 }}>{stat.label}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* ─── TIER BADGE ─── */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{
+              padding: "4px 10px", borderRadius: 6,
+              background: `${TIER_COLORS[tier]}20`,
+              border: `1px solid ${TIER_COLORS[tier]}60`,
+              fontFamily: "'Barlow Condensed', sans-serif",
+              fontSize: 11, fontWeight: 700, letterSpacing: 3,
+              color: TIER_COLORS[tier],
+            }}>
+              {TIER_LABELS[tier]}
+            </div>
+            {tier === "free" && (
+              <button
+                onClick={() => navigate("/pricing")}
+                style={{
+                  padding: "4px 10px", borderRadius: 6,
+                  background: "rgba(255,102,0,0.1)",
+                  border: "1px solid rgba(255,102,0,0.3)",
+                  fontFamily: "'Barlow Condensed', sans-serif",
+                  fontSize: 11, fontWeight: 700, letterSpacing: 2,
+                  color: "#FF6600", cursor: "pointer",
+                }}
+              >
+                UPGRADE →
+              </button>
+            )}
+          </div>
+          <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: 2, color: "#FF6600" }}>
+            {stage}
+          </span>
         </div>
 
         {/* ─── XP / STAGE BAR ─── */}

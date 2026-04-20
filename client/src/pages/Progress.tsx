@@ -1,231 +1,294 @@
-import { TrendingUp, Award, Zap, Target } from 'lucide-react';
+/**
+ * TUF Progress Tracker — v2.0
+ * Real data from localStorage: streak calendar, mobility/strength scores,
+ * phase progress, workout history, weekly summary
+ */
+import { useLocation } from "wouter";
+import { useProgress } from "@/hooks/useProgress";
+import { ls, getStageFromXP } from "@/data/v4constants";
+
+// ── Types ────────────────────────────────────────────────────────────────────
+
+interface WorkoutLog {
+  date: string;
+  name: string;
+  formScore: number;
+  xpEarned: number;
+  duration?: number;
+}
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+function getLast30Days(): string[] {
+  const days: string[] = [];
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    days.push(d.toISOString().split("T")[0]);
+  }
+  return days;
+}
+
+const PHASES = [
+  { id: "control",   label: "CONTROL",   threshold: 0,   color: "#888" },
+  { id: "stability", label: "STABILITY", threshold: 7,   color: "#FF6600" },
+  { id: "strength",  label: "STRENGTH",  threshold: 14,  color: "#C8973A" },
+  { id: "explosion", label: "EXPLOSION", threshold: 21,  color: "#FF2D2D" },
+  { id: "evolution", label: "EVOLUTION", threshold: 30,  color: "#9B59B6" },
+];
+
+// ── Component ─────────────────────────────────────────────────────────────────
 
 export default function Progress() {
-  const progressData = {
-    mhiRing: 72,
-    weeklyAverage: 4.2,
-    totalWorkouts: 24,
-    totalMinutes: 1440,
-    streak: 8,
-    prs: 3,
-  };
+  const [, navigate] = useLocation();
+  const { progress } = useProgress();
 
-  const trajectory = [
-    { week: 'W1', value: 45 },
-    { week: 'W2', value: 52 },
-    { week: 'W3', value: 58 },
-    { week: 'W4', value: 65 },
-    { week: 'W5', value: 68 },
-    { week: 'W6', value: 72 },
-  ];
+  const xp = progress.xp || 0;
+  const streak = progress.streakDays || 0;
+  const sessions = progress.sessionsCompleted || 0;
+  const stage = getStageFromXP(xp);
 
-  const maxValue = 100;
+  const rawProfile = localStorage.getItem("tuf_profile");
+  const profile = rawProfile ? JSON.parse(rawProfile) : {};
+  const mobilityScore = profile.mobilityScore ?? 7;
+  const strengthScore = profile.strengthScore ?? 6;
+  const workoutsCompleted = profile.workoutsCompleted ?? sessions;
+
+  // Workout history from localStorage
+  const workoutHistory = ls.get<WorkoutLog[]>("tuf_workout_history", []);
+  const completedDates = new Set(workoutHistory.map(w => w.date));
+
+  // 30-day calendar
+  const last30 = getLast30Days();
+  const today = new Date().toISOString().split("T")[0];
+
+  // Current phase
+  const currentPhaseIdx = PHASES.reduce((best, phase, i) => {
+    return workoutsCompleted >= phase.threshold ? i : best;
+  }, 0);
+  const currentPhase = PHASES[currentPhaseIdx];
+  const nextPhase = PHASES[currentPhaseIdx + 1];
+  const phaseProgress = nextPhase
+    ? Math.min(100, Math.round(((workoutsCompleted - currentPhase.threshold) / (nextPhase.threshold - currentPhase.threshold)) * 100))
+    : 100;
+
+  // Weekly summary
+  const thisWeekDates = last30.slice(-7);
+  const thisWeekWorkouts = thisWeekDates.filter(d => completedDates.has(d)).length;
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <main className="pb-24">
-        {/* Hero Section */}
-        <section className="bg-gradient-to-b from-card to-background px-4 py-8 border-b border-border">
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-headline mb-2">PROGRESS</h1>
-            <p className="text-muted-foreground">Track your 90-day transformation</p>
+    <div style={{ minHeight: "100vh", background: "#080808", paddingBottom: 80, color: "#fff" }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap');
+        @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+        .prog-fade { animation: fadeUp 0.4s ease both; }
+      `}</style>
+
+      <main className="prog-fade" style={{ maxWidth: 480, margin: "0 auto", padding: "0 16px" }}>
+
+        {/* ─── HEADER ─── */}
+        <div style={{ display: "flex", alignItems: "center", gap: 12, paddingTop: 20, marginBottom: 24 }}>
+          <button onClick={() => navigate("/")} style={{ background: "none", border: "none", color: "#888", cursor: "pointer", fontSize: 20 }}>←</button>
+          <div>
+            <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, letterSpacing: 4, color: "#FF6600" }}>TURNED UP FITNESS</div>
+            <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 32, letterSpacing: 2, lineHeight: 1 }}>PROGRESS</div>
           </div>
-        </section>
+        </div>
 
-        {/* MHI Ring */}
-        <section className="px-4 py-8">
-          <div className="max-w-4xl mx-auto">
-            <div className="card-tuf text-center">
-              <h2 className="text-label text-accent mb-6">MUSCLE HEALTH INDEX</h2>
-              
-              {/* Ring Visualization */}
-              <div className="flex justify-center mb-6">
-                <div className="relative w-40 h-40">
-                  <svg className="w-full h-full" viewBox="0 0 100 100">
-                    {/* Background circle */}
-                    <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="8" className="text-secondary" />
-                    {/* Progress circle */}
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="45"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="8"
-                      strokeDasharray={`${(progressData.mhiRing / maxValue) * 282.7} 282.7`}
-                      strokeLinecap="round"
-                      className="text-primary transition-all duration-1000"
-                      style={{ transform: 'rotate(-90deg)', transformOrigin: '50% 50%' }}
-                    />
-                  </svg>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-4xl font-bold text-primary">{progressData.mhiRing}</span>
-                    <span className="text-xs text-muted-foreground mt-1">/ 100</span>
-                  </div>
-                </div>
+        {/* ─── WEEKLY SUMMARY ─── */}
+        <div style={{
+          background: "linear-gradient(135deg, #1a1a1a, #111)",
+          border: "1px solid rgba(255,102,0,0.3)",
+          borderRadius: 20, padding: 20, marginBottom: 16,
+          boxShadow: "0 0 30px rgba(255,102,0,0.1)",
+        }}>
+          <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, letterSpacing: 4, color: "#FF6600", marginBottom: 12 }}>THIS WEEK</div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+            {[
+              { label: "WORKOUTS", value: thisWeekWorkouts, max: 7, color: "#FF6600" },
+              { label: "STREAK", value: `${streak}🔥`, color: streak >= 7 ? "#FF2D2D" : "#FF6600" },
+              { label: "STAGE", value: stage.split(" ")[0], color: "#C8973A" },
+            ].map(stat => (
+              <div key={stat.label} style={{ textAlign: "center" }}>
+                <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 28, color: stat.color, lineHeight: 1 }}>{stat.value}</div>
+                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, letterSpacing: 2, color: "#555", marginTop: 3 }}>{stat.label}</div>
               </div>
-
-              <p className="text-sm text-muted-foreground mb-6">
-                Your muscle health is improving. Keep the momentum going!
-              </p>
-
-              <div className="grid grid-cols-3 gap-3 pt-6 border-t border-border">
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1">WEEKLY AVG</p>
-                  <p className="font-bold text-primary">{progressData.weeklyAverage}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1">TOTAL WORKOUTS</p>
-                  <p className="font-bold text-accent">{progressData.totalWorkouts}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1">TOTAL MINUTES</p>
-                  <p className="font-bold">{progressData.totalMinutes}</p>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
-        </section>
+        </div>
 
-        {/* 90-Day Trajectory */}
-        <section className="px-4 py-8 border-t border-border">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-label text-accent mb-6">90-DAY TRAJECTORY</h2>
-            
-            <div className="card-tuf">
-              {/* Chart */}
-              <div className="flex items-end justify-between h-48 gap-2 mb-4 px-2">
-                {trajectory.map((point, idx) => {
-                  const height = (point.value / maxValue) * 100;
-                  return (
-                    <div key={idx} className="flex-1 flex flex-col items-center">
-                      <div className="w-full bg-gradient-to-t from-primary to-accent rounded-t" style={{ height: `${height}%` }} />
-                      <span className="text-xs text-muted-foreground mt-2">{point.week}</span>
-                    </div>
-                  );
-                })}
+        {/* ─── SCORES ─── */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
+          {[
+            { label: "MOBILITY SCORE", value: mobilityScore, color: mobilityScore >= 8 ? "#00cc66" : mobilityScore >= 6 ? "#FF6600" : "#FF4444", desc: mobilityScore >= 8 ? "Excellent" : mobilityScore >= 6 ? "Developing" : "Needs Work" },
+            { label: "STRENGTH SCORE", value: strengthScore, color: strengthScore >= 8 ? "#00cc66" : strengthScore >= 6 ? "#FF6600" : "#FF4444", desc: strengthScore >= 8 ? "Excellent" : strengthScore >= 6 ? "Developing" : "Needs Work" },
+          ].map(score => (
+            <div key={score.label} style={{
+              background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)",
+              borderRadius: 16, padding: 16,
+            }}>
+              <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, letterSpacing: 3, color: "#555", marginBottom: 8 }}>{score.label}</div>
+              <div style={{ display: "flex", alignItems: "flex-end", gap: 4, marginBottom: 8 }}>
+                <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 40, color: score.color, lineHeight: 1 }}>{score.value}</span>
+                <span style={{ fontSize: 14, color: "#555", marginBottom: 4 }}>/10</span>
               </div>
-
-              <p className="text-sm text-muted-foreground text-center">
-                Consistent progress. You're on track for a 60+ MHI by day 90.
-              </p>
+              {/* Score bar */}
+              <div style={{ height: 4, background: "rgba(255,255,255,0.08)", borderRadius: 2, overflow: "hidden" }}>
+                <div style={{ height: "100%", width: `${score.value * 10}%`, background: score.color, borderRadius: 2, transition: "width 1s ease" }} />
+              </div>
+              <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, color: score.color, marginTop: 6 }}>{score.desc}</div>
             </div>
+          ))}
+        </div>
+
+        {/* ─── PHASE PROGRESS ─── */}
+        <div style={{
+          background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)",
+          borderRadius: 16, padding: 16, marginBottom: 16,
+        }}>
+          <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, letterSpacing: 4, color: "#888", marginBottom: 12 }}>PROGRAM PHASE</div>
+          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+            {PHASES.map((phase, i) => (
+              <div key={phase.id} style={{ textAlign: "center", flex: 1 }}>
+                <div style={{
+                  width: 28, height: 28, borderRadius: "50%",
+                  background: i <= currentPhaseIdx ? phase.color : "rgba(255,255,255,0.08)",
+                  border: i === currentPhaseIdx ? `2px solid ${phase.color}` : "2px solid transparent",
+                  margin: "0 auto 4px",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  boxShadow: i === currentPhaseIdx ? `0 0 12px ${phase.color}60` : "none",
+                }}>
+                  {i < currentPhaseIdx && <span style={{ fontSize: 12 }}>✓</span>}
+                  {i === currentPhaseIdx && <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#fff", display: "block" }} />}
+                </div>
+                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 7, letterSpacing: 1, color: i <= currentPhaseIdx ? phase.color : "#444" }}>
+                  {phase.label}
+                </div>
+              </div>
+            ))}
           </div>
-        </section>
-
-        {/* Stats Grid */}
-        <section className="px-4 py-8 border-t border-border">
-          <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="card-tuf">
-              <div className="flex items-start justify-between mb-3">
-                <Zap className="w-6 h-6 text-primary" />
-              </div>
-              <h3 className="font-bold text-foreground mb-1">Current Streak</h3>
-              <p className="text-3xl font-bold text-primary mb-2">{progressData.streak}</p>
-              <p className="text-xs text-muted-foreground">days of consistency</p>
-            </div>
-
-            <div className="card-tuf">
-              <div className="flex items-start justify-between mb-3">
-                <Award className="w-6 h-6 text-accent" />
-              </div>
-              <h3 className="font-bold text-foreground mb-1">Personal Records</h3>
-              <p className="text-3xl font-bold text-accent mb-2">{progressData.prs}</p>
-              <p className="text-xs text-muted-foreground">new PRs this month</p>
-            </div>
-
-            <div className="card-tuf">
-              <div className="flex items-start justify-between mb-3">
-                <TrendingUp className="w-6 h-6 text-primary" />
-              </div>
-              <h3 className="font-bold text-foreground mb-1">Trend</h3>
-              <p className="text-3xl font-bold text-primary mb-2">↗ 8%</p>
-              <p className="text-xs text-muted-foreground">vs last 30 days</p>
-            </div>
+          {/* Progress bar */}
+          <div style={{ height: 4, background: "rgba(255,255,255,0.08)", borderRadius: 2, overflow: "hidden", marginTop: 8 }}>
+            <div style={{ height: "100%", width: `${phaseProgress}%`, background: currentPhase.color, borderRadius: 2, transition: "width 1s ease" }} />
           </div>
-        </section>
+          {nextPhase && (
+            <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, color: "#666", marginTop: 6 }}>
+              {nextPhase.threshold - workoutsCompleted} workouts to {nextPhase.label}
+            </div>
+          )}
+        </div>
 
-        {/* Milestones */}
-        <section className="px-4 py-8 border-t border-border">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-label text-accent mb-4">MILESTONES</h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="card-tuf">
-                <div className="flex items-start gap-3">
-                  <Award className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
-                  <div>
-                    <h3 className="font-bold text-foreground">First Week Complete</h3>
-                    <p className="text-xs text-muted-foreground">Unlocked on Day 7</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="card-tuf">
-                <div className="flex items-start gap-3">
-                  <Target className="w-6 h-6 text-accent flex-shrink-0 mt-1" />
-                  <div>
-                    <h3 className="font-bold text-foreground">10 Workouts</h3>
-                    <p className="text-xs text-muted-foreground">Unlocked on Day 15</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="card-tuf opacity-60">
-                <div className="flex items-start gap-3">
-                  <Zap className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
-                  <div>
-                    <h3 className="font-bold text-foreground">30-Day Streak</h3>
-                    <p className="text-xs text-muted-foreground">Unlock on Day 30</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="card-tuf opacity-60">
-                <div className="flex items-start gap-3">
-                  <TrendingUp className="w-6 h-6 text-accent flex-shrink-0 mt-1" />
-                  <div>
-                    <h3 className="font-bold text-foreground">Phase Complete</h3>
-                    <p className="text-xs text-muted-foreground">Unlock on Day 30</p>
-                  </div>
-                </div>
-              </div>
+        {/* ─── 30-DAY STREAK CALENDAR ─── */}
+        <div style={{
+          background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)",
+          borderRadius: 16, padding: 16, marginBottom: 16,
+        }}>
+          <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, letterSpacing: 4, color: "#888", marginBottom: 12 }}>30-DAY CALENDAR</div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(10, 1fr)", gap: 4 }}>
+            {last30.map((date) => {
+              const isToday = date === today;
+              const isDone = completedDates.has(date);
+              return (
+                <div key={date} style={{
+                  aspectRatio: "1",
+                  borderRadius: 4,
+                  background: isDone ? "#FF6600" : isToday ? "rgba(255,102,0,0.2)" : "rgba(255,255,255,0.06)",
+                  border: isToday ? "1px solid rgba(255,102,0,0.6)" : "1px solid transparent",
+                  boxShadow: isDone ? "0 0 6px rgba(255,102,0,0.4)" : "none",
+                }} />
+              );
+            })}
+          </div>
+          <div style={{ display: "flex", gap: 12, marginTop: 10 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <div style={{ width: 10, height: 10, borderRadius: 2, background: "#FF6600" }} />
+              <span style={{ fontSize: 10, color: "#666" }}>Completed</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <div style={{ width: 10, height: 10, borderRadius: 2, background: "rgba(255,102,0,0.2)", border: "1px solid rgba(255,102,0,0.6)" }} />
+              <span style={{ fontSize: 10, color: "#666" }}>Today</span>
             </div>
           </div>
-        </section>
+        </div>
 
-        {/* NSV Logging */}
-        <section className="px-4 py-8 border-t border-border">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-label text-accent mb-4">NON-SCALE VICTORIES (NSVs)</h2>
-            <p className="text-sm text-muted-foreground mb-4">
-              Track the wins that matter most — strength, mobility, energy, and how you feel
-            </p>
-            
-            <div className="space-y-3">
-              <div className="card-tuf">
-                <div className="font-semibold text-foreground mb-1">💪 Did 10 push-ups without stopping</div>
-                <div className="text-xs text-muted-foreground">Day 28 • 2 days ago</div>
-              </div>
+        {/* ─── XP PROGRESS ─── */}
+        <div style={{
+          background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)",
+          borderRadius: 16, padding: 16, marginBottom: 16,
+        }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+            <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, letterSpacing: 4, color: "#888" }}>TOTAL XP</div>
+            <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 24, color: "#C8973A" }}>{xp} XP</div>
+          </div>
+          <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, color: "#FF6600", marginBottom: 6 }}>{stage}</div>
+          <div style={{ height: 6, background: "rgba(255,255,255,0.08)", borderRadius: 3, overflow: "hidden" }}>
+            <div style={{ height: "100%", width: `${Math.min(100, (xp % 500) / 5)}%`, background: "linear-gradient(90deg, #C8973A, #FF6600)", borderRadius: 3 }} />
+          </div>
+          <div style={{ fontSize: 10, color: "#555", marginTop: 6 }}>{500 - (xp % 500)} XP to next stage</div>
+        </div>
 
-              <div className="card-tuf">
-                <div className="font-semibold text-foreground mb-1">🦵 Woke up with less joint pain</div>
-                <div className="text-xs text-muted-foreground">Day 25 • 5 days ago</div>
-              </div>
-
-              <div className="card-tuf">
-                <div className="font-semibold text-foreground mb-1">🏃 Climbed stairs without breathing hard</div>
-                <div className="text-xs text-muted-foreground">Day 20 • 10 days ago</div>
-              </div>
-
-              <button className="btn-accent w-full mt-4">
-                Log a New Victory
+        {/* ─── WORKOUT HISTORY ─── */}
+        <div style={{
+          background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)",
+          borderRadius: 16, padding: 16, marginBottom: 16,
+        }}>
+          <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, letterSpacing: 4, color: "#888", marginBottom: 12 }}>RECENT SESSIONS</div>
+          {workoutHistory.length === 0 ? (
+            <div style={{ textAlign: "center", padding: "20px 0" }}>
+              <div style={{ fontSize: 32, marginBottom: 8 }}>🐆</div>
+              <p style={{ fontSize: 12, color: "#555" }}>No sessions logged yet. Complete your first workout to start tracking.</p>
+              <button
+                onClick={() => navigate("/train")}
+                style={{
+                  marginTop: 12, padding: "10px 20px", borderRadius: 10,
+                  background: "rgba(255,102,0,0.15)", border: "1px solid rgba(255,102,0,0.4)",
+                  color: "#FF6600", fontFamily: "'Barlow Condensed', sans-serif",
+                  fontSize: 13, fontWeight: 700, letterSpacing: 2, cursor: "pointer",
+                }}
+              >
+                START FIRST WORKOUT →
               </button>
             </div>
-          </div>
-        </section>
-      </main>
+          ) : (
+            workoutHistory.slice(-10).reverse().map((log, i) => (
+              <div key={i} style={{
+                display: "flex", justifyContent: "space-between", alignItems: "center",
+                padding: "10px 0", borderBottom: i < Math.min(workoutHistory.length, 10) - 1 ? "1px solid rgba(255,255,255,0.05)" : "none",
+              }}>
+                <div>
+                  <div style={{ fontSize: 13, color: "#fff", fontWeight: 700 }}>{log.name}</div>
+                  <div style={{ fontSize: 11, color: "#555", marginTop: 2 }}>{log.date}</div>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                  <div style={{
+                    fontSize: 11, fontWeight: 700,
+                    color: log.formScore >= 8 ? "#00cc66" : log.formScore >= 6 ? "#FF6600" : "#FF4444",
+                  }}>
+                    FORM {log.formScore}/10
+                  </div>
+                  <div style={{ fontSize: 11, color: "#C8973A" }}>+{log.xpEarned} XP</div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
 
+        {/* ─── CTA ─── */}
+        <button
+          onClick={() => navigate("/train")}
+          style={{
+            width: "100%", padding: "18px 24px",
+            background: "linear-gradient(135deg, #FF6600, #DC2626)",
+            border: "none", borderRadius: 14,
+            color: "#fff", fontFamily: "'Barlow Condensed', sans-serif",
+            fontSize: 18, fontWeight: 900, letterSpacing: 3,
+            cursor: "pointer", marginBottom: 16,
+          }}
+        >
+          TRAIN NOW →
+        </button>
+
+      </main>
     </div>
   );
 }

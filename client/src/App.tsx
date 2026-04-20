@@ -51,6 +51,10 @@ import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentCancelled from "./pages/PaymentCancelled";
 import Leaderboard from "./pages/Leaderboard";
 import Join from "./pages/Join";
+import ProgramLibrary from "./pages/ProgramLibrary";
+import Membership from "./pages/Membership";
+import SeasonLeaderboard from "./pages/SeasonLeaderboard";
+import PvPChallenge from "./pages/PvPChallenge";
 
 // IP Protection
 import { TufTermsModal } from "./components/TufTermsModal";
@@ -135,7 +139,11 @@ function Router() {
         <Route path={"/payment-success"} component={PaymentSuccess} />
         <Route path={"/payment-cancelled"} component={PaymentCancelled} />
         <Route path={"/leaderboard"} component={Leaderboard} />
+        <Route path={"/season"} component={SeasonLeaderboard} />
         <Route path={"/join"} component={Join} />
+        <Route path={"/programs"} component={ProgramLibrary} />
+        <Route path={"/membership"} component={Membership} />
+        <Route path={"/pvp"} component={PvPChallenge} />
 
         <Route path={"/404"} component={NotFound} />
         <Route component={NotFound} />

@@ -312,3 +312,90 @@
 - [ ] Screen backgrounds — replace hardcoded #0A0A0A with var(--bg-primary)
 - [ ] Text colors — replace hardcoded #FFFFFF/#AAAAAA with var(--text-primary)/var(--text-secondary)
 - [ ] Verification checklist: toggle works, persists on reload, all screens respond
+
+## Full 7-Screen Architecture + Monetization Funnel (April 2026)
+
+### Monetization Tiers
+- Free → 7-Day Plan (auto-assigned on onboarding)
+- $19 → 30-Day Panther Program
+- $79 → Advanced System (12-week)
+- $20/month → Membership (live sessions + AI coaching + exclusive programs)
+
+### Upsell Trigger Logic
+- [ ] useUpsell hook — checks tier + workouts_completed, fires modal at right time
+- [ ] Free user completes 3 workouts → UpsellModal("starter") → $19 Stripe checkout
+- [ ] Starter user completes 14 workouts → UpsellModal("advanced") → $79 Stripe checkout
+- [ ] Advanced user 30+ days active → UpsellModal("member") → $20/mo Stripe subscription
+- [ ] UpsellModal dismiss stores tuf_upsell_dismissed_{tier} (re-shows after 3 days)
+
+### Onboarding Upgrade
+- [ ] Add program assignment step — Free 7-day auto-assigned, paid tiers shown as upgrade
+- [ ] Store tier: tuf_tier = "free" | "starter" | "advanced" | "member"
+- [ ] Store full profile: { name, goal, issue, tier, joinDate, mobilityScore:7, strengthScore:6 }
+- [ ] Add age + fitness level step (40+ athlete targeting)
+- [ ] Show personalized program assignment screen at onboarding end
+
+### Dashboard (Home) Upgrade
+- [ ] Add "TODAY'S WORKOUT" card at top — pulls from assigned program day
+- [ ] Add stats row: streak | workouts_completed | mobility_score | strength_score
+- [ ] Add tier badge (FREE / STARTER / ADVANCED / MEMBER) with upgrade CTA
+- [ ] Wire upsell triggers to dashboard load
+
+### Daily Workout Upgrade
+- [ ] Add performance logging: reps_completed, form_score (1-10), difficulty_felt
+- [ ] Post-workout Panther Brain analysis card (AI feedback based on scores)
+- [ ] Update mobility_score + strength_score in localStorage after each session
+- [ ] Adapt program logic: if form_score < 6 → reduce reps next session
+- [ ] Wire SuccessScreen to show Panther Brain feedback message
+
+### Progress Tracker
+- [ ] Streak calendar (30-day grid, completed days highlighted)
+- [ ] mobility_score and strength_score as progress bars with history
+- [ ] Phase progress bar (Control → Stability → Strength → Explosion → Evolution)
+- [ ] Workout history list (date, workout name, form score, XP earned)
+- [ ] Weekly summary card
+
+### Program Library
+- [ ] ProgramLibrary.tsx — 3 tiers: Free 7-day, $19 30-day, $79 Advanced
+- [ ] Program detail screen with day-by-day breakdown
+- [ ] Lock paywalled programs behind PaywallGate
+- [ ] "Currently Active" badge on assigned program
+
+### Membership / Live Training
+- [ ] Upgrade LiveCoaching.tsx — show membership benefits clearly
+- [ ] Live session schedule (calendar view)
+- [ ] $20/mo membership CTA with Stripe checkout
+- [ ] UpsellModal component (reusable, tier-aware)
+
+### Panther Brain Post-Workout Analysis
+- [ ] POST /api/panther-brain/analyze — accepts { streak, workouts_completed, mobility_score, strength_score, form_score }
+- [ ] Returns { headline, feedback, directive, adaptation }
+- [ ] Store adaptation in localStorage → next workout adjusts reps/tempo
+- [ ] Display in SuccessScreen as "PANTHER ANALYSIS" card
+
+### BOA Visual System (from BOAVisualSystem.pdf)
+- [ ] Build BOA_VisualSystem.tsx — BOAWindow (full/compact/mini sizes)
+- [ ] BOAEvalScreen — INTRO → SCAN (15s) → ANALYSIS → RESULTS phases
+- [ ] BOAWorkoutScreen — live BOA window + exercise tracker + set logger
+- [ ] drawPoseSkeleton — MediaPipe-style stick figure on canvas
+- [ ] Live cues: headForward, shoulderRound, hipFlexion, kneeValgus, pelvicTilt
+- [ ] Panther mode colors: STEALTH (#00aaff) / PRECISION (gold) / ATTACK (#ff2222)
+- [ ] Wire BOAEvalScreen into /boa route (replace current BiomechanicalOverlay)
+
+### Season Leaderboard
+- [ ] SeasonLeaderboard.tsx — monthly season with Apex Badge (top 10) / Hunter Badge (top 100)
+- [ ] Server: GET /api/season/current — returns season_id, dates, leaderboard, rewards
+- [ ] Server: POST /api/season/submit-score — updates user's season XP
+- [ ] /season-leaderboard route in App.tsx
+
+### PvP Live Challenge (Socket.io)
+- [ ] server/socket.ts — Socket.io server integrated into Express
+- [ ] Events: join_challenge, rep_update, endChallenge (winner = highest reps)
+- [ ] Challenge state: { challenge_id, name, type, duration, participants, status }
+- [ ] PvPScreen.tsx — live leaderboard, rep button, countdown timer, winner screen
+- [ ] /pvp route in App.tsx
+- [ ] PvP entry point on Home screen
+
+### Final Polish + Push
+- [ ] Commit all changes to GitHub
+- [ ] Build check (npx vite build)
