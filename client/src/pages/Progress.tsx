@@ -6,6 +6,7 @@
 import { useLocation } from "wouter";
 import { useProgress } from "@/hooks/useProgress";
 import { ls, getStageFromXP } from "@/data/v4constants";
+import AppShell from "@/components/AppShell";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -77,7 +78,8 @@ export default function Progress() {
   const thisWeekWorkouts = thisWeekDates.filter(d => completedDates.has(d)).length;
 
   return (
-    <div style={{ minHeight: "100vh", background: "#080808", paddingBottom: 80, color: "#fff" }}>
+    <AppShell title="PROGRESS" showBack bottomPad={80}>
+    <div style={{ background: "#080808", color: "#fff" }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap');
         @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
@@ -86,14 +88,8 @@ export default function Progress() {
 
       <main className="prog-fade" style={{ maxWidth: 480, margin: "0 auto", padding: "0 16px" }}>
 
-        {/* ─── HEADER ─── */}
-        <div style={{ display: "flex", alignItems: "center", gap: 12, paddingTop: 20, marginBottom: 24 }}>
-          <button onClick={() => navigate("/")} style={{ background: "none", border: "none", color: "#888", cursor: "pointer", fontSize: 20 }}>←</button>
-          <div>
-            <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, letterSpacing: 4, color: "#FF6600" }}>TURNED UP FITNESS</div>
-            <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 32, letterSpacing: 2, lineHeight: 1 }}>PROGRESS</div>
-          </div>
-        </div>
+        {/* header handled by AppShell */}
+        <div style={{ paddingTop: 16 }} />
 
         {/* ─── WEEKLY SUMMARY ─── */}
         <div style={{
@@ -334,5 +330,6 @@ export default function Progress() {
 
       </main>
     </div>
+    </AppShell>
   );
 }

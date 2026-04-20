@@ -7,6 +7,7 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
 import { haptics } from "@/utils/haptics";
+import AppShell from "@/components/AppShell";
 
 const CDN = "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR";
 
@@ -71,7 +72,8 @@ export default function Move() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#080808", paddingBottom: 80, color: "#fff" }}>
+    <AppShell title="LET'S MOVE" showBack bottomPad={80}>
+    <div style={{ backgroundColor: "#080808", color: "#fff" }}>
       <style>{`
         @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
         .move-fade { animation: fadeUp 0.4s ease both; }
@@ -88,17 +90,8 @@ export default function Move() {
 
       <main className="move-fade" style={{ maxWidth: 480, margin: "0 auto", padding: "0 16px" }}>
 
-        {/* ─── HEADER ─── */}
-        <div style={{ display: "flex", alignItems: "center", gap: 12, paddingTop: 20, marginBottom: 20 }}>
-          <button onClick={() => navigate("/")} style={{ background: "none", border: "none", color: "#888", cursor: "pointer", fontSize: 22, padding: "8px 4px" }}>‹</button>
-          <div>
-            <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, letterSpacing: 4, color: "#FF6600" }}>TURNED UP FITNESS</div>
-            <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 32, letterSpacing: 2, lineHeight: 1 }}>LET'S MOVE</div>
-          </div>
-          <div style={{ marginLeft: "auto" }}>
-            <span className="ai-va-badge">🐆 AI-VA</span>
-          </div>
-        </div>
+        {/* header handled by AppShell */}
+        <div style={{ paddingTop: 16 }} />
 
         {/* ─── RPE SLIDER (Doc 17 §4.2) ─── */}
         <div style={{ backgroundColor: "#111", border: "1px solid #222", borderRadius: 14, padding: "16px 20px", marginBottom: 16 }}>
@@ -266,5 +259,6 @@ export default function Move() {
         </div>
       )}
     </div>
+    </AppShell>
   );
 }

@@ -1,10 +1,11 @@
 /**
- * TUF HOME — v7.0 Neon Minimal
- * Clean command center: hero → stats → 1 primary CTA → 4 nav cards
+ * TUF HOME — v8.0 Command Center
+ * Hamburger nav replaces nav cards — full real estate for content.
  * © 2026 Turned Up Fitness LLC. All rights reserved.
  */
 import { useLocation } from "wouter";
 import { useState, useEffect } from "react";
+import AppShell from "@/components/AppShell";
 import { XPBar } from "@/components/v4Components";
 import { ls, getStageFromXP } from "@/data/v4constants";
 import { useProgress } from "@/hooks/useProgress";
@@ -15,44 +16,12 @@ import UpsellModal from "@/components/UpsellModal";
 const CDN = "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR";
 const PANTHER_MASCOT = `${CDN}/panther-mascot-gym_27e64ae1.png`;
 
-// ── 4 core nav destinations (reduced from 13 elements) ──────────────────────
-const CORE_NAV = [
-  {
-    id: "panther",
-    label: "PANTHER BRAIN",
-    sub: "AI Performance Coach",
-    icon: "🧠",
-    color: "#00FFC6",
-    route: "/panther",
-    img: `${CDN}/btn_panther_brain_debd99f9.jpg`,
-  },
-  {
-    id: "assess",
-    label: "ASSESS",
-    sub: "Pain · Movement · Form",
-    icon: "📋",
-    color: "#00FFC6",
-    route: "/assess",
-    img: `${CDN}/btn_boa_scan_ed4e58b5.jpg`,
-  },
-  {
-    id: "fuel",
-    label: "FUEL",
-    sub: "Macros · Meals · Directive",
-    icon: "⚡",
-    color: "#00FFC6",
-    route: "/fuel",
-    img: `${CDN}/btn_fuel_tracker_a518a0fc.jpg`,
-  },
-  {
-    id: "evolve",
-    label: "EVOLVE",
-    sub: "XP · Stages · Level Up",
-    icon: "🐆",
-    color: "#00FFC6",
-    route: "/evolve",
-    img: `${CDN}/btn_evolve_0c04bc54.jpg`,
-  },
+// ── Quick action shortcuts (replaces nav cards) ──────────────────────────────
+const QUICK_ACTIONS = [
+  { label: "TRAIN",  icon: "🏋️", route: "/move",          color: "#FF6600" },
+  { label: "ASSESS", icon: "👁️", route: "/boa",           color: "#00FFC6" },
+  { label: "FUEL",   icon: "🔥", route: "/fuel",          color: "#FF6600" },
+  { label: "BRAIN",  icon: "🐆", route: "/panther-brain", color: "#00FFC6" },
 ];
 
 export default function Home() {
@@ -89,11 +58,11 @@ export default function Home() {
   };
 
   const hour = new Date().getHours();
-  const greeting =
-    hour < 5  ? `STILL UP, ${userName.toUpperCase()}?` :
-    hour < 12 ? `GOOD MORNING, ${userName.toUpperCase()}.` :
-    hour < 17 ? `GOOD AFTERNOON, ${userName.toUpperCase()}.` :
-    hour < 21 ? `GOOD EVENING, ${userName.toUpperCase()}.` : `LATE SESSION, ${userName.toUpperCase()}.`;
+  const timeGreeting =
+    hour < 5  ? "STILL UP" :
+    hour < 12 ? "GOOD MORNING" :
+    hour < 17 ? "GOOD AFTERNOON" :
+    hour < 21 ? "GOOD EVENING" : "LATE SESSION";
 
   const handleStart = () => {
     if (isNew) navigate("/assess");
@@ -108,7 +77,7 @@ export default function Home() {
     : "START WORKOUT →";
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg-primary)", paddingBottom: 80 }}>
+    <AppShell bottomPad={80}>
       {showUpsell && <UpsellModal tier={upsellTier} onDismiss={dismissUpsell} />}
 
       <style>{`
@@ -123,6 +92,17 @@ export default function Home() {
         @keyframes haloPulse { 0%,100%{opacity:1} 50%{opacity:0.55} }
 
         .tuf-home { animation: fadeUp 0.4s ease both; }
+        .quick-action {
+          display: flex; flex-direction: column; align-items: center; justify-content: center;
+          gap: 6px; padding: 14px 8px;
+          background: rgba(255,255,255,0.03);
+          border: 1px solid rgba(255,255,255,0.07);
+          border-radius: 16px;
+          cursor: pointer;
+          transition: background 0.15s, border-color 0.15s, transform 0.1s;
+          flex: 1;
+        }
+        .quick-action:active { transform: scale(0.94); }
 
         .btn-start {
           display: block; width: 100%;
@@ -157,10 +137,10 @@ export default function Home() {
         .nav-card:hover  { border-color: rgba(0,255,198,0.45); }
       `}</style>
 
-      <main className="tuf-home" style={{ maxWidth: 480, margin: "0 auto", padding: "0 16px" }}>
+      <div className="tuf-home" style={{ maxWidth: 480, margin: "0 auto", padding: "0 16px" }}>
 
         {/* ─── HERO BANNER ─── */}
-        <div style={{ paddingTop: 0, marginBottom: 20 }}>
+        <div style={{ paddingTop: 16, marginBottom: 20 }}>
           <div style={{
             width: "100%", height: 220,
             borderRadius: 20, overflow: "hidden",
@@ -196,64 +176,46 @@ export default function Home() {
               background: "radial-gradient(ellipse at center, rgba(0,255,198,0.35) 0%, rgba(0,255,198,0.08) 55%, transparent 80%)",
               borderRadius: "50%", pointerEvents: "none",
             }} />
-            <div className="logo-ring" style={{
-              position: "absolute", right: "28%", top: "52%",
-              transform: "translate(50%, -50%)",
-              width: 72, height: 50,
-              border: "1.5px solid rgba(0,255,198,0.55)",
-              borderRadius: 8, pointerEvents: "none",
-            }} />
-            <div style={{ position: "absolute", left: 18, bottom: 18 }}>
+            {/* Greeting overlay on hero */}
+            <div style={{ position: "absolute", bottom: 20, left: 20 }}>
               <div style={{
                 fontFamily: "'Barlow Condensed', sans-serif",
-                fontSize: 9, fontWeight: 700, letterSpacing: "0.22em",
-                color: "rgba(0,255,198,0.75)", marginBottom: 3,
-              }}>TURNED UP FITNESS</div>
+                fontSize: 11, fontWeight: 700, letterSpacing: "0.2em",
+                color: "rgba(0,255,198,0.7)", marginBottom: 2,
+              }}>{timeGreeting}</div>
               <div style={{
                 fontFamily: "'Bebas Neue', sans-serif",
-                fontSize: 28, letterSpacing: "0.06em",
+                fontSize: 34, letterSpacing: "0.04em",
                 color: "#fff", lineHeight: 1,
-              }}>
-                THE PANTHER <span style={{ color: "#00FFC6" }}>SYSTEM</span>
-              </div>
+              }}>{userName.toUpperCase()}</div>
             </div>
+            {/* Stage badge */}
+            <div style={{
+              position: "absolute", top: 16, right: 16,
+              padding: "4px 12px", borderRadius: 100,
+              background: "rgba(0,255,198,0.12)",
+              border: "1px solid rgba(0,255,198,0.3)",
+              fontFamily: "'Barlow Condensed', sans-serif",
+              fontSize: 10, fontWeight: 800, letterSpacing: "0.18em",
+              color: "#00FFC6",
+            }}>{stage}</div>
           </div>
         </div>
 
-        {/* ─── GREETING ─── */}
-        <div style={{ marginBottom: 4, textAlign: "center" }}>
-          <p style={{
-            fontFamily: "'Barlow Condensed', sans-serif",
-            fontSize: 11, fontWeight: 700, letterSpacing: "0.2em",
-            color: "rgba(255,255,255,0.3)", margin: 0,
-          }}>{greeting}</p>
-        </div>
-
-        {/* ─── TAGLINE ─── */}
-        <div style={{ marginBottom: 18, textAlign: "center" }}>
-          <h1 style={{
-            fontFamily: "'Bebas Neue', sans-serif",
-            fontSize: 34, letterSpacing: "0.04em",
-            color: "#fff", lineHeight: 1.08, margin: 0,
-          }}>
-            READY TO MOVE<br />
-            <span style={{ color: "#00FFC6" }}>WITH PRECISION?</span>
-          </h1>
-        </div>
-
-        {/* ─── STATS ROW (3 key metrics) ─── */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 16 }}>
+        {/* ─── STATS ROW ─── */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 8, marginBottom: 16 }}>
           {[
-            { label: "STREAK", value: `${streak}🔥`, color: streak >= 7 ? "#FF3B3B" : streak >= 3 ? "#00FFC6" : "#555" },
-            { label: "SESSIONS", value: sessions, color: "#fff" },
-            { label: "XP", value: xp, color: "#00FFC6" },
+            { label: "STREAK",   value: `${streak}🔥`, color: streak >= 7 ? "#FF3B3B" : streak >= 3 ? "#00FFC6" : "#555" },
+            { label: "SESSIONS", value: sessions,       color: "#fff" },
+            { label: "XP",       value: xp,             color: "#00FFC6" },
+            { label: "STAGE",    value: stage.split(" ")[0], color: "#00FFC6" },
           ].map(stat => (
             <div key={stat.label} style={{
               background: "rgba(0,255,198,0.04)",
               border: "1px solid rgba(0,255,198,0.1)",
               borderRadius: 12, padding: "10px 8px", textAlign: "center",
             }}>
-              <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 22, color: stat.color, lineHeight: 1 }}>{stat.value}</div>
+              <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 20, color: stat.color, lineHeight: 1 }}>{stat.value}</div>
               <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: 2, color: "#444", marginTop: 3 }}>{stat.label}</div>
             </div>
           ))}
@@ -277,9 +239,7 @@ export default function Home() {
               >UPGRADE</span>
             )}
           </div>
-          <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: 2, color: "#00FFC6" }}>
-            {stage}
-          </span>
+
         </div>
         <div style={{ marginBottom: 20 }}>
           <XPBar xp={xp} stage={stage} />
@@ -309,59 +269,64 @@ export default function Home() {
           </div>
         )}
 
-        {/* ─── 4 CORE NAV CARDS ─── */}
-        <p style={{
-          fontFamily: "'Barlow Condensed', sans-serif",
-          fontSize: 10, fontWeight: 700, letterSpacing: "0.2em",
-          color: "rgba(255,255,255,0.25)", marginBottom: 10, marginTop: 0,
-        }}>COMMAND CENTER</p>
-
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 24 }}>
-          {CORE_NAV.map(card => (
-            <button key={card.id} className="nav-card" onClick={() => navigate(card.route)}>
-              {/* Background image */}
-              <img
-                src={card.img}
-                alt={card.label}
-                style={{
-                  position: "absolute", inset: 0,
-                  width: "100%", height: "100%",
-                  objectFit: "cover",
-                  filter: "brightness(0.3) saturate(0.8)",
-                }}
-              />
-              {/* Neon gradient overlay */}
-              <div style={{
-                position: "absolute", inset: 0,
-                background: `linear-gradient(135deg, rgba(0,255,198,0.08) 0%, transparent 60%)`,
-                pointerEvents: "none",
-              }} />
-              {/* Bottom fade */}
-              <div style={{
-                position: "absolute", bottom: 0, left: 0, right: 0, height: "60%",
-                background: "linear-gradient(to top, rgba(11,11,11,0.95) 0%, transparent 100%)",
-                pointerEvents: "none",
-              }} />
-              {/* Content */}
-              <div style={{ position: "absolute", bottom: 14, left: 14, right: 14 }}>
-                <div style={{
-                  fontFamily: "'Bebas Neue', sans-serif",
-                  fontSize: 17, letterSpacing: "0.06em",
-                  color: "#fff", lineHeight: 1, marginBottom: 2,
-                }}>{card.label}</div>
-                <div style={{
+        {/* ─── QUICK ACTIONS ─── */}
+        <div style={{ marginBottom: 20 }}>
+          <div style={{
+            fontFamily: "'Barlow Condensed', sans-serif",
+            fontSize: 10, fontWeight: 700, letterSpacing: "0.2em",
+            color: "rgba(255,255,255,0.2)", marginBottom: 10,
+          }}>QUICK ACCESS</div>
+          <div style={{ display: "flex", gap: 8 }}>
+            {QUICK_ACTIONS.map(action => (
+              <button
+                key={action.route}
+                className="quick-action"
+                onClick={() => navigate(action.route)}
+              >
+                <span style={{ fontSize: 22 }}>{action.icon}</span>
+                <span style={{
                   fontFamily: "'Barlow Condensed', sans-serif",
-                  fontSize: 10, fontWeight: 600, letterSpacing: "0.08em",
-                  color: "rgba(0,255,198,0.65)",
-                }}>{card.sub}</div>
-              </div>
-            </button>
-          ))}
+                  fontSize: 9, fontWeight: 800, letterSpacing: "0.18em",
+                  color: action.color,
+                }}>{action.label}</span>
+              </button>
+            ))}
+          </div>
         </div>
 
-      </main>
+        {/* ─── RECENT ACTIVITY ─── */}
+        <div style={{
+          background: "rgba(255,255,255,0.02)",
+          border: "1px solid rgba(255,255,255,0.06)",
+          borderRadius: 16, padding: 16, marginBottom: 20,
+        }}>
+          <div style={{
+            fontFamily: "'Barlow Condensed', sans-serif",
+            fontSize: 10, fontWeight: 700, letterSpacing: "0.2em",
+            color: "rgba(255,255,255,0.2)", marginBottom: 12,
+          }}>RECENT ACTIVITY</div>
+          {sessions === 0 ? (
+            <div style={{
+              fontFamily: "'Barlow Condensed', sans-serif",
+              fontSize: 14, color: "rgba(255,255,255,0.3)",
+              textAlign: "center", padding: "12px 0",
+            }}>No sessions yet — start your first workout above.</div>
+          ) : (
+            <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 14, color: "rgba(255,255,255,0.5)", lineHeight: 1.8 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", paddingBottom: 8, borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+                <span>{sessions} session{sessions !== 1 ? "s" : ""} completed</span>
+                <span style={{ color: "#00FFC6" }}>{xp} XP</span>
+              </div>
+              <div style={{ paddingTop: 8, color: "#FF6600" }}>
+                {streak > 0 ? `🔥 ${streak}-day streak — keep it going` : "Start a streak today"}
+              </div>
+            </div>
+          )}
+        </div>
+
+      </div>
 
       <TufSocialStickyStrip />
-    </div>
+    </AppShell>
   );
 }
