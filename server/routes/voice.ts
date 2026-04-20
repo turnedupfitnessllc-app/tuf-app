@@ -14,7 +14,7 @@ const ELEVENLABS_BASE = "https://api.elevenlabs.io/v1";
 export const TUF_VOICES = {
   // Primary — Marc Turner's custom recorded Panther voice
   panther: {
-    id: "85pAvHjRSpSU6pzixlCC", // Marc Turner — custom cloned Panther Brain voice
+    id: "b00ceb71c65e463b9bd82ec96ee8df1e", // Marc Turner — custom cloned Panther Brain voice
     name: "Panther (Marc)",
     description: "Marc Turner's voice — authentic Panther Brain coaching",
   },

@@ -6,6 +6,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useLocation } from "wouter";
 import { haptics } from "@/utils/haptics";
+import { usePantherVoice } from "@/hooks/usePantherVoice";
 import {
   EXERCISE_DATABASE, PANTHER_VOICE, getPantherVoiceLine, generateWorkout,
   detectFormDrop, isHighRisk, getRecoverySubstitution, getPantherRealtimeCue,
@@ -78,6 +79,7 @@ export default function WorkoutPlayer() {
   const [movementQuality, setMovementQuality] = useState<number | null>(null);
 
   const currentEx = exercises[currentIdx];
+  const { speak } = usePantherVoice({ voiceKey: "panther" });
 
   // Timer
   useEffect(() => {
@@ -100,10 +102,14 @@ export default function WorkoutPlayer() {
     return () => { if (restRef.current) clearInterval(restRef.current); };
   }, [restTimer]);
 
-  // Start timer on mount
+  // Start timer on mount — speak the opening cue in Marc's voice
   useEffect(() => {
     setTimerRunning(true);
-    setVoiceLine(getPantherVoiceLine("start"));
+    const startLine = getPantherVoiceLine("start");
+    setVoiceLine(startLine);
+    const t = setTimeout(() => speak(startLine), 900);
+    return () => clearTimeout(t);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Simulate form feedback every 8 seconds + full risk detection pipeline
@@ -153,6 +159,7 @@ export default function WorkoutPlayer() {
         if (cue) {
           setVoiceLine(cue);
           setRiskWarning(cue);
+          speak(cue);
           haptics.medium();
           if (riskWarningTimer.current) clearTimeout(riskWarningTimer.current);
           riskWarningTimer.current = setTimeout(() => setRiskWarning(null), 4000);
@@ -160,6 +167,7 @@ export default function WorkoutPlayer() {
 
         if (isHighRisk(profile)) {
           setRecoveryMode(true);
+          speak("Recovery mode activated.");
           haptics.heavy();
         }
 
@@ -179,7 +187,11 @@ export default function WorkoutPlayer() {
     haptics.light();
     setReps(r => {
       const next = r + 1;
-      if (next % 5 === 0) setVoiceLine(getPantherVoiceLine("during"));
+      if (next % 5 === 0) {
+        const line = getPantherVoiceLine("during");
+        setVoiceLine(line);
+        speak(line);
+      }
       return next;
     });
     setTotalXP(xp => xp + 2);
@@ -192,29 +204,36 @@ export default function WorkoutPlayer() {
     if (sets >= targetSets) {
       // Move to next exercise
       if (currentIdx < exercises.length - 1) {
-        setVoiceLine(getPantherVoiceLine("finish"));
+        const finishLine = getPantherVoiceLine("finish");
+        setVoiceLine(finishLine);
+        speak(finishLine);
         setRestTimer(45);
         setTimeout(() => {
           setCurrentIdx(i => i + 1);
           setSets(1);
           setReps(0);
           setFormScore(null);
-          setVoiceLine(getPantherVoiceLine("start"));
+          const nextLine = getPantherVoiceLine("start");
+          setVoiceLine(nextLine);
+          speak(nextLine);
         }, 45000);
       } else {
         // Workout complete
         setTimerRunning(false);
         setShowComplete(true);
         setVoiceLine("You earned that.");
+        speak("You earned that.");
         haptics.heavy();
       }
     } else {
       setSets(s => s + 1);
       setReps(0);
       setRestTimer(45);
-      setVoiceLine(getPantherVoiceLine("during"));
+      const betweenLine = getPantherVoiceLine("during");
+      setVoiceLine(betweenLine);
+      speak(betweenLine);
     }
-  }, [sets, currentIdx, exercises.length, currentEx]);
+  }, [sets, currentIdx, exercises.length, currentEx, speak]);
 
   const formatTime = (s: number) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
 
