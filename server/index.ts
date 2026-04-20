@@ -21,6 +21,7 @@ import pantherProgramRouter from "./routes/panther-program.js";
 import referralRouter from "./routes/referral.js";
 import pantherBrainAnalyzeRouter from "./routes/panther-brain-analyze.js";
 import videoScriptRouter from "./routes/video-script.js";
+import pantherBackendRouter from "./routes/panther-backend.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -55,6 +56,7 @@ async function startServer() {
   app.use("/api/referral", referralRouter);
   app.use("/api/panther-brain", pantherBrainAnalyzeRouter);
   app.use("/api/video-script", videoScriptRouter);
+  app.use("/api/panther-backend", pantherBackendRouter);
 
   // Health check endpoint
   app.get("/api/health", (_req, res) => {
