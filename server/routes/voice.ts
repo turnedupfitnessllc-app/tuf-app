@@ -12,11 +12,11 @@ const ELEVENLABS_BASE = "https://api.elevenlabs.io/v1";
 // ─── Available TUF Voices ─────────────────────────────────────────────────────
 // Curated ElevenLabs voices that fit the TUF brand
 export const TUF_VOICES = {
-  // Primary — deep, authoritative, military energy (default Panther voice)
+  // Primary — Marc Turner's custom recorded Panther voice
   panther: {
-    id: "pNInz6obpgDQGcFmaJgB", // Adam — deep, authoritative American male
-    name: "Panther (Adam)",
-    description: "Deep, authoritative — primary coaching voice",
+    id: "85pAvHjRSpSU6pzixlCC", // Marc Turner — custom cloned Panther Brain voice
+    name: "Panther (Marc)",
+    description: "Marc Turner's voice — authentic Panther Brain coaching",
   },
   // Alternative — strong, confident male
   marcus: {
