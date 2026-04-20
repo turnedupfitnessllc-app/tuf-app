@@ -1,18 +1,7 @@
 /**
- * TUF HOME — v6.0 Command Center
- * Doc 15 — Gradient Image Buttons
+ * TUF HOME — v7.0 Neon Minimal
+ * Clean command center: hero → stats → 1 primary CTA → 4 nav cards
  * © 2026 Turned Up Fitness LLC. All rights reserved.
- *
- * Layout (corrected order per Doc 14):
- *   1. Header — TUF logo + theme toggle + M button (TufHeader handles this)
- *   2. PANTHER BRAIN hero card — full width, orange border 2px + glow
- *   3. EVOLVE card — full width, gold border
- *   4. 30-Day Panther Mindset Challenge — full width, image card
- *   5. BOA SCAN — NavCard, green border
- *   6. FUEL TRACKER — NavCard, orange border (reference standard)
- *   7. HEALTH INTELLIGENCE — NavCard, blue border
- *   8. MEMBERSHIP — NavCard, gold border (moved to bottom)
- *   9. Social media icons row
  */
 import { useLocation } from "wouter";
 import { useState, useEffect } from "react";
@@ -20,54 +9,66 @@ import { XPBar } from "@/components/v4Components";
 import { ls, getStageFromXP } from "@/data/v4constants";
 import { useProgress } from "@/hooks/useProgress";
 import { TufSocialStickyStrip } from "@/components/TufSocialFooter";
-import GradientNavCard from "@/components/GradientNavCard";
-import { HOME_BUTTONS } from "@/config/homeButtonConfig";
-import { Brain, Zap, Flame, Camera, Utensils, Activity, Star } from "lucide-react";
 import { useUpsell } from "@/hooks/useUpsell";
 import UpsellModal from "@/components/UpsellModal";
-
-// Icon map for homeButtonConfig
-const ICON_MAP: Record<string, React.ReactNode> = {
-  Brain: <Brain size={28} />,
-  Zap: <Zap size={24} />,
-  Flame: <Flame size={24} />,
-  Camera: <Camera size={24} />,
-  Utensils: <Utensils size={24} />,
-  Activity: <Activity size={24} />,
-  Star: <Star size={24} />,
-};
 
 const CDN = "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR";
 const PANTHER_MASCOT = `${CDN}/panther-mascot-gym_27e64ae1.png`;
 
-
-// ── COMPONENT ──────────────────────────────────────────────────────────────────
+// ── 4 core nav destinations (reduced from 13 elements) ──────────────────────
+const CORE_NAV = [
+  {
+    id: "panther",
+    label: "PANTHER BRAIN",
+    sub: "AI Performance Coach",
+    icon: "🧠",
+    color: "#00FFC6",
+    route: "/panther",
+    img: `${CDN}/btn_panther_brain_debd99f9.jpg`,
+  },
+  {
+    id: "assess",
+    label: "ASSESS",
+    sub: "Pain · Movement · Form",
+    icon: "📋",
+    color: "#00FFC6",
+    route: "/assess",
+    img: `${CDN}/btn_boa_scan_ed4e58b5.jpg`,
+  },
+  {
+    id: "fuel",
+    label: "FUEL",
+    sub: "Macros · Meals · Directive",
+    icon: "⚡",
+    color: "#00FFC6",
+    route: "/fuel",
+    img: `${CDN}/btn_fuel_tracker_a518a0fc.jpg`,
+  },
+  {
+    id: "evolve",
+    label: "EVOLVE",
+    sub: "XP · Stages · Level Up",
+    icon: "🐆",
+    color: "#00FFC6",
+    route: "/evolve",
+    img: `${CDN}/btn_evolve_0c04bc54.jpg`,
+  },
+];
 
 export default function Home() {
   const [, navigate] = useLocation();
   const [fuelDirective, setFuelDirective] = useState<string | null>(null);
-  const [fuelSummary, setFuelSummary] = useState<{ calories: number; protein: number; target: number } | null>(null);
 
   useEffect(() => {
     const userId = localStorage.getItem("tuf_user_id") || "guest";
     const today = new Date().toISOString().split("T")[0];
-    Promise.all([
-      fetch(`/api/fuel/log/${userId}/${today}`).then(r => r.ok ? r.json() : null),
-      fetch(`/api/fuel/profile/${userId}`).then(r => r.ok ? r.json() : null),
-    ]).then(([log, profile]) => {
-      if (log?.pantherDirective) setFuelDirective(log.pantherDirective);
-      if (log && profile) {
-        setFuelSummary({
-          calories: Math.round(log.totalCalories ?? 0),
-          protein: Math.round(log.totalProteinG ?? 0),
-          target: profile.calorieTarget,
-        });
-      }
-    }).catch(() => {});
+    fetch(`/api/fuel/log/${userId}/${today}`)
+      .then(r => r.ok ? r.json() : null)
+      .then(log => { if (log?.pantherDirective) setFuelDirective(log.pantherDirective); })
+      .catch(() => {});
   }, []);
 
   const { progress } = useProgress();
-  const painLogs    = ls.get<Array<{ location: string; level: number }>>("tuf_pain_logs", []);
   const correctives = ls.get<{ issue?: { label: string } } | null>("tuf_correctives", null);
 
   const xp       = progress.xp || 0;
@@ -76,23 +77,15 @@ export default function Home() {
   const stage    = getStageFromXP(xp);
   const isNew    = sessions === 0;
 
-  // Upsell trigger
   const { shouldShow: showUpsell, tier: upsellTier, dismiss: dismissUpsell } = useUpsell();
 
-  // Profile data
   const rawProfile = localStorage.getItem("tuf_profile");
-  const profile = rawProfile ? JSON.parse(rawProfile) : {};
-  const tier = localStorage.getItem("tuf_tier") || "free";
-  const mobilityScore = profile.mobilityScore ?? 7;
-  const strengthScore = profile.strengthScore ?? 6;
-  const workoutsCompleted = profile.workoutsCompleted ?? sessions;
-  const userName = profile.name || "Athlete";
+  const profile    = rawProfile ? JSON.parse(rawProfile) : {};
+  const tier       = localStorage.getItem("tuf_tier") || "free";
+  const userName   = profile.name || "Athlete";
 
-  const TIER_LABELS: Record<string, string> = {
-    free: "FREE", starter: "STARTER", advanced: "ADVANCED", member: "MEMBER"
-  };
   const TIER_COLORS: Record<string, string> = {
-    free: "#666", starter: "#FF6600", advanced: "#C8973A", member: "#FF6600"
+    free: "#555", starter: "#00FFC6", advanced: "#00FFC6", member: "#00FFC6",
   };
 
   const hour = new Date().getHours();
@@ -117,65 +110,51 @@ export default function Home() {
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg-primary)", paddingBottom: 80 }}>
       {showUpsell && <UpsellModal tier={upsellTier} onDismiss={dismissUpsell} />}
+
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap');
 
         @keyframes fadeUp    { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
-        @keyframes glowPulse { 0%,100%{box-shadow:0 4px 24px rgba(255,102,0,0.4)} 50%{box-shadow:0 4px 56px rgba(255,102,0,0.75)} }
+        @keyframes neonPulse { 0%,100%{box-shadow:0 4px 24px rgba(0,255,198,0.35)} 50%{box-shadow:0 4px 56px rgba(0,255,198,0.65)} }
         @keyframes ringPulse {
-          0%,100% { box-shadow: 0 0 14px rgba(255,102,0,0.5), inset 0 0 10px rgba(255,102,0,0.08); }
-          50%     { box-shadow: 0 0 30px rgba(255,102,0,0.9), inset 0 0 18px rgba(255,102,0,0.18); }
+          0%,100% { box-shadow: 0 0 14px rgba(0,255,198,0.4), inset 0 0 10px rgba(0,255,198,0.06); }
+          50%     { box-shadow: 0 0 30px rgba(0,255,198,0.8), inset 0 0 18px rgba(0,255,198,0.14); }
         }
-        @keyframes haloPulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
-        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+        @keyframes haloPulse { 0%,100%{opacity:1} 50%{opacity:0.55} }
 
-        .tuf-home  { animation: fadeUp 0.45s ease both; }
+        .tuf-home { animation: fadeUp 0.4s ease both; }
 
-        .btn-primary {
+        .btn-start {
           display: block; width: 100%;
           padding: 18px 24px;
-          background: #FF6600;
-          border: none; border-radius: 14px;
-          color: #fff;
+          background: transparent;
+          border: 1.5px solid #00FFC6;
+          border-radius: 14px;
+          color: #00FFC6;
           font-family: 'Barlow Condensed', sans-serif;
           font-size: 18px; font-weight: 900;
-          letter-spacing: 0.12em;
+          letter-spacing: 0.14em;
           cursor: pointer;
-          animation: glowPulse 3s ease-in-out infinite;
-          transition: transform 0.12s ease, background 0.12s ease;
+          animation: neonPulse 3s ease-in-out infinite;
+          transition: background 0.15s ease, transform 0.1s ease;
         }
-        .btn-primary:active { transform: scale(0.97); background: #cc3700; animation: none; }
+        .btn-start:active { transform: scale(0.97); background: rgba(0,255,198,0.08); animation: none; }
 
         .logo-ring { animation: ringPulse 2.5s ease-in-out infinite; }
         .logo-halo { animation: haloPulse 2.5s ease-in-out infinite; }
 
-        /* Challenge card */
-        .challenge-card {
+        .nav-card {
           position: relative;
           border-radius: 16px;
           overflow: hidden;
           cursor: pointer;
-          border: 1px solid rgba(255,102,0,0.3);
-          transition: transform 0.15s ease;
-          background: var(--bg-secondary);
-          width: 100%;
-          display: block;
-          margin-bottom: 8px;
+          border: 1px solid rgba(0,255,198,0.18);
+          transition: transform 0.12s ease, border-color 0.15s ease;
+          background: #0D0D0D;
+          height: 120px;
         }
-        .challenge-card:active { transform: scale(0.98); }
-
-        /* 2-col assess/program cards */
-        .cmd-card {
-          position: relative;
-          border-radius: 16px;
-          overflow: hidden;
-          cursor: pointer;
-          border: 1px solid rgba(255,255,255,0.07);
-          transition: transform 0.15s ease, border-color 0.15s ease;
-          background: var(--bg-secondary);
-        }
-        .cmd-card:active { transform: scale(0.97); }
-        .cmd-card:hover  { border-color: rgba(255,102,0,0.3); }
+        .nav-card:active { transform: scale(0.97); }
+        .nav-card:hover  { border-color: rgba(0,255,198,0.45); }
       `}</style>
 
       <main className="tuf-home" style={{ maxWidth: 480, margin: "0 auto", padding: "0 16px" }}>
@@ -183,13 +162,11 @@ export default function Home() {
         {/* ─── HERO BANNER ─── */}
         <div style={{ paddingTop: 0, marginBottom: 20 }}>
           <div style={{
-            width: "100%",
-            height: 220,
-            borderRadius: 20,
-            overflow: "hidden",
+            width: "100%", height: 220,
+            borderRadius: 20, overflow: "hidden",
             position: "relative",
-            border: "1px solid rgba(255,102,0,0.2)",
-            boxShadow: "0 0 40px rgba(255,102,0,0.12), 0 12px 40px rgba(0,0,0,0.6)",
+            border: "1px solid rgba(0,255,198,0.2)",
+            boxShadow: "0 0 40px rgba(0,255,198,0.1), 0 12px 40px rgba(0,0,0,0.7)",
           }}>
             <img
               src={PANTHER_MASCOT}
@@ -197,63 +174,47 @@ export default function Home() {
               style={{
                 position: "absolute", inset: 0,
                 width: "100%", height: "100%",
-                objectFit: "cover",
-                objectPosition: "center 15%",
-                filter: "brightness(0.45) saturate(1.3)",
+                objectFit: "cover", objectPosition: "center 15%",
+                filter: "brightness(0.4) saturate(1.2)",
               }}
             />
             <div style={{
               position: "absolute", inset: 0,
-              background: "linear-gradient(to right, rgba(8,8,8,0.85) 0%, rgba(8,8,8,0.3) 50%, transparent 100%)",
+              background: "linear-gradient(to right, rgba(11,11,11,0.9) 0%, rgba(11,11,11,0.3) 55%, transparent 100%)",
               pointerEvents: "none",
             }} />
             <div style={{
-              position: "absolute",
-              bottom: 0, left: 0, right: 0,
-              height: "35%",
-              background: "linear-gradient(to top, rgba(8,8,8,0.9) 0%, transparent 100%)",
+              position: "absolute", bottom: 0, left: 0, right: 0, height: "40%",
+              background: "linear-gradient(to top, rgba(11,11,11,0.95) 0%, transparent 100%)",
               pointerEvents: "none",
             }} />
-            <div
-              className="logo-halo"
-              style={{
-                position: "absolute",
-                right: "30%", top: "55%",
-                transform: "translate(50%, -50%)",
-                width: 100, height: 70,
-                background: "radial-gradient(ellipse at center, rgba(255,102,0,0.45) 0%, rgba(255,102,0,0.1) 55%, transparent 80%)",
-                borderRadius: "50%",
-                pointerEvents: "none",
-              }}
-            />
-            <div
-              className="logo-ring"
-              style={{
-                position: "absolute",
-                right: "30%", top: "55%",
-                transform: "translate(50%, -50%)",
-                width: 72, height: 50,
-                border: "1.5px solid rgba(255,102,0,0.6)",
-                borderRadius: 8,
-                pointerEvents: "none",
-              }}
-            />
+            {/* Neon halo */}
+            <div className="logo-halo" style={{
+              position: "absolute", right: "28%", top: "52%",
+              transform: "translate(50%, -50%)",
+              width: 100, height: 70,
+              background: "radial-gradient(ellipse at center, rgba(0,255,198,0.35) 0%, rgba(0,255,198,0.08) 55%, transparent 80%)",
+              borderRadius: "50%", pointerEvents: "none",
+            }} />
+            <div className="logo-ring" style={{
+              position: "absolute", right: "28%", top: "52%",
+              transform: "translate(50%, -50%)",
+              width: 72, height: 50,
+              border: "1.5px solid rgba(0,255,198,0.55)",
+              borderRadius: 8, pointerEvents: "none",
+            }} />
             <div style={{ position: "absolute", left: 18, bottom: 18 }}>
               <div style={{
                 fontFamily: "'Barlow Condensed', sans-serif",
-                fontSize: 9, fontWeight: 700,
-                letterSpacing: "0.22em",
-                color: "rgba(255,102,0,0.85)",
-                marginBottom: 3,
-              }}>
-                TURNED UP FITNESS
-              </div>
+                fontSize: 9, fontWeight: 700, letterSpacing: "0.22em",
+                color: "rgba(0,255,198,0.75)", marginBottom: 3,
+              }}>TURNED UP FITNESS</div>
               <div style={{
                 fontFamily: "'Bebas Neue', sans-serif",
                 fontSize: 28, letterSpacing: "0.06em",
-                color: "var(--text-primary)", lineHeight: 1,
+                color: "#fff", lineHeight: 1,
               }}>
-                THE PANTHER <span style={{ color: "#FF6600" }}>SYSTEM</span>
+                THE PANTHER <span style={{ color: "#00FFC6" }}>SYSTEM</span>
               </div>
             </div>
           </div>
@@ -263,260 +224,143 @@ export default function Home() {
         <div style={{ marginBottom: 4, textAlign: "center" }}>
           <p style={{
             fontFamily: "'Barlow Condensed', sans-serif",
-            fontSize: 11, fontWeight: 700,
-            letterSpacing: "0.2em",
-            color: "var(--text-tertiary)",
-            margin: 0,
-          }}>
-            {greeting}
-          </p>
+            fontSize: 11, fontWeight: 700, letterSpacing: "0.2em",
+            color: "rgba(255,255,255,0.3)", margin: 0,
+          }}>{greeting}</p>
         </div>
 
         {/* ─── TAGLINE ─── */}
         <div style={{ marginBottom: 18, textAlign: "center" }}>
           <h1 style={{
             fontFamily: "'Bebas Neue', sans-serif",
-            fontSize: 36, letterSpacing: "0.04em",
-            color: "var(--text-primary)", lineHeight: 1.08, margin: 0,
+            fontSize: 34, letterSpacing: "0.04em",
+            color: "#fff", lineHeight: 1.08, margin: 0,
           }}>
             READY TO MOVE<br />
-            <span style={{ color: "#FF6600" }}>WITH PRECISION?</span>
+            <span style={{ color: "#00FFC6" }}>WITH PRECISION?</span>
           </h1>
         </div>
 
-        {/* ─── STATS ROW ─── */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 8, marginBottom: 16 }}>
+        {/* ─── STATS ROW (3 key metrics) ─── */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 16 }}>
           {[
-            { label: "STREAK", value: `${streak}🔥`, color: streak >= 7 ? "#FF2D2D" : streak >= 3 ? "#FF6600" : "#888" },
-            { label: "WORKOUTS", value: workoutsCompleted, color: "#fff" },
-            { label: "MOBILITY", value: `${mobilityScore}/10`, color: mobilityScore >= 8 ? "#00cc66" : mobilityScore >= 6 ? "#FF6600" : "#FF4444" },
-            { label: "STRENGTH", value: `${strengthScore}/10`, color: strengthScore >= 8 ? "#00cc66" : strengthScore >= 6 ? "#FF6600" : "#FF4444" },
+            { label: "STREAK", value: `${streak}🔥`, color: streak >= 7 ? "#FF3B3B" : streak >= 3 ? "#00FFC6" : "#555" },
+            { label: "SESSIONS", value: sessions, color: "#fff" },
+            { label: "XP", value: xp, color: "#00FFC6" },
           ].map(stat => (
             <div key={stat.label} style={{
-              background: "rgba(255,255,255,0.04)",
-              border: "1px solid rgba(255,255,255,0.07)",
+              background: "rgba(0,255,198,0.04)",
+              border: "1px solid rgba(0,255,198,0.1)",
               borderRadius: 12, padding: "10px 8px", textAlign: "center",
             }}>
-              <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 20, color: stat.color, lineHeight: 1 }}>{stat.value}</div>
-              <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: 2, color: "#555", marginTop: 3 }}>{stat.label}</div>
+              <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 22, color: stat.color, lineHeight: 1 }}>{stat.value}</div>
+              <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, fontWeight: 700, letterSpacing: 2, color: "#444", marginTop: 3 }}>{stat.label}</div>
             </div>
           ))}
         </div>
 
-        {/* ─── TIER BADGE ─── */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <div style={{
-              padding: "4px 10px", borderRadius: 6,
-              background: `${TIER_COLORS[tier]}20`,
-              border: `1px solid ${TIER_COLORS[tier]}60`,
-              fontFamily: "'Barlow Condensed', sans-serif",
-              fontSize: 11, fontWeight: 700, letterSpacing: 3,
-              color: TIER_COLORS[tier],
-            }}>
-              {TIER_LABELS[tier]}
-            </div>
+        {/* ─── TIER + XP BAR ─── */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+          <div style={{
+            padding: "3px 10px", borderRadius: 6,
+            background: `${TIER_COLORS[tier]}15`,
+            border: `1px solid ${TIER_COLORS[tier]}40`,
+            fontFamily: "'Barlow Condensed', sans-serif",
+            fontSize: 10, fontWeight: 700, letterSpacing: 3,
+            color: TIER_COLORS[tier],
+          }}>
+            {tier.toUpperCase()}
             {tier === "free" && (
-              <button
+              <span
                 onClick={() => navigate("/pricing")}
-                style={{
-                  padding: "4px 10px", borderRadius: 6,
-                  background: "rgba(255,102,0,0.1)",
-                  border: "1px solid rgba(255,102,0,0.3)",
-                  fontFamily: "'Barlow Condensed', sans-serif",
-                  fontSize: 11, fontWeight: 700, letterSpacing: 2,
-                  color: "#FF6600", cursor: "pointer",
-                }}
-              >
-                UPGRADE →
-              </button>
+                style={{ marginLeft: 8, color: "#00FFC6", cursor: "pointer", textDecoration: "underline" }}
+              >UPGRADE</span>
             )}
           </div>
-          <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: 2, color: "#FF6600" }}>
+          <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: 2, color: "#00FFC6" }}>
             {stage}
           </span>
         </div>
-
-        {/* ─── XP / STAGE BAR ─── */}
-        <div style={{ marginBottom: 18 }}>
-          <div style={{
-            display: "flex", alignItems: "center",
-            justifyContent: "space-between", marginBottom: 8,
-          }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              {streak > 0 && (
-                <span style={{
-                  fontFamily: "'Barlow Condensed', sans-serif",
-                  fontSize: 13, fontWeight: 700, color: "#C8973A",
-                  display: "flex", alignItems: "center", gap: 3,
-                }}>
-                  🔥 {streak}
-                </span>
-              )}
-              <span style={{
-                fontFamily: "'Barlow Condensed', sans-serif",
-                fontSize: 10, fontWeight: 700,
-                letterSpacing: "0.14em",
-                color: "var(--text-tertiary)",
-              }}>
-                {sessions} SESSION{sessions !== 1 ? "S" : ""}
-              </span>
-            </div>
-            <span style={{
-              fontFamily: "'Barlow Condensed', sans-serif",
-              fontSize: 10, fontWeight: 700,
-              letterSpacing: "0.14em", color: "#FF6600",
-            }}>
-              {stage}
-            </span>
-          </div>
+        <div style={{ marginBottom: 20 }}>
           <XPBar xp={xp} stage={stage} />
         </div>
 
-        {/* ─── START WORKOUT — full-width primary CTA ─── */}
-        <div style={{ marginBottom: 16 }}>
-          <button className="btn-primary" onClick={handleStart}>
+        {/* ─── PRIMARY CTA ─── */}
+        <div style={{ marginBottom: 20 }}>
+          <button className="btn-start" onClick={handleStart}>
             {startLabel}
           </button>
         </div>
 
-        {/* ─── MUSCLE PRESERVATION SCORE CARD (Doc 17 §2.2) ─── */}
-        <div style={{
-          backgroundColor: '#111111',
-          border: '1px solid #C8973A',
-          borderRadius: '16px',
-          padding: '24px',
-          position: 'relative',
-          overflow: 'hidden',
-          marginBottom: '16px',
-          minHeight: '160px',
-        }}>
-          {/* Panther character right side */}
-          <div style={{ position: 'absolute', right: '-10px', top: 0, bottom: 0, width: '55%', backgroundImage: `url(${PANTHER_MASCOT})`, backgroundSize: 'cover', backgroundPosition: 'center top' }} />
-          {/* Gradient overlay */}
-          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, #111111 45%, rgba(17,17,17,0.6) 65%, transparent 100%)' }} />
-          {/* Content */}
-          <div style={{ position: 'relative', zIndex: 2 }}>
-            <div style={{ color: '#AAAAAA', fontSize: '12px', fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '4px' }}>Muscle Preservation Score</div>
-            <div style={{ color: '#FFFFFF', fontSize: '72px', fontFamily: "'Bebas Neue', sans-serif", lineHeight: 1, marginBottom: '2px' }}>
-              {Math.round((mobilityScore + strengthScore) / 2 * 10)}
-              <span style={{ fontSize: '28px', color: '#AAAAAA' }}>/100</span>
+        {/* ─── PANTHER DIRECTIVE (conditional) ─── */}
+        {fuelDirective && (
+          <div style={{
+            background: "rgba(0,255,198,0.04)",
+            border: "1px solid rgba(0,255,198,0.15)",
+            borderLeft: "3px solid #00FFC6",
+            borderRadius: 12, padding: "14px 16px", marginBottom: 20,
+          }}>
+            <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 13, letterSpacing: "0.18em", color: "#00FFC6", marginBottom: 4 }}>
+              TODAY'S DIRECTIVE
             </div>
-            <div style={{ width: '180px', height: '3px', backgroundColor: '#333', borderRadius: '2px', marginBottom: '12px' }}>
-              <div style={{ width: `${Math.round((mobilityScore + strengthScore) / 2 * 10)}%`, height: '100%', backgroundColor: '#C8973A', borderRadius: '2px', transition: 'width 1s ease' }} />
+            <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 14, color: "rgba(255,255,255,0.7)", lineHeight: 1.5 }}>
+              {fuelDirective}
             </div>
-            <div style={{ color: '#AAAAAA', fontSize: '13px', fontFamily: "'Barlow Condensed', sans-serif", maxWidth: '55%', lineHeight: 1.4 }}>Your AI-powered coach provides direct insight into your muscle health</div>
           </div>
-        </div>
+        )}
 
-        {/* ─── QUICK START ROW: MOVE / FUEL / FEAST (Doc 17 §2.3) ─── */}
-        <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
-          {[
-            { label: 'MOVE', sub: 'QUICK START', icon: '🐆', color: '#FF6600', route: '/move' },
-            { label: 'FUEL', sub: 'QUICK START', icon: '⏱', color: '#00CC66', route: '/fuel' },
-            { label: 'FEAST', sub: 'QUICK START', icon: '🍽', color: '#C8973A', route: '/feast' },
-          ].map(btn => (
-            <button key={btn.label} onClick={() => navigate(btn.route)} style={{ flex: 1, backgroundColor: '#111111', border: `1px solid ${btn.color}33`, borderRadius: '14px', padding: '16px 8px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-              <span style={{ fontSize: '26px' }}>{btn.icon}</span>
-              <span style={{ color: btn.color, fontFamily: "'Bebas Neue', sans-serif", fontSize: '16px', letterSpacing: '1px' }}>{btn.label}</span>
-              <span style={{ color: '#555', fontFamily: "'Barlow Condensed', sans-serif", fontSize: '10px', letterSpacing: '1px' }}>{btn.sub}</span>
+        {/* ─── 4 CORE NAV CARDS ─── */}
+        <p style={{
+          fontFamily: "'Barlow Condensed', sans-serif",
+          fontSize: 10, fontWeight: 700, letterSpacing: "0.2em",
+          color: "rgba(255,255,255,0.25)", marginBottom: 10, marginTop: 0,
+        }}>COMMAND CENTER</p>
+
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 24 }}>
+          {CORE_NAV.map(card => (
+            <button key={card.id} className="nav-card" onClick={() => navigate(card.route)}>
+              {/* Background image */}
+              <img
+                src={card.img}
+                alt={card.label}
+                style={{
+                  position: "absolute", inset: 0,
+                  width: "100%", height: "100%",
+                  objectFit: "cover",
+                  filter: "brightness(0.3) saturate(0.8)",
+                }}
+              />
+              {/* Neon gradient overlay */}
+              <div style={{
+                position: "absolute", inset: 0,
+                background: `linear-gradient(135deg, rgba(0,255,198,0.08) 0%, transparent 60%)`,
+                pointerEvents: "none",
+              }} />
+              {/* Bottom fade */}
+              <div style={{
+                position: "absolute", bottom: 0, left: 0, right: 0, height: "60%",
+                background: "linear-gradient(to top, rgba(11,11,11,0.95) 0%, transparent 100%)",
+                pointerEvents: "none",
+              }} />
+              {/* Content */}
+              <div style={{ position: "absolute", bottom: 14, left: 14, right: 14 }}>
+                <div style={{
+                  fontFamily: "'Bebas Neue', sans-serif",
+                  fontSize: 17, letterSpacing: "0.06em",
+                  color: "#fff", lineHeight: 1, marginBottom: 2,
+                }}>{card.label}</div>
+                <div style={{
+                  fontFamily: "'Barlow Condensed', sans-serif",
+                  fontSize: 10, fontWeight: 600, letterSpacing: "0.08em",
+                  color: "rgba(0,255,198,0.65)",
+                }}>{card.sub}</div>
+              </div>
             </button>
           ))}
         </div>
 
-        {/* ─── PANTHER DIRECTIVE CARD ─── */}
-        {fuelDirective && (
-          <div className="panther-directive-card" style={{ marginBottom: '16px' }}>
-            <div style={{ color: '#FF6600', fontFamily: "'Bebas Neue', sans-serif", fontSize: '18px', letterSpacing: '1px', marginBottom: '6px' }}>TODAY'S DIRECTIVE</div>
-            <div style={{ color: '#AAAAAA', fontFamily: "'Barlow Condensed', sans-serif", fontSize: '14px', lineHeight: 1.5 }}>{fuelDirective}</div>
-            <div style={{ color: '#555', fontFamily: "'Barlow Condensed', sans-serif", fontSize: '11px', textAlign: 'right', marginTop: '8px', letterSpacing: '1px' }}>THE PANTHER SYSTEM — FUEL ENGINE</div>
-          </div>
-        )}
-
-        {/* ─── 2-COL CARDS: ASSESS | PROGRAM ─── */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
-          <button className="cmd-card" onClick={() => navigate("/assess")} style={{ height: 110 }}>
-            <div style={{ padding: "18px 14px" }}>
-              <div style={{ marginBottom: 6 }}>
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="4" y="3" width="16" height="18" rx="2" stroke="#FF6600" strokeWidth="1.5"/>
-                  <path d="M8 8h8M8 12h8M8 16h5" stroke="#FF6600" strokeWidth="1.5" strokeLinecap="round"/>
-                  <circle cx="17" cy="16" r="3" fill="#FF6600" opacity="0.3" stroke="#FF6600" strokeWidth="1"/>
-                  <path d="M15.5 16l1 1 2-2" stroke="#FF6600" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
-              <div style={{
-                fontFamily: "'Bebas Neue', sans-serif",
-                fontSize: 18, letterSpacing: "0.06em", color: "var(--text-primary)",
-              }}>ASSESS</div>
-              <div style={{
-                fontFamily: "'Barlow Condensed', sans-serif",
-                fontSize: 10, fontWeight: 700,
-                letterSpacing: "0.1em",
-                color: "var(--text-tertiary)",
-                marginTop: 2,
-              }}>Pain · Movement</div>
-            </div>
-          </button>
-
-          <button className="cmd-card" onClick={() => navigate("/program")} style={{ height: 110 }}>
-            <div style={{ padding: "18px 14px" }}>
-              <div style={{ marginBottom: 6 }}>
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="3" y="5" width="18" height="16" rx="2" stroke="#C8973A" strokeWidth="1.5"/>
-                  <path d="M3 9h18" stroke="#C8973A" strokeWidth="1.5"/>
-                  <path d="M8 3v4M16 3v4" stroke="#C8973A" strokeWidth="1.5" strokeLinecap="round"/>
-                  <rect x="7" y="13" width="3" height="3" rx="0.5" fill="#C8973A" opacity="0.7"/>
-                  <rect x="14" y="13" width="3" height="3" rx="0.5" fill="#C8973A" opacity="0.4"/>
-                </svg>
-              </div>
-              <div style={{
-                fontFamily: "'Bebas Neue', sans-serif",
-                fontSize: 18, letterSpacing: "0.06em", color: "var(--text-primary)",
-              }}>PROGRAM</div>
-              <div style={{
-                fontFamily: "'Barlow Condensed', sans-serif",
-                fontSize: 10, fontWeight: 700,
-                letterSpacing: "0.1em",
-                color: "var(--text-tertiary)",
-                marginTop: 2,
-              }}>4-Week Plan</div>
-            </div>
-          </button>
-        </div>
-
-        {/* ─── SECTION LABEL ─── */}
-        <p style={{
-          fontFamily: "'Barlow Condensed', sans-serif",
-          fontSize: 10, fontWeight: 700,
-          letterSpacing: "0.2em",
-          color: "var(--text-tertiary)",
-          marginBottom: 10,
-          marginTop: 0,
-        }}>
-          COMMAND CENTER
-        </p>
-
-        {/* ── GRADIENT IMAGE BUTTONS — Doc 15 ── */}
-        {HOME_BUTTONS.map((btn) => (
-          <GradientNavCard
-            key={btn.id}
-            icon={ICON_MAP[btn.iconName] || <Brain size={24} />}
-            title={btn.title}
-            subtitle={btn.id === "evolve" ? `${stage} · ${xp} XP` : btn.subtitle}
-            titleColor={btn.titleColor}
-            borderColor={btn.borderColor}
-            gradientColor={btn.gradientColor}
-            imageSrc={btn.imageSrc}
-            hero={btn.hero}
-            locked={btn.locked}
-            onClick={() => navigate(btn.route)}
-          />
-        ))}
-
       </main>
 
-      {/* ─── STICKY STRIP ─── */}
       <TufSocialStickyStrip />
     </div>
   );

@@ -7,6 +7,7 @@
  */
 
 import { useState } from "react";
+import { usePantherVoice } from "@/hooks/usePantherVoice";
 import { Link } from "wouter";
 
 // ── Panther AI voice lines (from spec) ────────────────────────────────────────
@@ -68,6 +69,7 @@ export default function DesignTest() {
 
   const cue = getPantherCue(fatigue, formBreak, setDone);
   const isNeon = theme === "neon";
+  const { speak, speaking } = usePantherVoice({ voiceKey: "panther" });
 
   // Inline style helpers so the test page is fully self-contained
   const bg      = isNeon ? "#0B0B0B" : "#080808";
@@ -286,16 +288,39 @@ export default function DesignTest() {
             ...(isNeon ? { boxShadow: "0 0 20px rgba(0,255,198,0.12)" } : {}),
           }}>
             <div style={{ fontSize: 11, color: textSec, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 6 }}>PANTHER SAYS</div>
-            <div style={{ fontSize: 28, fontWeight: 900, fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: "0.04em", color: accent }}>
+            <div style={{ fontSize: 28, fontWeight: 900, fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: "0.04em", color: accent, marginBottom: 12 }}>
               "{cue}"
             </div>
+            <button
+              onClick={() => speak(cue)}
+              disabled={speaking}
+              style={{
+                padding: "8px 20px", borderRadius: 8, border: `1.5px solid ${accent}`,
+                background: speaking ? (isNeon ? "rgba(0,255,198,0.15)" : "rgba(255,102,0,0.15)") : "transparent",
+                color: accent, fontSize: 11, fontWeight: 700,
+                letterSpacing: "0.1em", textTransform: "uppercase", cursor: speaking ? "default" : "pointer",
+                transition: "all 0.15s",
+              }}
+            >
+              {speaking ? "🔊 SPEAKING..." : "🐆 SPEAK CUE"}
+            </button>
           </div>
-          {/* Voice line grid */}
+          {/* Voice line grid with speak buttons */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginTop: 12 }}>
             {Object.entries(PANTHER_VOICE).map(([phase, lines]) => (
               <div key={phase} style={{ background: card, border: `1px solid ${border}`, borderRadius: 10, padding: 10 }}>
                 <div style={{ fontSize: 9, color: accent, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 4 }}>{phase}</div>
-                {lines.map(l => <div key={l} style={{ fontSize: 12, color: textPri, marginBottom: 2 }}>"{l}"</div>)}
+                {lines.map(l => (
+                  <div key={l} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
+                    <div style={{ fontSize: 12, color: textPri }}>"{ l}"</div>
+                    <button
+                      onClick={() => speak(l)}
+                      disabled={speaking}
+                      style={{ background: "transparent", border: "none", color: accent, fontSize: 14, cursor: speaking ? "default" : "pointer", padding: "0 4px", opacity: speaking ? 0.5 : 1 }}
+                      title="Speak this line"
+                    >🔊</button>
+                  </div>
+                ))}
               </div>
             ))}
           </div>

@@ -1,17 +1,20 @@
 /**
- * TUF THEME CONTEXT — v2.0
- * Doc 12 compliant: uses data-theme attribute on documentElement
+ * TUF THEME CONTEXT — v3.0
+ * Supports: "dark" | "neon" | "light"
+ * Uses data-theme attribute on documentElement
  * localStorage key: "tuf-theme"
- * Default: dark
+ * Default: neon
  */
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-type Theme = "light" | "dark";
+export type Theme = "light" | "dark" | "neon";
 
 interface ThemeContextType {
   theme: Theme;
+  setTheme: (t: Theme) => void;
   toggleTheme: () => void;
   isDark: boolean;
+  isNeon: boolean;
   switchable: boolean;
 }
 
@@ -25,27 +28,25 @@ interface ThemeProviderProps {
 
 export function ThemeProvider({
   children,
-  defaultTheme = "dark",
+  defaultTheme = "neon",
   switchable = true,
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(() => {
+  const [theme, setThemeState] = useState<Theme>(() => {
     if (switchable) {
-      // Support both old key ("theme") and new key ("tuf-theme") for migration
       const stored =
         (localStorage.getItem("tuf-theme") as Theme) ||
         (localStorage.getItem("theme") as Theme);
-      return stored || defaultTheme;
+      // Migrate old "dark" stored value to "neon" on first load
+      if (stored === "dark" || stored === "neon" || stored === "light") return stored;
     }
     return defaultTheme;
   });
 
   useEffect(() => {
     const root = document.documentElement;
-
-    // Doc 12 spec: set data-theme attribute
     root.setAttribute("data-theme", theme);
 
-    // Also keep .dark class for Tailwind @custom-variant dark compatibility
+    // Keep .dark class for Tailwind @custom-variant dark compatibility
     if (theme === "dark") {
       root.classList.add("dark");
     } else {
@@ -57,9 +58,15 @@ export function ThemeProvider({
     }
   }, [theme, switchable]);
 
+  const setTheme = (t: Theme) => {
+    if (switchable) setThemeState(t);
+  };
+
   const toggleTheme = () => {
     if (switchable) {
-      setTheme(prev => (prev === "dark" ? "light" : "dark"));
+      setThemeState(prev =>
+        prev === "neon" ? "dark" : prev === "dark" ? "light" : "neon"
+      );
     }
   };
 
@@ -67,8 +74,10 @@ export function ThemeProvider({
     <ThemeContext.Provider
       value={{
         theme,
+        setTheme,
         toggleTheme,
         isDark: theme === "dark",
+        isNeon: theme === "neon",
         switchable: switchable ?? true,
       }}
     >
