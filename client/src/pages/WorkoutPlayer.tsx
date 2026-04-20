@@ -7,6 +7,8 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useLocation } from "wouter";
 import { haptics } from "@/utils/haptics";
 import { usePantherVoice } from "@/hooks/usePantherVoice";
+import { useCoachMode } from "@/hooks/useCoachMode";
+import CoachModeSelector from "@/components/CoachModeSelector";
 import {
   EXERCISE_DATABASE, PANTHER_VOICE, getPantherVoiceLine, generateWorkout,
   detectFormDrop, isHighRisk, getRecoverySubstitution, getPantherRealtimeCue,
@@ -80,6 +82,8 @@ export default function WorkoutPlayer() {
 
   const currentEx = exercises[currentIdx];
   const { speak } = usePantherVoice({ voiceKey: "panther" });
+  const { mode: coachMode, setMode: setCoachMode, getCue, realtimeAdjust, preferredMode, config: coachConfig } = useCoachMode();
+  const [showCoachSelector, setShowCoachSelector] = useState(false);
 
   // Timer
   useEffect(() => {
@@ -105,7 +109,7 @@ export default function WorkoutPlayer() {
   // Start timer on mount — speak the opening cue in Marc's voice
   useEffect(() => {
     setTimerRunning(true);
-    const startLine = getPantherVoiceLine("start");
+    const startLine = getCue("start");
     setVoiceLine(startLine);
     const t = setTimeout(() => speak(startLine), 900);
     return () => clearTimeout(t);
@@ -188,7 +192,7 @@ export default function WorkoutPlayer() {
     setReps(r => {
       const next = r + 1;
       if (next % 5 === 0) {
-        const line = getPantherVoiceLine("during");
+        const line = getCue("mid");
         setVoiceLine(line);
         speak(line);
       }
@@ -204,7 +208,7 @@ export default function WorkoutPlayer() {
     if (sets >= targetSets) {
       // Move to next exercise
       if (currentIdx < exercises.length - 1) {
-        const finishLine = getPantherVoiceLine("finish");
+        const finishLine = getCue("finish");
         setVoiceLine(finishLine);
         speak(finishLine);
         setRestTimer(45);
@@ -262,8 +266,28 @@ export default function WorkoutPlayer() {
           <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, letterSpacing: 3, color: "#888" }}>EXERCISE {currentIdx + 1} OF {exercises.length}</div>
           <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 18, letterSpacing: 1 }}>{currentEx.name}</div>
         </div>
-        <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 20, color: "#FF6600" }}>{formatTime(timer)}</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <button
+            onClick={() => setShowCoachSelector(s => !s)}
+            style={{ background: coachConfig.color + "18", border: `1px solid ${coachConfig.color}55`, borderRadius: 6, padding: "4px 8px", color: coachConfig.color, fontSize: 11, fontFamily: "'Bebas Neue', sans-serif", letterSpacing: 1, cursor: "pointer" }}
+          >
+            {coachConfig.icon} {coachMode.toUpperCase()}
+          </button>
+          <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 20, color: "#FF6600" }}>{formatTime(timer)}</div>
+        </div>
       </div>
+
+      {/* ─── COACH MODE SELECTOR (expandable) ─── */}
+      {showCoachSelector && (
+        <div style={{ padding: "12px 20px", background: "#0D0D0D", borderBottom: "1px solid #1A1A1A" }}>
+          <CoachModeSelector
+            currentMode={coachMode}
+            preferredMode={preferredMode}
+            onSelect={m => { setCoachMode(m); setShowCoachSelector(false); }}
+            compact
+          />
+        </div>
+      )}
 
       {/* ─── RISK WARNING BANNER ─── */}
       {riskWarning && (

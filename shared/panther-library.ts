@@ -514,3 +514,140 @@ export function buildAdaptiveSession(
 
   return { correctives, mainSession, regressions };
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COACH MODE SYSTEM
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type CoachMode = "intensity" | "technical" | "motivational" | "panther";
+export type CueContext = "start" | "mid" | "fail" | "finish";
+
+export interface CoachModeConfig {
+  label: string;
+  icon: string;
+  description: string;
+  color: string;
+  restMultiplier: number;   // 1.0 = normal, 0.7 = shorter rest, 1.3 = longer
+  repRangeBonus: number;    // extra reps added to base range
+  formThreshold: number;    // form score below which mode auto-switches to technical
+  fatigueThreshold: number; // fatigue above which mode auto-switches to motivational
+}
+
+export const COACH_MODE_CONFIGS: Record<CoachMode, CoachModeConfig> = {
+  intensity: {
+    label: "INTENSITY",
+    icon: "🔥",
+    description: "Push limits. No excuses.",
+    color: "#FF3B3B",
+    restMultiplier: 0.7,
+    repRangeBonus: 2,
+    formThreshold: 60,
+    fatigueThreshold: 85,
+  },
+  technical: {
+    label: "TECHNICAL",
+    icon: "◎",
+    description: "Form first. Every rep counts.",
+    color: "#00FFC6",
+    restMultiplier: 1.3,
+    repRangeBonus: 0,
+    formThreshold: 50,
+    fatigueThreshold: 90,
+  },
+  motivational: {
+    label: "MOTIVATIONAL",
+    icon: "⚡",
+    description: "You've got this. Keep going.",
+    color: "#C8973A",
+    restMultiplier: 1.0,
+    repRangeBonus: 0,
+    formThreshold: 55,
+    fatigueThreshold: 80,
+  },
+  panther: {
+    label: "PANTHER",
+    icon: "🐆",
+    description: "Silent. Precise. Lethal.",
+    color: "#A0A0A0",
+    restMultiplier: 0.8,
+    repRangeBonus: 1,
+    formThreshold: 65,
+    fatigueThreshold: 88,
+  },
+};
+
+/**
+ * Returns the coaching cue for the given mode and context.
+ * Exact spec: intensity/technical/motivational/panther × start/mid/fail/finish
+ */
+export function getCoachCue(mode: CoachMode, context: CueContext): string {
+  const cues: Record<CoachMode, Record<CueContext, string>> = {
+    intensity: {
+      start: "Let's go. No excuses.",
+      mid: "Push harder.",
+      fail: "That doesn't count.",
+      finish: "You earned that.",
+    },
+    technical: {
+      start: "Focus on form.",
+      mid: "Control each rep.",
+      fail: "Adjust your alignment.",
+      finish: "Solid execution.",
+    },
+    motivational: {
+      start: "You've got this.",
+      mid: "Keep going!",
+      fail: "Reset and try again.",
+      finish: "Great job today.",
+    },
+    panther: {
+      start: "Move.",
+      mid: "Again.",
+      fail: "No.",
+      finish: "Done.",
+    },
+  };
+  return cues[mode]?.[context] ?? "Go.";
+}
+
+/**
+ * Auto-selects the optimal coach mode based on live user stats.
+ * Priority: consistency → form → performance → user preference
+ */
+export interface AutoAdjustProfile {
+  consistency_score: number;
+  form_score: number;
+  performance_score: number;
+  coach_mode: CoachMode;
+}
+
+export function autoAdjustCoach(user: AutoAdjustProfile): CoachMode {
+  if (user.consistency_score < 50) return "motivational";
+  if (user.form_score < 70) return "technical";
+  if (user.performance_score > 85) return "intensity";
+  return user.coach_mode;
+}
+
+/**
+ * Real-time in-workout mode switching based on live signals.
+ * Returns the new mode if a switch is warranted, otherwise returns current mode.
+ */
+export function getRealtimeCoachMode(
+  currentMode: CoachMode,
+  formScore: number,
+  isSlowingDown: boolean
+): CoachMode {
+  if (formScore < 60) return "technical";
+  if (isSlowingDown) return "intensity";
+  return currentMode;
+}
+
+/**
+ * Tracks mode usage and returns the most-used mode as the preferred default.
+ */
+export function mostUsedMode(usageLog: CoachMode[]): CoachMode {
+  if (!usageLog.length) return "panther";
+  const counts: Record<string, number> = {};
+  for (const m of usageLog) counts[m] = (counts[m] || 0) + 1;
+  return Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0] as CoachMode;
+}
