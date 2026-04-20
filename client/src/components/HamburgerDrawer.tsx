@@ -4,6 +4,7 @@
  * © 2026 Turned Up Fitness LLC. All rights reserved.
  */
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useLocation } from "wouter";
 
 interface NavItem {
@@ -98,31 +99,36 @@ export default function HamburgerDrawer({ demoMode = false }: HamburgerDrawerPro
         ))}
       </button>
 
-      {/* ── OVERLAY ── */}
-      {open && (
-        <div
-          onClick={() => setOpen(false)}
-          style={{
-            position: "fixed", inset: 0, zIndex: 998,
-            background: "rgba(0,0,0,0.7)",
-            backdropFilter: "blur(4px)",
-            animation: "overlayFadeIn 0.2s ease",
-          }}
-        />
-      )}
+      {/* ── OVERLAY + DRAWER rendered via Portal — escapes all stacking contexts ── */}
+      {createPortal(
+        <>
+          {/* Overlay */}
+          <div
+            onClick={() => setOpen(false)}
+            style={{
+              position: "fixed", inset: 0,
+              zIndex: 9998,
+              background: "rgba(0,0,0,0.7)",
+              backdropFilter: "blur(4px)",
+              WebkitBackdropFilter: "blur(4px)",
+              opacity: open ? 1 : 0,
+              pointerEvents: open ? "auto" : "none",
+              transition: "opacity 0.25s ease",
+            }}
+          />
 
-      {/* ── DRAWER ── */}
-      <div style={{
-        position: "fixed", top: 0, left: 0, bottom: 0,
-        width: 280, zIndex: 999,
-        background: "linear-gradient(180deg, #0D0D0D 0%, #080808 100%)",
-        borderRight: "1px solid rgba(0,255,198,0.12)",
-        boxShadow: open ? "8px 0 40px rgba(0,0,0,0.8)" : "none",
-        transform: open ? "translateX(0)" : "translateX(-100%)",
-        transition: "transform 0.28s cubic-bezier(0.4,0,0.2,1)",
-        display: "flex", flexDirection: "column",
-        overflowY: "auto",
-      }}>
+          {/* Drawer */}
+          <div style={{
+            position: "fixed", top: 0, left: 0, bottom: 0,
+            width: 280, zIndex: 9999,
+            background: "linear-gradient(180deg, #0D0D0D 0%, #080808 100%)",
+            borderRight: "1px solid rgba(0,255,198,0.12)",
+            boxShadow: open ? "8px 0 40px rgba(0,0,0,0.8)" : "none",
+            transform: open ? "translateX(0)" : "translateX(-100%)",
+            transition: "transform 0.28s cubic-bezier(0.4,0,0.2,1)",
+            display: "flex", flexDirection: "column",
+            overflowY: "auto",
+          }}>
         {/* Header */}
         <div style={{
           display: "flex", alignItems: "center", justifyContent: "space-between",
@@ -195,6 +201,9 @@ export default function HamburgerDrawer({ demoMode = false }: HamburgerDrawerPro
           </div>
         </div>
       </div>
+        </>,
+        document.body
+      )}
     </>
   );
 }
