@@ -380,6 +380,59 @@ export default function Home() {
           </button>
         </div>
 
+        {/* ─── MUSCLE PRESERVATION SCORE CARD (Doc 17 §2.2) ─── */}
+        <div style={{
+          backgroundColor: '#111111',
+          border: '1px solid #C8973A',
+          borderRadius: '16px',
+          padding: '24px',
+          position: 'relative',
+          overflow: 'hidden',
+          marginBottom: '16px',
+          minHeight: '160px',
+        }}>
+          {/* Panther character right side */}
+          <div style={{ position: 'absolute', right: '-10px', top: 0, bottom: 0, width: '55%', backgroundImage: `url(${PANTHER_MASCOT})`, backgroundSize: 'cover', backgroundPosition: 'center top' }} />
+          {/* Gradient overlay */}
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, #111111 45%, rgba(17,17,17,0.6) 65%, transparent 100%)' }} />
+          {/* Content */}
+          <div style={{ position: 'relative', zIndex: 2 }}>
+            <div style={{ color: '#AAAAAA', fontSize: '12px', fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '4px' }}>Muscle Preservation Score</div>
+            <div style={{ color: '#FFFFFF', fontSize: '72px', fontFamily: "'Bebas Neue', sans-serif", lineHeight: 1, marginBottom: '2px' }}>
+              {Math.round((mobilityScore + strengthScore) / 2 * 10)}
+              <span style={{ fontSize: '28px', color: '#AAAAAA' }}>/100</span>
+            </div>
+            <div style={{ width: '180px', height: '3px', backgroundColor: '#333', borderRadius: '2px', marginBottom: '12px' }}>
+              <div style={{ width: `${Math.round((mobilityScore + strengthScore) / 2 * 10)}%`, height: '100%', backgroundColor: '#C8973A', borderRadius: '2px', transition: 'width 1s ease' }} />
+            </div>
+            <div style={{ color: '#AAAAAA', fontSize: '13px', fontFamily: "'Barlow Condensed', sans-serif", maxWidth: '55%', lineHeight: 1.4 }}>Your AI-powered coach provides direct insight into your muscle health</div>
+          </div>
+        </div>
+
+        {/* ─── QUICK START ROW: MOVE / FUEL / FEAST (Doc 17 §2.3) ─── */}
+        <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
+          {[
+            { label: 'MOVE', sub: 'QUICK START', icon: '🐆', color: '#FF6600', route: '/move' },
+            { label: 'FUEL', sub: 'QUICK START', icon: '⏱', color: '#00CC66', route: '/fuel' },
+            { label: 'FEAST', sub: 'QUICK START', icon: '🍽', color: '#C8973A', route: '/feast' },
+          ].map(btn => (
+            <button key={btn.label} onClick={() => navigate(btn.route)} style={{ flex: 1, backgroundColor: '#111111', border: `1px solid ${btn.color}33`, borderRadius: '14px', padding: '16px 8px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+              <span style={{ fontSize: '26px' }}>{btn.icon}</span>
+              <span style={{ color: btn.color, fontFamily: "'Bebas Neue', sans-serif", fontSize: '16px', letterSpacing: '1px' }}>{btn.label}</span>
+              <span style={{ color: '#555', fontFamily: "'Barlow Condensed', sans-serif", fontSize: '10px', letterSpacing: '1px' }}>{btn.sub}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* ─── PANTHER DIRECTIVE CARD ─── */}
+        {fuelDirective && (
+          <div className="panther-directive-card" style={{ marginBottom: '16px' }}>
+            <div style={{ color: '#FF6600', fontFamily: "'Bebas Neue', sans-serif", fontSize: '18px', letterSpacing: '1px', marginBottom: '6px' }}>TODAY'S DIRECTIVE</div>
+            <div style={{ color: '#AAAAAA', fontFamily: "'Barlow Condensed', sans-serif", fontSize: '14px', lineHeight: 1.5 }}>{fuelDirective}</div>
+            <div style={{ color: '#555', fontFamily: "'Barlow Condensed', sans-serif", fontSize: '11px', textAlign: 'right', marginTop: '8px', letterSpacing: '1px' }}>THE PANTHER SYSTEM — FUEL ENGINE</div>
+          </div>
+        )}
+
         {/* ─── 2-COL CARDS: ASSESS | PROGRAM ─── */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
           <button className="cmd-card" onClick={() => navigate("/assess")} style={{ height: 110 }}>

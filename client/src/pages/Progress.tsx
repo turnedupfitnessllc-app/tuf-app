@@ -211,6 +211,50 @@ export default function Progress() {
           </div>
         </div>
 
+        {/* ─── SARCOPENIA RISK CHART (Doc 17 §3.2) ─── */}
+        <div style={{ backgroundColor: '#111111', border: '1px solid #C8973A', borderRadius: '16px', padding: '20px', marginBottom: '16px' }}>
+          <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, letterSpacing: 4, color: '#C8973A', marginBottom: 12 }}>SARCOPENIA RISK ANALYSIS</div>
+          {/* Bar chart: mobility, strength, endurance, recovery */}
+          {[
+            { label: 'MOBILITY', value: mobilityScore * 10, color: mobilityScore >= 8 ? '#00CC66' : mobilityScore >= 6 ? '#FF6600' : '#FF4444' },
+            { label: 'STRENGTH', value: strengthScore * 10, color: strengthScore >= 8 ? '#00CC66' : strengthScore >= 6 ? '#FF6600' : '#FF4444' },
+            { label: 'ENDURANCE', value: Math.min(100, sessions * 4), color: '#C8973A' },
+            { label: 'RECOVERY', value: Math.min(100, streak * 7), color: streak >= 7 ? '#00CC66' : '#FF6600' },
+          ].map(bar => (
+            <div key={bar.label} style={{ marginBottom: 10 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, letterSpacing: 2, color: '#888' }}>{bar.label}</span>
+                <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 14, color: bar.color }}>{bar.value}%</span>
+              </div>
+              <div style={{ height: 6, backgroundColor: '#1A1A1A', borderRadius: 3, overflow: 'hidden' }}>
+                <div style={{ height: '100%', width: `${bar.value}%`, backgroundColor: bar.color, borderRadius: 3, transition: 'width 1.2s ease' }} />
+              </div>
+            </div>
+          ))}
+          {/* Risk level */}
+          <div style={{ marginTop: 12, padding: '10px 14px', backgroundColor: '#1A1A1A', borderRadius: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, color: '#888', letterSpacing: 2 }}>OVERALL RISK</span>
+            <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 18, color: (mobilityScore + strengthScore) >= 14 ? '#00CC66' : (mobilityScore + strengthScore) >= 10 ? '#FF6600' : '#FF4444' }}>
+              {(mobilityScore + strengthScore) >= 14 ? 'LOW' : (mobilityScore + strengthScore) >= 10 ? 'MODERATE' : 'HIGH'}
+            </span>
+          </div>
+        </div>
+
+        {/* ─── GOLD ACTION ROW: BREAKDOWN / MAINTAIN / DEFEND (Doc 17 §3.3) ─── */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 16 }}>
+          {[
+            { label: 'BREAKDOWN', icon: '💥', color: '#FF4444', sub: 'Tear & Build', route: '/train' },
+            { label: 'MAINTAIN', icon: '⚡', color: '#C8973A', sub: 'Hold Gains', route: '/move' },
+            { label: 'DEFEND', icon: '🛡️', color: '#00CC66', sub: 'Protect Muscle', route: '/correct' },
+          ].map(btn => (
+            <button key={btn.label} onClick={() => navigate(btn.route)} style={{ backgroundColor: '#111111', border: `1px solid ${btn.color}33`, borderRadius: 12, padding: '14px 8px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
+              <span style={{ fontSize: 22 }}>{btn.icon}</span>
+              <span style={{ color: btn.color, fontFamily: "'Bebas Neue', sans-serif", fontSize: 13, letterSpacing: '1px' }}>{btn.label}</span>
+              <span style={{ color: '#555', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, letterSpacing: '1px' }}>{btn.sub}</span>
+            </button>
+          ))}
+        </div>
+
         {/* ─── XP PROGRESS ─── */}
         <div style={{
           background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)",

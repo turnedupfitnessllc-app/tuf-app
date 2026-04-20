@@ -125,13 +125,19 @@
   --chart-3: #FF6600;
   --chart-4: #C0392B;
   --chart-5: #A93226;
-  /* TUF Panther System Tokens — Dark */
-  --bg-primary: #0A0A0A;
+  /* TUF Panther System Tokens — Dark (Doc 17 locked) */
+  --bg-primary: #080808;
+  --bg-card: #111111;
   --bg-secondary: #1A1A1A;
   --bg-tertiary: #2A2A2A;
   --text-primary: #FFFFFF;
   --text-secondary: #AAAAAA;
   --text-tertiary: #666666;
+  --action-primary: #8B0000;
+  --action-text: #C8973A;
+  --accent-orange: #FF6600;
+  --accent-gold: #C8973A;
+  --border-gold: #C8973A;
   --accent-primary: #FF6600;
   --accent-secondary: #CC4400;
   --border-primary: #333333;
@@ -142,6 +148,16 @@
   --success: #00CC66;
   --warning: #FFAA00;
   --danger: #FF3333;
+  /* Spacing tokens */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 100px;
 }
 @layer base {
   * { @apply border-border outline-ring/50; }
@@ -181,4 +197,49 @@
   .accent-line { height: 3px; background: linear-gradient(90deg, var(--primary), var(--accent), transparent); border-radius: 2px; }
   @keyframes glow-pulse { 0%,100% { opacity: 0.6; } 50% { opacity: 1; } }
   .glow-pulse { animation: glow-pulse 2s ease-in-out infinite; }
+  /* Panther System font utilities */
+  .font-bebas { font-family: 'Bebas Neue', sans-serif; }
+  .font-barlow-body { font-family: 'Barlow Condensed', sans-serif; font-weight: 400; }
+  /* Shimmer skeleton animation */
+  @keyframes shimmer {
+    0% { background-position: -400px 0; }
+    100% { background-position: 400px 0; }
+  }
+  .skeleton-shimmer {
+    background: linear-gradient(90deg, #1A1A1A 25%, #2A2A2A 50%, #1A1A1A 75%);
+    background-size: 400px 100%;
+    animation: shimmer 1.5s infinite linear;
+  }
+  /* Panther page transitions */
+  .page-enter {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  .page-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+  .page-exit {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .page-exit-active {
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  /* Panther directive card standard */
+  .panther-directive-card {
+    background-color: #111111;
+    border-left: 3px solid #FF6600;
+    border-radius: 12px;
+    padding: 16px;
+  }
+  /* Pain alert flash */
+  @keyframes pain-flash {
+    0%, 100% { background-color: #080808; }
+    50% { background-color: #3B0000; }
+  }
+  .pain-alert { animation: pain-flash 0.4s ease 3; }
 }
