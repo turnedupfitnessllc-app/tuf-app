@@ -212,3 +212,101 @@ export function generateVideoScript(exerciseId: string): VideoScript | null {
     video_prompt: ex.video_prompt || `${ex.name} demonstration, cinematic gym lighting, athletic form, Panther System aesthetic`,
   };
 }
+
+// ── PANTHER AI VOICE RULES (spec v2) ──────────────────────────────────────────
+export const PANTHER_AI_VOICE_RULES = {
+  tone: "calm_intense",
+  rules: [
+    "never ramble",
+    "short commands only",
+    "no fluff",
+    "always directive",
+  ],
+  personality_traits: ["disciplined", "strategic", "predatory", "calm_under_pressure"],
+};
+
+/**
+ * Panther Brain real-time cue engine.
+ * Returns the correct short command based on session state.
+ */
+export function getPantherRealTimeCue(state: {
+  fatigue: number;      // 0-100
+  formBreak: boolean;
+  setCompleted: boolean;
+}): string {
+  if (state.fatigue > 80)   return "Slow it down.";
+  if (state.formBreak)      return "Fix your posture.";
+  if (state.setCompleted)   return "Good. Again.";
+  return "Stay locked.";
+}
+
+// ── VIDEO TYPES ───────────────────────────────────────────────────────────────
+export const VIDEO_TYPES = [
+  "exercise_demo",
+  "form_correction",
+  "motivation_clip",
+  "challenge_video",
+] as const;
+
+export type VideoType = typeof VIDEO_TYPES[number];
+
+// ── WORKOUT TEMPLATES ─────────────────────────────────────────────────────────
+export interface WorkoutTemplate {
+  name: string;
+  duration: string;
+  exercises: string[];
+  style: string;
+}
+
+export const WORKOUT_TEMPLATES: WorkoutTemplate[] = [
+  {
+    name: "Panther Full Body Initiation",
+    duration: "20 min",
+    exercises: ["bodyweight_squat", "pushup", "band_row", "plank", "bear_crawl"],
+    style: "low_rest_high_control",
+  },
+  {
+    name: "Panther Power Circuit",
+    duration: "30 min",
+    exercises: ["kettlebell_swing", "push_press", "goblet_squat", "renegade_row", "jump_squat"],
+    style: "explosive_conditioning",
+  },
+  {
+    name: "Panther Mobility Flow",
+    duration: "15 min",
+    exercises: ["hip_90_90", "thoracic_rotation", "ankle_circles", "world_greatest_stretch", "cat_cow"],
+    style: "controlled_flow",
+  },
+];
+
+// ── VIDEO PROMPTS (from spec) ─────────────────────────────────────────────────
+export const CINEMATIC_VIDEO_PROMPTS: Record<string, string> = {
+  bodyweight_squat: "athletic male performing slow controlled squat, dark gym, cinematic lighting",
+  band_row:         "resistance band row, strong posture, squeeze back muscles, neon lighting",
+  bear_crawl:       "bear crawl low to ground, panther-like movement, intense focus",
+  pushup:           "perfect push-up form, full range of motion, dark athletic environment",
+  plank:            "plank hold, full body tension, cinematic side angle, neon accent",
+  kettlebell_swing: "explosive kettlebell swing, hip snap, athletic power, dark gym",
+  deadlift:         "conventional deadlift, perfect hip hinge, heavy weight, dramatic lighting",
+};
+
+// ── SUCCESS METRICS ───────────────────────────────────────────────────────────
+export const SUCCESS_METRICS = [
+  { key: "did_user_finish",  label: "Finished",  weight: 0.4 },
+  { key: "did_user_sweat",   label: "Sweat",     weight: 0.2 },
+  { key: "did_user_repeat",  label: "Repeated",  weight: 0.25 },
+  { key: "did_user_share",   label: "Shared",    weight: 0.15 },
+] as const;
+
+export type SuccessMetricKey = typeof SUCCESS_METRICS[number]["key"];
+
+/**
+ * Calculate session success score from 0-100.
+ */
+export function calculateSuccessScore(results: Record<SuccessMetricKey, boolean>): number {
+  return Math.round(
+    SUCCESS_METRICS.reduce((score, metric) => {
+      return score + (results[metric.key] ? metric.weight * 100 : 0);
+    }, 0)
+  );
+}

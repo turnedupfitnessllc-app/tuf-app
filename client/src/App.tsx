@@ -56,6 +56,7 @@ import Membership from "./pages/Membership";
 import SeasonLeaderboard from "./pages/SeasonLeaderboard";
 import PvPChallenge from "./pages/PvPChallenge";
 import WorkoutPlayer from "./pages/WorkoutPlayer";
+import DesignTest from "./pages/DesignTest";
 
 // IP Protection
 import { TufTermsModal } from "./components/TufTermsModal";
@@ -146,6 +147,7 @@ function Router() {
         <Route path={"/membership"} component={Membership} />
         <Route path={"/pvp"} component={PvPChallenge} />
         <Route path={"/workout-player"} component={WorkoutPlayer} />
+        <Route path={"/design-test"} component={DesignTest} />
 
         <Route path={"/404"} component={NotFound} />
         <Route component={NotFound} />
