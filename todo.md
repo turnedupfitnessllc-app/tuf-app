@@ -399,3 +399,9 @@
 ### Final Polish + Push
 - [ ] Commit all changes to GitHub
 - [ ] Build check (npx vite build)
+
+## Socket.io PvP — Real Opponent + Bot Fallback (April 2026)
+- [ ] server/socket.ts — Socket.io attached to HTTP server, challenge rooms, rep broadcast, bot fallback
+- [ ] client/src/hooks/usePvPSocket.ts — connect, join_challenge, rep_update, challenge_update, challenge_end
+- [ ] Wire usePvPSocket into PvPChallenge.tsx — real opponent when matched, bot when solo
+- [ ] Update ElevenLabs Voice ID in server/routes/voice.ts

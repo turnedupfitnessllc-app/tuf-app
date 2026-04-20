@@ -9,6 +9,8 @@
 import { useState } from "react";
 import { usePantherVoice } from "@/hooks/usePantherVoice";
 import { Link } from "wouter";
+import HamburgerDrawer from "@/components/HamburgerDrawer";
+import BottomSheetMenu from "@/components/BottomSheetMenu";
 
 // ── Panther AI voice lines (from spec) ────────────────────────────────────────
 const PANTHER_VOICE = {
@@ -410,6 +412,104 @@ export default function DesignTest() {
               }} />
             ))}
             <span style={{ fontSize: 12, color: textSec }}>Panther Brain thinking...</span>
+          </div>
+        </Section>
+
+        {/* ── Section: Nav Option A ───────────────────────────────── */}
+        <Section label="NAVIGATION — OPTION A: HAMBURGER DRAWER" border={border} card={card}>
+          <div style={{ fontSize: 12, color: textSec, marginBottom: 14, lineHeight: 1.6 }}>
+            Tap the ☰ icon → full nav slides in from the left. All routes in one place.
+            Home screen gets 100% of its space back — no nav cards needed.
+          </div>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <div style={{
+              width: 320, height: 540, borderRadius: 28, border: `2px solid ${border}`,
+              background: "#080808", overflow: "hidden", position: "relative",
+              boxShadow: "0 8px 40px rgba(0,0,0,0.6)",
+            }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 20px", borderBottom: `1px solid ${border}` }}>
+                <HamburgerDrawer demoMode />
+                <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 18, color: accent, letterSpacing: 2 }}>TUF APP</div>
+                <div style={{ width: 44 }} />
+              </div>
+              <div style={{ padding: 20 }}>
+                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, color: textSec, letterSpacing: 3, marginBottom: 6 }}>GOOD MORNING</div>
+                <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 28, color: "#fff", letterSpacing: 1, marginBottom: 16 }}>MARC</div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 16 }}>
+                  {([["XP","2,840"],["STREAK","12"],["STAGE","HUNTER"]] as [string,string][]).map(([k,v]) => (
+                    <div key={k} style={{ background: "rgba(0,255,198,0.06)", border: `1px solid ${border}`, borderRadius: 10, padding: "10px 8px", textAlign: "center" }}>
+                      <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 18, color: accent }}>{v}</div>
+                      <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 8, color: textSec, letterSpacing: 2 }}>{k}</div>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ background: "linear-gradient(135deg,#FF6600,#DC2626)", borderRadius: 16, padding: "24px 20px", textAlign: "center", marginBottom: 12 }}>
+                  <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 22, color: "#fff", letterSpacing: 2 }}>TODAY'S WORKOUT</div>
+                  <div style={{ fontSize: 11, color: "rgba(255,255,255,0.7)", marginTop: 4 }}>Full Body · 25 min · Intermediate</div>
+                </div>
+                <div style={{ fontSize: 10, color: textSec, textAlign: "center", letterSpacing: 2 }}>← TAP ☰ TO OPEN MENU →</div>
+              </div>
+            </div>
+          </div>
+          <div style={{ marginTop: 12, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+            <div style={{ padding: "10px 14px", background: "rgba(0,255,198,0.06)", borderRadius: 10, border: `1px solid ${border}` }}>
+              <div style={{ fontSize: 11, color: accent, fontWeight: 700, marginBottom: 4, letterSpacing: 1 }}>✓ PROS</div>
+              <div style={{ fontSize: 11, color: textSec, lineHeight: 1.7 }}>Full screen content · Clean header · Easy to expand routes</div>
+            </div>
+            <div style={{ padding: "10px 14px", background: "rgba(255,59,59,0.06)", borderRadius: 10, border: `1px solid rgba(255,59,59,0.2)` }}>
+              <div style={{ fontSize: 11, color: "#FF3B3B", fontWeight: 700, marginBottom: 4, letterSpacing: 1 }}>✗ CONS</div>
+              <div style={{ fontSize: 11, color: textSec, lineHeight: 1.7 }}>Requires tap to open · Primary sections hidden by default</div>
+            </div>
+          </div>
+        </Section>
+
+        {/* ── Section: Nav Option B ───────────────────────────────── */}
+        <Section label="NAVIGATION — OPTION B: BOTTOM SHEET + MORE" border={border} card={card}>
+          <div style={{ fontSize: 12, color: textSec, marginBottom: 14, lineHeight: 1.6 }}>
+            4 primary tabs always visible at the bottom. Tap MORE → sheet slides up with all other sections.
+            One-thumb navigation — never lose your place.
+          </div>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <div style={{
+              width: 320, height: 540, borderRadius: 28, border: `2px solid ${border}`,
+              background: "#080808", overflow: "hidden", position: "relative",
+              boxShadow: "0 8px 40px rgba(0,0,0,0.6)",
+            }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 20px", borderBottom: `1px solid ${border}` }}>
+                <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 18, color: accent, letterSpacing: 2 }}>TUF APP</div>
+                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, color: textSec, letterSpacing: 2 }}>HUNTER</div>
+              </div>
+              <div style={{ padding: 20, paddingBottom: 80 }}>
+                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, color: textSec, letterSpacing: 3, marginBottom: 6 }}>GOOD MORNING</div>
+                <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 28, color: "#fff", letterSpacing: 1, marginBottom: 16 }}>MARC</div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 16 }}>
+                  {([["XP","2,840"],["STREAK","12"],["STAGE","HUNTER"]] as [string,string][]).map(([k,v]) => (
+                    <div key={k} style={{ background: "rgba(0,255,198,0.06)", border: `1px solid ${border}`, borderRadius: 10, padding: "10px 8px", textAlign: "center" }}>
+                      <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 18, color: accent }}>{v}</div>
+                      <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 8, color: textSec, letterSpacing: 2 }}>{k}</div>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ background: "linear-gradient(135deg,#FF6600,#DC2626)", borderRadius: 16, padding: "24px 20px", textAlign: "center", marginBottom: 12 }}>
+                  <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 22, color: "#fff", letterSpacing: 2 }}>TODAY'S WORKOUT</div>
+                  <div style={{ fontSize: 11, color: "rgba(255,255,255,0.7)", marginTop: 4 }}>Full Body · 25 min · Intermediate</div>
+                </div>
+                <div style={{ fontSize: 10, color: textSec, textAlign: "center", letterSpacing: 2 }}>↓ BOTTOM NAV ALWAYS VISIBLE ↓</div>
+              </div>
+              <div style={{ position: "absolute", bottom: 0, left: 0, right: 0 }}>
+                <BottomSheetMenu demoMode />
+              </div>
+            </div>
+          </div>
+          <div style={{ marginTop: 12, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+            <div style={{ padding: "10px 14px", background: "rgba(0,255,198,0.06)", borderRadius: 10, border: `1px solid ${border}` }}>
+              <div style={{ fontSize: 11, color: accent, fontWeight: 700, marginBottom: 4, letterSpacing: 1 }}>✓ PROS</div>
+              <div style={{ fontSize: 11, color: textSec, lineHeight: 1.7 }}>Primary tabs always 1 tap · Feels native on mobile · Instagram/TikTok pattern</div>
+            </div>
+            <div style={{ padding: "10px 14px", background: "rgba(255,59,59,0.06)", borderRadius: 10, border: `1px solid rgba(255,59,59,0.2)` }}>
+              <div style={{ fontSize: 11, color: "#FF3B3B", fontWeight: 700, marginBottom: 4, letterSpacing: 1 }}>✗ CONS</div>
+              <div style={{ fontSize: 11, color: textSec, lineHeight: 1.7 }}>Bottom bar takes ~60px · MORE is an extra tap for secondary sections</div>
+            </div>
           </div>
         </Section>
 

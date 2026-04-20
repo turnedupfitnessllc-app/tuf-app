@@ -22,6 +22,7 @@ import referralRouter from "./routes/referral.js";
 import pantherBrainAnalyzeRouter from "./routes/panther-brain-analyze.js";
 import videoScriptRouter from "./routes/video-script.js";
 import pantherBackendRouter from "./routes/panther-backend.js";
+import { attachSocketIO } from "./socket.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -29,6 +30,7 @@ const __dirname = path.dirname(__filename);
 async function startServer() {
   const app = express();
   const server = createServer(app);
+  attachSocketIO(server);
 
   // Stripe webhook needs raw body BEFORE express.json()
   app.use("/api/stripe/webhook", express.raw({ type: "application/json" }));
