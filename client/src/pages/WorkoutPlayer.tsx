@@ -6,7 +6,12 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useLocation } from "wouter";
 import { haptics } from "@/utils/haptics";
-import { EXERCISE_DATABASE, PANTHER_VOICE, getPantherVoiceLine, generateWorkout } from "@shared/panther-library";
+import {
+  EXERCISE_DATABASE, PANTHER_VOICE, getPantherVoiceLine, generateWorkout,
+  detectFormDrop, isHighRisk, getRecoverySubstitution, getPantherRealtimeCue,
+  regressExercise, injectCorrective, calculateMovementQuality,
+  type RiskProfile,
+} from "@shared/panther-library";
 import type { Exercise } from "@shared/panther-library";
 
 const CDN = "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR";
@@ -62,6 +67,16 @@ export default function WorkoutPlayer() {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const restRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // ── Risk Detection + Adaptive Engine State ───────────────────────────────────
+  const [repScores, setRepScores] = useState<number[]>([]);
+  const [fatigue, setFatigue] = useState(0);
+  const [recoveryMode, setRecoveryMode] = useState(false);
+  const [riskWarning, setRiskWarning] = useState<string | null>(null);
+  const riskWarningTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [correctivesInjected, setCorrectivesInjected] = useState<string[]>([]);
+  const [regressedExercise, setRegressedExercise] = useState<string | null>(null);
+  const [movementQuality, setMovementQuality] = useState<number | null>(null);
+
   const currentEx = exercises[currentIdx];
 
   // Timer
@@ -91,16 +106,74 @@ export default function WorkoutPlayer() {
     setVoiceLine(getPantherVoiceLine("start"));
   }, []);
 
-  // Simulate form feedback every 8 seconds
+  // Simulate form feedback every 8 seconds + full risk detection pipeline
   useEffect(() => {
     const scores: FormScore[] = ["excellent", "good", "check_form"];
     const interval = setInterval(() => {
       const score = scores[Math.floor(Math.random() * scores.length)];
       setFormScore(score);
+
+      const numericScore = score === "excellent" ? 85 + Math.random() * 15
+                         : score === "good"      ? 70 + Math.random() * 15
+                         :                         50 + Math.random() * 15;
+      const rounded = Math.round(numericScore);
+
+      setRepScores(prev => {
+        const next = [...prev, rounded];
+        const newFatigue = Math.min(100, Math.round((next.length / 30) * 100));
+        setFatigue(newFatigue);
+
+        // Movement quality (7-day rolling — simulated here as session rolling)
+        setMovementQuality(calculateMovementQuality(next));
+
+        const profile: RiskProfile = { fatigue_level: newFatigue, form_score: rounded };
+
+        // Corrective injection
+        if (rounded < 70) {
+          const correctives = injectCorrective({ form_score: rounded });
+          setCorrectivesInjected(correctives);
+        }
+
+        // Exercise regression on form drop
+        if (detectFormDrop(next)) {
+          const regressed = regressExercise(currentEx?.id ?? "");
+          if (regressed !== currentEx?.id) setRegressedExercise(regressed);
+        }
+
+        // Panther real-time cue
+        const cue = getPantherRealtimeCue({
+          repScores: next,
+          fatigue: newFatigue,
+          formScore: rounded,
+          kneeCollapse: score === "check_form" && Math.random() > 0.6,
+          backRounding: score === "check_form" && Math.random() > 0.7,
+          setCompleted: false,
+        });
+
+        if (cue) {
+          setVoiceLine(cue);
+          setRiskWarning(cue);
+          haptics.medium();
+          if (riskWarningTimer.current) clearTimeout(riskWarningTimer.current);
+          riskWarningTimer.current = setTimeout(() => setRiskWarning(null), 4000);
+        }
+
+        if (isHighRisk(profile)) {
+          setRecoveryMode(true);
+          haptics.heavy();
+        }
+
+        return next;
+      });
+
       if (score === "check_form") haptics.medium();
     }, 8000);
-    return () => clearInterval(interval);
-  }, []);
+    return () => {
+      clearInterval(interval);
+      if (riskWarningTimer.current) clearTimeout(riskWarningTimer.current);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentEx?.id]);
 
   const handleRep = useCallback(() => {
     haptics.light();
@@ -110,6 +183,7 @@ export default function WorkoutPlayer() {
       return next;
     });
     setTotalXP(xp => xp + 2);
+    setFatigue(f => Math.min(100, f + 1.5));
   }, []);
 
   const handleSetComplete = useCallback(() => {
@@ -149,6 +223,8 @@ export default function WorkoutPlayer() {
   const videoUrl = VIDEO_MAP[currentEx.id] || `${CDN}/jarvis-squat_29894acb.mp4`;
   const targetSets = parseInt(currentEx.volume.sets?.split("-")[0] || "3");
   const targetReps = currentEx.volume.reps || currentEx.volume.duration || "—";
+  const recoverySubstitution = recoveryMode ? getRecoverySubstitution(currentEx.pattern) : null;
+  const formDropDetected = detectFormDrop(repScores);
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#080808", color: "#fff", display: "flex", flexDirection: "column" }}>
@@ -169,6 +245,77 @@ export default function WorkoutPlayer() {
         </div>
         <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 20, color: "#FF6600" }}>{formatTime(timer)}</div>
       </div>
+
+      {/* ─── RISK WARNING BANNER ─── */}
+      {riskWarning && (
+        <div style={{
+          background: "linear-gradient(90deg, rgba(139,0,0,0.95), rgba(180,0,0,0.95))",
+          borderBottom: "2px solid #FF4444",
+          padding: "10px 20px",
+          display: "flex", alignItems: "center", gap: 12,
+          animation: "fadeIn 0.3s ease",
+        }}>
+          <span style={{ fontSize: 18 }}>⚠️</span>
+          <div>
+            <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 13, letterSpacing: 2, color: "#FF9999" }}>PANTHER ALERT</div>
+            <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 13, color: "#fff", letterSpacing: 1 }}>{riskWarning}</div>
+          </div>
+          {movementQuality !== null && (
+            <div style={{ marginLeft: "auto", textAlign: "right" }}>
+              <div style={{ fontSize: 9, letterSpacing: 2, color: "rgba(255,255,255,0.4)" }}>MOVEMENT QUALITY</div>
+              <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 20, color: movementQuality >= 70 ? "#00CC66" : "#FF4444" }}>{movementQuality}</div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ─── RECOVERY MODE BANNER ─── */}
+      {recoveryMode && (
+        <div style={{
+          background: "linear-gradient(90deg, rgba(0,80,0,0.95), rgba(0,120,0,0.95))",
+          borderBottom: "2px solid #00CC66",
+          padding: "10px 20px",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <span style={{ fontSize: 18 }}>🛡️</span>
+            <div>
+              <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 13, letterSpacing: 2, color: "#00FF88" }}>RECOVERY MODE ACTIVE</div>
+              {recoverySubstitution && (
+                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, color: "rgba(255,255,255,0.7)", letterSpacing: 1 }}>
+                  Substituted: {recoverySubstitution}
+                </div>
+              )}
+              {regressedExercise && regressedExercise !== currentEx.id && (
+                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, color: "rgba(0,255,136,0.7)", letterSpacing: 1 }}>
+                  Regressed to: {regressedExercise.replace(/_/g, " ")}
+                </div>
+              )}
+            </div>
+          </div>
+          <button
+            onClick={() => { setRecoveryMode(false); setRegressedExercise(null); }}
+            style={{ background: "none", border: "1px solid #00CC66", borderRadius: 6, color: "#00CC66", fontSize: 11, letterSpacing: 2, padding: "4px 10px", cursor: "pointer", fontFamily: "'Barlow Condensed', sans-serif" }}
+          >
+            DISMISS
+          </button>
+        </div>
+      )}
+
+      {/* ─── CORRECTIVE INJECTION BANNER ─── */}
+      {correctivesInjected.length > 0 && formDropDetected && (
+        <div style={{
+          background: "rgba(200,151,58,0.12)",
+          borderBottom: "1px solid rgba(200,151,58,0.3)",
+          padding: "8px 20px",
+          display: "flex", alignItems: "center", gap: 10,
+        }}>
+          <span style={{ fontSize: 14 }}>🦴</span>
+          <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, color: "#C8973A", letterSpacing: 1 }}>
+            Correctives queued: {correctivesInjected.slice(0, 3).map(c => c.replace(/_/g, " ")).join(" · ")}
+          </div>
+        </div>
+      )}
 
       {/* ─── EXERCISE VIDEO ─── */}
       <div style={{ position: "relative", backgroundColor: "#000", aspectRatio: "16/9" }}>

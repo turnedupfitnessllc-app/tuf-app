@@ -310,3 +310,207 @@ export function calculateSuccessScore(results: Record<SuccessMetricKey, boolean>
     }, 0)
   );
 }
+
+// ── BIOMECHANICAL RISK DETECTION ─────────────────────────────────────────────
+
+/**
+ * Detects form degradation from the last 5 rep scores.
+ * Returns true when average drops below the threshold (default 65).
+ */
+export function detectFormDrop(repScores: number[], threshold = 65): boolean {
+  if (repScores.length < 1) return false;
+  const last5 = repScores.slice(-5);
+  const avg = last5.reduce((a, b) => a + b, 0) / last5.length;
+  return avg < threshold;
+}
+
+/**
+ * Detects knee valgus (inward collapse) from 2D joint coordinates.
+ * Returns true when the knee x-position is inside the ankle x-position.
+ * Coordinates should be normalised (0–1) relative to frame width.
+ */
+export interface Joint2D { x: number; y: number }
+
+export function detectKneeCollapse(
+  hip: Joint2D,
+  knee: Joint2D,
+  ankle: Joint2D
+): boolean {
+  // Inward collapse: knee drifts medially past the ankle
+  return knee.x < ankle.x;
+}
+
+/**
+ * Determines whether the current session is high-risk.
+ * Triggers recovery mode when fatigue > 75 AND form score < 70.
+ */
+export interface RiskProfile {
+  fatigue_level: number;  // 0–100
+  form_score: number;     // 0–100
+}
+
+export function isHighRisk(profile: RiskProfile): boolean {
+  return profile.fatigue_level > 75 && profile.form_score < 70;
+}
+
+/**
+ * Returns the recovery-mode exercise substitution for a given pattern.
+ * Used by WorkoutPlayer to swap high-intensity exercises when risk is detected.
+ */
+export const RECOVERY_SUBSTITUTIONS: Record<string, string> = {
+  squat:       "Wall Sit Hold",
+  hinge:       "Glute Bridge Hold",
+  push:        "Incline Push-Up",
+  pull:        "Band Pull-Apart",
+  lunge:       "Reverse Lunge (slow tempo)",
+  rotation:    "Seated Torso Rotation",
+  locomotion:  "Slow March",
+  stability:   "Dead Bug Hold",
+};
+
+export function getRecoverySubstitution(pattern: string): string {
+  return RECOVERY_SUBSTITUTIONS[pattern] ?? "Active Rest — Deep Breathing";
+}
+
+/**
+ * Panther voice cues specific to risk events.
+ */
+export const PANTHER_RISK_CUES = {
+  formDrop:       "Form dropping. Slow down.",
+  kneeCollapse:   "Drive knees outward.",
+  highRisk:       "Recovery mode activated.",
+  backRounding:   "Fix your posture.",
+  setComplete:    "Good. Again.",
+  fatigueHigh:    "Slow it down.",
+} as const;
+
+export type RiskCueKey = keyof typeof PANTHER_RISK_CUES;
+
+export function getPantherRiskCue(key: RiskCueKey): string {
+  return PANTHER_RISK_CUES[key];
+}
+
+/**
+ * Composite real-time cue selector.
+ * Evaluates all risk signals and returns the highest-priority cue.
+ */
+export interface RealtimeRiskInput {
+  repScores: number[];
+  fatigue: number;
+  formScore: number;
+  kneeCollapse?: boolean;
+  backRounding?: boolean;
+  setCompleted?: boolean;
+}
+
+export function getPantherRealtimeCue(input: RealtimeRiskInput): string | null {
+  const { repScores, fatigue, formScore, kneeCollapse, backRounding, setCompleted } = input;
+
+  const profile: RiskProfile = { fatigue_level: fatigue, form_score: formScore };
+
+  if (isHighRisk(profile))               return PANTHER_RISK_CUES.highRisk;
+  if (detectFormDrop(repScores))         return PANTHER_RISK_CUES.formDrop;
+  if (kneeCollapse)                      return PANTHER_RISK_CUES.kneeCollapse;
+  if (backRounding)                      return PANTHER_RISK_CUES.backRounding;
+  if (fatigue > 80)                      return PANTHER_RISK_CUES.fatigueHigh;
+  if (setCompleted)                      return PANTHER_RISK_CUES.setComplete;
+  return null;
+}
+
+// ── EXERCISE REGRESSION ENGINE ────────────────────────────────────────────────
+
+/**
+ * Returns the regression (easier) version of an exercise when form drops.
+ * Extend this map as the exercise database grows.
+ */
+export const EXERCISE_REGRESSIONS: Record<string, string> = {
+  // Squat pattern
+  jump_squat:            "squat_slow",
+  squat_001:             "wall_sit",
+  squat_002:             "box_squat",
+  squat_003:             "goblet_squat",
+  // Push pattern
+  push_up:               "knee_push_up",
+  push_001:              "incline_push_up",
+  push_002:              "knee_push_up",
+  // Hinge pattern
+  deadlift:              "romanian_deadlift",
+  hinge_001:             "glute_bridge",
+  // Lunge pattern
+  lunge_001:             "reverse_lunge_slow",
+  lunge_002:             "split_squat_hold",
+  // Locomotion
+  locomotion_005:        "slow_march",
+  locomotion_006:        "step_touch",
+  // Pull pattern
+  pull_up:               "band_assisted_pull_up",
+  pull_001:              "band_row",
+};
+
+export function regressExercise(exerciseId: string): string {
+  return EXERCISE_REGRESSIONS[exerciseId] ?? exerciseId;
+}
+
+// ── MOVEMENT QUALITY SCORE ────────────────────────────────────────────────────
+
+/**
+ * Calculates 7-day rolling movement quality from an array of daily form scores.
+ * Returns a value 0–100. Uses the last 7 entries.
+ */
+export function calculateMovementQuality(formScores: number[]): number {
+  if (formScores.length === 0) return 0;
+  const last7 = formScores.slice(-7);
+  const avg = last7.reduce((a, b) => a + b, 0) / last7.length;
+  return Math.round(avg);
+}
+
+// ── CORRECTIVE INJECTION ENGINE ───────────────────────────────────────────────
+
+/**
+ * Injects corrective exercises into the workout when form score is below 70.
+ * Returns an array of corrective exercise IDs to prepend to the session.
+ */
+export interface CorrectiveProfile {
+  form_score: number;
+  ucs_risk?: boolean;   // Upper Crossed Syndrome flag
+  lcs_risk?: boolean;   // Lower Crossed Syndrome flag
+}
+
+export function injectCorrective(profile: CorrectiveProfile): string[] {
+  if (profile.form_score >= 70) return [];
+
+  const correctives: string[] = ["glute_bridge", "plank", "mobility_flow"];
+
+  // Add targeted correctives based on dysfunction flags
+  if (profile.ucs_risk) {
+    correctives.push("chin_tuck", "band_pull_apart", "thoracic_extension");
+  }
+  if (profile.lcs_risk) {
+    correctives.push("hip_flexor_stretch", "glute_activation", "dead_bug");
+  }
+
+  return correctives;
+}
+
+/**
+ * Full adaptive session builder.
+ * Combines corrective injection + regression logic for a given profile.
+ */
+export function buildAdaptiveSession(
+  exercises: string[],
+  profile: CorrectiveProfile & RiskProfile
+): { correctives: string[]; mainSession: string[]; regressions: Record<string, string> } {
+  const correctives = injectCorrective(profile);
+  const regressions: Record<string, string> = {};
+
+  const mainSession = exercises.map(id => {
+    if (isHighRisk(profile)) {
+      const regressed = regressExercise(id);
+      if (regressed !== id) regressions[id] = regressed;
+      return regressed;
+    }
+    return id;
+  });
+
+  return { correctives, mainSession, regressions };
+}
