@@ -107,79 +107,77 @@ export default function Onboarding() {
   // ── Step 0: Welcome ─────────────────────────────────────────────────────────
   if (step === 0) {
     return (
-      <div className="min-h-screen flex flex-col" style={{ background: "#080808", position: "relative", overflow: "hidden" }}>
-        {/* Panther hero image — fills top portion */}
-        <img
-          src="https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/panther-hero-cropped_6e9cb2a1.png"
-          alt="TUF Panther"
+      <div
+        className="min-h-screen flex flex-col"
+        style={{ background: "#000", position: "relative", overflow: "hidden" }}
+      >
+        {/* ── Fire video — full screen background ── */}
+        <video
+          autoPlay
+          muted
+          playsInline
+          loop
           style={{
-            position: "absolute", top: 0, left: 0, right: 0,
-            width: "100%", height: "68%",
-            objectFit: "cover", objectPosition: "top center",
+            position: "absolute", inset: 0,
+            width: "100%", height: "100%",
+            objectFit: "cover",
             zIndex: 0,
           }}
+          src="https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/_users_e72db2bb-567c-4ca9-8c2a-17e00854da58_generated_034c96d4-9ddb-40f3-8e07-3b9307c66946_generated_video_c285aaa6.mp4"
         />
-        {/* Gradient fade from panther into black */}
+
+        {/* ── Bottom gradient so UI text is readable ── */}
         <div style={{
           position: "absolute", bottom: 0, left: 0, right: 0,
-          height: "60%",
-          background: "linear-gradient(to bottom, transparent 0%, #080808 50%)",
+          height: "55%",
+          background: "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.75) 40%, #000 75%)",
           zIndex: 1,
         }} />
-        {/* Content pinned to bottom */}
-        <div className="relative mt-auto px-6 pb-10 text-center" style={{ zIndex: 2 }}>
+
+        {/* ── UI pinned to bottom ── */}
+        <div
+          className="relative mt-auto px-6 pb-10 text-center"
+          style={{ zIndex: 2, animation: "splashUIFadeIn 0.9s ease-out 1.2s both" }}
+        >
           <div className="max-w-[400px] mx-auto w-full">
-            {/* Glowing 3D UP logo */}
-            <div className="flex justify-center mb-4" style={{ position: "relative" }}>
-              <div style={{
-                position: "absolute", inset: -30,
-                background: "radial-gradient(circle, rgba(255,102,0,0.3) 0%, transparent 70%)",
-                borderRadius: "50%", pointerEvents: "none",
-                animation: "pantherPulse 2.5s ease-in-out infinite",
-              }} />
-              <img
-                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/tuf-up-logo-glow-5NGyvzw7VqJKbHXdwrPhU6.png"
-                alt="UP Logo"
-                style={{
-                  width: 200, height: "auto", position: "relative",
-                  mixBlendMode: "screen",
-                  filter: "drop-shadow(0 0 20px rgba(255,102,0,1)) drop-shadow(0 0 50px rgba(255,102,0,0.8)) drop-shadow(0 0 90px rgba(255,102,0,0.5))",
-                  animation: "logoGlowPulse 2.5s ease-in-out infinite",
-                }}
-              />
-            </div>
-            <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 18, letterSpacing: 4, color: "#FF6600", marginBottom: 4 }}>
+            <p style={{
+              fontFamily: "'Bebas Neue', sans-serif",
+              fontSize: 18, letterSpacing: 5, color: "#FF6600",
+              marginBottom: 6,
+              textShadow: "0 0 20px rgba(255,102,0,0.8)",
+            }}>
               TURNED UP FITNESS
             </p>
-            <p className="text-sm text-muted-foreground mb-2">
+            <p style={{ fontSize: 13, color: "#888", marginBottom: 4 }}>
               AI-powered coaching built for the 40+ athlete.
             </p>
-            <p className="text-xs text-muted-foreground mb-8">
+            <p style={{ fontSize: 11, color: "#555", marginBottom: 32 }}>
               Assess your movement. Correct the root cause. Train without limits.
             </p>
             <button
               onClick={() => setStep(1)}
               className="w-full py-4 rounded-2xl text-white font-black text-base tracking-wide active:scale-[0.98] transition-all"
-              style={{ background: 'linear-gradient(135deg, #FF6600, #DC2626)', boxShadow: '0 4px 24px rgba(255,102,0,0.4)' }}
+              style={{
+                background: "linear-gradient(135deg, #FF6600, #DC2626)",
+                boxShadow: "0 4px 28px rgba(255,102,0,0.5)",
+              }}
             >
               GET STARTED →
             </button>
             <button
               onClick={handleComplete}
-              className="w-full mt-3 py-3 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className="w-full mt-3 py-3 text-sm transition-colors"
+              style={{ color: "#444" }}
             >
               Skip setup
             </button>
           </div>
         </div>
+
         <style>{`
-          @keyframes logoGlowPulse {
-            0%, 100% { filter: drop-shadow(0 0 14px rgba(255,102,0,1)) drop-shadow(0 0 35px rgba(255,102,0,0.8)) drop-shadow(0 0 70px rgba(255,102,0,0.5)); }
-            50% { filter: drop-shadow(0 0 22px rgba(255,140,0,1)) drop-shadow(0 0 55px rgba(255,102,0,1)) drop-shadow(0 0 100px rgba(255,102,0,0.7)); }
-          }
-          @keyframes pantherPulse {
-            0%, 100% { opacity: 0.5; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.1); }
+          @keyframes splashUIFadeIn {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
           }
         `}</style>
       </div>
