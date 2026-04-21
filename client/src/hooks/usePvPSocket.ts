@@ -2,11 +2,10 @@
  * usePvPSocket — TUF PvP real-time challenge hook
  * © 2026 Turned Up Fitness LLC. All rights reserved.
  *
- * Connects to the Socket.io server, joins a challenge room,
- * emits rep updates, and receives live state from the server.
+ * Connects to the Socket.io server ONLY when a real challenge_id is provided.
+ * Joins the challenge room, emits rep updates, and receives live state.
  * Falls back gracefully if the socket cannot connect.
  */
-
 import { useEffect, useRef, useCallback, useState } from "react";
 import { io, Socket } from "socket.io-client";
 
@@ -19,10 +18,10 @@ export interface PvPParticipant {
   isBot?: boolean;
 }
 
-export type PvPConnectionStatus = "connecting" | "connected" | "disconnected" | "error";
+export type PvPConnectionStatus = "idle" | "connecting" | "connected" | "disconnected" | "error";
 
 interface UsePvPSocketOptions {
-  challenge_id: string;
+  challenge_id: string | null;   // null = disabled, don't connect
   user_id: string;
   name: string;
   onChallengeUpdate?: (participants: PvPParticipant[]) => void;
@@ -50,11 +49,30 @@ export function usePvPSocket({
   onBotMode,
 }: UsePvPSocketOptions): UsePvPSocketReturn {
   const socketRef = useRef<Socket | null>(null);
-  const [status, setStatus] = useState<PvPConnectionStatus>("connecting");
+  const [status, setStatus] = useState<PvPConnectionStatus>("idle");
   const [isBotMode, setIsBotMode] = useState(false);
 
+  // Store callbacks in refs so the effect doesn't re-run when they change
+  const onChallengeUpdateRef = useRef(onChallengeUpdate);
+  const onChallengeEndRef    = useRef(onChallengeEnd);
+  const onOpponentJoinedRef  = useRef(onOpponentJoined);
+  const onBotModeRef         = useRef(onBotMode);
+  useEffect(() => { onChallengeUpdateRef.current = onChallengeUpdate; }, [onChallengeUpdate]);
+  useEffect(() => { onChallengeEndRef.current    = onChallengeEnd;    }, [onChallengeEnd]);
+  useEffect(() => { onOpponentJoinedRef.current  = onOpponentJoined;  }, [onOpponentJoined]);
+  useEffect(() => { onBotModeRef.current         = onBotMode;         }, [onBotMode]);
+
+  // Re-run whenever challenge_id changes (null → real ID triggers connection)
   useEffect(() => {
-    // Connect to the same origin — Socket.io path matches server config
+    // Don't connect until we have a real challenge ID
+    if (!challenge_id) {
+      setStatus("idle");
+      return;
+    }
+
+    setStatus("connecting");
+    setIsBotMode(false);
+
     const socket = io(window.location.origin, {
       path: "/socket.io",
       transports: ["polling"],   // polling-only: reliable through all reverse proxies
@@ -66,8 +84,9 @@ export function usePvPSocket({
     socketRef.current = socket;
 
     socket.on("connect", () => {
+      console.log("[PvP] Socket connected, joining room:", challenge_id);
       setStatus("connected");
-      // Join the challenge room immediately on connect
+      // Join the challenge room with the real ID
       socket.emit("join_challenge", { challenge_id, user_id, name });
     });
 
@@ -75,42 +94,47 @@ export function usePvPSocket({
       setStatus("disconnected");
     });
 
-    socket.on("connect_error", () => {
+    socket.on("connect_error", (err) => {
+      console.error("[PvP] Socket connection error:", err.message);
       setStatus("error");
     });
 
     socket.on("challenge_update", ({ participants }: { participants: PvPParticipant[] }) => {
-      onChallengeUpdate?.(participants);
+      onChallengeUpdateRef.current?.(participants);
     });
 
     socket.on("challenge_end", ({ winner }: { winner: PvPParticipant }) => {
-      onChallengeEnd?.(winner);
+      onChallengeEndRef.current?.(winner);
     });
 
     socket.on("opponent_joined", ({ name: oppName }: { name: string }) => {
-      onOpponentJoined?.(oppName);
+      onOpponentJoinedRef.current?.(oppName);
     });
 
     socket.on("bot_mode", ({ botName }: { botName: string }) => {
+      console.log("[PvP] Bot mode activated:", botName);
       setIsBotMode(true);
-      onBotMode?.(botName);
+      onBotModeRef.current?.(botName);
     });
 
     return () => {
       socket.emit("leave_challenge", { challenge_id, user_id });
       socket.disconnect();
+      socketRef.current = null;
     };
-    // Only run on mount — challenge_id/user_id/name are stable for a session
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [challenge_id, user_id, name]); // Re-run when challenge_id arrives
 
   const sendRepUpdate = useCallback((reps: number) => {
-    socketRef.current?.emit("rep_update", { challenge_id, user_id, reps });
+    if (socketRef.current && challenge_id) {
+      socketRef.current.emit("rep_update", { challenge_id, user_id, reps });
+    }
   }, [challenge_id, user_id]);
 
   const leaveChallenge = useCallback(() => {
-    socketRef.current?.emit("leave_challenge", { challenge_id, user_id });
-    socketRef.current?.disconnect();
+    if (socketRef.current && challenge_id) {
+      socketRef.current.emit("leave_challenge", { challenge_id, user_id });
+      socketRef.current.disconnect();
+    }
   }, [challenge_id, user_id]);
 
   return {

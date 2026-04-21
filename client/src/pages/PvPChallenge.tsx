@@ -48,38 +48,28 @@ export default function PvPChallenge() {
   const timerRef    = useRef<ReturnType<typeof setInterval> | null>(null);
   const myRepsRef   = useRef(0);
 
-  // ── Socket hook (only active once we have a challengeId) ───────────────────
-  const socketEnabled = !!challengeId && phase !== "select";
-
-  const { sendRepUpdate, leaveChallenge } = usePvPSocket(
-    socketEnabled
-      ? {
-          challenge_id: challengeId!,
-          user_id: userId,
-          name: userName,
-          onChallengeUpdate: (parts) => {
-            setParticipants(parts);
-          },
-          onChallengeEnd: (w) => {
-            setWinner(w);
-            handleEnd(w);
-          },
-          onOpponentJoined: (oppName) => {
-            setStatusMsg(`${oppName} joined — GET READY`);
-            startCountdown();
-          },
-          onBotMode: (botName) => {
-            setIsBotMode(true);
-            setStatusMsg(`No opponent found — ${botName} (BOT) steps up`);
-            startCountdown();
-          },
-        }
-      : {
-          challenge_id: "__disabled__",
-          user_id: userId,
-          name: userName,
-        }
-  );
+  // ── Socket hook — challenge_id=null = idle, real ID triggers connection ──────
+  const { sendRepUpdate, leaveChallenge } = usePvPSocket({
+    challenge_id: challengeId,   // null until challenge is issued
+    user_id: userId,
+    name: userName,
+    onChallengeUpdate: (parts) => {
+      setParticipants(parts);
+    },
+    onChallengeEnd: (w) => {
+      setWinner(w);
+      handleEnd(w);
+    },
+    onOpponentJoined: (oppName) => {
+      setStatusMsg(`${oppName} joined — GET READY`);
+      startCountdown();
+    },
+    onBotMode: (botName) => {
+      setIsBotMode(true);
+      setStatusMsg(`No opponent found — ${botName} (BOT) steps up`);
+      startCountdown();
+    },
+  });
 
   // ── Issue challenge via API ────────────────────────────────────────────────
   const issueChallenge = useCallback(async () => {
