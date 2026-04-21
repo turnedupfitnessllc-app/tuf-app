@@ -107,46 +107,80 @@ export default function Onboarding() {
   // ── Step 0: Welcome ─────────────────────────────────────────────────────────
   if (step === 0) {
     return (
-      <div className="min-h-screen bg-[#080808] flex flex-col items-center justify-center px-6 text-center">
-        <div className="max-w-[400px] w-full">
-          <div className="flex justify-center mb-6" style={{ position: "relative" }}>
-            <div style={{
-              position: "absolute", inset: -40,
-              background: "radial-gradient(circle, rgba(255,102,0,0.18) 0%, transparent 65%)",
-              borderRadius: "50%", pointerEvents: "none",
-            }} />
-            <span style={{
-              fontFamily: "'Bebas Neue', sans-serif", fontSize: 120, lineHeight: 1,
-              color: "#FF6600", letterSpacing: "-0.02em",
-              textShadow: "0 0 20px rgba(255,102,0,0.95), 0 0 50px rgba(255,102,0,0.65), 0 0 100px rgba(255,102,0,0.35)",
-              position: "relative",
-            }}>UP</span>
+      <div className="min-h-screen flex flex-col" style={{ background: "#080808", position: "relative", overflow: "hidden" }}>
+        {/* Panther hero image — fills top portion */}
+        <img
+          src="https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/panther-hero-cropped_6e9cb2a1.png"
+          alt="TUF Panther"
+          style={{
+            position: "absolute", top: 0, left: 0, right: 0,
+            width: "100%", height: "68%",
+            objectFit: "cover", objectPosition: "top center",
+            zIndex: 0,
+          }}
+        />
+        {/* Gradient fade from panther into black */}
+        <div style={{
+          position: "absolute", bottom: 0, left: 0, right: 0,
+          height: "60%",
+          background: "linear-gradient(to bottom, transparent 0%, #080808 50%)",
+          zIndex: 1,
+        }} />
+        {/* Content pinned to bottom */}
+        <div className="relative mt-auto px-6 pb-10 text-center" style={{ zIndex: 2 }}>
+          <div className="max-w-[400px] mx-auto w-full">
+            {/* Glowing 3D UP logo */}
+            <div className="flex justify-center mb-4" style={{ position: "relative" }}>
+              <div style={{
+                position: "absolute", inset: -30,
+                background: "radial-gradient(circle, rgba(255,102,0,0.3) 0%, transparent 70%)",
+                borderRadius: "50%", pointerEvents: "none",
+                animation: "pantherPulse 2.5s ease-in-out infinite",
+              }} />
+              <img
+                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/tuf-logo-3d_2c7bc118.png"
+                alt="UP Logo"
+                style={{
+                  width: 130, height: "auto", position: "relative",
+                  filter: "drop-shadow(0 0 14px rgba(255,102,0,1)) drop-shadow(0 0 35px rgba(255,102,0,0.8)) drop-shadow(0 0 70px rgba(255,102,0,0.5))",
+                  animation: "logoGlowPulse 2.5s ease-in-out infinite",
+                }}
+              />
+            </div>
+            <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 18, letterSpacing: 4, color: "#FF6600", marginBottom: 4 }}>
+              TURNED UP FITNESS
+            </p>
+            <p className="text-sm text-muted-foreground mb-2">
+              AI-powered coaching built for the 40+ athlete.
+            </p>
+            <p className="text-xs text-muted-foreground mb-8">
+              Assess your movement. Correct the root cause. Train without limits.
+            </p>
+            <button
+              onClick={() => setStep(1)}
+              className="w-full py-4 rounded-2xl text-white font-black text-base tracking-wide active:scale-[0.98] transition-all"
+              style={{ background: 'linear-gradient(135deg, #FF6600, #DC2626)', boxShadow: '0 4px 24px rgba(255,102,0,0.4)' }}
+            >
+              GET STARTED →
+            </button>
+            <button
+              onClick={handleComplete}
+              className="w-full mt-3 py-3 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Skip setup
+            </button>
           </div>
-          <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 18, letterSpacing: 4, color: "#FF6600", marginBottom: 4 }}>
-            TURNED UP FITNESS
-          </p>
-          <p className="text-sm text-muted-foreground mb-2">
-            AI-powered coaching built for the 40+ athlete.
-          </p>
-          <p className="text-xs text-muted-foreground mb-8">
-            Assess your movement. Correct the root cause. Train without limits.
-          </p>
-
-          <button
-            onClick={() => setStep(1)}
-            className="w-full py-4 rounded-2xl text-white font-black text-base tracking-wide active:scale-[0.98] transition-all"
-            style={{ background: 'linear-gradient(135deg, #FF6600, #DC2626)', boxShadow: '0 4px 24px rgba(255,102,0,0.4)' }}
-          >
-            GET STARTED →
-          </button>
-
-          <button
-            onClick={handleComplete}
-            className="w-full mt-3 py-3 text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Skip setup
-          </button>
         </div>
+        <style>{`
+          @keyframes logoGlowPulse {
+            0%, 100% { filter: drop-shadow(0 0 14px rgba(255,102,0,1)) drop-shadow(0 0 35px rgba(255,102,0,0.8)) drop-shadow(0 0 70px rgba(255,102,0,0.5)); }
+            50% { filter: drop-shadow(0 0 22px rgba(255,140,0,1)) drop-shadow(0 0 55px rgba(255,102,0,1)) drop-shadow(0 0 100px rgba(255,102,0,0.7)); }
+          }
+          @keyframes pantherPulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+          }
+        `}</style>
       </div>
     );
   }
