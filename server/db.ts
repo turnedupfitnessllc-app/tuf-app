@@ -336,6 +336,9 @@ interface DbSchema {
   meal_plans: WeeklyMealPlan[];
   voice_jobs: VoiceJob[];
   user_progress: UserProgress[];
+  pvp_challenges: PvPChallenge[];
+  rep_logs: RepLog[];
+  mps_entries: MPSEntry[];
 }
 
 const defaultData: DbSchema = {
@@ -354,6 +357,9 @@ const defaultData: DbSchema = {
   meal_plans: [],
   voice_jobs: [],
   user_progress: [],
+  pvp_challenges: [],
+  rep_logs: [],
+  mps_entries: [],
 };
 
 // ─── DB Singleton ─────────────────────────────────────────────────────────────
@@ -377,6 +383,9 @@ async function getDb(): Promise<Low<DbSchema>> {
   if (!_db.data.meal_plans) _db.data.meal_plans = [];
   if (!_db.data.voice_jobs) _db.data.voice_jobs = [];
   if (!_db.data.user_progress) _db.data.user_progress = [];
+  if (!_db.data.pvp_challenges) _db.data.pvp_challenges = [];
+  if (!_db.data.rep_logs) _db.data.rep_logs = [];
+  if (!_db.data.mps_entries) _db.data.mps_entries = [];
   await _db.write();
   return _db;
 }
@@ -944,7 +953,57 @@ export async function markMealPlanViewed(planId: string): Promise<void> {
   }
 }
 
-// ─── Voice Jobs ──────────────────────────────────────────────────────────────
+/// ─── PvP Challenge Types ─────────────────────────────────────────────────────
+
+export type ChallengeStatus = "pending" | "active" | "completed" | "expired" | "declined";
+
+export interface PvPChallenge {
+  challenge_id: string;
+  challenger_id: string;
+  challenger_name: string;
+  opponent_id: string;
+  opponent_name: string;
+  exercise_id: string;
+  exercise_name: string;
+  target_reps: number;
+  time_limit_seconds: number;
+  wager_xp: number;
+  status: ChallengeStatus;
+  challenger_score?: number;
+  opponent_score?: number;
+  winner_id?: string;
+  created_at: number;
+  expires_at: number;
+  completed_at?: number;
+}
+
+// ─── Rep Log Types ───────────────────────────────────────────────────────────
+
+export interface RepLog {
+  rep_id: string;
+  session_id: string;
+  user_id: string;
+  exercise_id: string;
+  rep_number: number;
+  form_score: number;
+  timestamp: number;
+}
+
+// ─── MPS (Movement Performance Score) ───────────────────────────────────────
+
+export interface MPSEntry {
+  entry_id: string;
+  user_id: string;
+  session_id: string;
+  mps_points: number;
+  form_grade: "A" | "B" | "C" | "D" | "F";
+  avg_form_score: number;
+  total_reps: number;
+  interventions: number;
+  date: number;
+}
+
+// ─── Voice Jobs ────────────────────────────────────────────────────────────
 
 export interface VoiceJob {
   job_id: string;
@@ -1249,4 +1308,80 @@ export async function getReferralStats(referrer_id: string): Promise<{
     conversions: code?.conversions ?? 0,
     xp_earned:   (code?.conversions ?? 0) * 100,
   };
+}
+
+// ─── PvP Challenge CRUD ───────────────────────────────────────────────────────
+
+export async function savePvPChallenge(challenge: PvPChallenge): Promise<PvPChallenge> {
+  const db = await getDb();
+  const idx = db.data.pvp_challenges.findIndex(c => c.challenge_id === challenge.challenge_id);
+  if (idx >= 0) {
+    db.data.pvp_challenges[idx] = challenge;
+  } else {
+    db.data.pvp_challenges.push(challenge);
+  }
+  await db.write();
+  return challenge;
+}
+
+export async function getPvPChallenge(challenge_id: string): Promise<PvPChallenge | undefined> {
+  const db = await getDb();
+  return db.data.pvp_challenges.find(c => c.challenge_id === challenge_id);
+}
+
+export async function getAllPvPChallenges(user_id: string): Promise<PvPChallenge[]> {
+  const db = await getDb();
+  return db.data.pvp_challenges.filter(
+    c => c.challenger_id === user_id || c.opponent_id === user_id
+  );
+}
+
+export async function getAllPvPChallengesGlobal(): Promise<PvPChallenge[]> {
+  const db = await getDb();
+  return db.data.pvp_challenges;
+}
+
+// ─── MPS Entry CRUD ───────────────────────────────────────────────────────────
+
+export async function saveMPSEntry(entry: MPSEntry): Promise<MPSEntry> {
+  const db = await getDb();
+  db.data.mps_entries.push(entry);
+  await db.write();
+  return entry;
+}
+
+export async function getMPSEntriesForUser(user_id: string): Promise<MPSEntry[]> {
+  const db = await getDb();
+  return db.data.mps_entries
+    .filter(e => e.user_id === user_id)
+    .sort((a, b) => b.date - a.date);
+}
+
+export async function getAllMPSEntries(): Promise<MPSEntry[]> {
+  const db = await getDb();
+  return db.data.mps_entries;
+}
+
+// ─── Rep Log CRUD ─────────────────────────────────────────────────────────────
+
+export async function saveRepLog(log: RepLog): Promise<RepLog> {
+  const db = await getDb();
+  db.data.rep_logs.push(log);
+  await db.write();
+  return log;
+}
+
+export async function getRepLogsForSession(session_id: string): Promise<RepLog[]> {
+  const db = await getDb();
+  return db.data.rep_logs
+    .filter(r => r.session_id === session_id)
+    .sort((a, b) => a.rep_number - b.rep_number);
+}
+
+// ─── All User Progress (for leaderboard) ─────────────────────────────────────
+
+export async function getAllUserProgress(): Promise<UserProgress[]> {
+  const db = await getDb();
+  const raw = (db.data as unknown) as Record<string, unknown>;
+  return (raw.user_program_states ?? db.data.user_progress ?? []) as UserProgress[];
 }
