@@ -19,21 +19,24 @@ const NAV_ITEMS: NavItem[] = [
   { label: "HOME",           path: "/",              icon: "⚡", group: "PRIMARY" },
   { label: "DAILY WORKOUT",  path: "/move",           icon: "🏋️", group: "PRIMARY" },
   { label: "PANTHER BRAIN",  path: "/panther-brain",  icon: "🐆", group: "PRIMARY" },
-  { label: "FUEL",           path: "/fuel",           icon: "🔥", group: "PRIMARY" },
+  // Fuel
+  { label: "FUEL TRACKER",   path: "/fuel",           icon: "🔥", group: "FUEL" },
+  { label: "TUTK RECIPES",   path: "/feast",          icon: "🍽️", group: "FUEL" },
+  { label: "FUEL LOG",       path: "/fuel-track",     icon: "📊", group: "FUEL" },
   // Train
-  { label: "PROGRAMS",       path: "/programmes",     icon: "📋", group: "TRAIN" },
+  { label: "PROGRAMS",       path: "/programs",       icon: "📋", group: "TRAIN" },
   { label: "BOA SCAN",       path: "/boa",            icon: "👁️", group: "TRAIN" },
   { label: "PROGRESS",       path: "/progress",       icon: "📈", group: "TRAIN" },
-  { label: "CATALOGUE",      path: "/catalogue",      icon: "🗂️", group: "TRAIN" },
+  { label: "HEALTH INTEL",   path: "/health-intel",   icon: "🧬", group: "TRAIN" },
   // Compete
   { label: "PvP CHALLENGE",  path: "/pvp",            icon: "⚔️", group: "COMPETE" },
   { label: "SEASON BOARD",   path: "/season",         icon: "🏆", group: "COMPETE" },
+  { label: "LEADERBOARD",    path: "/leaderboard",    icon: "🥇", group: "COMPETE" },
   // Account
   { label: "MEMBERSHIP",     path: "/membership",     icon: "💎", group: "ACCOUNT" },
-  { label: "SCHEDULE",       path: "/schedule",       icon: "📅", group: "ACCOUNT" },
 ];
 
-const GROUPS = ["PRIMARY", "TRAIN", "COMPETE", "ACCOUNT"];
+const GROUPS = ["PRIMARY", "FUEL", "TRAIN", "COMPETE", "ACCOUNT"];
 
 interface HamburgerDrawerProps {
   /** If true, renders as a standalone demo (no real navigation) */
