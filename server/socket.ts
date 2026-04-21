@@ -133,8 +133,13 @@ export function attachSocketIO(httpServer: HTTPServer) {
     cors: {
       origin: "*",
       methods: ["GET", "POST"],
+      credentials: false,
     },
     path: "/socket.io",
+    allowEIO3: true,             // backwards compat
+    transports: ["polling", "websocket"],
+    pingTimeout: 30000,
+    pingInterval: 10000,
   });
 
   io.on("connection", (socket) => {

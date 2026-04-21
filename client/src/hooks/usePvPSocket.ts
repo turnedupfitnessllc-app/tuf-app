@@ -57,9 +57,10 @@ export function usePvPSocket({
     // Connect to the same origin — Socket.io path matches server config
     const socket = io(window.location.origin, {
       path: "/socket.io",
-      transports: ["websocket", "polling"],
-      reconnectionAttempts: 3,
+      transports: ["polling"],   // polling-only: reliable through all reverse proxies
+      reconnectionAttempts: 5,
       reconnectionDelay: 1000,
+      timeout: 10000,
     });
 
     socketRef.current = socket;
