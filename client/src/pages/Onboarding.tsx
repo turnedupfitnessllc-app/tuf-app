@@ -138,11 +138,12 @@ export default function Onboarding() {
                 animation: "pantherPulse 2.5s ease-in-out infinite",
               }} />
               <img
-                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/tuf-logo-3d_2c7bc118.png"
+                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/tuf-up-logo-glow-5NGyvzw7VqJKbHXdwrPhU6.png"
                 alt="UP Logo"
                 style={{
-                  width: 130, height: "auto", position: "relative",
-                  filter: "drop-shadow(0 0 14px rgba(255,102,0,1)) drop-shadow(0 0 35px rgba(255,102,0,0.8)) drop-shadow(0 0 70px rgba(255,102,0,0.5))",
+                  width: 200, height: "auto", position: "relative",
+                  mixBlendMode: "screen",
+                  filter: "drop-shadow(0 0 20px rgba(255,102,0,1)) drop-shadow(0 0 50px rgba(255,102,0,0.8)) drop-shadow(0 0 90px rgba(255,102,0,0.5))",
                   animation: "logoGlowPulse 2.5s ease-in-out infinite",
                 }}
               />
