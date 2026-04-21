@@ -232,12 +232,75 @@ export default function PantherBrain() {
         @keyframes dot     { 0%,100%{opacity:0.2;transform:scale(0.7)} 50%{opacity:1;transform:scale(1)} }
         @keyframes pulse   { 0%,100%{opacity:0.6;transform:scale(1)} 50%{opacity:1;transform:scale(1.08)} }
         .voice-btn:hover { opacity: 0.85 !important; }
+        @keyframes pantherWake {
+          0%   { opacity:0; transform: scale(1.06) translateY(10px); filter: brightness(0.05) saturate(0); }
+          35%  { opacity:0.5; filter: brightness(0.2) saturate(0.4); }
+          70%  { opacity:1; transform: scale(1.01) translateY(2px); filter: brightness(0.35) saturate(1.3); }
+          100% { opacity:1; transform: scale(1) translateY(0); filter: brightness(0.35) saturate(1.3); }
+        }
+        @keyframes eyeGlow {
+          0%,100% { opacity: 0.5; transform: scale(1); }
+          50%     { opacity: 1; transform: scale(1.04); }
+        }
+        @keyframes heroScan {
+          0%   { top: 0%; opacity: 0; }
+          5%   { opacity: 0.5; }
+          95%  { opacity: 0.5; }
+          100% { top: 100%; opacity: 0; }
+        }
+        @keyframes wakeSlide {
+          from { opacity: 0; transform: translateX(-16px); }
+          to   { opacity: 1; transform: translateX(0); }
+        }
+        .panther-wake  { animation: pantherWake 2s cubic-bezier(0.4,0,0.2,1) both; }
+        .eye-glow      { animation: eyeGlow 3s ease-in-out infinite; }
+        .hero-scan     { animation: heroScan 4s ease-in-out 2s infinite; }
+        .wake-slide    { animation: wakeSlide 0.6s cubic-bezier(0.4,0,0.2,1) 0.8s both; }
       `}</style>
 
       <div style={{ maxWidth: 480, margin: "0 auto", width: "100%", display: "flex", flexDirection: "column", height: "100vh" }}>
 
-        {/* SCENE 1 — HOOK: Panther header */}
-        <div style={{ padding: "72px 16px 8px", flexShrink: 0 }}>
+        {/* SCENE 1 — HOOK: Panther header with cinematic wake-up */}
+        <div style={{ padding: "0 0 8px", flexShrink: 0 }}>
+          {/* Cinematic hero banner */}
+          <div style={{
+            position: "relative", width: "100%", height: 180,
+            overflow: "hidden", marginBottom: 12,
+          }}>
+            <img
+              src="https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/panther-mascot-gym_27e64ae1.png"
+              alt="Panther"
+              className="panther-wake"
+              style={{
+                position: "absolute", inset: 0,
+                width: "100%", height: "100%",
+                objectFit: "cover", objectPosition: "center 18%",
+              }}
+            />
+            {/* Gradient overlays */}
+            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 60%, transparent 100%)" }} />
+            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "50%", background: "linear-gradient(to top, var(--bg-primary, #0B0B0B) 0%, transparent 100%)" }} />
+            {/* Neon eye glow */}
+            <div className="eye-glow" style={{
+              position: "absolute", right: "22%", top: "42%",
+              transform: "translate(50%, -50%)",
+              width: 90, height: 50,
+              background: "radial-gradient(ellipse, rgba(0,255,198,0.5) 0%, rgba(0,255,198,0.1) 55%, transparent 80%)",
+              borderRadius: "50%", pointerEvents: "none",
+            }} />
+            {/* Scan line */}
+            <div className="hero-scan" style={{
+              position: "absolute", left: 0, right: 0, height: 1,
+              background: "linear-gradient(to right, transparent, rgba(0,255,198,0.6), transparent)",
+              pointerEvents: "none",
+            }} />
+            {/* Text overlay */}
+            <div className="wake-slide" style={{ position: "absolute", bottom: 20, left: 16 }}>
+              <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, fontWeight: 800, letterSpacing: "0.3em", color: "rgba(0,255,198,0.6)", marginBottom: 3 }}>PANTHER AI</div>
+              <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 28, letterSpacing: "0.05em", color: "#fff", lineHeight: 1 }}>ONLINE. <span style={{ color: "#00FFC6" }}>LOCKED IN.</span></div>
+            </div>
+          </div>
+          <div style={{ padding: "0 16px" }}>
           {/* Back to Home */}
           <button
             onClick={() => navigate("/")}
@@ -290,8 +353,8 @@ export default function PantherBrain() {
               <XPBar xp={progress.xp || 0} stage={getStageFromXP(progress.xp || 0)} />
             </div>
           </div>
+          </div>{/* end padding wrapper */}
         </div>
-
         {/* SCENES 2-5 — Messages */}
         <div style={{
           flex: 1, overflowY: "auto", padding: "8px 16px",

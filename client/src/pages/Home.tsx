@@ -90,6 +90,18 @@ export default function Home() {
           50%     { box-shadow: 0 0 30px rgba(0,255,198,0.8), inset 0 0 18px rgba(0,255,198,0.14); }
         }
         @keyframes haloPulse { 0%,100%{opacity:1} 50%{opacity:0.55} }
+        @keyframes heroBreathe {
+          0%,100% { transform: scale(1);    filter: brightness(0.4) saturate(1.2); }
+          50%     { transform: scale(1.025); filter: brightness(0.45) saturate(1.4); }
+        }
+        @keyframes heroScanLine {
+          0%   { top: 0%;   opacity: 0; }
+          5%   { opacity: 0.4; }
+          95%  { opacity: 0.4; }
+          100% { top: 100%; opacity: 0; }
+        }
+        .hero-breathe  { animation: heroBreathe 5s ease-in-out infinite; }
+        .hero-scanline { animation: heroScanLine 6s ease-in-out 3s infinite; }
 
         .tuf-home { animation: fadeUp 0.4s ease both; }
         .quick-action {
@@ -151,13 +163,19 @@ export default function Home() {
             <img
               src={PANTHER_MASCOT}
               alt="TUF Panther"
+              className="hero-breathe"
               style={{
                 position: "absolute", inset: 0,
                 width: "100%", height: "100%",
                 objectFit: "cover", objectPosition: "center 15%",
-                filter: "brightness(0.4) saturate(1.2)",
               }}
             />
+            {/* Slow scan line — Panther is watching */}
+            <div className="hero-scanline" style={{
+              position: "absolute", left: 0, right: 0, height: 1,
+              background: "linear-gradient(to right, transparent, rgba(0,255,198,0.5), transparent)",
+              pointerEvents: "none",
+            }} />
             <div style={{
               position: "absolute", inset: 0,
               background: "linear-gradient(to right, rgba(11,11,11,0.9) 0%, rgba(11,11,11,0.3) 55%, transparent 100%)",

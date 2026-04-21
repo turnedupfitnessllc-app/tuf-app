@@ -9,6 +9,7 @@ import { haptics } from "@/utils/haptics";
 import { usePantherVoice } from "@/hooks/usePantherVoice";
 import { useCoachMode } from "@/hooks/useCoachMode";
 import CoachModeSelector from "@/components/CoachModeSelector";
+import PantherCueOverlay from "@/components/PantherCueOverlay";
 import {
   EXERCISE_DATABASE, PANTHER_VOICE, getPantherVoiceLine, generateWorkout,
   detectFormDrop, isHighRisk, getRecoverySubstitution, getPantherRealtimeCue,
@@ -63,6 +64,7 @@ export default function WorkoutPlayer() {
   const [timerRunning, setTimerRunning] = useState(false);
   const [restTimer, setRestTimer] = useState<number | null>(null);
   const [voiceLine, setVoiceLine] = useState<string>("Lock in.");
+  const [showCueOverlay, setShowCueOverlay] = useState(false);
   const [formScore, setFormScore] = useState<FormScore>(null);
   const [showComplete, setShowComplete] = useState(false);
   const [totalXP, setTotalXP] = useState(0);
@@ -164,6 +166,7 @@ export default function WorkoutPlayer() {
           setVoiceLine(cue);
           setRiskWarning(cue);
           speak(cue);
+          setShowCueOverlay(true);
           haptics.medium();
           if (riskWarningTimer.current) clearTimeout(riskWarningTimer.current);
           riskWarningTimer.current = setTimeout(() => setRiskWarning(null), 4000);
@@ -195,6 +198,7 @@ export default function WorkoutPlayer() {
         const line = getCue("mid");
         setVoiceLine(line);
         speak(line);
+        setShowCueOverlay(true);
       }
       return next;
     });
@@ -251,6 +255,11 @@ export default function WorkoutPlayer() {
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#080808", color: "#fff", display: "flex", flexDirection: "column" }}>
+      <PantherCueOverlay
+        cue={voiceLine}
+        visible={showCueOverlay}
+        onHide={() => setShowCueOverlay(false)}
+      />
       <style>{`
         @keyframes repPulse { 0%{transform:scale(1)} 50%{transform:scale(1.08)} 100%{transform:scale(1)} }
         @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
