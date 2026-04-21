@@ -5,6 +5,7 @@
  * © 2026 Turned Up Fitness LLC. All rights reserved.
  */
 import { useState, useEffect, useRef, useCallback } from "react";
+import HamburgerDrawer from "@/components/HamburgerDrawer";
 import { useLocation } from "wouter";
 import { usePvPSocket } from "../hooks/usePvPSocket";
 import type { PvPParticipant } from "../hooks/usePvPSocket";
@@ -225,12 +226,17 @@ export default function PvPChallenge() {
         .pvp-pulse { animation: pulse 1.5s ease infinite; }
       `}</style>
 
+      {/* Sticky header with hamburger */}
+      <div style={{ position: "sticky", top: 0, zIndex: 200, background: "rgba(8,8,8,0.92)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(0,255,198,0.1)", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 16px", height: 56 }}>
+        <HamburgerDrawer />
+        <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 15, fontWeight: 800, letterSpacing: "0.14em", color: "#fff", textTransform: "uppercase" }}>PvP CHALLENGE</span>
+        <div style={{ width: 44 }} />
+      </div>
       <main className="pvp-fade" style={{ maxWidth: 480, margin: "0 auto", padding: "0 16px" }}>
 
         {/* ─── HEADER ─── */}
         <div style={{ display: "flex", alignItems: "center", gap: 12, paddingTop: 20, marginBottom: 20 }}>
-          <button onClick={() => { resetToSelect(); navigate("/"); }}
-            style={{ background: "none", border: "none", color: "#888", cursor: "pointer", fontSize: 20 }}>←</button>
+          <div style={{ width: 44 }} />
           <div>
             <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, letterSpacing: 4, color: "#FF6600" }}>
               {isBotMode ? "BOT CHALLENGE" : "LIVE CHALLENGE"}

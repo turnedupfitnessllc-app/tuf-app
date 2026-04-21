@@ -4,6 +4,7 @@
  */
 
 import { useState } from "react";
+import HamburgerDrawer from "@/components/HamburgerDrawer";
 import {
   tutkRecipes,
   conditionModifications,
@@ -58,6 +59,12 @@ export default function Fuel() {
 
   return (
     <div className="min-h-screen pb-24" style={{ background: "var(--bg-primary)" }}>
+      {/* Sticky header with hamburger */}
+      <div className="sticky top-0 z-30" style={{ background: "rgba(8,8,8,0.92)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(0,255,198,0.1)", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 16px", height: 56 }}>
+        <HamburgerDrawer />
+        <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 15, fontWeight: 800, letterSpacing: "0.14em", color: "#fff", textTransform: "uppercase" }}>TUTK FUEL</span>
+        <div style={{ width: 44 }} />
+      </div>
       {/* Header */}
       <div className="px-4 pt-6 pb-4">
         <div className="flex items-center justify-between mb-1">

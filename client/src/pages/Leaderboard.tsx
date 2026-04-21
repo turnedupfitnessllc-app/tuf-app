@@ -6,6 +6,7 @@
 
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
+import HamburgerDrawer from "@/components/HamburgerDrawer";
 
 interface LeaderboardEntry {
   user_id: string;
@@ -62,22 +63,13 @@ export default function Leaderboard() {
         @keyframes pulse { 0%,100%{opacity:0.6} 50%{opacity:1} }
       `}</style>
 
-      <main style={{ maxWidth: 480, margin: "0 auto", padding: "72px 16px 0" }}>
-        {/* Back button */}
-        <button
-          onClick={() => navigate("/evolve")}
-          style={{
-            display: "flex", alignItems: "center", gap: 6,
-            padding: "6px 12px", marginBottom: 20, borderRadius: 8,
-            border: "1px solid rgba(255,255,255,0.08)",
-            background: "rgba(255,255,255,0.03)",
-            fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11,
-            fontWeight: 700, letterSpacing: "0.1em",
-            color: "rgba(255,255,255,0.45)", cursor: "pointer",
-          }}
-        >
-          ← EVOLVE
-        </button>
+      {/* Sticky header with hamburger */}
+      <div style={{ position: "sticky", top: 0, zIndex: 200, background: "rgba(0,0,0,0.92)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(0,255,198,0.1)", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 16px", height: 56 }}>
+        <HamburgerDrawer />
+        <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 15, fontWeight: 800, letterSpacing: "0.14em", color: "#fff", textTransform: "uppercase" }}>LEADERBOARD</span>
+        <div style={{ width: 44 }} />
+      </div>
+      <main style={{ maxWidth: 480, margin: "0 auto", padding: "24px 16px 0" }}>
 
         {/* Header */}
         <div style={{ marginBottom: 24, animation: "fadeUp 0.4s ease forwards" }}>

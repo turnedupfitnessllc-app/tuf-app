@@ -11,6 +11,7 @@
  */
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
+import HamburgerDrawer from "@/components/HamburgerDrawer";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface AgeGroupStat {
@@ -101,14 +102,14 @@ export default function HealthIntel() {
         .hi-pill { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; }
       `}</style>
 
+      {/* Sticky header with hamburger */}
+      <div style={{ position: "sticky", top: 0, zIndex: 200, background: "rgba(8,8,8,0.92)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(0,255,198,0.1)", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 16px", height: 56 }}>
+        <HamburgerDrawer />
+        <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 15, fontWeight: 800, letterSpacing: "0.14em", color: "#fff", textTransform: "uppercase" }}>HEALTH INTEL</span>
+        <div style={{ width: 44 }} />
+      </div>
       {/* ─── HEADER ─── */}
       <div style={{ padding: "16px 20px 8px", maxWidth: 480, margin: "0 auto" }}>
-        <button
-          onClick={() => navigate("/")}
-          style={{ background: "none", border: "none", color: "var(--text-tertiary)", fontFamily: "'Barlow Condensed',sans-serif", fontSize: 13, fontWeight: 700, letterSpacing: "0.12em", cursor: "pointer", padding: 0, marginBottom: 16 }}
-        >
-          ← HOME
-        </button>
 
         <div style={{ marginBottom: 4 }}>
           <span style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 28, color: "var(--accent-primary)", letterSpacing: "0.05em" }}>

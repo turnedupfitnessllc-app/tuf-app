@@ -19,6 +19,7 @@ import {
   Search,
 } from "lucide-react";
 import { tutkRecipes, type Recipe } from "@/data/tutkRecipes";
+import HamburgerDrawer from "@/components/HamburgerDrawer";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -388,12 +389,7 @@ export default function Feast() {
       {/* Header */}
       <div className="sticky top-0 z-30 bg-[#0a0a0a]/95 backdrop-blur border-b border-white/5">
         <div className="flex items-center gap-3 px-4 py-3">
-          <button
-            onClick={() => navigate("/")}
-            className="text-gray-400 hover:text-white transition-colors"
-          >
-            <ArrowLeft size={20} />
-          </button>
+          <HamburgerDrawer />
           <div>
             <div className="text-xs font-bold text-orange-400 tracking-widest">THE PANTHER SYSTEM</div>
             <div className="text-lg font-black text-white leading-none">FEAST</div>

@@ -5,6 +5,7 @@
  */
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
+import HamburgerDrawer from "@/components/HamburgerDrawer";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -102,11 +103,17 @@ export default function SeasonLeaderboard() {
         .sl-fade { animation: fadeUp 0.4s ease both; }
       `}</style>
 
+      {/* Sticky header with hamburger */}
+      <div style={{ position: "sticky", top: 0, zIndex: 200, background: "rgba(8,8,8,0.92)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(0,255,198,0.1)", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 16px", height: 56 }}>
+        <HamburgerDrawer />
+        <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 15, fontWeight: 800, letterSpacing: "0.14em", color: "#fff", textTransform: "uppercase" }}>SEASON LEADERBOARD</span>
+        <div style={{ width: 44 }} />
+      </div>
       <main className="sl-fade" style={{ maxWidth: 480, margin: "0 auto", padding: "0 16px" }}>
 
         {/* ─── HEADER ─── */}
         <div style={{ display: "flex", alignItems: "center", gap: 12, paddingTop: 20, marginBottom: 8 }}>
-          <button onClick={() => navigate("/")} style={{ background: "none", border: "none", color: "#888", cursor: "pointer", fontSize: 20 }}>←</button>
+          <div style={{ width: 44 }} />
           <div>
             <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, letterSpacing: 4, color: "#FF6600" }}>SEASON 01 · APRIL 2026</div>
             <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 32, letterSpacing: 2, lineHeight: 1, color: "#fff" }}>LEADERBOARD</div>

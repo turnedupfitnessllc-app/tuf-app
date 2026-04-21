@@ -29,6 +29,8 @@ const TIER_PRICES: Record<Tier, string> = {
 };
 
 function getCurrentTier(): Tier {
+  // Dev mode bypass — unlock all pages for testing
+  if (localStorage.getItem("tuf_dev_mode") === "true") return "pro";
   return (localStorage.getItem("tuf_tier") as Tier) || "free";
 }
 

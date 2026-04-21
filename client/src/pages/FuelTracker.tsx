@@ -15,6 +15,7 @@
  */
 
 import { useState, useEffect, useCallback, useMemo } from "react";
+import HamburgerDrawer from "@/components/HamburgerDrawer";
 import { useLocation } from "wouter";
 import { tutkRecipes, type Recipe } from "@/data/tutkRecipes";
 
@@ -424,13 +425,7 @@ export default function FuelTracker() {
 
       {/* Header */}
       <div className="sticky top-0 z-40 bg-black/95 border-b border-white/10 px-4 py-3 flex items-center justify-between">
-        <button onClick={() => navigate("/")}
-          className="flex items-center gap-1.5 text-white/50 hover:text-white text-xs font-bold tracking-wider transition-colors">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <path d="M9 11L5 7l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-          HOME
-        </button>
+        <HamburgerDrawer />
         <div className="text-center">
           <div className="text-white font-black tracking-widest text-base">FUEL TRACKER</div>
           <div className="text-white/30 text-[10px]">

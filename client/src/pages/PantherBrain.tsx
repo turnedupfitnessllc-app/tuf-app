@@ -5,6 +5,7 @@
  * v5.0: Voice toggle (ElevenLabs TTS) — Panther speaks every response
  */
 import { useState, useRef, useEffect, useCallback } from "react";
+import HamburgerDrawer from "@/components/HamburgerDrawer";
 import { useLocation } from "wouter";
 import { PantherPresence, PantherMessage, XPBar } from "@/components/v4Components";
 import { getFallback, ls, getStageFromXP } from "@/data/v4constants";
@@ -301,13 +302,8 @@ export default function PantherBrain() {
             </div>
           </div>
           <div style={{ padding: "0 16px" }}>
-          {/* Back to Home */}
-          <button
-            onClick={() => navigate("/")}
-            style={{ display: "flex", alignItems: "center", gap: 6, padding: "5px 10px", marginBottom: 12, borderRadius: 8, border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.03)", fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", color: "rgba(255,255,255,0.45)", cursor: "pointer" }}
-          >
-            ← HOME
-          </button>
+          {/* Hamburger nav */}
+          <div style={{ marginBottom: 12 }}><HamburgerDrawer /></div>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <PantherPresence state={pState} size={60} />
             <div style={{ flex: 1 }}>
