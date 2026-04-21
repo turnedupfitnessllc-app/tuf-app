@@ -109,6 +109,17 @@ function RecipeModal({
   return (
     <div className="fixed inset-0 bg-black/80 z-50 flex items-end md:items-center justify-center p-4">
       <div className="w-full md:max-w-lg max-h-[90vh] overflow-y-auto bg-[#111] border border-white/10 rounded-2xl">
+        {/* Hero Image */}
+        {recipe.image && (
+          <div className="w-full h-48 overflow-hidden rounded-t-2xl">
+            <img
+              src={recipe.image}
+              alt={recipe.name}
+              className="w-full h-full object-cover"
+              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+            />
+          </div>
+        )}
         <div className="p-6">
           {/* Header */}
           <div className="flex justify-between items-start mb-4">
@@ -657,8 +668,16 @@ export default function Feast() {
                 onClick={() => setSelectedRecipe(recipe)}
                 className="w-full text-left bg-white/5 border border-white/10 hover:border-orange-500/30 rounded-xl p-3 transition-colors"
               >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
+                <div className="flex items-start gap-3">
+                  {recipe.image && (
+                    <img
+                      src={recipe.image}
+                      alt={recipe.name}
+                      className="w-14 h-14 rounded-lg object-cover flex-shrink-0"
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                    />
+                  )}
+                  <div className="flex-1 min-w-0">
                     <div className="text-xs font-bold text-orange-400 mb-0.5">
                       {recipe.category.toUpperCase()}
                     </div>
@@ -671,7 +690,7 @@ export default function Feast() {
                       ))}
                     </div>
                   </div>
-                  <div className="text-right ml-3">
+                  <div className="text-right flex-shrink-0">
                     <div className="text-xs text-green-400 font-bold">
                       {recipe.protein ?? "~35"}g
                     </div>
