@@ -12,5 +12,25 @@
   "mindset_challenges": [],
   "animation_jobs": [],
   "meal_plans": [],
-  "voice_jobs": []
+  "voice_jobs": [],
+  "user_progress": [],
+  "pvp_challenges": [
+    {
+      "challenge_id": "88bf130c-3eaa-424c-824e-b8959edd0f51",
+      "challenger_id": "test",
+      "challenger_name": "Marc",
+      "opponent_id": "open",
+      "opponent_name": "Opponent",
+      "exercise_id": "squat",
+      "exercise_name": "100 Squat Sprint",
+      "target_reps": 100,
+      "time_limit_seconds": 300,
+      "wager_xp": 25,
+      "status": "pending",
+      "created_at": 1776734788901,
+      "expires_at": 1776821188901
+    }
+  ],
+  "rep_logs": [],
+  "mps_entries": []
 }

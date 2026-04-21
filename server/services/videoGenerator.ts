@@ -10,7 +10,7 @@
  *   5. Served in workout player
  */
 
-import { PANTHER_AI, EXERCISE_DB } from "../../shared/panther-library";
+import { PANTHER_AI_VOICE_RULES as PANTHER_AI, EXERCISE_DATABASE as EXERCISE_DB } from "../../shared/panther-library";
 
 export interface VideoScript {
   exercise_id: string;

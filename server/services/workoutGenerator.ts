@@ -3,7 +3,7 @@
  * © 2026 Turned Up Fitness LLC. All rights reserved.
  */
 
-import { EXERCISE_DB } from "../../shared/panther-library";
+import { EXERCISE_DATABASE as EXERCISE_DB } from "../../shared/panther-library";
 
 export interface WorkoutUser {
   goal: "fat_loss" | "muscle_gain" | "athletic_performance" | "mobility";
