@@ -29,7 +29,7 @@ export const tutkRecipes: Recipe[] = [
     id: 'M01',
     name: 'Seared Scallops with Sprouts',
     category: 'mains',
-    image: 'https://source.unsplash.com/400x300/?scallops,seared',
+    image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/VN8SDsWcmwtR_0b49a718.jpg',
     tags: ['high-protein', 'low-carb', 'seafood', 'anti-inflammatory'],
     conditionFriendly: ['heart', 'diabetes', 'arthritis'],
     ingredients: [
@@ -51,7 +51,7 @@ export const tutkRecipes: Recipe[] = [
     id: 'M02',
     name: 'Stir Fry Cabbage & Pork',
     category: 'mains',
-    image: 'https://source.unsplash.com/400x300/?stir-fry,pork,cabbage',
+    image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/b3IWLdB7RtDP_205082db.jpg',
     tags: ['high-protein', 'low-carb', 'gut-health'],
     conditionFriendly: ['diabetes', 'heart'],
     ingredients: [
@@ -76,7 +76,7 @@ export const tutkRecipes: Recipe[] = [
     id: 'M03',
     name: 'Lean Stuffed Pepper',
     category: 'mains',
-    image: 'https://source.unsplash.com/400x300/?stuffed,peppers,turkey',
+    image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/1CxznTemGUvE_15001823.jpg',
     tags: ['high-protein', 'low-fat', 'meal-prep'],
     conditionFriendly: ['diabetes', 'heart', 'arthritis'],
     ingredients: [
@@ -101,7 +101,7 @@ export const tutkRecipes: Recipe[] = [
     id: 'M04',
     name: 'Lemon Butter Asparagus & Fish',
     category: 'mains',
-    image: 'https://source.unsplash.com/400x300/?fish,asparagus,lemon',
+    image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/OotmzHj9hnPR_f45ba7ff.jpg',
     tags: ['omega-3', 'anti-inflammatory', 'seafood', 'heart-healthy'],
     conditionFriendly: ['heart', 'arthritis', 'diabetes'],
     ingredients: [
@@ -123,7 +123,7 @@ export const tutkRecipes: Recipe[] = [
     id: 'M05',
     name: 'Healthy Holiday Comfort',
     category: 'mains',
-    image: 'https://source.unsplash.com/400x300/?turkey,sweet-potato,healthy',
+    image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/75ROI75JBrde_96ee4c85.jpg',
     tags: ['comfort-food', 'low-carb', 'high-protein'],
     conditionFriendly: ['diabetes', 'bad-knees'],
     ingredients: [
@@ -149,7 +149,7 @@ export const tutkRecipes: Recipe[] = [
     id: 'M06',
     name: 'Lemon & Almond Roasted Salad',
     category: 'mains',
-    image: 'https://source.unsplash.com/400x300/?salad,almonds,roasted',
+    image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/9fPFPDHOpwTC_bb2523b2.jpg',
     tags: ['high-protein', 'healthy-fats', 'meal-prep'],
     conditionFriendly: ['heart', 'arthritis'],
     ingredients: [
@@ -174,7 +174,7 @@ export const tutkRecipes: Recipe[] = [
     id: 'M07',
     name: 'Low Carb Broccoli & Tuna Salad',
     category: 'mains',
-    image: 'https://source.unsplash.com/400x300/?tuna,broccoli,salad',
+    image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/AlqqrFrgTMdf_4f14ccbc.jpg',
     tags: ['omega-3', 'low-carb', 'high-protein', 'meal-prep'],
     conditionFriendly: ['heart', 'diabetes', 'arthritis'],
     ingredients: [
@@ -199,7 +199,7 @@ export const tutkRecipes: Recipe[] = [
     id: 'M08',
     name: 'Shrimp & Avocado Stuffed Salad',
     category: 'mains',
-    image: 'https://source.unsplash.com/400x300/?shrimp,avocado,salad',
+    image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/UzDVoBEnhAZn_f28943b0.jpg',
     tags: ['healthy-fats', 'high-protein', 'seafood', 'hormone-support'],
     conditionFriendly: ['heart', 'arthritis', 'diabetes'],
     ingredients: [
@@ -223,7 +223,7 @@ export const tutkRecipes: Recipe[] = [
     id: 'M09',
     name: 'Honey Mustard Chicken Salad',
     category: 'mains',
-    image: 'https://source.unsplash.com/400x300/?chicken,salad,mustard',
+    image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/exjCgZLUWxMz_a81b32e5.jpg',
     tags: ['high-protein', 'low-carb', 'quick'],
     conditionFriendly: ['diabetes', 'heart'],
     ingredients: [
@@ -245,7 +245,7 @@ export const tutkRecipes: Recipe[] = [
     id: 'M10',
     name: 'Garlic Shrimp',
     category: 'mains',
-    image: 'https://source.unsplash.com/400x300/?shrimp,garlic,pan',
+    image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/k521SF0vHZWw_8bacac3d.jpg',
     tags: ['high-protein', 'seafood', 'quick', 'anti-inflammatory'],
     conditionFriendly: ['heart', 'arthritis'],
     ingredients: [
@@ -269,7 +269,7 @@ export const tutkRecipes: Recipe[] = [
     id: 'M11',
     name: 'Turkey Tacos',
     category: 'mains',
-    image: 'https://source.unsplash.com/400x300/?tacos,turkey,healthy',
+    image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/GAuzxahY4TU5_b07020ce.jpg',
     tags: ['high-protein', 'low-carb', 'quick', 'meal-prep'],
     conditionFriendly: ['diabetes', 'heart'],
     ingredients: [
@@ -294,7 +294,7 @@ export const tutkRecipes: Recipe[] = [
     id: 'M12',
     name: 'Quinoa Chicken Salad',
     category: 'mains',
-    image: 'https://source.unsplash.com/400x300/?quinoa,chicken,bowl',
+    image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/hEt8fjcRiwUs_37b3af21.jpg',
     tags: ['complete-protein', 'high-fiber', 'anti-inflammatory'],
     conditionFriendly: ['heart', 'diabetes', 'arthritis'],
     ingredients: [
@@ -319,7 +319,7 @@ export const tutkRecipes: Recipe[] = [
     id: 'M13',
     name: 'Seared Whitefish with Couscous Cucumber Salad',
     category: 'mains',
-    image: 'https://source.unsplash.com/400x300/?whitefish,couscous,plate',
+    image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/9K6Cnhl1joVg_3a72a095.jpg',
     tags: ['seafood', 'high-protein', 'mediterranean'],
     conditionFriendly: ['heart', 'arthritis'],
     ingredients: [
@@ -342,7 +342,7 @@ export const tutkRecipes: Recipe[] = [
     id: 'M14',
     name: 'Thai Beef Salad',
     category: 'mains',
-    image: 'https://source.unsplash.com/400x300/?beef,salad,thai',
+    image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/IjBYJXfx6B56_5d936ac6.jpg',
     tags: ['high-protein', 'anti-inflammatory', 'bold-flavor'],
     conditionFriendly: ['arthritis'],
     ingredients: [
@@ -368,7 +368,7 @@ export const tutkRecipes: Recipe[] = [
     id: 'M15',
     name: 'Avocado Tuna Salad',
     category: 'mains',
-    image: 'https://source.unsplash.com/400x300/?avocado,tuna,salad',
+    image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/BHRwPVWT6AlV_67f565e1.jpg',
     tags: ['omega-3', 'healthy-fats', 'quick', 'no-cook'],
     conditionFriendly: ['heart', 'arthritis', 'diabetes'],
     ingredients: [
@@ -390,7 +390,7 @@ export const tutkRecipes: Recipe[] = [
     id: 'M16',
     name: 'Spicy Thai Shrimp Salad',
     category: 'mains',
-    image: 'https://source.unsplash.com/400x300/?shrimp,spicy,thai',
+    image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/L2kWMP49T49k_ab06e44a.jpg',
     tags: ['seafood', 'high-protein', 'anti-inflammatory', 'bold-flavor'],
     conditionFriendly: ['heart', 'arthritis'],
     ingredients: [
@@ -413,7 +413,7 @@ export const tutkRecipes: Recipe[] = [
     id: 'M17',
     name: 'Crispy Chicken & Brussels',
     category: 'mains',
-    image: 'https://source.unsplash.com/400x300/?chicken,crispy,brussels',
+    image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/NMyjVnpvqWye_3e1f6c2e.jpg',
     tags: ['high-protein', 'low-carb', 'hormone-support'],
     conditionFriendly: ['heart', 'diabetes', 'arthritis'],
     ingredients: [
@@ -434,7 +434,7 @@ export const tutkRecipes: Recipe[] = [
     id: 'M18',
     name: 'Thai Peanut Chicken',
     category: 'mains',
-    image: 'https://source.unsplash.com/400x300/?chicken,peanut,thai',
+    image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/5Chl8kKuEsbY_7cf1ea9b.jpg',
     tags: ['high-protein', 'healthy-fats', 'bold-flavor'],
     conditionFriendly: ['heart'],
     ingredients: [
@@ -459,7 +459,7 @@ export const tutkRecipes: Recipe[] = [
     id: 'B01',
     name: 'Sweet Egg Scramble',
     category: 'breakfast',
-    image: 'https://source.unsplash.com/400x300/?eggs,scramble,breakfast',
+    image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/1xJj5vsBW7M1_372c7ee4.jpg',
     tags: ['high-protein', 'quick', 'low-carb'],
     conditionFriendly: ['diabetes'],
     ingredients: [
@@ -481,7 +481,7 @@ export const tutkRecipes: Recipe[] = [
     id: 'B02',
     name: 'Egg White Omelet',
     category: 'breakfast',
-    image: 'https://source.unsplash.com/400x300/?omelet,egg,healthy',
+    image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/1xJj5vsBW7M1_372c7ee4.jpg',
     tags: ['high-protein', 'low-fat', 'quick'],
     conditionFriendly: ['heart', 'diabetes'],
     ingredients: [
@@ -499,7 +499,7 @@ export const tutkRecipes: Recipe[] = [
     id: 'B03',
     name: 'Protein Pancakes',
     category: 'breakfast',
-    image: 'https://source.unsplash.com/400x300/?pancakes,protein,stack',
+    image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/gF0i7nvOS63j_3a1826e0.jpg',
     calories: 320,
     protein: 30,
     fat: 8,
@@ -528,7 +528,7 @@ export const tutkRecipes: Recipe[] = [
     id: 'B04',
     name: 'Blueberry Oat Bake',
     category: 'breakfast',
-    image: 'https://source.unsplash.com/400x300/?blueberry,oatmeal,bake',
+    image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/bNe2psI981DB_8a2a50ef.jpg',
     tags: ['meal-prep', 'high-fiber', 'antioxidant'],
     conditionFriendly: ['heart', 'diabetes', 'arthritis'],
     ingredients: [
@@ -553,7 +553,7 @@ export const tutkRecipes: Recipe[] = [
     id: 'B05',
     name: 'Cottage Cheese Bowl',
     category: 'breakfast',
-    image: 'https://source.unsplash.com/400x300/?cottage-cheese,bowl,fruit',
+    image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/d5n0fT5s7LEm_074d2793.jpg',
     tags: ['high-protein', 'quick', 'no-cook', 'bone-health'],
     conditionFriendly: ['diabetes', 'heart'],
     ingredients: [
@@ -575,7 +575,7 @@ export const tutkRecipes: Recipe[] = [
     id: 'B06',
     name: 'Egg White Sandwich',
     category: 'breakfast',
-    image: 'https://source.unsplash.com/400x300/?egg,sandwich,healthy',
+    image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/2QLDSC0dFBDB_472e54a4.jpg',
     tags: ['high-protein', 'quick', 'portable'],
     conditionFriendly: ['heart', 'diabetes'],
     ingredients: [
@@ -596,7 +596,7 @@ export const tutkRecipes: Recipe[] = [
     id: 'S01',
     name: 'Blueberry Pie Smoothie',
     category: 'shakes',
-    image: 'https://source.unsplash.com/400x300/?blueberry,smoothie,purple',
+    image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/H7ve9i8nzHWq_e1b194dc.jpg',
     tags: ['antioxidant', 'gut-health', 'quick'],
     conditionFriendly: ['heart', 'arthritis', 'diabetes'],
     ingredients: [
@@ -620,7 +620,7 @@ export const tutkRecipes: Recipe[] = [
     id: 'S02',
     name: 'Vanilla Almond Shake',
     category: 'shakes',
-    image: 'https://source.unsplash.com/400x300/?vanilla,almond,shake',
+    image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/nW51XP4CntS0_6c7a74df.jpeg',
     tags: ['high-protein', 'healthy-fats', 'quick'],
     conditionFriendly: ['heart'],
     ingredients: [
@@ -639,7 +639,7 @@ export const tutkRecipes: Recipe[] = [
     id: 'S03',
     name: 'Cake for Breakfast Shake',
     category: 'shakes',
-    image: 'https://source.unsplash.com/400x300/?protein,shake,chocolate',
+    image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/nW51XP4CntS0_6c7a74df.jpeg',
     tags: ['high-protein', 'low-fat', 'quick'],
     conditionFriendly: ['diabetes'],
     ingredients: [
@@ -662,7 +662,7 @@ export const tutkRecipes: Recipe[] = [
     id: 'S04',
     name: 'PB Sandwich Shake',
     category: 'shakes',
-    image: 'https://source.unsplash.com/400x300/?peanut-butter,smoothie,shake',
+    image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/uspWGu5Pmakp_32da9040.jpg',
     tags: ['high-protein', 'healthy-fats', 'muscle-building'],
     conditionFriendly: ['heart'],
     ingredients: [
@@ -684,7 +684,7 @@ export const tutkRecipes: Recipe[] = [
     id: 'D01',
     name: 'Balsamic Vinegar Dressing',
     category: 'dressings',
-    image: 'https://source.unsplash.com/400x300/?balsamic,dressing,salad',
+    image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/45m7WTEYlJWY_4486400d.jpg',
     tags: ['low-calorie', 'quick', 'versatile'],
     conditionFriendly: ['heart', 'diabetes'],
     ingredients: [
@@ -705,7 +705,7 @@ export const tutkRecipes: Recipe[] = [
     id: 'D02',
     name: 'Versatile Vinegar Dressing',
     category: 'dressings',
-    image: 'https://source.unsplash.com/400x300/?vinegar,dressing,bottle',
+    image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/dZs9Y0L8AYz2_fbd4d1c8.jpg',
     tags: ['low-calorie', 'quick', 'versatile'],
     conditionFriendly: ['heart', 'diabetes'],
     ingredients: [
@@ -727,7 +727,7 @@ export const tutkRecipes: Recipe[] = [
     id: 'D03',
     name: 'Honey Mustard Dressing',
     category: 'dressings',
-    image: 'https://source.unsplash.com/400x300/?honey,mustard,dressing',
+    image: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/hkOnPFvgfIFr_35c2c262.jpg',
     tags: ['low-calorie', 'quick', 'sweet'],
     conditionFriendly: ['heart', 'diabetes'],
     ingredients: [
