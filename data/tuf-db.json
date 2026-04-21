@@ -239,6 +239,21 @@
       "status": "pending",
       "created_at": 1776784967512,
       "expires_at": 1776871367512
+    },
+    {
+      "challenge_id": "3a13e3d1-20ae-485d-88ff-8b22b2ea1654",
+      "challenger_id": "guest_k4gjxk",
+      "challenger_name": "Panther",
+      "opponent_id": "open",
+      "opponent_name": "Opponent",
+      "exercise_id": "squat",
+      "exercise_name": "100 Squat Sprint",
+      "target_reps": 100,
+      "time_limit_seconds": 300,
+      "wager_xp": 25,
+      "status": "pending",
+      "created_at": 1776788175550,
+      "expires_at": 1776874575550
     }
   ],
   "rep_logs": [],

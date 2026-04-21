@@ -37,6 +37,7 @@ interface UsePvPSocketOptions {
   onChallengeEnd?: (winner: PvPParticipant) => void;
   onOpponentJoined?: (opponentName: string) => void;
   onBotMode?: (botName: string) => void;
+  onStateUpdate?: (state: RoomState) => void;  // FIX #2: expose full state
 }
 
 interface UsePvPSocketReturn {
@@ -58,6 +59,7 @@ export function usePvPSocket({
   onChallengeEnd,
   onOpponentJoined,
   onBotMode,
+  onStateUpdate,
 }: UsePvPSocketOptions): UsePvPSocketReturn {
   const [status, setStatus] = useState<PvPConnectionStatus>("idle");
   const [isBotMode, setIsBotMode] = useState(false);
@@ -70,16 +72,20 @@ export function usePvPSocket({
   const onChallengeEndRef    = useRef(onChallengeEnd);
   const onOpponentJoinedRef  = useRef(onOpponentJoined);
   const onBotModeRef         = useRef(onBotMode);
+  const onStateUpdateRef     = useRef(onStateUpdate);
   useEffect(() => { onChallengeUpdateRef.current = onChallengeUpdate; }, [onChallengeUpdate]);
   useEffect(() => { onChallengeEndRef.current    = onChallengeEnd;    }, [onChallengeEnd]);
   useEffect(() => { onOpponentJoinedRef.current  = onOpponentJoined;  }, [onOpponentJoined]);
   useEffect(() => { onBotModeRef.current         = onBotMode;         }, [onBotMode]);
+  useEffect(() => { onStateUpdateRef.current     = onStateUpdate;     }, [onStateUpdate]);
 
   const processState = useCallback((state: RoomState) => {
     const prev = prevStateRef.current;
 
     // Notify on participant changes
     onChallengeUpdateRef.current?.(state.participants);
+    // Expose full state (for endsAt, etc.)
+    onStateUpdateRef.current?.(state);
 
     // Detect bot spawn
     if (state.botName && (!prev?.botName)) {
