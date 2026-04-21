@@ -12,6 +12,7 @@ import { useProgress } from "@/hooks/useProgress";
 import { TufSocialStickyStrip } from "@/components/TufSocialFooter";
 import { useUpsell } from "@/hooks/useUpsell";
 import UpsellModal from "@/components/UpsellModal";
+import MealsOfWeekCard from "@/components/MealsOfWeekCard";
 
 const CDN = "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR";
 const PANTHER_MASCOT = `${CDN}/panther-mascot-gym_27e64ae1.png`;
@@ -311,6 +312,9 @@ export default function Home() {
             ))}
           </div>
         </div>
+
+        {/* ─── MEALS OF THE WEEK ─── */}
+        <MealsOfWeekCard />
 
         {/* ─── RECENT ACTIVITY ─── */}
         <div style={{

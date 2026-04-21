@@ -196,6 +196,21 @@ export default defineConfig({
         secure: false,
         ws: true, // Enable WebSocket proxying for Socket.io
       },
+      "/api/pvp/events": {
+        target: "http://localhost:4000",
+        changeOrigin: true,
+        secure: false,
+        // SSE requires no buffering and a long timeout
+        configure: (proxy) => {
+          proxy.on("proxyReq", (proxyReq) => {
+            proxyReq.setHeader("Accept", "text/event-stream");
+          });
+          proxy.on("proxyRes", (proxyRes) => {
+            proxyRes.headers["cache-control"] = "no-cache";
+            proxyRes.headers["x-accel-buffering"] = "no";
+          });
+        },
+      },
     },
   },
 });

@@ -641,7 +641,7 @@ export default function Feast() {
 
           {/* Category Pills */}
           <div className="flex gap-2 overflow-x-auto pb-2 mb-4">
-            {["all", "mains", "breakfast", "shakes", "dressings"].map((cat) => (
+            {["all", "mains", "breakfast", "shakes", "dressings", "challenge"].map((cat) => (
               <button
                 key={cat}
                 onClick={() => setRecipeCategory(cat)}

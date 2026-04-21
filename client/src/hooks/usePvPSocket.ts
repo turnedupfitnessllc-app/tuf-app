@@ -1,13 +1,12 @@
 /**
- * usePvPSocket — TUF PvP real-time challenge hook
+ * usePvPSocket — TUF PvP real-time challenge hook (polling transport)
  * © 2026 Turned Up Fitness LLC. All rights reserved.
  *
- * Connects to the Socket.io server ONLY when a real challenge_id is provided.
- * Joins the challenge room, emits rep updates, and receives live state.
- * Falls back gracefully if the socket cannot connect.
+ * Uses short-poll HTTP (every 1.5s) for real-time PvP state.
+ * Works over any HTTPS tunnel — no WebSocket or SSE required.
+ * Client→server actions use regular fetch POST requests.
  */
 import { useEffect, useRef, useCallback, useState } from "react";
-import { io, Socket } from "socket.io-client";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 export interface PvPParticipant {
@@ -20,8 +19,18 @@ export interface PvPParticipant {
 
 export type PvPConnectionStatus = "idle" | "connecting" | "connected" | "disconnected" | "error";
 
+interface RoomState {
+  participants: PvPParticipant[];
+  ended: boolean;
+  winner: PvPParticipant | null;
+  startedAt: number | null;
+  endsAt: number | null;
+  botName: string | null;
+  opponentName: string | null;
+}
+
 interface UsePvPSocketOptions {
-  challenge_id: string | null;   // null = disabled, don't connect
+  challenge_id: string | null;
   user_id: string;
   name: string;
   onChallengeUpdate?: (participants: PvPParticipant[]) => void;
@@ -38,6 +47,8 @@ interface UsePvPSocketReturn {
   leaveChallenge: () => void;
 }
 
+const POLL_INTERVAL_MS = 1500;
+
 // ── Hook ──────────────────────────────────────────────────────────────────────
 export function usePvPSocket({
   challenge_id,
@@ -48,11 +59,13 @@ export function usePvPSocket({
   onOpponentJoined,
   onBotMode,
 }: UsePvPSocketOptions): UsePvPSocketReturn {
-  const socketRef = useRef<Socket | null>(null);
   const [status, setStatus] = useState<PvPConnectionStatus>("idle");
   const [isBotMode, setIsBotMode] = useState(false);
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const prevStateRef = useRef<RoomState | null>(null);
+  const hasJoinedRef = useRef(false);
 
-  // Store callbacks in refs so the effect doesn't re-run when they change
+  // Stable callback refs
   const onChallengeUpdateRef = useRef(onChallengeUpdate);
   const onChallengeEndRef    = useRef(onChallengeEnd);
   const onOpponentJoinedRef  = useRef(onOpponentJoined);
@@ -62,79 +75,126 @@ export function usePvPSocket({
   useEffect(() => { onOpponentJoinedRef.current  = onOpponentJoined;  }, [onOpponentJoined]);
   useEffect(() => { onBotModeRef.current         = onBotMode;         }, [onBotMode]);
 
-  // Re-run whenever challenge_id changes (null → real ID triggers connection)
+  const processState = useCallback((state: RoomState) => {
+    const prev = prevStateRef.current;
+
+    // Notify on participant changes
+    onChallengeUpdateRef.current?.(state.participants);
+
+    // Detect bot spawn
+    if (state.botName && (!prev?.botName)) {
+      console.log("[PvP Poll] Bot mode activated:", state.botName);
+      setIsBotMode(true);
+      onBotModeRef.current?.(state.botName);
+    }
+
+    // Detect opponent joined
+    if (state.opponentName && (!prev?.opponentName)) {
+      console.log("[PvP Poll] Opponent joined:", state.opponentName);
+      onOpponentJoinedRef.current?.(state.opponentName);
+    }
+
+    // Detect challenge end
+    if (state.ended && !prev?.ended && state.winner) {
+      console.log("[PvP Poll] Challenge ended, winner:", state.winner.name);
+      onChallengeEndRef.current?.(state.winner);
+    }
+
+    prevStateRef.current = state;
+  }, []);
+
   useEffect(() => {
-    // Don't connect until we have a real challenge ID
     if (!challenge_id) {
       setStatus("idle");
+      hasJoinedRef.current = false;
+      prevStateRef.current = null;
       return;
     }
 
     setStatus("connecting");
     setIsBotMode(false);
+    hasJoinedRef.current = false;
+    prevStateRef.current = null;
 
-    const socket = io(window.location.origin, {
-      path: "/socket.io",
-      transports: ["polling"],   // polling-only: reliable through all reverse proxies
-      reconnectionAttempts: 5,
-      reconnectionDelay: 1000,
-      timeout: 10000,
-    });
+    // Join the room first
+    const joinRoom = async () => {
+      try {
+        const res = await fetch("/api/pvp/join", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ challenge_id, user_id, name }),
+        });
+        if (!res.ok) throw new Error(`Join failed: ${res.status}`);
+        const state: RoomState = await res.json();
+        hasJoinedRef.current = true;
+        setStatus("connected");
+        console.log("[PvP Poll] Joined room:", challenge_id);
+        processState(state);
+      } catch (err) {
+        console.error("[PvP Poll] Join error:", err);
+        setStatus("error");
+      }
+    };
 
-    socketRef.current = socket;
+    joinRoom();
 
-    socket.on("connect", () => {
-      console.log("[PvP] Socket connected, joining room:", challenge_id);
-      setStatus("connected");
-      // Join the challenge room with the real ID
-      socket.emit("join_challenge", { challenge_id, user_id, name });
-    });
+    // Start polling
+    pollRef.current = setInterval(async () => {
+      if (!hasJoinedRef.current) return;
+      try {
+        const res = await fetch(
+          `/api/pvp/state/${challenge_id}?user_id=${encodeURIComponent(user_id)}`
+        );
+        if (res.status === 404) {
+          // Room gone
+          setStatus("disconnected");
+          if (pollRef.current) clearInterval(pollRef.current);
+          return;
+        }
+        if (!res.ok) return;
+        const state: RoomState = await res.json();
+        processState(state);
 
-    socket.on("disconnect", () => {
-      setStatus("disconnected");
-    });
-
-    socket.on("connect_error", (err) => {
-      console.error("[PvP] Socket connection error:", err.message);
-      setStatus("error");
-    });
-
-    socket.on("challenge_update", ({ participants }: { participants: PvPParticipant[] }) => {
-      onChallengeUpdateRef.current?.(participants);
-    });
-
-    socket.on("challenge_end", ({ winner }: { winner: PvPParticipant }) => {
-      onChallengeEndRef.current?.(winner);
-    });
-
-    socket.on("opponent_joined", ({ name: oppName }: { name: string }) => {
-      onOpponentJoinedRef.current?.(oppName);
-    });
-
-    socket.on("bot_mode", ({ botName }: { botName: string }) => {
-      console.log("[PvP] Bot mode activated:", botName);
-      setIsBotMode(true);
-      onBotModeRef.current?.(botName);
-    });
+        // Stop polling if challenge ended
+        if (state.ended) {
+          if (pollRef.current) clearInterval(pollRef.current);
+        }
+      } catch (err) {
+        console.warn("[PvP Poll] Poll error:", err);
+      }
+    }, POLL_INTERVAL_MS);
 
     return () => {
-      socket.emit("leave_challenge", { challenge_id, user_id });
-      socket.disconnect();
-      socketRef.current = null;
+      if (pollRef.current) clearInterval(pollRef.current);
+      // Notify server we left
+      if (challenge_id && user_id && hasJoinedRef.current) {
+        fetch("/api/pvp/action", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ type: "leave", challenge_id, user_id }),
+          keepalive: true,
+        }).catch(() => {});
+      }
     };
-  }, [challenge_id, user_id, name]); // Re-run when challenge_id arrives
+  }, [challenge_id, user_id, name, processState]);
 
   const sendRepUpdate = useCallback((reps: number) => {
-    if (socketRef.current && challenge_id) {
-      socketRef.current.emit("rep_update", { challenge_id, user_id, reps });
-    }
+    if (!challenge_id || !hasJoinedRef.current) return;
+    fetch("/api/pvp/action", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type: "rep_update", challenge_id, user_id, reps }),
+    }).catch(err => console.error("[PvP Poll] rep_update error:", err));
   }, [challenge_id, user_id]);
 
   const leaveChallenge = useCallback(() => {
-    if (socketRef.current && challenge_id) {
-      socketRef.current.emit("leave_challenge", { challenge_id, user_id });
-      socketRef.current.disconnect();
-    }
+    if (!challenge_id) return;
+    if (pollRef.current) clearInterval(pollRef.current);
+    fetch("/api/pvp/action", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type: "leave", challenge_id, user_id }),
+    }).catch(() => {});
   }, [challenge_id, user_id]);
 
   return {

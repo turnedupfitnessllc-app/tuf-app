@@ -243,12 +243,25 @@
 }
 @layer base {
   * { @apply border-border outline-ring/50; }
-  body { @apply bg-background text-foreground; font-family: 'Barlow', sans-serif; font-weight: 400; }
+  /* ── Accessibility: base font raised to 17px, line-height 1.65 for readability ── */
+  html { font-size: 17px; }
+  body { @apply bg-background text-foreground; font-family: 'Barlow', sans-serif; font-weight: 400; line-height: 1.65; }
   button:not(:disabled),[role="button"]:not([aria-disabled="true"]),[type="button"]:not(:disabled),[type="submit"]:not(:disabled),[type="reset"]:not(:disabled),a[href],select:not(:disabled),input[type="checkbox"]:not(:disabled),input[type="radio"]:not(:disabled) { @apply cursor-pointer; }
   h1,h2,h3,h4,h5,h6 { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; letter-spacing: 0.03em; text-transform: uppercase; }
   h1 { @apply text-4xl md:text-5xl; letter-spacing: 0.04em; }
   h2 { @apply text-3xl md:text-4xl; letter-spacing: 0.03em; }
   h3 { @apply text-2xl md:text-3xl; letter-spacing: 0.02em; }
+  /* ── Accessibility: remap Tailwind text-xs and text-sm to larger sizes ── */
+  .text-xs { font-size: 0.8125rem !important; line-height: 1.5rem !important; }   /* 13.8px (was 12px) */
+  .text-sm { font-size: 0.9375rem !important; line-height: 1.6rem !important; }   /* 15.9px (was 14px) */
+  /* ── Accessibility: boost low-contrast muted text colors ── */
+  .text-gray-400 { color: #C0C0C0 !important; }   /* was #9CA3AF — now much brighter */
+  .text-gray-500 { color: #AAAAAA !important; }   /* was #6B7280 */
+  .text-gray-600 { color: #999999 !important; }   /* was #4B5563 */
+  .text-gray-300 { color: #E0E0E0 !important; }   /* was #D1D5DB — near-white */
+  /* ── Accessibility: ensure muted-foreground is readable ── */
+  :root { --muted-foreground: #BBBBBB; }
+  .dark, [data-theme='dark'] { --muted-foreground: #AAAAAA; }
 }
 @layer components {
   .header-exec { @apply sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border; }

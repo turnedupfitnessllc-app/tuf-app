@@ -137,9 +137,9 @@ export function attachSocketIO(httpServer: HTTPServer) {
     },
     path: "/socket.io",
     allowEIO3: true,             // backwards compat
-    transports: ["polling", "websocket"],
-    pingTimeout: 30000,
-    pingInterval: 10000,
+    transports: ["polling", "websocket"],  // server accepts both; clients use websocket-only
+    pingTimeout: 60000,
+    pingInterval: 25000,
   });
 
   io.on("connection", (socket) => {

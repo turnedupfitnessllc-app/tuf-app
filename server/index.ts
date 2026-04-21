@@ -23,6 +23,7 @@ import pantherBrainAnalyzeRouter from "./routes/panther-brain-analyze.js";
 import videoScriptRouter from "./routes/video-script.js";
 import pantherBackendRouter from "./routes/panther-backend.js";
 import challengesRouter from "./routes/challenges.js";
+import pvpSseRouter from "./routes/pvp-sse.js";
 import { attachSocketIO } from "./socket.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -61,6 +62,7 @@ async function startServer() {
   app.use("/api/video-script", videoScriptRouter);
   app.use("/api/panther-backend", pantherBackendRouter);
   app.use("/api/challenges", challengesRouter);
+  app.use("/api/pvp", pvpSseRouter);
 
   // Health check endpoint
   app.get("/api/health", (_req, res) => {
