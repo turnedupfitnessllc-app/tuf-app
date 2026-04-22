@@ -1,7 +1,7 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
-import { Route, Switch, Redirect } from "wouter";
+import { Route, Switch, Redirect, useLocation } from "wouter";
 import { useState } from "react";
 import { useTierSync } from "./hooks/useTierSync";
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -66,10 +66,12 @@ import { PaywallGate } from "./components/PaywallGate";
 
 function Router() {
   const isOnboarded = localStorage.getItem("tuf_onboarded") === "true";
+  const [location] = useLocation();
+  const isOnboarding = location === "/onboarding";
 
   return (
     <>
-      <TufHeader />
+      {!isOnboarding && <TufHeader />}
       <Switch>
         {/* ── Onboarding ────────────────────────────────────── */}
         <Route path={"/onboarding"} component={Onboarding} />
