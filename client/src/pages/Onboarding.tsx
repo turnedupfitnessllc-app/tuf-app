@@ -108,75 +108,118 @@ export default function Onboarding() {
   if (step === 0) {
     return (
       <div
-        className="min-h-screen flex flex-col"
-        style={{ background: "#000", position: "relative", overflow: "hidden" }}
+        style={{
+          background: "#000",
+          minHeight: "100dvh",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          overflow: "hidden",
+          position: "relative",
+        }}
       >
-        {/* ── Fire video — full screen background ── */}
-        <video
-          autoPlay
-          muted
-          playsInline
-          loop
-          style={{
-            position: "absolute", inset: 0,
-            width: "100%", height: "100%",
-            objectFit: "cover",
-            zIndex: 0,
-          }}
-          src="https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/_users_e72db2bb-567c-4ca9-8c2a-17e00854da58_generated_034c96d4-9ddb-40f3-8e07-3b9307c66946_generated_video_c285aaa6.mp4"
-        />
-
-        {/* ── Bottom gradient so UI text is readable ── */}
+        {/* ── Cinematic: brand name drops in from top ── */}
         <div style={{
-          position: "absolute", bottom: 0, left: 0, right: 0,
-          height: "55%",
-          background: "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.75) 40%, #000 75%)",
-          zIndex: 1,
+          position: "absolute",
+          top: 0, left: 0, right: 0,
+          textAlign: "center",
+          paddingTop: 52,
+          zIndex: 5,
+          animation: "tufFadeDown 0.7s ease-out 0.7s both",
+        }}>
+          <p style={{
+            fontFamily: "'Bebas Neue', sans-serif",
+            fontSize: 13, letterSpacing: 7,
+            color: "rgba(255,102,0,0.85)",
+            textShadow: "0 0 12px rgba(255,102,0,0.5)",
+          }}>
+            TURNED UP FITNESS
+          </p>
+        </div>
+
+        {/* ── Top spacer — pushes video to vertical center ── */}
+        <div style={{ flex: "1.2", minHeight: 0 }} />
+
+        {/* ── Fire video — square, padded, centered ── */}
+        <div style={{
+          width: "calc(100% - 48px)",
+          maxWidth: 340,
+          aspectRatio: "1 / 1",
+          borderRadius: 16,
+          overflow: "hidden",
+          flexShrink: 0,
+          position: "relative",
+          zIndex: 2,
+        }}>
+          <video
+            autoPlay muted playsInline loop
+            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+            src="https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/_users_e72db2bb-567c-4ca9-8c2a-17e00854da58_generated_034c96d4-9ddb-40f3-8e07-3b9307c66946_generated_video(1)_a553328f.mp4"
+          />
+        </div>
+
+        {/* ── Gradient fade below video ── */}
+        <div style={{
+          width: "calc(100% - 48px)",
+          maxWidth: 340,
+          height: 56,
+          marginTop: -28,
+          flexShrink: 0,
+          background: "linear-gradient(to bottom, transparent, #000)",
+          pointerEvents: "none",
+          position: "relative", zIndex: 3,
         }} />
 
-        {/* ── UI pinned to bottom ── */}
-        <div
-          className="relative mt-auto px-6 pb-10 text-center"
-          style={{ zIndex: 2, animation: "splashUIFadeIn 0.9s ease-out 1.2s both" }}
-        >
-          <div className="max-w-[400px] mx-auto w-full">
-            <p style={{
+        {/* ── UI fades up from bottom ── */}
+        <div style={{
+          flex: 1,
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "flex-end",
+          padding: "0 24px 44px",
+          textAlign: "center",
+          position: "relative", zIndex: 4,
+          animation: "tufFadeUp 0.7s ease-out 1.6s both",
+        }}>
+          <p style={{ fontSize: 11, color: "#666", marginBottom: 22 }}>
+            AI-powered coaching built for the 40+ athlete.
+          </p>
+          <button
+            onClick={() => setStep(1)}
+            style={{
+              width: "100%", padding: "16px",
+              borderRadius: 14, border: "none",
+              background: "linear-gradient(135deg, #FF6600, #DC2626)",
+              color: "#fff",
               fontFamily: "'Bebas Neue', sans-serif",
-              fontSize: 18, letterSpacing: 5, color: "#FF6600",
-              marginBottom: 6,
-              textShadow: "0 0 20px rgba(255,102,0,0.8)",
-            }}>
-              TURNED UP FITNESS
-            </p>
-            <p style={{ fontSize: 13, color: "#888", marginBottom: 4 }}>
-              AI-powered coaching built for the 40+ athlete.
-            </p>
-            <p style={{ fontSize: 11, color: "#555", marginBottom: 32 }}>
-              Assess your movement. Correct the root cause. Train without limits.
-            </p>
-            <button
-              onClick={() => setStep(1)}
-              className="w-full py-4 rounded-2xl text-white font-black text-base tracking-wide active:scale-[0.98] transition-all"
-              style={{
-                background: "linear-gradient(135deg, #FF6600, #DC2626)",
-                boxShadow: "0 4px 28px rgba(255,102,0,0.5)",
-              }}
-            >
-              GET STARTED →
-            </button>
-            <button
-              onClick={handleComplete}
-              className="w-full mt-3 py-3 text-sm transition-colors"
-              style={{ color: "#444" }}
-            >
-              Skip setup
-            </button>
-          </div>
+              fontSize: 18, letterSpacing: 3,
+              cursor: "pointer",
+              boxShadow: "0 4px 24px rgba(255,102,0,0.45)",
+            }}
+          >
+            GET STARTED →
+          </button>
+          <button
+            onClick={handleComplete}
+            style={{
+              width: "100%", marginTop: 10, padding: "8px",
+              background: "none", border: "none",
+              fontSize: 11, color: "#333", cursor: "pointer",
+            }}
+          >
+            Skip setup
+          </button>
         </div>
 
         <style>{`
-          @keyframes splashUIFadeIn {
-            from { opacity: 0; transform: translateY(16px); }
+          @keyframes tufFadeDown {
+            from { opacity: 0; transform: translateY(-14px); }
+            to   { opacity: 1; transform: translateY(0); }
+          }
+          @keyframes tufFadeUp {
+            from { opacity: 0; transform: translateY(18px); }
             to   { opacity: 1; transform: translateY(0); }
           }
         `}</style>
