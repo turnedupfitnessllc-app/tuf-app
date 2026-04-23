@@ -5,6 +5,7 @@
 import { useState } from 'react';
 import { useLocation } from 'wouter';
 import { TUF_PROGRAMS, type TufProgram, type ProgramWeek, type Workout } from '@/data/tufPrograms';
+import SmartWorkoutCard from '@/components/SmartWorkoutCard';
 
 // ─── Legacy quick-access programs (kept for corrective warm-up flow) ──────────
 interface QuickProgram {
@@ -636,6 +637,9 @@ export default function Train() {
             })}
           </div>
         </div>
+
+        {/* AI SMART WORKOUT GENERATOR */}
+        <SmartWorkoutCard />
 
         {/* Live Coaching CTA */}
         <div className="mt-6">
