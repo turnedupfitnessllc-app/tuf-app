@@ -1,12 +1,30 @@
-// server/routes/coaching.ts
-// Real-time AI coaching pipeline:
-// Camera frame → fal.ai vision → The Panther System (Claude) analysis → ElevenLabs TTS
+/**
+ * TUF Coaching Pipeline — v3.0
+ * Panther Vision Engine: Grok Vision → Autonomous Decision Engine → ElevenLabs TTS
+ *
+ * Pipeline:
+ *   Camera frame → Grok Vision (with exercise knowledge base context)
+ *                → Autonomous Decision Engine (regress/coach/stop/praise)
+ *                → ElevenLabs TTS (Panther voice)
+ *
+ * Fallback:
+ *   Grok Vision unavailable → fal.ai vision → Claude coaching cue
+ */
+
 import { Router, Request, Response } from "express";
 import Anthropic from "@anthropic-ai/sdk";
+import {
+  EXERCISE_KNOWLEDGE_BASE,
+  getExerciseKnowledge,
+  buildVisionPrompt,
+  pantherDecisionEngine,
+  type VisionAnalysis,
+  type PantherDecision,
+} from "../../shared/exerciseKnowledgeBase";
 
 const router = Router();
 
-// ─── Panther System Coaching Prompt (NASM Corrective Exercise Framework) ───────
+// ─── Panther System Coaching Prompt ──────────────────────────────────────────
 const PANTHER_COACHING_PROMPT = `You are The Panther System — the clinical coaching intelligence behind Turned Up Fitness (TUF). You are not a chatbot. You do not motivate. You direct with precision and back every directive with science. You train adults 40+ and you know exactly what their bodies need.
 
 YOUR COACHING FRAMEWORK — NASM Corrective Exercise Continuum:
@@ -42,39 +60,81 @@ RESPONSE FORMAT FOR LIVE COACHING:
 - One correction or one encouragement per response
 - No lists, no headers — just direct coaching voice`;
 
-// ─── Exercise Form Standards (TUF Coaching Baselines) ───────────────────────
-const EXERCISE_STANDARDS: Record<string, string> = {
-  squat: "Feet shoulder-width, toes 15-30° out. Knees track over toes (not caving in = valgus). Neutral spine, chest tall. Hip crease below parallel at depth. Common LCS compensations: knee valgus, forward trunk lean, heel rise.",
-  deadlift: "Hip hinge pattern. Neutral spine throughout — no rounding lumbar or thoracic. Bar stays close to body. Hips and shoulders rise at same rate. Glutes drive lockout. Common faults: lumbar flexion, bar drift, early hip rise.",
-  "push-up": "Rigid plank — no hip sag or pike. Hands under shoulders. Elbows 45° from body. Chest to floor. Common UCS compensations: head forward, shoulder elevation, scapular winging.",
-  lunge: "Front shin vertical, knee not past toe. Rear knee 1-2 inches from floor. Torso upright, no forward lean. Hips square — no rotation. Common LCS fault: hip drop (Trendelenburg), forward trunk lean.",
-  "hip hinge": "Soft knee bend. Hinge at hip — not squat. Neutral spine. Hamstring stretch felt. Glutes drive return. Common fault: squatting the hinge, lumbar flexion.",
-  "glute bridge": "Feet flat, hip-width. Drive through heels. Full hip extension at top — no lumbar hyperextension. Glutes squeezed hard at top. Common fault: hamstring dominance, lumbar arch instead of glute drive.",
-  plank: "Neutral spine — no hip sag or pike. Head neutral, not forward. Glutes and core braced. Scapulae flat — no winging. Common UCS fault: head forward, shoulder elevation.",
-};
+// ─── Grok Vision Analysis (Primary) ──────────────────────────────────────────
+async function analyzeFrameWithGrok(
+  imageBase64: string,
+  exerciseId?: string
+): Promise<{ analysis: VisionAnalysis | null; rawDescription: string }> {
+  const xaiKey = process.env.XAI_API_KEY;
+  if (!xaiKey) throw new Error("XAI_API_KEY not configured");
 
-// ─── fal.ai Vision Analysis ──────────────────────────────────────────────────
+  const exercise = exerciseId ? getExerciseKnowledge(exerciseId) : null;
+  const prompt = exercise
+    ? buildVisionPrompt(exercise)
+    : `Analyze this exercise frame. Describe the movement, body position, joint alignment, and any visible compensation patterns or form breaks. Return a JSON object with keys: form_score (0-100), mistakes_detected (array), risk_flags_triggered (array), fatigue_signals (array), primary_cue (string), positive_observation (string).`;
+
+  const response = await fetch("https://api.x.ai/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${xaiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: "grok-2-vision-1212",
+      messages: [
+        {
+          role: "user",
+          content: [
+            {
+              type: "image_url",
+              image_url: { url: `data:image/jpeg;base64,${imageBase64}` },
+            },
+            { type: "text", text: prompt },
+          ],
+        },
+      ],
+      max_tokens: 400,
+      temperature: 0.1, // Low temp for consistent form analysis
+    }),
+  });
+
+  if (!response.ok) {
+    const err = await response.text();
+    throw new Error(`Grok Vision error: ${response.status} — ${err}`);
+  }
+
+  const data = await response.json() as {
+    choices?: Array<{ message?: { content?: string } }>;
+  };
+  const content = data.choices?.[0]?.message?.content || "";
+
+  // Try to parse structured JSON response
+  let analysis: VisionAnalysis | null = null;
+  try {
+    const jsonMatch = content.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      analysis = JSON.parse(jsonMatch[0]) as VisionAnalysis;
+    }
+  } catch {
+    // Structured parsing failed — fall through to raw description
+  }
+
+  return { analysis, rawDescription: content };
+}
+
+// ─── fal.ai Vision Analysis (Fallback) ───────────────────────────────────────
 async function analyzeFrameWithFal(imageBase64: string, exerciseContext?: string): Promise<string> {
   const falKey = process.env.FAL_KEY;
   if (!falKey) throw new Error("FAL_KEY not configured");
 
-  const standard = exerciseContext
-    ? EXERCISE_STANDARDS[exerciseContext.toLowerCase()] || null
+  const exercise = exerciseContext ? getExerciseKnowledge(exerciseContext) : null;
+  const standard = exercise
+    ? `CORRECT FORM: ${exercise.key_cues.join('. ')}. COMMON MISTAKES: ${exercise.common_mistakes.join(', ')}.`
     : null;
 
   const prompt = standard
-    ? `You are a biomechanics analyst. The person is performing: ${exerciseContext}.
-
-CORRECT FORM STANDARD:
-${standard}
-
-Analyze this frame against that standard. Identify:
-1. What they are doing correctly
-2. Any compensation patterns or form breaks you see
-3. The single most critical issue (if any)
-
-Be specific: joint angles, spine position, alignment. 2-3 sentences.`
-    : `Analyze this exercise frame. Describe the movement being performed, body position, joint alignment, and any visible compensation patterns or form breaks. Be specific. 2-3 sentences.`;
+    ? `You are a biomechanics analyst. The person is performing: ${exerciseContext}.\n${standard}\nAnalyze this frame. Identify what they are doing correctly and any compensation patterns. 2-3 sentences.`
+    : `Analyze this exercise frame. Describe the movement, body position, joint alignment, and any visible compensation patterns. 2-3 sentences.`;
 
   const response = await fetch("https://fal.run/fal-ai/any-llm/vision", {
     method: "POST",
@@ -99,7 +159,7 @@ Be specific: joint angles, spine position, alignment. 2-3 sentences.`
   return data.output || "Unable to analyze frame";
 }
 
-// ─── The Panther System Coaching Analysis (Claude) ─────────────────────────────
+// ─── Claude Coaching Cue (Fallback when Grok structured output fails) ─────────
 async function getPantherCoachingCue(
   movementDescription: string,
   memberContext?: string
@@ -108,11 +168,8 @@ async function getPantherCoachingCue(
   if (!anthropicKey) throw new Error("ANTHROPIC_API_KEY not configured");
 
   const anthropic = new Anthropic({ apiKey: anthropicKey });
-
   let system = PANTHER_COACHING_PROMPT;
-  if (memberContext) {
-    system += `\n\nMEMBER CONTEXT:\n${memberContext}`;
-  }
+  if (memberContext) system += `\n\nMEMBER CONTEXT:\n${memberContext}`;
 
   const response = await anthropic.messages.create({
     model: "claude-sonnet-4-5",
@@ -126,8 +183,7 @@ async function getPantherCoachingCue(
     ],
   });
 
-  const text = response.content[0].type === "text" ? response.content[0].text : "";
-  return text;
+  return response.content[0].type === "text" ? response.content[0].text : "";
 }
 
 // ─── ElevenLabs TTS ───────────────────────────────────────────────────────────
@@ -135,7 +191,6 @@ async function synthesizeSpeech(text: string): Promise<Buffer> {
   const elevenKey = process.env.ELEVENLABS_API_KEY;
   if (!elevenKey) throw new Error("ELEVENLABS_API_KEY not configured");
 
-  // Use a strong, authoritative voice — "Adam" (deep male voice, good for coaching)
   const voiceId = process.env.ELEVENLABS_VOICE_ID || "pNInz6obpgDQGcFmaJgB"; // Adam
 
   const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
@@ -147,7 +202,7 @@ async function synthesizeSpeech(text: string): Promise<Buffer> {
     },
     body: JSON.stringify({
       text,
-      model_id: "eleven_turbo_v2_5", // Fast, low-latency model
+      model_id: "eleven_turbo_v2_5",
       voice_settings: {
         stability: 0.5,
         similarity_boost: 0.8,
@@ -170,9 +225,9 @@ async function synthesizeSpeech(text: string): Promise<Buffer> {
 
 /**
  * POST /api/coaching/analyze
- * Step 1: Camera frame → fal.ai vision → movement description
+ * Step 1: Camera frame → Grok Vision → movement description
  * Body: { frame: string (base64 JPEG), exerciseContext?: string }
- * Returns: { description: string }
+ * Returns: { description: string, analysis?: VisionAnalysis }
  */
 router.post("/analyze", async (req: Request, res: Response) => {
   try {
@@ -180,13 +235,16 @@ router.post("/analyze", async (req: Request, res: Response) => {
       frame: string;
       exerciseContext?: string;
     };
+    if (!frame) return res.status(400).json({ error: "frame (base64 JPEG) required" });
 
-    if (!frame) {
-      return res.status(400).json({ error: "frame (base64 JPEG) required" });
+    try {
+      const { analysis, rawDescription } = await analyzeFrameWithGrok(frame, exerciseContext);
+      return res.json({ description: rawDescription, analysis });
+    } catch (grokErr) {
+      console.warn("[Coaching/analyze] Grok Vision failed, falling back to fal.ai:", grokErr);
+      const description = await analyzeFrameWithFal(frame, exerciseContext);
+      return res.json({ description, analysis: null });
     }
-
-    const description = await analyzeFrameWithFal(frame, exerciseContext);
-    return res.json({ description });
   } catch (error: any) {
     console.error("[Coaching/analyze] Error:", error);
     return res.status(500).json({ error: error.message || "Vision analysis failed" });
@@ -195,7 +253,7 @@ router.post("/analyze", async (req: Request, res: Response) => {
 
 /**
  * POST /api/coaching/coach
- * Step 2: Movement description → The Panther System (Claude) → coaching cue text
+ * Step 2: Movement description → Panther coaching cue
  * Body: { description: string, memberContext?: string }
  * Returns: { cue: string }
  */
@@ -205,16 +263,13 @@ router.post("/coach", async (req: Request, res: Response) => {
       description: string;
       memberContext?: string;
     };
-
-    if (!description) {
-      return res.status(400).json({ error: "description required" });
-    }
+    if (!description) return res.status(400).json({ error: "description required" });
 
     const cue = await getPantherCoachingCue(description, memberContext);
     return res.json({ cue });
   } catch (error: any) {
     console.error("[Coaching/coach] Error:", error);
-    return res.status(500).json({ error: error.message || "Coaching analysis failed" });
+    return res.status(500).json({ error: error.message || "Coaching cue failed" });
   }
 });
 
@@ -227,10 +282,7 @@ router.post("/coach", async (req: Request, res: Response) => {
 router.post("/speak", async (req: Request, res: Response) => {
   try {
     const { text } = req.body as { text: string };
-
-    if (!text) {
-      return res.status(400).json({ error: "text required" });
-    }
+    if (!text) return res.status(400).json({ error: "text required" });
 
     const audioBuffer = await synthesizeSpeech(text);
     res.setHeader("Content-Type", "audio/mpeg");
@@ -244,43 +296,79 @@ router.post("/speak", async (req: Request, res: Response) => {
 
 /**
  * POST /api/coaching/pipeline
- * Full pipeline: frame → vision → Claude → TTS in one call
- * Body: { frame: string (base64), exerciseContext?: string, memberContext?: string, audioEnabled?: boolean }
- * Returns: { description, cue, audioUrl? } — audioUrl is a data URI if audioEnabled
+ * Full pipeline: frame → Grok Vision → Autonomous Decision Engine → TTS
+ * Body: {
+ *   frame: string (base64),
+ *   exerciseContext?: string,
+ *   memberContext?: string,
+ *   audioEnabled?: boolean,
+ *   consecutiveMistakes?: number
+ * }
+ * Returns: { description, cue, decision, audioBase64? }
  */
 router.post("/pipeline", async (req: Request, res: Response) => {
   try {
-    const { frame, exerciseContext, memberContext, audioEnabled = false } = req.body as {
+    const {
+      frame,
+      exerciseContext,
+      memberContext,
+      audioEnabled = false,
+      consecutiveMistakes = 0,
+    } = req.body as {
       frame: string;
       exerciseContext?: string;
       memberContext?: string;
       audioEnabled?: boolean;
+      consecutiveMistakes?: number;
     };
 
-    if (!frame) {
-      return res.status(400).json({ error: "frame (base64 JPEG) required" });
+    if (!frame) return res.status(400).json({ error: "frame (base64 JPEG) required" });
+
+    let description = "";
+    let analysis: VisionAnalysis | null = null;
+    let decision: PantherDecision | null = null;
+    let cue = "";
+
+    // Step 1: Grok Vision analysis
+    try {
+      const result = await analyzeFrameWithGrok(frame, exerciseContext);
+      analysis = result.analysis;
+      description = result.rawDescription;
+    } catch (grokErr) {
+      console.warn("[Pipeline] Grok Vision failed, falling back:", grokErr);
+      description = await analyzeFrameWithFal(frame, exerciseContext);
     }
 
-    // Step 1: Vision analysis
-    const description = await analyzeFrameWithFal(frame, exerciseContext);
+    // Step 2: Autonomous Decision Engine (if structured analysis available)
+    if (analysis && exerciseContext) {
+      const exercise = getExerciseKnowledge(exerciseContext);
+      if (exercise) {
+        decision = pantherDecisionEngine(analysis, exercise, consecutiveMistakes);
+        cue = decision.message;
+      }
+    }
 
-    // Step 2: The Panther System coaching cue
-    const cue = await getPantherCoachingCue(description, memberContext);
+    // Step 3: Fallback to Claude if no structured decision
+    if (!cue) {
+      cue = await getPantherCoachingCue(description, memberContext);
+    }
 
-    // Step 3: TTS (optional — only if audioEnabled to save latency)
+    // Step 4: TTS (optional)
     let audioBase64: string | undefined;
-    if (audioEnabled) {
+    if (audioEnabled && cue && decision?.action !== 'silence') {
       try {
         const audioBuffer = await synthesizeSpeech(cue);
         audioBase64 = audioBuffer.toString("base64");
       } catch (ttsError) {
-        console.error("[Coaching/pipeline] TTS failed, continuing without audio:", ttsError);
+        console.error("[Pipeline] TTS failed, continuing without audio:", ttsError);
       }
     }
 
     return res.json({
       description,
       cue,
+      decision,
+      analysis,
       ...(audioBase64 ? { audioBase64 } : {}),
     });
   } catch (error: any) {
@@ -306,14 +394,20 @@ router.post("/analyze-movement", async (req: Request, res: Response) => {
       return res.status(400).json({ error: "imageBase64 and prompt required" });
     }
 
-    // Try fal.ai first for vision, then fall back to Anthropic
+    // Try Grok Vision first
     let visionDescription = "";
-    const falKey = process.env.FAL_KEY;
-    if (falKey) {
-      try {
-        visionDescription = await analyzeFrameWithFal(imageBase64, mode);
-      } catch (falErr) {
-        console.warn("[BOA] fal.ai failed, falling back to Anthropic vision:", falErr);
+    try {
+      const { rawDescription } = await analyzeFrameWithGrok(imageBase64, mode);
+      visionDescription = rawDescription;
+    } catch (grokErr) {
+      console.warn("[BOA] Grok Vision failed, falling back to fal.ai:", grokErr);
+      const falKey = process.env.FAL_KEY;
+      if (falKey) {
+        try {
+          visionDescription = await analyzeFrameWithFal(imageBase64, mode);
+        } catch (falErr) {
+          console.warn("[BOA] fal.ai also failed:", falErr);
+        }
       }
     }
 
@@ -324,13 +418,10 @@ router.post("/analyze-movement", async (req: Request, res: Response) => {
     }
 
     const client = new Anthropic({ apiKey: anthropicKey });
-
-    // If we have a fal description, use it as context for the Panther prompt
     const userContent = visionDescription
       ? `${prompt}\n\nVISION ANALYSIS FROM CAMERA:\n${visionDescription}`
       : prompt;
 
-    // If no fal vision, use Anthropic vision directly with the image
     const messages: Anthropic.MessageParam[] = visionDescription
       ? [{ role: "user", content: userContent }]
       : [{
@@ -356,6 +447,14 @@ router.post("/analyze-movement", async (req: Request, res: Response) => {
 });
 
 /**
+ * GET /api/coaching/exercises
+ * Returns the full exercise knowledge base (for client-side use)
+ */
+router.get("/exercises", (_req: Request, res: Response) => {
+  return res.json({ exercises: EXERCISE_KNOWLEDGE_BASE });
+});
+
+/**
  * GET /api/coaching/health
  * Check which services are configured
  */
@@ -363,10 +462,12 @@ router.get("/health", (_req: Request, res: Response) => {
   res.json({
     status: "ok",
     services: {
+      grok_vision: !!process.env.XAI_API_KEY,
       fal: !!process.env.FAL_KEY,
       anthropic: !!process.env.ANTHROPIC_API_KEY,
       elevenlabs: !!process.env.ELEVENLABS_API_KEY,
     },
+    exercise_library_count: EXERCISE_KNOWLEDGE_BASE.length,
     timestamp: new Date().toISOString(),
   });
 });
