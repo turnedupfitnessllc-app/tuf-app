@@ -1,7 +1,6 @@
 /**
  * TUF Membership & Live Training Screen
- * Shows tier benefits, live session schedule, and upgrade CTA
- * Funnel: Free → $19 Starter → $79 Advanced → $20/mo Member
+ * Canonical tiers: Free → Panther Core $19.99/mo → Panther Elite $39.99/mo → Panther Pro $79.99/mo
  */
 import { useState } from "react";
 import { useLocation } from "wouter";
@@ -23,48 +22,48 @@ const TIERS = [
     highlight: false,
   },
   {
-    id: "starter",
-    name: "STARTER",
-    price: "$19",
-    period: "one-time",
+    id: "core",
+    name: "PANTHER CORE",
+    price: "$19.99",
+    period: "per month",
     color: "#FF6600",
     glow: "rgba(255,102,0,0.15)",
-    features: ["30-Day Panther Program", "4-phase progression", "Panther Brain AI analysis", "XP & badge system", "Leaderboard access", "SuccessScreen celebrations"],
-    cta: "GET STARTER →",
+    features: ["AI Corrective Coaching", "MOVE Pillar", "FUEL Pillar", "Pain Diagnostics", "Full Exercise Library", "XP & badge system"],
+    cta: "GET CORE →",
     ctaRoute: "/pricing",
     highlight: false,
   },
   {
-    id: "advanced",
-    name: "ADVANCED",
-    price: "$79",
-    period: "one-time",
+    id: "elite",
+    name: "PANTHER ELITE",
+    price: "$39.99",
+    period: "per month",
     color: "#C8973A",
     glow: "rgba(200,151,58,0.15)",
-    features: ["12-Week Advanced System", "Periodized programming", "BOA biomechanical analysis", "Strength + power focus", "Priority AI coaching", "Exclusive badges"],
-    cta: "GET ADVANCED →",
+    features: ["Everything in Core", "FEAST Pillar — TUTK Recipes", "100-Recipe Library", "1,800-Food Database", "Priority AI coaching", "Exclusive badges"],
+    cta: "GET ELITE →",
     ctaRoute: "/pricing",
     highlight: true,
   },
   {
-    id: "member",
-    name: "MEMBER",
-    price: "$20",
+    id: "pro",
+    name: "PANTHER PRO",
+    price: "$79.99",
     period: "per month",
-    color: "#9B59B6",
-    glow: "rgba(155,89,182,0.2)",
-    features: ["Everything in Advanced", "Live coaching sessions", "New programs monthly", "Season leaderboard", "PvP challenges", "Full AI coaching suite", "Exclusive member badges", "Early access to new features"],
-    cta: "JOIN MEMBERSHIP →",
+    color: "#AA44FF",
+    glow: "rgba(170,68,255,0.2)",
+    features: ["Everything in Elite", "MINDSET Pillar", "Trainer Tools", "Client Management", "Live coaching sessions", "Season leaderboard", "Early access to new features"],
+    cta: "GET PRO →",
     ctaRoute: "/pricing",
     highlight: false,
   },
 ];
 
 const LIVE_SESSIONS = [
-  { day: "MON", time: "6:00 AM EST", title: "Morning Mobility Flow", coach: "Coach Marcus", tier: "member", spots: 12 },
-  { day: "WED", time: "7:00 PM EST", title: "Strength Foundations", coach: "Coach Marcus", tier: "advanced", spots: 8 },
-  { day: "FRI", time: "6:00 AM EST", title: "Panther Power Session", coach: "Coach Marcus", tier: "member", spots: 15 },
-  { day: "SAT", time: "9:00 AM EST", title: "Weekend Warrior", coach: "Coach Marcus", tier: "member", spots: 20 },
+  { day: "MON", time: "6:00 AM EST", title: "Morning Mobility Flow", coach: "Coach Marcus", tier: "pro", spots: 12 },
+          { day: "WED", time: "7:00 PM EST", title: "Strength Foundations", coach: "Coach Marcus", tier: "elite", spots: 8 },
+          { day: "FRI", time: "6:00 AM EST", title: "Panther Power Session", coach: "Coach Marcus", tier: "pro", spots: 15 },
+  { day: "SAT", time: "9:00 AM EST", title: "Weekend Warrior", coach: "Coach Marcus", tier: "pro", spots: 20 },
 ];
 
 const MEMBER_BENEFITS = [
@@ -83,7 +82,7 @@ export default function Membership() {
   const userTier = localStorage.getItem("tuf_tier") || "free";
   const [selectedTier, setSelectedTier] = useState<string | null>(null);
 
-  const tierOrder = ["free", "starter", "advanced", "member"];
+  const tierOrder = ["free", "core", "elite", "pro"];
   const userTierIdx = tierOrder.indexOf(userTier);
 
   return (

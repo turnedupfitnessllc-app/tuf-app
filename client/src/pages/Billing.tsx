@@ -9,22 +9,30 @@ import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 
 interface SubscriptionStatus {
-  tier: "free" | "cub" | "stealth" | "controlled" | "apex";
+  tier: "free" | "core" | "elite" | "pro";
   status: "active" | "cancelled" | "past_due" | "trialing" | null;
   current_period_end?: number;
   cancel_at_period_end?: boolean;
 }
 
 const TIER_META: Record<string, { name: string; color: string; price: string; tagline: string }> = {
-  free:       { name: "FREE",          color: "#666",     price: "$0",     tagline: "Basic access" },
-  cub:        { name: "CUB",           color: "#A0A0A0",  price: "$9.99",  tagline: "Start your movement journey" },
-  stealth:    { name: "STEALTH",       color: "#4a9eff",  price: "$19.99", tagline: "Build your corrective foundation" },
-  controlled: { name: "CONTROLLED",    color: "#C8973A",  price: "$34.99", tagline: "Precision training at full capacity" },
-  apex:       { name: "APEX PREDATOR", color: "#FF6600",  price: "$59.99", tagline: "Elite performance, no limits" },
+  free:  { name: "FREE",          color: "#666",    price: "$0",     tagline: "Basic access" },
+  core:  { name: "PANTHER CORE",  color: "#FF6600", price: "$19.99", tagline: "AI corrective coaching + nutrition" },
+  elite: { name: "PANTHER ELITE", color: "#C8973A", price: "$39.99", tagline: "Adds full TUTK food system" },
+  pro:   { name: "PANTHER PRO",   color: "#AA44FF", price: "$79.99", tagline: "All pillars + trainer tools" },
 };
 
-const UPGRADE_TIERS = ["cub", "stealth", "controlled", "apex"] as const;
-const TIER_ORDER = ["free", "cub", "stealth", "controlled", "apex"];
+const UPGRADE_TIERS = ["core", "elite", "pro"] as const;
+const TIER_ORDER = ["free", "core", "elite", "pro"];
+
+// Map legacy DB tier names → canonical names
+function normalizeTier(raw: string): "free" | "core" | "elite" | "pro" {
+  const map: Record<string, "free" | "core" | "elite" | "pro"> = {
+    free: "free", cub: "free", stealth: "core", controlled: "elite", apex: "pro",
+    core: "core", elite: "elite", pro: "pro",
+  };
+  return map[raw] ?? "free";
+}
 
 function tierRank(tier: string): number {
   return TIER_ORDER.indexOf(tier);
@@ -54,22 +62,18 @@ export default function Billing() {
 
     fetch(`/api/stripe/subscription/${userId}`)
       .then(r => r.json())
-      .then((data: SubscriptionStatus) => {
-        setSub(data);
-        setLoading(false);
-        // Sync server tier → localStorage so PaywallGate reads the correct value
-        const serverTier = data.tier || "free";
-        // Map DB tier names (cub/stealth/controlled/apex) → PaywallGate names (free/core/elite/pro)
-        const tierMap: Record<string, string> = {
-          free: "free",
-          cub: "core",
-          stealth: "core",
-          controlled: "elite",
-          apex: "pro",
+      .then((data: { tier?: string; status?: string; current_period_end?: number; cancel_at_period_end?: boolean }) => {
+        const normalizedTier = normalizeTier(data.tier || "free");
+        const normalized: SubscriptionStatus = {
+          tier: normalizedTier,
+          status: (data.status as SubscriptionStatus["status"]) || null,
+          current_period_end: data.current_period_end,
+          cancel_at_period_end: data.cancel_at_period_end,
         };
-        const gateTier = tierMap[serverTier] ?? "free";
-        localStorage.setItem("tuf_tier", gateTier);
-        localStorage.setItem("tuf_tier_raw", serverTier);
+        setSub(normalized);
+        setLoading(false);
+        localStorage.setItem("tuf_tier", normalizedTier);
+        localStorage.setItem("tuf_tier_raw", data.tier || "free");
       })
       .catch(() => { setSub({ tier: "free", status: null }); setLoading(false); });
   }, [userId]);
@@ -267,9 +271,9 @@ export default function Billing() {
             )}
 
             {/* Already on top tier */}
-            {currentTier === "apex" && isActive && (
-              <div style={{ padding: "16px", borderRadius: 14, background: "#FF660010", border: "1px solid #FF660030", textAlign: "center", animation: "fadeUp 0.5s ease 0.1s both" }}>
-                <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 18, color: "#FF6600", letterSpacing: "0.06em" }}>APEX PREDATOR</p>
+            {currentTier === "pro" && isActive && (
+              <div style={{ padding: "16px", borderRadius: 14, background: "rgba(170,68,255,0.06)", border: "1px solid rgba(170,68,255,0.2)", textAlign: "center", animation: "fadeUp 0.5s ease 0.1s both" }}>
+                <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 18, color: "#AA44FF", letterSpacing: "0.06em" }}>PANTHER PRO</p>
                 <p style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12, color: "rgba(255,255,255,0.4)", marginTop: 4 }}>You're on the highest tier. No limits.</p>
               </div>
             )}

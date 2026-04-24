@@ -283,6 +283,56 @@
   .text-bold-accent { font-weight: 700; letter-spacing: 0.05em; }
   .btn-glow { @apply bg-primary text-primary-foreground font-bold rounded-xl px-6 py-3 transition-all duration-200; }
   .btn-glow:hover { box-shadow: 0 0 20px rgba(255,102,0,0.5); transform: translateY(-1px); }
+  /* ── TUF Button System ──────────────────────────────────────────────── */
+  .btn-primary {
+    display: block; width: 100%; padding: 14px 20px;
+    background: linear-gradient(135deg, #FF6600, #FF8C00);
+    border: none; border-radius: 12px;
+    font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 800;
+    letter-spacing: 0.12em; color: #fff; cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .btn-primary:hover:not(:disabled) { box-shadow: 0 0 24px rgba(255,102,0,0.45); transform: translateY(-1px); }
+  .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+  .btn-secondary {
+    display: block; width: 100%; padding: 13px 20px;
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 12px;
+    font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700;
+    letter-spacing: 0.1em; color: rgba(255,255,255,0.7); cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .btn-secondary:hover:not(:disabled) { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); color: #fff; }
+  .btn-secondary:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-teal {
+    display: block; width: 100%; padding: 14px 20px;
+    background: linear-gradient(135deg, #00FFC6, #00D4A8);
+    border: none; border-radius: 12px;
+    font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 800;
+    letter-spacing: 0.12em; color: #0B0B0B; cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .btn-teal:hover:not(:disabled) { box-shadow: 0 0 24px rgba(0,255,198,0.35); transform: translateY(-1px); }
+  .btn-teal:disabled { opacity: 0.45; cursor: not-allowed; }
+  .btn-danger {
+    display: block; width: 100%; padding: 13px 20px;
+    background: rgba(255,59,59,0.08); border: 1px solid rgba(255,59,59,0.3);
+    border-radius: 12px;
+    font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700;
+    letter-spacing: 0.1em; color: #FF3B3B; cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .btn-danger:hover:not(:disabled) { background: rgba(255,59,59,0.15); }
+  .btn-danger:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-inline {
+    display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px;
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700;
+    letter-spacing: 0.1em; color: rgba(255,255,255,0.6); cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .btn-inline:hover:not(:disabled) { background: rgba(255,255,255,0.09); color: #fff; }
   .voice-pulse { animation: voice-pulse 1.5s ease-in-out infinite; }
   @keyframes voice-pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(255,102,0,0.4); } 50% { box-shadow: 0 0 0 14px rgba(255,102,0,0); } }
   .typing-dot { animation: typing-bounce 1.4s ease-in-out infinite; }
