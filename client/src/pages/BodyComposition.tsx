@@ -1,7 +1,8 @@
 // BodyComposition.tsx — TUF Body Composition Tracker
 // Mirrors the TUF Body Composition Assessment form from Drive
 // Calculates BMI + U.S. Navy body fat % + tracks history
-import { useState } from "react";
+// Unit system: imperial (lbs/in) or metric (kg/cm) via useUnitPreference
+import { useState, useMemo } from "react";
 import { Link } from "wouter";
 import {
   useBodyComp,
@@ -11,6 +12,7 @@ import {
   getBodyFatCategory,
   type BodyMeasurements,
 } from "../hooks/useBodyComp";
+import { useUnitPreference } from "@/hooks/useUnitPreference";
 
 // ─── Helper ────────────────────────────────────────────────────────────────
 function InputField({
@@ -64,24 +66,45 @@ function DeltaBadge({ delta, inverse = false }: { delta: number | null; inverse?
 export default function BodyComposition() {
   const { history, latestEntry, saveEntry, getDelta, hasData } = useBodyComp();
 
+  // Unit preference — storage is always lbs/inches (imperial-native)
+  const {
+    system, isImperial, toggleSystem,
+    weightUnit, measureUnit,
+    kgToLbs, lbsToKg, cmToInches, inchesToCm,
+  } = useUnitPreference();
+
+  // Convert stored lbs/inches → display units
+  const toDisp = useMemo(() => ({
+    weight: (lbs: number) => isImperial ? lbs : Math.round(lbsToKg(lbs) * 10) / 10,
+    meas:   (inches: number) => isImperial ? inches : Math.round(inchesToCm(inches) * 10) / 10,
+  }), [isImperial, lbsToKg, inchesToCm]);
+
+  // Convert display input → lbs/inches for storage
+  const toStore = useMemo(() => ({
+    weight: (v: number) => isImperial ? v : Math.round(kgToLbs(v) * 10) / 10,
+    meas:   (v: number) => isImperial ? v : Math.round(cmToInches(v) * 10) / 10,
+  }), [isImperial, kgToLbs, cmToInches]);
+
   const [gender, setGender] = useState<"male" | "female">(
     (latestEntry?.gender as "male" | "female") ?? "male"
   );
+
+  // Form values are always in display units (converted on save)
   const [form, setForm] = useState({
-    weight: latestEntry?.weight?.toString() ?? "",
-    height: latestEntry?.height?.toString() ?? "",
+    weight: latestEntry?.weight ? toDisp.weight(latestEntry.weight).toString() : "",
+    height: latestEntry?.height ? toDisp.meas(latestEntry.height).toString() : "",
     age: latestEntry?.age?.toString() ?? "",
-    neck: latestEntry?.neck?.toString() ?? "",
-    chest: latestEntry?.chest?.toString() ?? "",
-    waist: latestEntry?.waist?.toString() ?? "",
-    hips: latestEntry?.hips?.toString() ?? "",
-    bicepRight: latestEntry?.bicepRight?.toString() ?? "",
-    bicepLeft: latestEntry?.bicepLeft?.toString() ?? "",
-    thighRight: latestEntry?.thighRight?.toString() ?? "",
-    thighLeft: latestEntry?.thighLeft?.toString() ?? "",
-    calfRight: latestEntry?.calfRight?.toString() ?? "",
-    calfLeft: latestEntry?.calfLeft?.toString() ?? "",
-    wrist: latestEntry?.wrist?.toString() ?? "",
+    neck: latestEntry?.neck ? toDisp.meas(latestEntry.neck).toString() : "",
+    chest: latestEntry?.chest ? toDisp.meas(latestEntry.chest).toString() : "",
+    waist: latestEntry?.waist ? toDisp.meas(latestEntry.waist).toString() : "",
+    hips: latestEntry?.hips ? toDisp.meas(latestEntry.hips).toString() : "",
+    bicepRight: latestEntry?.bicepRight ? toDisp.meas(latestEntry.bicepRight).toString() : "",
+    bicepLeft: latestEntry?.bicepLeft ? toDisp.meas(latestEntry.bicepLeft).toString() : "",
+    thighRight: latestEntry?.thighRight ? toDisp.meas(latestEntry.thighRight).toString() : "",
+    thighLeft: latestEntry?.thighLeft ? toDisp.meas(latestEntry.thighLeft).toString() : "",
+    calfRight: latestEntry?.calfRight ? toDisp.meas(latestEntry.calfRight).toString() : "",
+    calfLeft: latestEntry?.calfLeft ? toDisp.meas(latestEntry.calfLeft).toString() : "",
+    wrist: latestEntry?.wrist ? toDisp.meas(latestEntry.wrist).toString() : "",
     notes: latestEntry?.notes ?? "",
   });
 
@@ -90,15 +113,15 @@ export default function BodyComposition() {
 
   const n = (v: string) => parseFloat(v) || 0;
 
-  // Live preview calculations
-  const liveBMI = calculateBMI(n(form.weight), n(form.height));
-  const liveBF = calculateBodyFatNavy(
-    gender,
-    n(form.height),
-    n(form.waist),
-    n(form.neck),
-    n(form.hips)
-  );
+  // Live preview — always compute in lbs/inches (storage units)
+  const weightLbs = toStore.weight(n(form.weight));
+  const heightIn  = toStore.meas(n(form.height));
+  const waistIn   = toStore.meas(n(form.waist));
+  const neckIn    = toStore.meas(n(form.neck));
+  const hipsIn    = toStore.meas(n(form.hips));
+
+  const liveBMI = calculateBMI(weightLbs, heightIn);
+  const liveBF = calculateBodyFatNavy(gender, heightIn, waistIn, neckIn, hipsIn);
   const bmiCat = getBMICategory(liveBMI);
   const bfCat = getBodyFatCategory(liveBF, gender);
 
@@ -106,20 +129,20 @@ export default function BodyComposition() {
     if (!form.weight || !form.height) return;
     saveEntry({
       gender,
-      weight: n(form.weight),
-      height: n(form.height),
+      weight: toStore.weight(n(form.weight)),
+      height: toStore.meas(n(form.height)),
       age: n(form.age),
-      neck: n(form.neck),
-      chest: n(form.chest),
-      waist: n(form.waist),
-      hips: n(form.hips),
-      bicepRight: n(form.bicepRight),
-      bicepLeft: n(form.bicepLeft),
-      thighRight: n(form.thighRight),
-      thighLeft: n(form.thighLeft),
-      calfRight: n(form.calfRight),
-      calfLeft: n(form.calfLeft),
-      wrist: n(form.wrist),
+      neck: toStore.meas(n(form.neck)),
+      chest: toStore.meas(n(form.chest)),
+      waist: toStore.meas(n(form.waist)),
+      hips: toStore.meas(n(form.hips)),
+      bicepRight: toStore.meas(n(form.bicepRight)),
+      bicepLeft: toStore.meas(n(form.bicepLeft)),
+      thighRight: toStore.meas(n(form.thighRight)),
+      thighLeft: toStore.meas(n(form.thighLeft)),
+      calfRight: toStore.meas(n(form.calfRight)),
+      calfLeft: toStore.meas(n(form.calfLeft)),
+      wrist: toStore.meas(n(form.wrist)),
       notes: form.notes,
     });
     setSaved(true);
@@ -128,6 +151,10 @@ export default function BodyComposition() {
 
   const set = (field: string) => (v: string) =>
     setForm((prev) => ({ ...prev, [field]: v }));
+
+  // Display a history value with correct unit label
+  const dispW = (lbs: number) => isImperial ? `${lbs} lbs` : `${Math.round(lbsToKg(lbs) * 10) / 10} kg`;
+  const dispM = (inches: number) => isImperial ? `${inches}"` : `${Math.round(inchesToCm(inches) * 10) / 10} cm`;
 
   return (
     <div className="min-h-screen bg-gray-950 text-white pb-24">
@@ -138,10 +165,20 @@ export default function BodyComposition() {
             ←
           </button>
         </Link>
-        <div>
+        <div className="flex-1">
           <h1 className="text-base font-bold text-white">Body Composition</h1>
           <p className="text-xs text-gray-500">TUF Assessment Protocol</p>
         </div>
+        {/* Unit toggle */}
+        <button
+          onClick={toggleSystem}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-orange-500/15 border border-orange-500/30 hover:bg-orange-500/25 active:scale-95 transition-all"
+        >
+          <span className="text-xs font-black text-orange-400 tracking-wide">
+            {isImperial ? "IMPERIAL" : "METRIC"}
+          </span>
+          <span className="text-orange-400 text-xs">⇄</span>
+        </button>
       </div>
 
       {/* Tabs */}
@@ -192,19 +229,23 @@ export default function BodyComposition() {
                   <DeltaBadge delta={getDelta("bodyFatPercent")} inverse />
                 </div>
               )}
-              {liveBMI > 0 && n(form.weight) > 0 && liveBF > 0 && (
+              {liveBMI > 0 && weightLbs > 0 && liveBF > 0 && (
                 <>
                   <div className="bg-gray-900 rounded-2xl p-4 border border-gray-800">
                     <p className="text-xs text-gray-500 mb-1">Lean Mass</p>
                     <p className="text-2xl font-black text-emerald-400">
-                      {Math.round(n(form.weight) * (1 - liveBF / 100))} lbs
+                      {isImperial
+                        ? `${Math.round(weightLbs * (1 - liveBF / 100))} lbs`
+                        : `${Math.round(lbsToKg(weightLbs * (1 - liveBF / 100)) * 10) / 10} kg`}
                     </p>
                     <DeltaBadge delta={getDelta("leanMassLbs")} />
                   </div>
                   <div className="bg-gray-900 rounded-2xl p-4 border border-gray-800">
                     <p className="text-xs text-gray-500 mb-1">Fat Mass</p>
                     <p className="text-2xl font-black text-orange-400">
-                      {Math.round(n(form.weight) * (liveBF / 100))} lbs
+                      {isImperial
+                        ? `${Math.round(weightLbs * (liveBF / 100))} lbs`
+                        : `${Math.round(lbsToKg(weightLbs * (liveBF / 100)) * 10) / 10} kg`}
                     </p>
                     <DeltaBadge delta={getDelta("fatMassLbs")} inverse />
                   </div>
@@ -241,8 +282,20 @@ export default function BodyComposition() {
               Core Metrics
             </p>
             <div className="grid grid-cols-3 gap-3">
-              <InputField label="Weight" value={form.weight} onChange={set("weight")} unit="lbs" />
-              <InputField label="Height" value={form.height} onChange={set("height")} unit="in" placeholder="68" />
+              <InputField
+                label="Weight"
+                value={form.weight}
+                onChange={set("weight")}
+                unit={weightUnit}
+                placeholder={isImperial ? "185" : "84"}
+              />
+              <InputField
+                label="Height"
+                value={form.height}
+                onChange={set("height")}
+                unit={measureUnit}
+                placeholder={isImperial ? "68" : "173"}
+              />
               <InputField label="Age" value={form.age} onChange={set("age")} unit="yrs" />
             </div>
           </div>
@@ -253,27 +306,27 @@ export default function BodyComposition() {
               Circumference Measurements
             </p>
             <p className="text-xs text-gray-600 mb-3">
-              All measurements in inches. Used for U.S. Navy body fat calculation.
+              All measurements in {isImperial ? "inches" : "centimeters"}. Used for U.S. Navy body fat calculation.
             </p>
             <div className="grid grid-cols-2 gap-3">
-              <InputField label="Neck" value={form.neck} onChange={set("neck")} unit="in" />
-              <InputField label="Chest" value={form.chest} onChange={set("chest")} unit="in" />
-              <InputField label="Waist" value={form.waist} onChange={set("waist")} unit="in" />
-              <InputField label="Hips" value={form.hips} onChange={set("hips")} unit="in" />
-              <InputField label="Bicep (R)" value={form.bicepRight} onChange={set("bicepRight")} unit="in" />
-              <InputField label="Bicep (L)" value={form.bicepLeft} onChange={set("bicepLeft")} unit="in" />
-              <InputField label="Thigh (R)" value={form.thighRight} onChange={set("thighRight")} unit="in" />
-              <InputField label="Thigh (L)" value={form.thighLeft} onChange={set("thighLeft")} unit="in" />
-              <InputField label="Calf (R)" value={form.calfRight} onChange={set("calfRight")} unit="in" />
-              <InputField label="Calf (L)" value={form.calfLeft} onChange={set("calfLeft")} unit="in" />
-              <InputField label="Wrist" value={form.wrist} onChange={set("wrist")} unit="in" />
+              <InputField label="Neck" value={form.neck} onChange={set("neck")} unit={measureUnit} />
+              <InputField label="Chest" value={form.chest} onChange={set("chest")} unit={measureUnit} />
+              <InputField label="Waist" value={form.waist} onChange={set("waist")} unit={measureUnit} />
+              <InputField label="Hips" value={form.hips} onChange={set("hips")} unit={measureUnit} />
+              <InputField label="Bicep (R)" value={form.bicepRight} onChange={set("bicepRight")} unit={measureUnit} />
+              <InputField label="Bicep (L)" value={form.bicepLeft} onChange={set("bicepLeft")} unit={measureUnit} />
+              <InputField label="Thigh (R)" value={form.thighRight} onChange={set("thighRight")} unit={measureUnit} />
+              <InputField label="Thigh (L)" value={form.thighLeft} onChange={set("thighLeft")} unit={measureUnit} />
+              <InputField label="Calf (R)" value={form.calfRight} onChange={set("calfRight")} unit={measureUnit} />
+              <InputField label="Calf (L)" value={form.calfLeft} onChange={set("calfLeft")} unit={measureUnit} />
+              <InputField label="Wrist" value={form.wrist} onChange={set("wrist")} unit={measureUnit} />
             </div>
           </div>
 
           {/* Notes */}
           <div>
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-              Notes (optional)
+              Notes
             </p>
             <textarea
               value={form.notes}
@@ -331,9 +384,9 @@ export default function BodyComposition() {
                   </p>
                   <div className="grid grid-cols-3 gap-3 text-center">
                     {[
-                      { label: "Weight", delta: getDelta("weight"), unit: "lbs", inverse: true },
+                      { label: "Weight", delta: getDelta("weight"), unit: isImperial ? " lbs" : " kg", inverse: true },
                       { label: "Body Fat", delta: getDelta("bodyFatPercent"), unit: "%", inverse: true },
-                      { label: "Waist", delta: getDelta("waist"), unit: '"', inverse: true },
+                      { label: "Waist", delta: getDelta("waist"), unit: isImperial ? '"' : " cm", inverse: true },
                     ].map(({ label, delta, unit, inverse }) => (
                       <div key={label}>
                         <p className="text-xs text-gray-500">{label}</p>
@@ -383,8 +436,10 @@ export default function BodyComposition() {
                   <div className="grid grid-cols-4 gap-2 text-center">
                     <div>
                       <p className="text-xs text-gray-500">Weight</p>
-                      <p className="text-base font-black text-white">{entry.weight}</p>
-                      <p className="text-xs text-gray-600">lbs</p>
+                      <p className="text-base font-black text-white">
+                        {isImperial ? entry.weight : Math.round(lbsToKg(entry.weight) * 10) / 10}
+                      </p>
+                      <p className="text-xs text-gray-600">{weightUnit}</p>
                     </div>
                     <div>
                       <p className="text-xs text-gray-500">BMI</p>
@@ -407,8 +462,10 @@ export default function BodyComposition() {
                     </div>
                     <div>
                       <p className="text-xs text-gray-500">Lean</p>
-                      <p className="text-base font-black text-emerald-400">{entry.leanMassLbs}</p>
-                      <p className="text-xs text-gray-600">lbs</p>
+                      <p className="text-base font-black text-emerald-400">
+                        {isImperial ? entry.leanMassLbs : Math.round(lbsToKg(entry.leanMassLbs) * 10) / 10}
+                      </p>
+                      <p className="text-xs text-gray-600">{weightUnit}</p>
                     </div>
                   </div>
                   {entry.waist > 0 && (
@@ -421,7 +478,13 @@ export default function BodyComposition() {
                       ].map(({ label, value }) => (
                         <div key={label}>
                           <p className="text-gray-500">{label}</p>
-                          <p className="text-gray-300 font-semibold">{value || "—"}"</p>
+                          <p className="text-gray-300 font-semibold">
+                            {value
+                              ? isImperial
+                                ? `${value}"`
+                                : `${Math.round(inchesToCm(value) * 10) / 10} cm`
+                              : "—"}
+                          </p>
                         </div>
                       ))}
                     </div>

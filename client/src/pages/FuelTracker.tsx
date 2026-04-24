@@ -18,6 +18,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import HamburgerDrawer from "@/components/HamburgerDrawer";
 import { useLocation } from "wouter";
 import { tutkRecipes, type Recipe } from "@/data/tutkRecipes";
+import FoodLibrarySearch from "@/components/FoodLibrarySearch";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -257,7 +258,7 @@ export default function FuelTracker() {
   const [evaluating, setEvaluating] = useState(false);
   const [showSetup, setShowSetup] = useState(false);
   const [showLogMeal, setShowLogMeal] = useState(false);
-  const [logMealTab, setLogMealTab] = useState<"search" | "manual">("search");
+  const [logMealTab, setLogMealTab] = useState<"search" | "library" | "manual">("search");
 
   // Setup form
   const [sf, setSf] = useState({
@@ -697,14 +698,14 @@ export default function FuelTracker() {
 
             {/* Tab switcher */}
             <div className="flex gap-2 mb-4">
-              {(["search","manual"] as const).map(tab => (
+              {(["search", "library", "manual"] as const).map(tab => (
                 <button key={tab} onClick={() => setLogMealTab(tab)}
                   className={`flex-1 py-2 rounded-xl text-[10px] font-black tracking-widest transition-colors ${
                     logMealTab === tab
                       ? "bg-[#C8973A] text-black"
                       : "bg-white/5 text-white/40 hover:text-white/60"
                   }`}>
-                  {tab === "search" ? "🔍 TUTK RECIPES" : "✏️ MANUAL ENTRY"}
+                  {tab === "search" ? "🔍 TUTK" : tab === "library" ? "📚 1,802" : "✏️ MANUAL"}
                 </button>
               ))}
             </div>
@@ -712,6 +713,28 @@ export default function FuelTracker() {
             {/* Recipe search tab */}
             {logMealTab === "search" && (
               <RecipeSearch onSelect={handleRecipeSelect} />
+            )}
+            {/* Food library search tab */}
+            {logMealTab === "library" && (
+              <FoodLibrarySearch
+                compact
+                showGroupFilter
+                placeholder="Search 1,802 foods — chicken, broccoli, garlic powder..."
+                onSelect={({ item, servingG, macros }) => {
+                  setMf(prev => ({
+                    ...prev,
+                    foods: [{
+                      name: item.name,
+                      calories: String(Math.round(macros.calories)),
+                      proteinG: String(macros.protein_g),
+                      carbsG: String(macros.carbs_g),
+                      fatG: String(macros.fat_g),
+                      servingG: String(servingG),
+                    }],
+                  }));
+                  setLogMealTab("manual");
+                }}
+              />
             )}
 
             {/* Manual entry tab */}

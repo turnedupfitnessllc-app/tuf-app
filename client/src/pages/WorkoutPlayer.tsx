@@ -10,6 +10,7 @@ import { usePantherVoice } from "@/hooks/usePantherVoice";
 import { useCoachMode } from "@/hooks/useCoachMode";
 import CoachModeSelector from "@/components/CoachModeSelector";
 import PantherCueOverlay from "@/components/PantherCueOverlay";
+import MovementCueDisplay from "@/components/MovementCueDisplay";
 import {
   EXERCISE_DATABASE, PANTHER_VOICE, getPantherVoiceLine, generateWorkout,
   detectFormDrop, isHighRisk, getRecoverySubstitution, getPantherRealtimeCue,
@@ -395,6 +396,19 @@ export default function WorkoutPlayer() {
           </div>
         )}
       </div>
+
+      {/* ─── MOVEMENT CUE DISPLAY (Video Awareness) ─── */}
+      <MovementCueDisplay
+        exerciseId={currentEx.id}
+        exerciseName={currentEx.name}
+        repCount={reps}
+        isActive={timerRunning && restTimer === null}
+        onFocusAreaTap={(area) => {
+          const line = `FOCUS ON YOUR ${area.toUpperCase()}`;
+          setVoiceLine(line);
+          speak(line);
+        }}
+      />
 
       {/* ─── PANTHER VOICE PROMPT ─── */}
       <div style={{ backgroundColor: "#111", borderBottom: "1px solid #1A1A1A", padding: "12px 20px", display: "flex", alignItems: "center", gap: 10 }}>

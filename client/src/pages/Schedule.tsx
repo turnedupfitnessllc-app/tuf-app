@@ -27,6 +27,15 @@ interface TrainingSession {
   checkedIn: boolean;
 }
 
+interface AlarmEntry {
+  id: string;
+  label: string;
+  time: string;   // HH:MM
+  type: "morning_check_in" | "pre_workout" | "custom";
+  enabled: boolean;
+  days: number[];  // 0=Sun…6=Sat, empty=every day
+  snoozeMin: number;
+}
 interface SchedulerState {
   sessions: TrainingSession[];
   goalDaysPerWeek: number;
@@ -36,6 +45,7 @@ interface SchedulerState {
   streak: number;
   longestStreak: number;
   lastCheckIn: string; // YYYY-MM-DD
+  alarms: AlarmEntry[];
 }
 
 const DEFAULT_STATE: SchedulerState = {
@@ -47,7 +57,40 @@ const DEFAULT_STATE: SchedulerState = {
   streak: 0,
   longestStreak: 0,
   lastCheckIn: "",
+  alarms: [],
 };
+
+const DAY_LABELS_SHORT = ["Su","Mo","Tu","We","Th","Fr","Sa"];
+
+// Schedule an alarm via the service worker
+async function scheduleAlarmViaSW(alarm: AlarmEntry): Promise<boolean> {
+  if (!("serviceWorker" in navigator)) return false;
+  try {
+    const reg = await navigator.serviceWorker.ready;
+    if (!reg.active) return false;
+    const now = new Date();
+    const [h, m] = alarm.time.split(":").map(Number);
+    const target = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m);
+    if (target <= now) target.setDate(target.getDate() + 1);
+    const delayMs = target.getTime() - now.getTime();
+    if (delayMs <= 0 || delayMs > 48 * 60 * 60 * 1000) return false;
+    reg.active.postMessage({
+      type: "SCHEDULE_ALARM",
+      payload: {
+        delay_ms: delayMs,
+        title: alarm.type === "morning_check_in" ? "🐾 PANTHER" : alarm.label,
+        body: alarm.type === "morning_check_in"
+          ? "IT'S TRAINING DAY. NO EXCUSES. LET'S GO."
+          : alarm.type === "pre_workout"
+          ? "GET YOUR MIND RIGHT. SESSION STARTS SOON."
+          : alarm.label,
+        alarm_type: alarm.type,
+        tag: `tuf-alarm-${alarm.id}`,
+      },
+    });
+    return true;
+  } catch { return false; }
+}
 
 const PROGRAMS = [
   "Maximum Overdrive",
@@ -824,6 +867,147 @@ export default function Schedule() {
                 <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 24, color: "#FF6600" }}>
                   {state.longestStreak} DAYS
                 </div>
+              </div>
+
+              {/* ─── PANTHER ALARM MANAGER ────────────────────────────────────── */}
+              <div>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+                  <label style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: "0.15em", color: "rgba(255,255,255,0.4)" }}>
+                    PANTHER ALARMS
+                  </label>
+                  <button
+                    onClick={() => {
+                      const newAlarm: AlarmEntry = {
+                        id: Date.now().toString(),
+                        label: "PANTHER ALARM",
+                        time: "07:00",
+                        type: "custom",
+                        enabled: true,
+                        days: [],
+                        snoozeMin: 10,
+                      };
+                      save({ ...state, alarms: [...(state.alarms ?? []), newAlarm] });
+                    }}
+                    style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", color: "#FF6600", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+                  >
+                    + ADD ALARM
+                  </button>
+                </div>
+
+                {/* Alarm list */}
+                {(state.alarms ?? []).length === 0 && (
+                  <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: 11, color: "rgba(255,255,255,0.25)", textAlign: "center", padding: "12px 0" }}>
+                    No alarms set. Tap + ADD ALARM to create one.
+                  </div>
+                )}
+                {(state.alarms ?? []).map((alarm, idx) => (
+                  <div key={alarm.id} style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 14, padding: "12px 14px", marginBottom: 10 }}>
+                    {/* Row 1: time + toggle + delete */}
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+                      <input
+                        type="time"
+                        value={alarm.time}
+                        onChange={e => {
+                          const updated = [...(state.alarms ?? [])];
+                          updated[idx] = { ...alarm, time: e.target.value };
+                          save({ ...state, alarms: updated });
+                        }}
+                        style={{ flex: 1, background: "rgba(128,128,128,0.15)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 10, padding: "8px 10px", color: "#fff", fontFamily: "'Bebas Neue',sans-serif", fontSize: 22, letterSpacing: "0.05em", outline: "none", colorScheme: "dark" }}
+                      />
+                      {/* Toggle */}
+                      <button
+                        onClick={() => {
+                          const updated = [...(state.alarms ?? [])];
+                          updated[idx] = { ...alarm, enabled: !alarm.enabled };
+                          save({ ...state, alarms: updated });
+                          if (!alarm.enabled) scheduleAlarmViaSW({ ...alarm, enabled: true });
+                        }}
+                        style={{ width: 44, height: 26, borderRadius: 13, border: "none", cursor: "pointer", background: alarm.enabled ? "#FF6600" : "rgba(255,255,255,0.12)", position: "relative", flexShrink: 0, transition: "background 0.2s" }}
+                      >
+                        <div style={{ position: "absolute", top: 3, left: alarm.enabled ? 21 : 3, width: 20, height: 20, borderRadius: "50%", background: "#fff", transition: "left 0.2s" }} />
+                      </button>
+                      {/* Delete */}
+                      <button
+                        onClick={() => save({ ...state, alarms: (state.alarms ?? []).filter((_, i) => i !== idx) })}
+                        style={{ background: "none", border: "none", color: "rgba(255,255,255,0.25)", cursor: "pointer", fontSize: 16, padding: 0, lineHeight: 1 }}
+                      >
+                        ✕
+                      </button>
+                    </div>
+
+                    {/* Row 2: label input */}
+                    <input
+                      type="text"
+                      value={alarm.label}
+                      maxLength={30}
+                      placeholder="Alarm label"
+                      onChange={e => {
+                        const updated = [...(state.alarms ?? [])];
+                        updated[idx] = { ...alarm, label: e.target.value };
+                        save({ ...state, alarms: updated });
+                      }}
+                      style={{ width: "100%", background: "transparent", border: "none", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.7)", fontFamily: "'Barlow Condensed',sans-serif", fontSize: 13, fontWeight: 700, letterSpacing: "0.08em", outline: "none", paddingBottom: 4, marginBottom: 10, boxSizing: "border-box" }}
+                    />
+
+                    {/* Row 3: type selector */}
+                    <div style={{ display: "flex", gap: 6, marginBottom: 10 }}>
+                      {(["morning_check_in", "pre_workout", "custom"] as const).map(t => (
+                        <button
+                          key={t}
+                          onClick={() => {
+                            const updated = [...(state.alarms ?? [])];
+                            updated[idx] = { ...alarm, type: t };
+                            save({ ...state, alarms: updated });
+                          }}
+                          style={{ flex: 1, padding: "5px 4px", borderRadius: 8, border: "1px solid", fontSize: 9, fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, letterSpacing: "0.08em", cursor: "pointer", transition: "all 0.15s",
+                            background: alarm.type === t ? "#FF6600" : "transparent",
+                            borderColor: alarm.type === t ? "#FF6600" : "rgba(255,255,255,0.12)",
+                            color: alarm.type === t ? "#fff" : "rgba(255,255,255,0.4)",
+                          }}
+                        >
+                          {t === "morning_check_in" ? "🌅 MORNING" : t === "pre_workout" ? "💪 PRE-WORK" : "🔔 CUSTOM"}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Row 4: day selector */}
+                    <div style={{ display: "flex", gap: 4, marginBottom: 8 }}>
+                      {DAY_LABELS_SHORT.map((d, di) => (
+                        <button
+                          key={di}
+                          onClick={() => {
+                            const days = alarm.days.includes(di)
+                              ? alarm.days.filter(x => x !== di)
+                              : [...alarm.days, di];
+                            const updated = [...(state.alarms ?? [])];
+                            updated[idx] = { ...alarm, days };
+                            save({ ...state, alarms: updated });
+                          }}
+                          style={{ flex: 1, padding: "4px 2px", borderRadius: 6, border: "1px solid", fontSize: 9, fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, cursor: "pointer", transition: "all 0.15s",
+                            background: alarm.days.includes(di) ? "rgba(255,102,0,0.25)" : "transparent",
+                            borderColor: alarm.days.includes(di) ? "#FF6600" : "rgba(255,255,255,0.1)",
+                            color: alarm.days.includes(di) ? "#FF6600" : "rgba(255,255,255,0.35)",
+                          }}
+                        >
+                          {d}
+                        </button>
+                      ))}
+                    </div>
+                    <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: 9, color: "rgba(255,255,255,0.25)" }}>
+                      {alarm.days.length === 0 ? "Every day" : alarm.days.map(d => DAY_LABELS_SHORT[d]).join(", ")}
+                    </div>
+
+                    {/* Schedule button */}
+                    {alarm.enabled && notifStatus === "granted" && (
+                      <button
+                        onClick={() => scheduleAlarmViaSW(alarm).then(ok => ok && setRoarMsg(`ALARM SCHEDULED: ${alarm.label} AT ${alarm.time}`))}
+                        style={{ marginTop: 8, width: "100%", padding: "8px", borderRadius: 10, border: "1px solid rgba(255,102,0,0.4)", background: "rgba(255,102,0,0.1)", color: "#FF6600", fontFamily: "'Barlow Condensed',sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", cursor: "pointer" }}
+                      >
+                        🔔 SCHEDULE THIS ALARM
+                      </button>
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
 

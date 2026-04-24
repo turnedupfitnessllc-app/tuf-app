@@ -405,3 +405,36 @@
 - [ ] client/src/hooks/usePvPSocket.ts — connect, join_challenge, rep_update, challenge_update, challenge_end
 - [ ] Wire usePvPSocket into PvPChallenge.tsx — real opponent when matched, bot when solo
 - [ ] Update ElevenLabs Voice ID in server/routes/voice.ts
+
+## Unit Conversions & Food Library — Session Apr 24 2026
+- [x] Create shared/units.ts with full kg/lbs/cm/inches/oz/g conversion utilities
+- [x] Create client/src/hooks/useUnitPreference.ts React hook for global unit toggle
+- [x] Wire unit toggle into BodyComposition.tsx (weight, height, body fat inputs + display)
+- [x] Add unit_preference field to User interface in server/db.ts
+- [x] Add IMPERIAL ⇄ METRIC toggle button to Profile.tsx
+- [x] Export 1,802-item food library from Google Drive Excel to JSON (shared/foodLibrary.json)
+- [x] Create shared/foodLibraryService.ts with searchFoods(), getFoodsByGroup(), getFoodMacros()
+- [x] Create client/src/components/FoodLibrarySearch.tsx (search + serving size + macro display)
+- [x] Wire FoodLibrarySearch into FuelTracker.tsx as third tab "📚 1,802" in log-meal modal
+
+## Panther Alarm — Session Apr 24 2026
+- [x] Add AlarmEntry interface to Schedule.tsx SchedulerState
+- [x] Add scheduleAlarmViaSW() helper function using service worker SCHEDULE_ALARM message
+- [x] Build Panther Alarm manager UI in Schedule settings panel (+ ADD ALARM button)
+- [x] Alarm card: time picker (large Bebas Neue font), on/off toggle, label input
+- [x] Alarm card: type selector (🌅 MORNING / 💪 PRE-WORK / 🔔 CUSTOM)
+- [x] Alarm card: day-of-week selector pills (Su Mo Tu We Th Fr Sa)
+- [x] Alarm card: SCHEDULE THIS ALARM button (fires service worker)
+- [x] Upgrade sw.js to support SCHEDULE_ALARM with snooze, vibrate, requireInteraction
+
+## Video Awareness & Movement Display — Session Apr 24 2026
+- [x] Create shared/movementCues.ts with MovementCue, ExerciseCueSet types and 11-exercise database
+- [x] Create client/src/components/MovementCueDisplay.tsx — phase-by-phase cue overlay
+- [x] Wire MovementCueDisplay into WorkoutPlayer.tsx below exercise video
+- [x] Phase selector pills (SETUP → BRACE → DOWN → HOLD → DRIVE → LOCK → RESET)
+- [x] Auto-advance phases on each rep tap
+- [x] Critical cue flash (red border pulse on priority=critical cues)
+- [x] Focus area tap → speaks cue via Panther Voice
+- [x] Tap-to-expand for full coaching detail + error_flag warning
+- [x] Rep tempo + breathing pattern display
+- [x] Spreadsheet column format documented for adding new exercises
