@@ -80,6 +80,24 @@ export default function Profile() {
   const [editing, setEditing] = useState(false);
   const [editName, setEditName] = useState('');
   const [editGoal, setEditGoal] = useState('');
+  const [unitPref, setUnitPref] = useState<'imperial' | 'metric'>(
+    () => (localStorage.getItem('tuf_unit_preference') as 'imperial' | 'metric') || 'imperial'
+  );
+
+  const toggleUnits = () => {
+    const next = unitPref === 'imperial' ? 'metric' : 'imperial';
+    setUnitPref(next);
+    localStorage.setItem('tuf_unit_preference', next);
+    // Persist to server profile if user is logged in
+    const uid = localStorage.getItem('tuf_user_id');
+    if (uid && uid !== 'guest') {
+      fetch(`/api/user/${uid}/preferences`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ unit_preference: next }),
+      }).catch(() => {});
+    }
+  };
   const [fuelProfile, setFuelProfile] = useState<FuelProfile | null>(null);
   const userId = localStorage.getItem('tuf_user_id') || 'guest';
 
@@ -299,6 +317,28 @@ export default function Profile() {
             )}
           </div>
         )}
+
+        {/* ── Unit Preference ───────────────────────────────────────── */}
+        <div className="mb-6">
+          <p className="text-xs font-black tracking-widest text-muted-foreground mb-3">MEASUREMENT UNITS</p>
+          <div className="flex items-center justify-between p-4 rounded-2xl bg-card border border-border">
+            <div>
+              <p className="text-sm font-black text-foreground">Unit System</p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                {unitPref === 'imperial' ? 'lbs · inches · oz' : 'kg · cm · grams'}
+              </p>
+            </div>
+            <button
+              onClick={toggleUnits}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl border-2 border-primary/40 bg-primary/10 hover:bg-primary/20 active:scale-95 transition-all"
+            >
+              <span className="text-xs font-black text-primary tracking-wide">
+                {unitPref === 'imperial' ? 'IMPERIAL' : 'METRIC'}
+              </span>
+              <span className="text-primary text-sm">⇄</span>
+            </button>
+          </div>
+        </div>
 
         {/* ── Quick Links ───────────────────────────────────────────── */}
         <div className="space-y-2">

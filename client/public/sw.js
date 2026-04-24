@@ -1,9 +1,16 @@
 /**
- * TUF PANTHER SERVICE WORKER v1.0
- * Handles push notifications and background sync
+ * TUF PANTHER SERVICE WORKER v2.0
+ * Handles push notifications, background sync, and Panther alarms.
+ *
+ * Alarm types:
+ *   - morning_check_in: Daily morning motivation from Panther
+ *   - pre_workout: X minutes before a scheduled session
+ *   - streak_milestone: 7/14/21/30-day streak achievements
+ *   - missed_session: Panther accountability message
  */
 
-const CACHE_NAME = "tuf-v1";
+const CACHE_NAME = "tuf-v2";
+const PANTHER_ICON = "/favicon.ico";
 
 // ── Install ──────────────────────────────────────────────────────────────────
 self.addEventListener("install", (event) => {
@@ -85,5 +92,48 @@ self.addEventListener("notificationclick", (event) => {
 self.addEventListener("message", (event) => {
   if (event.data?.type === "SKIP_WAITING") {
     self.skipWaiting();
+    return;
+  }
+
+  // Schedule a local alarm (short-term, < 24h)
+  if (event.data?.type === "SCHEDULE_ALARM") {
+    const { delay_ms, title, body, alarm_type, tag } = event.data.payload || {};
+    if (delay_ms > 0 && delay_ms < 24 * 60 * 60 * 1000) {
+      setTimeout(() => {
+        self.registration.showNotification(title || "THE PANTHER", {
+          body: body || "It's time.",
+          icon: PANTHER_ICON,
+          badge: PANTHER_ICON,
+          tag: tag || alarm_type || "tuf-alarm",
+          vibrate: [200, 100, 200, 100, 400],
+          requireInteraction: true,
+          data: { type: alarm_type, url: "/schedule" },
+          actions: [
+            { action: "open", title: "OPEN APP" },
+            { action: "snooze", title: "Snooze 10 min" },
+          ],
+        });
+      }, delay_ms);
+    }
+    return;
+  }
+
+  // Test notification
+  if (event.data?.type === "TEST_NOTIFICATION") {
+    self.registration.showNotification("PANTHER ALARM TEST", {
+      body: "Your alarm system is working. The Panther is watching.",
+      icon: PANTHER_ICON,
+      tag: "test",
+      vibrate: [200, 100, 400],
+      requireInteraction: false,
+    });
+    return;
+  }
+});
+
+// ── Background Sync ───────────────────────────────────────────────────────────
+self.addEventListener("sync", (event) => {
+  if (event.tag === "panther-alarm-sync") {
+    // Future: sync alarm schedules with server when back online
   }
 });

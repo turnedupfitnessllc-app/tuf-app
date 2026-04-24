@@ -34,8 +34,9 @@ export interface User {
   injuries: string[];
   equipment: string[];
   age?: number;
-  weight?: number;
-  height?: number;
+  weight?: number;          // stored in kg (canonical)
+  height?: number;          // stored in cm (canonical)
+  unit_preference?: "imperial" | "metric"; // display preference, defaults to imperial
   created_at: number;
   updated_at: number;
   // ── Subscription / billing ──────────────────────────────────────────────────
