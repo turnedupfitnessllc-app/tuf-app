@@ -63,7 +63,7 @@ export default function Move() {
 
   const handleLog = (ex: Exercise) => {
     haptics.medium();
-    setLoggedIds(prev => new Set([...prev, ex.id]));
+    setLoggedIds(prev => new Set(Array.from(prev).concat(ex.id)));
   };
 
   const handleStart = (ex: Exercise) => {

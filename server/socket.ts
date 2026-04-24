@@ -79,7 +79,7 @@ function endChallenge(io: SocketIOServer, room: ChallengeRoom) {
 
   // Determine winner by highest reps
   let winner: Participant | null = null;
-  for (const p of room.participants.values()) {
+  for (const p of Array.from(room.participants.values())) {
     if (!winner || p.reps > winner.reps) winner = p;
   }
 

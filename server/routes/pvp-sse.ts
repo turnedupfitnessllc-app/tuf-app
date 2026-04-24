@@ -83,7 +83,7 @@ function endChallenge(room: ChallengeRoom) {
   if (room.botSpawnHandle) clearTimeout(room.botSpawnHandle);
 
   let winner: Participant | null = null;
-  for (const p of room.participants.values()) {
+  for (const p of Array.from(room.participants.values())) {
     if (!winner || p.reps > winner.reps) winner = p;
   }
   room.winner = winner;
@@ -206,7 +206,7 @@ router.get("/state/:challenge_id", (req: Request, res: Response) => {
 
     // Clean up timed-out users
     const now = Date.now();
-    for (const [uid, lastSeen] of room.lastSeen.entries()) {
+    for (const [uid, lastSeen] of Array.from(room.lastSeen.entries())) {
       if (now - lastSeen > USER_TIMEOUT_MS) {
         room.participants.delete(uid);
         room.lastSeen.delete(uid);

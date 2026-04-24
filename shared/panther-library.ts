@@ -250,15 +250,14 @@ export const VIDEO_TYPES = [
 
 export type VideoType = typeof VIDEO_TYPES[number];
 
-// ── WORKOUT TEMPLATES ─────────────────────────────────────────────────────────
-export interface WorkoutTemplate {
+/// ── WORKOUT TEMPLATES ─────────────────────────────────────────────────────────
+export interface WorkoutProgram {
   name: string;
   duration: string;
   exercises: string[];
   style: string;
 }
-
-export const WORKOUT_TEMPLATES: WorkoutTemplate[] = [
+export const WORKOUT_TEMPLATES: WorkoutProgram[] = [
   {
     name: "Panther Full Body Initiation",
     duration: "20 min",

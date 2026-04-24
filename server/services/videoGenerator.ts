@@ -10,7 +10,7 @@
  *   5. Served in workout player
  */
 
-import { PANTHER_AI_VOICE_RULES as PANTHER_AI, EXERCISE_DATABASE as EXERCISE_DB } from "../../shared/panther-library";
+import { PANTHER_VOICE, EXERCISE_DATABASE as EXERCISE_DB } from "../../shared/panther-library";
 
 export interface VideoScript {
   exercise_id: string;
@@ -42,9 +42,9 @@ export function generateVideoScript(exerciseId: string): VideoScript {
   }
 
   const voiceover = {
-    start:  pickRandom(PANTHER_AI.voice_lines.start),
-    during: pickRandom(PANTHER_AI.voice_lines.during),
-    finish: pickRandom(PANTHER_AI.voice_lines.finish),
+    start:  pickRandom(PANTHER_VOICE.start),
+    during: pickRandom(PANTHER_VOICE.during),
+    finish: pickRandom(PANTHER_VOICE.finish),
   };
 
   const script: VideoScript = {

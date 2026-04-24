@@ -88,7 +88,7 @@ function Router() {
         <Route path={"/pricing"} component={Pricing} />
         <Route path={"/billing"} component={Billing} />
         <Route path={"/challenge"} component={Challenge} />
-        {/* <Route path={"/schedule"} component={Schedule} /> */}  {/* hidden — calendar bugs being fixed */}
+        <Route path={"/schedule"} component={Schedule} />
         <Route path={"/mindset"} component={Mindset} />
         <Route path={"/panther-30"} component={Panther30} />
 
