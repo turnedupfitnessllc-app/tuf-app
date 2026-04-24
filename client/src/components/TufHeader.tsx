@@ -8,13 +8,15 @@
  */
 import { useState, useEffect } from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
-import { Moon, Sun } from 'lucide-react';
+import { useLocation } from 'wouter';
+import { Moon, Sun, Settings } from 'lucide-react';
 
 const PANTHER_MASCOT =
   "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR/panther-mascot-gym_27e64ae1.png";
 
 export function TufHeader() {
   const { theme, toggleTheme } = useTheme();
+  const [, navigate] = useLocation();
   const [initial, setInitial] = useState("A");
 
   useEffect(() => {
@@ -165,7 +167,7 @@ export function TufHeader() {
           </div>
 
           {/* Right controls */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <button
               onClick={toggleTheme}
               style={{
@@ -186,21 +188,46 @@ export function TufHeader() {
                 : <Moon style={{ width: 18, height: 18 }} />
               }
             </button>
-            <div style={{
-              width: 36,
-              height: 36,
-              borderRadius: '50%',
-              background: 'var(--accent-primary)',
-              color: '#fff',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontFamily: "'Barlow Condensed', sans-serif",
-              fontSize: 15,
-              fontWeight: 900,
-              cursor: 'pointer',
-              boxShadow: '0 0 12px rgba(255,102,0,0.4)',
-            }}>
+            {/* Settings gear — always visible */}
+            <button
+              onClick={() => navigate('/settings')}
+              aria-label="Settings"
+              title="Settings"
+              style={{
+                background: isDark ? 'rgba(255,102,0,0.12)' : 'rgba(255,102,0,0.08)',
+                border: '1px solid rgba(255,102,0,0.25)',
+                padding: 7,
+                borderRadius: 9,
+                cursor: 'pointer',
+                color: 'rgba(255,102,0,0.85)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'background 0.2s ease, box-shadow 0.2s ease',
+              }}
+            >
+              <Settings style={{ width: 18, height: 18 }} />
+            </button>
+            {/* Avatar — navigates to profile */}
+            <div
+              onClick={() => navigate('/profile')}
+              title="Profile"
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: '50%',
+                background: 'var(--accent-primary)',
+                color: '#fff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontFamily: "'Barlow Condensed', sans-serif",
+                fontSize: 15,
+                fontWeight: 900,
+                cursor: 'pointer',
+                boxShadow: '0 0 12px rgba(255,102,0,0.4)',
+              }}
+            >
               {initial}
             </div>
           </div>
