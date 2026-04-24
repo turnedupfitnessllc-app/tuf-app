@@ -8,7 +8,7 @@
  *                → ElevenLabs TTS (Panther voice)
  *
  * Fallback:
- *   Grok Vision unavailable → fal.ai vision → Claude coaching cue
+ *   Grok Vision unavailable → graceful coaching cue (no fal.ai dependency)
  */
 
 import { Router, Request, Response } from "express";
@@ -240,9 +240,10 @@ router.post("/analyze", async (req: Request, res: Response) => {
     try {
       const { analysis, rawDescription } = await analyzeFrameWithGrok(frame, exerciseContext);
       return res.json({ description: rawDescription, analysis });
-    } catch (grokErr) {
-      console.warn("[Coaching/analyze] Grok Vision failed, falling back to fal.ai:", grokErr);
-      const description = await analyzeFrameWithFal(frame, exerciseContext);
+    } catch (grokErr: any) {
+      console.error("[Coaching/analyze] Grok Vision failed:", grokErr);
+      // Graceful degradation — no fal.ai fallback needed
+      const description = "Frame analysis unavailable. Continue with your current form.";
       return res.json({ description, analysis: null });
     }
   } catch (error: any) {
@@ -324,19 +325,22 @@ router.post("/pipeline", async (req: Request, res: Response) => {
 
     if (!frame) return res.status(400).json({ error: "frame (base64 JPEG) required" });
 
-    let description = "";
+     let description = "";
     let analysis: VisionAnalysis | null = null;
     let decision: PantherDecision | null = null;
     let cue = "";
-
-    // Step 1: Grok Vision analysis
+    // Step 1: Grok Vision analysis (Grok-only — no fal.ai dependency)
     try {
       const result = await analyzeFrameWithGrok(frame, exerciseContext);
       analysis = result.analysis;
       description = result.rawDescription;
-    } catch (grokErr) {
-      console.warn("[Pipeline] Grok Vision failed, falling back:", grokErr);
-      description = await analyzeFrameWithFal(frame, exerciseContext);
+    } catch (grokErr: any) {
+      console.error("[Pipeline] Grok Vision failed:", grokErr);
+      if (grokErr?.message?.includes("XAI_API_KEY")) {
+        return res.status(500).json({ error: "Grok Vision API key not configured. Contact support." });
+      }
+      // Grok is configured but returned an error — keep session alive with a generic cue
+      description = "Frame analysis unavailable. Continue with your current form.";
     }
 
     // Step 2: Autonomous Decision Engine (if structured analysis available)
