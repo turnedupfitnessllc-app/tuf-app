@@ -1,9 +1,6 @@
 /**
  * TUF Program Library — Tiered program catalog
- * Free: 7-Day Starter Plan
- * $19 Starter: 30-Day Panther Program
- * $79 Advanced: 12-Week Advanced System
- * $20/mo Member: Exclusive member programs
+ * Canonical tiers: Free → Panther Core $19.99/mo → Panther Elite $39.99/mo → Panther Pro $79.99/mo
  */
 import { useLocation } from "wouter";
 import HamburgerDrawer from "@/components/HamburgerDrawer";
@@ -28,9 +25,9 @@ const PROGRAMS = [
     locked: false,
   },
   {
-    id: "starter-30day",
-    tier: "starter",
-    price: "$19",
+    id: "core-30day",
+    tier: "core",
+    price: "$19.99/mo",
     name: "30-DAY PANTHER PROGRAM",
     subtitle: "Full Transformation System",
     days: 30,
@@ -38,15 +35,15 @@ const PROGRAMS = [
     glow: "rgba(255,102,0,0.15)",
     badge: "MOST POPULAR",
     desc: "The complete 30-day system. Four phases — Control, Stability, Strength, Explosion — with adaptive AI coaching throughout.",
-    features: ["30 structured workouts", "4-phase progression", "Panther Brain AI analysis", "XP & badge system", "Leaderboard access", "SuccessScreen celebrations"],
+    features: ["30 structured workouts", "4-phase progression", "Panther Brain AI analysis", "XP & badge system", "Leaderboard access", "AI Corrective Coaching"],
     phases: ["CONTROL", "STABILITY", "STRENGTH", "EXPLOSION"],
     route: "/panther-30",
-    locked: false, // unlocked for demo — check tier in real impl
+    locked: true,
   },
   {
-    id: "advanced-12week",
-    tier: "advanced",
-    price: "$79",
+    id: "elite-12week",
+    tier: "elite",
+    price: "$39.99/mo",
     name: "ADVANCED SYSTEM",
     subtitle: "12-Week Elite Protocol",
     days: 84,
@@ -54,28 +51,30 @@ const PROGRAMS = [
     glow: "rgba(200,151,58,0.15)",
     badge: "ELITE",
     desc: "For athletes who have completed the 30-day program. Periodized strength, power, and performance protocols with BOA biomechanical analysis.",
-    features: ["84 advanced workouts", "Periodized programming", "BOA biomechanical analysis", "Strength + power focus", "Priority AI coaching", "Exclusive badges"],
+    features: ["84 advanced workouts", "Periodized programming", "BOA biomechanical analysis", "FEAST Pillar — TUTK Recipes", "Priority AI coaching", "Exclusive badges"],
     phases: ["STRENGTH", "EXPLOSION", "EVOLUTION"],
     route: "/pricing",
     locked: true,
   },
   {
-    id: "member-exclusive",
-    tier: "member",
-    price: "$20/mo",
-    name: "MEMBER PROGRAMS",
+    id: "pro-exclusive",
+    tier: "pro",
+    price: "$79.99/mo",
+    name: "PRO MEMBER PROGRAMS",
     subtitle: "Live + Exclusive Content",
     days: 0,
-    color: "#9B59B6",
-    glow: "rgba(155,89,182,0.15)",
-    badge: "MEMBERS ONLY",
-    desc: "Exclusive programs released monthly. Live coaching sessions, seasonal challenges, and the full AI coaching suite.",
-    features: ["New programs monthly", "Live coaching sessions", "Season leaderboard", "PvP challenges", "Full AI suite", "Exclusive badges"],
+    color: "#AA44FF",
+    glow: "rgba(170,68,255,0.2)",
+    badge: "PRO ONLY",
+    desc: "Exclusive programs released monthly. Live coaching sessions, seasonal challenges, MINDSET pillar, and the full AI coaching suite.",
+    features: ["New programs monthly", "Live coaching sessions", "MINDSET Pillar", "Season leaderboard", "PvP challenges", "Trainer Tools"],
     phases: ["ALL PHASES"],
     route: "/pricing",
     locked: true,
   },
 ];
+
+const TIER_ORDER = ["free", "core", "elite", "pro"];
 
 // ── Phase pill ────────────────────────────────────────────────────────────────
 
@@ -100,9 +99,8 @@ function ProgramCard({ program, userTier, onSelect }: {
   userTier: string;
   onSelect: () => void;
 }) {
-  const tierOrder = ["free", "starter", "advanced", "member"];
-  const userTierIdx = tierOrder.indexOf(userTier);
-  const programTierIdx = tierOrder.indexOf(program.tier);
+  const userTierIdx = TIER_ORDER.indexOf(userTier);
+  const programTierIdx = TIER_ORDER.indexOf(program.tier);
   const isUnlocked = userTierIdx >= programTierIdx;
   const isActive = userTier === program.tier || (program.tier === "free" && userTierIdx >= 0);
 
@@ -127,7 +125,7 @@ function ProgramCard({ program, userTier, onSelect }: {
         }}>🔒</div>
       )}
 
-      {/* Badge */}
+      {/* Badge + Price */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
         <div style={{
           padding: "3px 10px", borderRadius: 6,
@@ -138,7 +136,7 @@ function ProgramCard({ program, userTier, onSelect }: {
         }}>
           {program.badge}
         </div>
-        <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 28, color: program.color, lineHeight: 1 }}>
+        <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 22, color: program.color, lineHeight: 1 }}>
           {program.price}
         </div>
       </div>
@@ -181,7 +179,9 @@ function ProgramCard({ program, userTier, onSelect }: {
         fontSize: 14, fontWeight: 900, letterSpacing: 3,
         color: isUnlocked ? "#fff" : "#555",
       }}>
-        {isUnlocked ? (isActive ? "CONTINUE PROGRAM →" : "START PROGRAM →") : `UNLOCK FOR ${program.price} →`}
+        {isUnlocked
+          ? (isActive ? "CONTINUE PROGRAM →" : "START PROGRAM →")
+          : `UNLOCK WITH ${program.tier.toUpperCase()} →`}
       </div>
     </div>
   );
@@ -194,7 +194,9 @@ export default function ProgramLibrary() {
   const userTier = localStorage.getItem("tuf_tier") || "free";
 
   const handleSelect = (program: typeof PROGRAMS[0]) => {
-    if (program.locked) {
+    const userTierIdx = TIER_ORDER.indexOf(userTier);
+    const programTierIdx = TIER_ORDER.indexOf(program.tier);
+    if (userTierIdx < programTierIdx) {
       navigate("/pricing");
     } else {
       navigate(program.route);
@@ -209,21 +211,19 @@ export default function ProgramLibrary() {
         .lib-fade { animation: fadeUp 0.4s ease both; }
       `}</style>
 
-      {/* Sticky header with hamburger */}
+      {/* Sticky header */}
       <div style={{ position: "sticky", top: 0, zIndex: 200, background: "rgba(8,8,8,0.92)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(0,255,198,0.1)", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 16px", height: 56 }}>
         <HamburgerDrawer />
         <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 15, fontWeight: 800, letterSpacing: "0.14em", color: "#fff", textTransform: "uppercase" }}>PROGRAMS</span>
         <div style={{ width: 44 }} />
       </div>
+
       <main className="lib-fade" style={{ maxWidth: 480, margin: "0 auto", padding: "0 16px" }}>
 
         {/* ─── HEADER ─── */}
-        <div style={{ display: "flex", alignItems: "center", gap: 12, paddingTop: 20, marginBottom: 8 }}>
-          <div style={{ width: 44 }} />
-          <div>
-            <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, letterSpacing: 4, color: "#FF6600" }}>TURNED UP FITNESS</div>
-            <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 32, letterSpacing: 2, lineHeight: 1, color: "#fff" }}>PROGRAMS</div>
-          </div>
+        <div style={{ paddingTop: 20, marginBottom: 8 }}>
+          <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 10, letterSpacing: 4, color: "#FF6600" }}>TURNED UP FITNESS</div>
+          <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 32, letterSpacing: 2, lineHeight: 1, color: "#fff" }}>PROGRAMS</div>
         </div>
 
         <p style={{ fontSize: 12, color: "#666", marginBottom: 24, paddingLeft: 4 }}>
@@ -240,7 +240,7 @@ export default function ProgramLibrary() {
           />
         ))}
 
-        {/* ─── COMPARISON NOTE ─── */}
+        {/* ─── PANTHER PATH NOTE ─── */}
         <div style={{
           background: "rgba(255,102,0,0.05)", border: "1px solid rgba(255,102,0,0.15)",
           borderRadius: 14, padding: 16, marginBottom: 24,
@@ -251,6 +251,19 @@ export default function ProgramLibrary() {
           <p style={{ fontSize: 12, color: "#888", lineHeight: 1.6 }}>
             Start free. Build the habit. Unlock the full system when you're ready. Every program builds on the last — the AI adapts with you.
           </p>
+          <button
+            onClick={() => navigate("/pricing")}
+            style={{
+              marginTop: 12, width: "100%", padding: "11px 16px",
+              background: "linear-gradient(135deg, #FF6600, #FF8C00)",
+              border: "none", borderRadius: 10,
+              fontFamily: "'Barlow Condensed', sans-serif",
+              fontSize: 13, fontWeight: 900, letterSpacing: 3,
+              color: "#fff", cursor: "pointer",
+            }}
+          >
+            VIEW ALL PLANS →
+          </button>
         </div>
 
       </main>
