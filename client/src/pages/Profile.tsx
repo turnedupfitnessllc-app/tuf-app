@@ -141,11 +141,20 @@ export default function Profile() {
       <main className="max-w-[480px] mx-auto px-4 pt-6">
 
         {/* ── Header ────────────────────────────────────────────────── */}
-        <div className="mb-6">
-          <p className="text-xs font-black tracking-widest text-muted-foreground mb-1">STEP 4 OF 4</p>
-          <h1 className="text-2xl font-black tracking-tight text-foreground">
-            YOUR <span className="text-primary">EVOLUTION</span>
-          </h1>
+        <div className="mb-6 flex items-start justify-between">
+          <div>
+            <p className="text-xs font-black tracking-widest text-muted-foreground mb-1">STEP 4 OF 4</p>
+            <h1 className="text-2xl font-black tracking-tight text-foreground">
+              YOUR <span className="text-primary">EVOLUTION</span>
+            </h1>
+          </div>
+          <button
+            onClick={() => navigate('/settings')}
+            style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: '8px 12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}
+          >
+            <span style={{ fontSize: 18 }}>⚙️</span>
+            <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', color: 'rgba(255,255,255,0.6)' }}>SETTINGS</span>
+          </button>
         </div>
 
         {/* ── Panther Evolution ─────────────────────────────────────── */}
@@ -348,6 +357,7 @@ export default function Profile() {
             { label: 'Live Coaching', icon: '📷', path: '/live' },
             { label: 'Nutrition (FUEL)', icon: '🥗', path: '/fuel' },
             { label: 'Recipes (FEAST)', icon: '🍽️', path: '/feast' },
+            { label: 'App Settings', icon: '⚙️', path: '/settings' },
           ].map(({ label, icon, path }) => (
             <button
               key={path}

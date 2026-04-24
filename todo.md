@@ -438,3 +438,80 @@
 - [x] Tap-to-expand for full coaching detail + error_flag warning
 - [x] Rep tempo + breathing pattern display
 - [x] Spreadsheet column format documented for adding new exercises
+
+## Settings System — Full Build (Apr 24 2026)
+
+### Profile Setup
+- [ ] Full profile setup flow: name, age, sex, height, weight (with unit toggle)
+- [ ] Profile photo / avatar upload (stored in S3)
+- [ ] Fitness goal selector: Fat Loss / Muscle Gain / Athletic Performance / Mobility / General Health
+- [ ] Experience level: Beginner / Intermediate / Advanced / Athlete
+- [ ] Health conditions multi-select: diabetes, hypertension, joint inflammation, heart condition, pregnancy, other
+- [ ] Injury history: current injuries, movement restrictions (affects program recommendations)
+- [ ] Emergency contact info (name + phone)
+
+### Fitness Preferences
+- [ ] Preferred workout days (day-of-week checkboxes)
+- [ ] Preferred workout time: Morning / Midday / Evening / Late Night
+- [ ] Session duration preference: 20 / 30 / 45 / 60 / 90 min
+- [ ] Equipment available: bodyweight / dumbbells / barbell / resistance bands / cables / machines / kettlebells / pull-up bar
+- [ ] Training environment: Home / Gym / Outdoor / Hotel
+- [ ] Rest day activity: Active Recovery / Full Rest / Light Cardio / Yoga/Stretch
+
+### Nutrition Preferences
+- [ ] Dietary style: Standard / Vegetarian / Vegan / Keto / Paleo / Mediterranean / Gluten-Free
+- [ ] Food allergies/intolerances: dairy, gluten, nuts, shellfish, eggs, soy
+- [ ] Meal frequency preference: 2 / 3 / 4 / 5 / 6 meals per day
+- [ ] Water intake goal (oz/day) with reminder toggle
+- [ ] Supplement stack: protein powder, creatine, pre-workout, vitamins
+
+### Smart Devices and Integrations
+- [ ] Apple Health connect (Web API bridge - read steps, HR, sleep, active calories)
+- [ ] Google Fit connect (OAuth - read steps, HR, workouts)
+- [ ] Garmin connect (OAuth - read HR, VO2max, HRV, sleep)
+- [ ] Fitbit connect (OAuth - read steps, HR, sleep stages)
+- [ ] Whoop connect (API - read strain, recovery, sleep)
+- [ ] Heart rate monitor pairing (Web Bluetooth API - HR strap)
+- [ ] Smart scale integration: Withings / Renpho / Eufy
+- [ ] Device connection status indicators (connected / not connected / last sync)
+
+### Notifications and Reminders
+- [ ] Workout reminder toggle + time picker
+- [ ] Rest day reminder toggle
+- [ ] Hydration reminders (every X hours toggle)
+- [ ] Meal/nutrition reminder toggle + times
+- [ ] Weekly progress report toggle (Sunday summary)
+- [ ] Panther motivational push toggle (daily Panther quote)
+- [ ] Streak at-risk warning toggle (no training in 2 days)
+- [ ] Notification sound: Panther Roar / Standard / Silent
+
+### App Preferences
+- [ ] Unit system toggle: Imperial / Metric (move from Profile to here)
+- [ ] Theme: Dark (default) / Light / System
+- [ ] Language: English (placeholder for future localization)
+- [ ] Coach voice: Marc (Panther) / Female / Neutral
+- [ ] Coach mode: Motivational / Technical / Calm / Drill Sergeant
+- [ ] Display density: Compact / Standard / Comfortable
+- [ ] Haptic feedback toggle
+- [ ] Auto-play exercise videos toggle
+- [ ] Show movement cues toggle (Video Awareness on/off)
+
+### Account and Privacy
+- [ ] Account info: email, member since, subscription tier badge
+- [ ] Change display name
+- [ ] Subscription management link to /billing
+- [ ] Data export: download all my data (JSON)
+- [ ] Delete account with confirmation modal
+- [ ] Privacy: analytics opt-out toggle
+- [ ] Privacy: share progress with leaderboard toggle
+- [ ] Terms of Service and Privacy Policy links
+- [ ] Sign out button
+
+### Settings Navigation
+- [x] Create client/src/pages/Settings.tsx full settings screen
+- [x] Settings sections: Profile / Fitness / Nutrition / Devices / Notifications / App / Account
+- [x] Section headers with icons, tap to expand/collapse
+- [x] Back button to Profile or Home
+- [x] Wire /settings route in App.tsx
+- [x] Add Settings gear icon to Profile screen header
+- [x] Add Settings entry point to Home Command Center profile card

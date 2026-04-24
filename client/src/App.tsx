@@ -58,6 +58,7 @@ import PvPChallenge from "./pages/PvPChallenge";
 import WorkoutPlayer from "./pages/WorkoutPlayer";
 import DesignTest from "./pages/DesignTest";
 import PantherBrainCatalogue from "./pages/PantherBrainCatalogue";
+import Settings from "./pages/Settings";
 
 // IP Protection
 import { TufTermsModal } from "./components/TufTermsModal";
@@ -124,6 +125,7 @@ function Router() {
         <Route path={"/workout-player"} component={WorkoutPlayer} />
         <Route path={"/design-test"} component={DesignTest} />
         <Route path={"/catalogue"} component={PantherBrainCatalogue} />
+        <Route path={"/settings"} component={Settings} />
 
         <Route path={"/404"} component={NotFound} />
         <Route component={NotFound} />
