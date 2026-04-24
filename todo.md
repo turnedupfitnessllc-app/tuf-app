@@ -515,3 +515,67 @@
 - [x] Wire /settings route in App.tsx
 - [x] Add Settings gear icon to Profile screen header
 - [x] Add Settings entry point to Home Command Center profile card
+
+
+## Panther Voice System v2.0
+- [x] Upgrade usePantherVoice hook — streaming TTS, Web Audio waveform, personality presets, queue
+- [x] Upgrade /api/voice/speak/stream — ElevenLabs streaming endpoint for low-latency first-byte
+- [x] Personality presets: calm_intense / motivational / drill_sergeant / recovery / technical
+- [x] Per-personality voice_settings (stability, style, similarity_boost)
+- [x] Per-personality exercise cue library (7 exercises x 4 personalities)
+- [x] PantherVoiceBar component — floating waveform visualizer with personality badge
+- [x] VoiceRecordingGuide component — step-by-step guide for Marc to record his voice in ElevenLabs
+- [ ] Wire PantherVoiceBar into WorkoutPlayer, JarvisChat, LiveCoaching
+- [ ] Wire VoiceRecordingGuide into Settings -> App Preferences -> Coach Voice
+- [ ] Add personality selector to WorkoutPlayer (tap to switch mode mid-workout)
+- [ ] Pre-warm voice cache on workout start (generate first 3 exercise cues in background)
+
+## Missing and Unique Components — Research Findings
+
+### HIGH PRIORITY (differentiators no other app has)
+- [ ] AI Adaptive Workout Engine — detects fatigue from rep velocity drop, auto-adjusts weight/reps
+- [ ] Predictive Burnout Detector — tracks trend + missed sessions, warns before dropout
+- [ ] Biomechanical Risk Score — real-time injury risk score per exercise based on form + fatigue
+- [ ] Voice-Activated Workout Control — next exercise, skip set, how many reps left via mic
+- [ ] Panther Daily Brief — morning audio message from Panther (personalized to today workout + goals)
+- [ ] Smart Rest Timer — auto-adjusts rest period based on heart rate recovery (wearable data)
+- [ ] Workout Mood Check-In — pre-workout 1-tap mood selector, Panther adjusts intensity + cues
+
+### MEDIUM PRIORITY (strong retention features)
+- [ ] Progress Photo Timeline — side-by-side body comp photos with AI overlay comparison
+- [ ] Strength Standards Tracker — shows where user ranks vs population per lift
+- [ ] Weekly Readiness Score — composite score from sleep, soreness, mood — green/yellow/red
+- [ ] Muscle Heat Map — body diagram showing which muscles were trained this week
+- [ ] Personal Records Wall — trophy case for PRs with date, video clip, and Panther reaction
+- [ ] Challenge Creator — user can create custom challenges and invite friends
+- [ ] Workout Sharing Card — auto-generated shareable image of completed workout
+
+### UNIQUE TO TUF (brand differentiators)
+- [ ] Panther Roar Moment — special animation + voice when user hits a PR or streak milestone
+- [ ] TUF Score — composite fitness score (strength + cardio + consistency + nutrition) weekly
+- [ ] Coach Marc Live Sessions — scheduled live coaching sessions with push notification reminders
+- [ ] Transformation Timeline — visual journey from Day 1 to today with key milestones marked
+- [ ] Accountability Partner System — pair with another user for mutual check-ins and challenges
+
+### SMART DEVICE INTEGRATIONS (when OAuth is ready)
+- [ ] Apple Health sync — read HRV, sleep, steps, active calories; write workout data
+- [ ] Google Fit sync — bidirectional workout and health data
+- [ ] Garmin Connect sync — advanced metrics (VO2 max, training load, recovery advisor)
+- [ ] Whoop integration — strain score, recovery, sleep performance feed into Panther AI
+- [ ] Bluetooth HR Monitor — live heart rate during workout, smart rest timer + intensity zones
+
+### CALENDAR AND PANTHER ALARM
+- [ ] Alarm UI in Schedule settings — time picker, alarm type, snooze duration
+- [ ] Alarm types: MORNING ACTIVATION / PRE-WORKOUT / RECOVERY / CUSTOM
+- [ ] Panther speaks the alarm (ElevenLabs) instead of a standard beep
+- [ ] Calendar view — monthly grid with workout sessions, rest days, streaks marked
+- [ ] Recurring workout schedule builder — set M/W/F pattern, auto-populates calendar
+
+### VIDEO AWARENESS SYSTEM
+- [ ] MovementCueDisplay wired into WorkoutPlayer (done — needs testing)
+- [ ] Camera-based rep counter using MediaPipe Pose (BiomechanicalOverlay already has this)
+- [ ] Form error detection — Panther speaks correction immediately
+- [ ] Post-workout form report — summary of form errors detected during session
+- [ ] Exercise demo video library — short clips for each exercise (upload to S3)
+- [ ] Split-screen mode — user camera + demo video side by side
+- [ ] Data output: movement cue data exportable to Google Sheets / CSV for trainer review
