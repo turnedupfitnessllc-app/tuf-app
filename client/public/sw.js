@@ -1,27 +1,56 @@
 /**
- * TUF PANTHER SERVICE WORKER v2.0
- * Handles push notifications, background sync, and Panther alarms.
- *
- * Alarm types:
- *   - morning_check_in: Daily morning motivation from Panther
- *   - pre_workout: X minutes before a scheduled session
- *   - streak_milestone: 7/14/21/30-day streak achievements
- *   - missed_session: Panther accountability message
+ * TUF PANTHER SERVICE WORKER v3.0 — PWA Edition
+ * Handles push notifications, background sync, offline caching, and Panther alarms.
  */
 
-const CACHE_NAME = "tuf-v2";
-const PANTHER_ICON = "/favicon.ico";
+const CACHE_NAME = "tuf-v3";
+const PANTHER_ICON = "/icon-192.png";
+const PANTHER_BADGE = "/icon-192.png";
 
-// ── Install ──────────────────────────────────────────────────────────────────
+const PRECACHE_ASSETS = [
+  "/",
+  "/manifest.json",
+  "/icon-192.png",
+  "/icon-512.png",
+  "/apple-touch-icon.png",
+];
+
+// ── Install ───────────────────────────────────────────────────────────────────
 self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => cache.addAll(PRECACHE_ASSETS))
+  );
   self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
-  event.waitUntil(clients.claim());
+  event.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
+    ).then(() => clients.claim())
+  );
 });
 
-// ── Push Notification Handler ────────────────────────────────────────────────
+// ── Fetch (cache-first for static assets) ────────────────────────────────────
+self.addEventListener("fetch", (event) => {
+  const url = new URL(event.request.url);
+  if (event.request.method !== "GET" || url.origin !== self.location.origin) return;
+  if (url.pathname.startsWith("/api/")) return;
+  event.respondWith(
+    caches.match(event.request).then(cached => {
+      if (cached) return cached;
+      return fetch(event.request).then(response => {
+        if (response.ok && url.pathname.match(/\.(png|ico|webp|svg|json)$/)) {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+        }
+        return response;
+      });
+    })
+  );
+});
+
+// ── Push Notification Handler ─────────────────────────────────────────────────
 self.addEventListener("push", (event) => {
   let data = {};
   try {
@@ -33,8 +62,8 @@ self.addEventListener("push", (event) => {
   const title = data.title || "🐾 PANTHER";
   const options = {
     body: data.body || "Your training session is waiting.",
-    icon: data.icon || "/favicon.ico",
-    badge: "/favicon.ico",
+    icon: data.icon || PANTHER_ICON,
+    badge: PANTHER_BADGE,
     tag: data.tag || "tuf-notification",
     renotify: true,
     requireInteraction: data.requireInteraction || false,
@@ -57,7 +86,6 @@ self.addEventListener("notificationclick", (event) => {
   event.notification.close();
 
   if (event.action === "snooze") {
-    // Reschedule for 30 minutes later — post message to client
     event.waitUntil(
       clients.matchAll({ type: "window" }).then((clientList) => {
         for (const client of clientList) {
@@ -72,7 +100,6 @@ self.addEventListener("notificationclick", (event) => {
 
   event.waitUntil(
     clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
-      // Focus existing window if open
       for (const client of clientList) {
         if (client.url.includes(self.location.origin) && "focus" in client) {
           client.focus();
@@ -80,7 +107,6 @@ self.addEventListener("notificationclick", (event) => {
           return;
         }
       }
-      // Open new window
       if (clients.openWindow) {
         return clients.openWindow(urlToOpen);
       }
@@ -95,7 +121,6 @@ self.addEventListener("message", (event) => {
     return;
   }
 
-  // Schedule a local alarm (short-term, < 24h)
   if (event.data?.type === "SCHEDULE_ALARM") {
     const { delay_ms, title, body, alarm_type, tag } = event.data.payload || {};
     if (delay_ms > 0 && delay_ms < 24 * 60 * 60 * 1000) {
@@ -103,7 +128,7 @@ self.addEventListener("message", (event) => {
         self.registration.showNotification(title || "THE PANTHER", {
           body: body || "It's time.",
           icon: PANTHER_ICON,
-          badge: PANTHER_ICON,
+          badge: PANTHER_BADGE,
           tag: tag || alarm_type || "tuf-alarm",
           vibrate: [200, 100, 200, 100, 400],
           requireInteraction: true,
@@ -118,11 +143,11 @@ self.addEventListener("message", (event) => {
     return;
   }
 
-  // Test notification
   if (event.data?.type === "TEST_NOTIFICATION") {
-    self.registration.showNotification("PANTHER ALARM TEST", {
+    self.registration.showNotification("🐾 PANTHER ALARM", {
       body: "Your alarm system is working. The Panther is watching.",
       icon: PANTHER_ICON,
+      badge: PANTHER_BADGE,
       tag: "test",
       vibrate: [200, 100, 400],
       requireInteraction: false,

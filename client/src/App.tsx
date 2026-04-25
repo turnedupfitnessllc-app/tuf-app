@@ -62,6 +62,7 @@ import Settings from "./pages/Settings";
 
 // IP Protection
 import { TufTermsModal } from "./components/TufTermsModal";
+import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
 // Tier gating
 import { PaywallGate } from "./components/PaywallGate";
 
@@ -160,6 +161,7 @@ function App() {
             <SplashScreen onComplete={handleSplashComplete} />
           )}
           <Router />
+          <PWAInstallPrompt />
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
