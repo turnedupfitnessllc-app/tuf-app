@@ -94,19 +94,38 @@ export default function PantherBrain() {
   // ── SPEAK PANTHER RESPONSE ────────────────────────────────────────────────────
   const speakResponse = useCallback(async (headline: string, body: string, directive: string) => {
     if (!voiceEnabled) return;
-    // Build spoken text: headline + body (first sentence) + directive
+    // Build spoken text: headline + first sentence of body + directive
     const bodySentence = body ? body.split(".")[0].trim() + "." : "";
-    const spokenText = [headline, bodySentence, directive ? `Directive: ${directive}` : ""]
+    const spokenText = [headline, bodySentence, directive || ""]
       .filter(Boolean)
       .join(" ")
       .slice(0, 500);
+
+    // Browser speech synthesis fallback — deep masculine voice
+    const speakWithBrowserTTS = (text: string) => {
+      if (!window.speechSynthesis) return;
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.rate = 0.88;
+      utter.pitch = 0.55;
+      utter.volume = 1;
+      const voices = window.speechSynthesis.getVoices();
+      const deep = voices.find(v => /daniel|alex|fred|bruce|arthur|male|man/i.test(v.name))
+        || voices.find(v => v.lang.startsWith("en"))
+        || voices[0];
+      if (deep) utter.voice = deep;
+      utter.onend = () => setSpeaking(false);
+      utter.onerror = () => setSpeaking(false);
+      setSpeaking(true);
+      window.speechSynthesis.speak(utter);
+    };
 
     try {
       setSpeaking(true);
       const res = await fetch("/api/voice/speak", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: spokenText, voiceKey: "panther" }),
+        body: JSON.stringify({ text: spokenText, voiceKey: "panther", personality: "calm_intense" }),
       });
       if (!res.ok) throw new Error("TTS failed");
       const blob = await res.blob();
@@ -118,10 +137,18 @@ export default function PantherBrain() {
       const audio = new Audio(url);
       audioRef.current = audio;
       audio.onended = () => { setSpeaking(false); URL.revokeObjectURL(url); };
-      audio.onerror = () => { setSpeaking(false); };
-      await audio.play();
+      audio.onerror = () => { setSpeaking(false); speakWithBrowserTTS(spokenText); };
+      // play() returns a Promise — catch autoplay blocks
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          setSpeaking(false);
+          speakWithBrowserTTS(spokenText);
+        });
+      }
     } catch {
       setSpeaking(false);
+      speakWithBrowserTTS(spokenText);
     }
   }, [voiceEnabled]);
 

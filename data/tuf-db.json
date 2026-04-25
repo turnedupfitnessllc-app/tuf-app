@@ -14,6 +14,21 @@
       "updated_at": 1777123477219,
       "user_id": "tuf_1777123477219_kn306q",
       "age": 49
+    },
+    {
+      "name": "Marc",
+      "fitness_level": "advanced",
+      "goals": [
+        "performance"
+      ],
+      "injuries": [
+        "low-back-pain"
+      ],
+      "equipment": [],
+      "created_at": 1777125961625,
+      "updated_at": 1777125961625,
+      "user_id": "tuf_1777125961625_q8rojq",
+      "age": 49
     }
   ],
   "pain_logs": [],

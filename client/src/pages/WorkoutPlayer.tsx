@@ -32,6 +32,46 @@ const VIDEO_MAP: Record<string, string> = {
   lunge_003: `${CDN}/jarvis-lunge-stretch_5b0b7c7f.mp4`,
 };
 
+// YouTube video IDs for exercises without CDN videos
+// These are high-quality form demonstration videos
+const YOUTUBE_MAP: Record<string, string> = {
+  // Hinge pattern
+  hinge_001: "aclHkVaku9U",   // Glute Bridge
+  hinge_002: "jEy_czb3RKA",   // Romanian Deadlift
+  hinge_003: "op9kVnSso6Q",   // Conventional Deadlift
+  hinge_004: "YSxHifyI6s8",   // Kettlebell Swing
+  hinge_005: "vKPGe9zqvm0",   // Good Morning
+  hinge_006: "2Y64bL8cD0g",   // Single-Leg Deadlift
+  // Push pattern
+  push_001: "IODxDxX7oi4",    // Push-Up
+  push_002: "VmB1G1K7v94",    // Dumbbell Bench Press
+  push_003: "rT7DgCr-3pg",    // Barbell Bench Press
+  push_004: "2yjwXTZbDtY",    // Overhead Press
+  push_005: "0rbmjemhy38",    // Dumbbell Shoulder Press
+  push_006: "_nqoWYHhTqI",    // Dips
+  // Pull pattern
+  pull_001: "eGo4IYlbE5g",    // Pull-Up
+  pull_002: "roCP442La5Q",    // Dumbbell Row
+  pull_003: "CAwf7n6Luuc",    // Lat Pulldown
+  pull_004: "DMo3HJoawmU",    // Cable Row
+  pull_005: "pYcpY20QaE8",    // Face Pull
+  // Squat pattern
+  squat_004: "ultWZbUMPL8",   // Bulgarian Split Squat
+  squat_005: "U3HlEF_whyU",   // Goblet Squat
+  squat_006: "gsNoPYwWXeE",   // Front Squat
+  // Lunge pattern
+  lunge_002: "QOVaHwm-Q6U",   // Walking Lunge
+  lunge_004: "xrjUX7ZbTYU",   // Lateral Lunge
+  // Stability
+  stability_001: "pSHjTRCQxIw", // Plank
+  stability_002: "L8fvypPrzzs", // Dead Bug
+  stability_003: "DHBMQfEFbSo", // Bird Dog
+  stability_004: "yeKv5oX_6GY", // Pallof Press
+  // Rotation
+  rotation_001: "oDdkytliOqE", // Russian Twist
+  rotation_002: "pAplQXSNNf0", // Woodchop
+};
+
 type FormScore = "excellent" | "good" | "check_form" | null;
 
 const FORM_COLORS: Record<string, string> = {
@@ -109,10 +149,14 @@ export default function WorkoutPlayer() {
     return () => { if (restRef.current) clearInterval(restRef.current); };
   }, [restTimer]);
 
-  // Start timer on mount — speak the opening cue in Marc's voice
+  // Start timer on mount — speak the exercise-specific Panther cue
   useEffect(() => {
     setTimerRunning(true);
-    const startLine = getCue("start");
+    // Use exercise-specific cue if available, fall back to generic start cue
+    const exerciseCue = currentEx?.panther_mode?.cue;
+    const startLine = exerciseCue
+      ? `${exerciseCue} Let's go.`
+      : getCue("start");
     setVoiceLine(startLine);
     const t = setTimeout(() => speak(startLine), 900);
     return () => clearTimeout(t);
@@ -196,7 +240,9 @@ export default function WorkoutPlayer() {
     setReps(r => {
       const next = r + 1;
       if (next % 5 === 0) {
-        const line = getCue("mid");
+        // Alternate between exercise-specific cue and generic mid cue
+        const exerciseCue = currentEx?.panther_mode?.cue;
+        const line = (next % 10 === 0 && exerciseCue) ? exerciseCue : getCue("mid");
         setVoiceLine(line);
         speak(line);
         setShowCueOverlay(true);
@@ -222,7 +268,11 @@ export default function WorkoutPlayer() {
           setSets(1);
           setReps(0);
           setFormScore(null);
-          const nextLine = getPantherVoiceLine("start");
+          // Speak the next exercise's specific cue when transitioning
+          const nextEx = exercises[currentIdx + 1];
+          const nextLine = nextEx?.panther_mode?.cue
+            ? `Next: ${nextEx.name}. ${nextEx.panther_mode.cue}`
+            : getPantherVoiceLine("start");
           setVoiceLine(nextLine);
           speak(nextLine);
         }, 45000);
@@ -372,15 +422,25 @@ export default function WorkoutPlayer() {
 
       {/* ─── EXERCISE VIDEO ─── */}
       <div style={{ position: "relative", backgroundColor: "#000", aspectRatio: "16/9" }}>
-        <video
-          ref={videoRef}
-          src={videoUrl}
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
-          autoPlay
-          loop
-          muted
-          playsInline
-        />
+        {YOUTUBE_MAP[currentEx.id] && !VIDEO_MAP[currentEx.id] ? (
+          <iframe
+            key={currentEx.id}
+            src={`https://www.youtube.com/embed/${YOUTUBE_MAP[currentEx.id]}?autoplay=1&mute=1&loop=1&playlist=${YOUTUBE_MAP[currentEx.id]}&controls=0&modestbranding=1&rel=0&showinfo=0`}
+            style={{ width: "100%", height: "100%", border: "none" }}
+            allow="autoplay; encrypted-media"
+            allowFullScreen
+          />
+        ) : (
+          <video
+            ref={videoRef}
+            src={videoUrl}
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            autoPlay
+            loop
+            muted
+            playsInline
+          />
+        )}
         {/* Form feedback indicator (BOA) */}
         {formScore && (
           <div className="form-badge" style={{ position: "absolute", top: 12, right: 12, padding: "6px 12px", borderRadius: 100, backgroundColor: `${FORM_COLORS[formScore]}20`, border: `1px solid ${FORM_COLORS[formScore]}60`, fontFamily: "'Barlow Condensed', sans-serif", fontSize: 11, fontWeight: 700, letterSpacing: 2, color: FORM_COLORS[formScore] }}>
