@@ -21,7 +21,7 @@ import {
   type VisionAnalysis,
   type PantherDecision,
 } from "../../shared/exerciseKnowledgeBase";
-
+import { getActivePantherVoiceId } from "./voice";
 const router = Router();
 
 // ─── Panther System Coaching Prompt ──────────────────────────────────────────
@@ -191,7 +191,8 @@ async function synthesizeSpeech(text: string): Promise<Buffer> {
   const elevenKey = process.env.ELEVENLABS_API_KEY;
   if (!elevenKey) throw new Error("ELEVENLABS_API_KEY not configured");
 
-  const voiceId = process.env.ELEVENLABS_VOICE_ID || "pNInz6obpgDQGcFmaJgB"; // Adam
+  // Use the shared getter so runtime voice overrides (from Settings) are respected
+  const voiceId = getActivePantherVoiceId();
 
   const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
     method: "POST",

@@ -1,5 +1,21 @@
 {
-  "users": [],
+  "users": [
+    {
+      "name": "Marc",
+      "fitness_level": "intermediate",
+      "goals": [
+        "lose-fat"
+      ],
+      "injuries": [
+        "low-back-pain"
+      ],
+      "equipment": [],
+      "created_at": 1777123477219,
+      "updated_at": 1777123477219,
+      "user_id": "tuf_1777123477219_kn306q",
+      "age": 49
+    }
+  ],
   "pain_logs": [],
   "assessments": [],
   "exercises": [],

@@ -21,6 +21,11 @@ const ELEVENLABS_BASE = "https://api.elevenlabs.io/v1";
 // Set via POST /api/voice/set-voice-id without restarting the server
 let runtimePantherVoiceId: string | null = null;
 
+/** Returns the active Panther Voice ID — runtime override → env var → Adam fallback */
+export function getActivePantherVoiceId(): string {
+  return runtimePantherVoiceId || process.env.ELEVENLABS_VOICE_ID || "pNInz6obpgDQGcFmaJgB";
+}
+
 // ─── Available TUF Voices ─────────────────────────────────────────────────────
 export const TUF_VOICES = {
   // Primary — Marc Turner's custom recorded Panther voice
