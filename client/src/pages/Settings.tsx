@@ -823,6 +823,27 @@ export default function Settings() {
                     { value: "neutral", label: "Neutral" },
                   ]} />
                 </Row>
+                <Row label="ElevenLabs Voice ID" sublabel="Paste your cloned Voice ID from elevenlabs.io">
+                  <input
+                    type="text"
+                    defaultValue={localStorage.getItem("tuf_elevenlabs_voice_id") || ""}
+                    placeholder="e.g. pNInz6obpgDQGcFmaJgB"
+                    onBlur={e => {
+                      const id = e.target.value.trim();
+                      if (id) {
+                        localStorage.setItem("tuf_elevenlabs_voice_id", id);
+                        setSaved(true);
+                        setTimeout(() => setSaved(false), 2000);
+                      }
+                    }}
+                    style={{
+                      background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)",
+                      borderRadius: 8, color: "#fff", padding: "7px 12px",
+                      fontFamily: "'Barlow Condensed', sans-serif", fontSize: 12,
+                      width: 180, outline: "none",
+                    }}
+                  />
+                </Row>
                 <Row label="Coach Mode">
                   <Select value={s.coachMode} onChange={v => update("coachMode", v)} options={[
                     { value: "motivational", label: "Motivational" },

@@ -253,8 +253,13 @@ export default function PantherSystemChat() {
           if (data === "[DONE]") break;
           try {
             const parsed = JSON.parse(data);
-            const delta = parsed.choices?.[0]?.delta?.content ?? "";
-            // Skip reasoning_content tokens (internal thinking), only show final content
+            // Support both Anthropic format {text} and OpenAI format {choices[0].delta.content}
+            const delta =
+              parsed.text ??
+              parsed.choices?.[0]?.delta?.content ??
+              "";
+            // Skip done signals and reasoning tokens
+            if (parsed.done) break;
             if (!delta && parsed.choices?.[0]?.delta?.reasoning_content) continue;
             if (delta) {
               fullText += delta;

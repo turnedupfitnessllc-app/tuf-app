@@ -75,7 +75,12 @@ export default function Onboarding() {
 
   const totalSteps = 4; // steps 1-4 (name, age/level, goal, issue)
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
+    // Generate a stable user_id (or reuse existing)
+    const existingId = localStorage.getItem("tuf_user_id");
+    const userId = existingId || `tuf_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+    if (!existingId) localStorage.setItem("tuf_user_id", userId);
+
     const profile = {
       name: name.trim() || "Athlete",
       age: parseInt(age) || null,
@@ -99,6 +104,28 @@ export default function Onboarding() {
         issue: selectedIssue,
         timestamp: Date.now(),
       }));
+    }
+
+    // Persist to server DB (non-blocking — don't block navigation on failure)
+    try {
+      await fetch("/api/db/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: userId,
+          name: profile.name,
+          age: profile.age,
+          fitness_level: profile.fitnessLevel as "beginner" | "intermediate" | "advanced",
+          goals: profile.goal ? [profile.goal] : [],
+          injuries: selectedIssue && selectedIssue.id !== "none" ? [selectedIssue.id] : [],
+          equipment: [],
+          created_at: Date.now(),
+          updated_at: Date.now(),
+        }),
+      });
+    } catch (e) {
+      // Non-fatal — localStorage is the source of truth for now
+      console.warn("[Onboarding] DB save failed (non-fatal):", e);
     }
 
     navigate("/");

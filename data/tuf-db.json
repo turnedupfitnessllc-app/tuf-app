@@ -284,6 +284,21 @@
       "status": "pending",
       "created_at": 1777012055889,
       "expires_at": 1777098455889
+    },
+    {
+      "challenge_id": "baa6763b-9df6-4790-b828-2cf009a589f0",
+      "challenger_id": "guest_ccs7bf",
+      "challenger_name": "Marc",
+      "opponent_id": "open",
+      "opponent_name": "Opponent",
+      "exercise_id": "burpee",
+      "exercise_name": "30 Burpee Inferno",
+      "target_reps": 30,
+      "time_limit_seconds": 300,
+      "wager_xp": 25,
+      "status": "pending",
+      "created_at": 1777092439727,
+      "expires_at": 1777178839727
     }
   ],
   "rep_logs": [],

@@ -17,12 +17,16 @@ const router = Router();
 const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY || "";
 const ELEVENLABS_BASE = "https://api.elevenlabs.io/v1";
 
+// ─── Runtime Voice ID Override ───────────────────────────────────────────────
+// Set via POST /api/voice/set-voice-id without restarting the server
+let runtimePantherVoiceId: string | null = null;
+
 // ─── Available TUF Voices ─────────────────────────────────────────────────────
 export const TUF_VOICES = {
   // Primary — Marc Turner's custom recorded Panther voice
   // Once Marc records in ElevenLabs, set ELEVENLABS_VOICE_ID env var to his real Voice ID
   panther: {
-    id: process.env.ELEVENLABS_VOICE_ID || "pNInz6obpgDQGcFmaJgB", // env var → Adam fallback
+    get id() { return runtimePantherVoiceId || process.env.ELEVENLABS_VOICE_ID || "pNInz6obpgDQGcFmaJgB"; }, // runtime override → env var → Adam fallback
     name: "Panther (Marc)",
     description: "Marc Turner's voice — authentic Panther Brain coaching",
   },
@@ -505,6 +509,22 @@ router.get("/voices", (_req: Request, res: Response) => {
     })),
     default: "panther",
     default_personality: "calm_intense",
+  });
+});
+
+// ─── POST /api/voice/set-voice-id ───────────────────────────────────────────
+// Allows Marc to paste his ElevenLabs Voice ID from Settings without a server restart
+router.post("/set-voice-id", (req: Request, res: Response) => {
+  const { voiceId } = req.body as { voiceId?: string };
+  if (!voiceId || typeof voiceId !== "string" || voiceId.trim().length < 10) {
+    return res.status(400).json({ error: "Invalid voiceId — must be at least 10 characters" });
+  }
+  runtimePantherVoiceId = voiceId.trim();
+  console.log(`[Voice] Runtime Panther Voice ID updated: ${runtimePantherVoiceId}`);
+  res.json({
+    success: true,
+    voiceId: runtimePantherVoiceId,
+    message: "Panther voice updated. All future TTS calls will use this voice.",
   });
 });
 
