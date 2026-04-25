@@ -13,6 +13,7 @@ import { TufSocialStickyStrip } from "@/components/TufSocialFooter";
 import { useUpsell } from "@/hooks/useUpsell";
 import UpsellModal from "@/components/UpsellModal";
 import MealsOfWeekCard from "@/components/MealsOfWeekCard";
+import { PantherGreeting } from "@/components/PantherGreeting";
 
 const CDN = "https://d2xsxph8kpxj0f.cloudfront.net/310519663432145978/c6QtxNhJJDYmnbZswK9UTR";
 const PANTHER_MASCOT = `${CDN}/panther-mascot-gym_27e64ae1.png`;
@@ -152,73 +153,9 @@ export default function Home() {
 
       <div className="tuf-home" style={{ maxWidth: 480, margin: "0 auto", padding: "0 16px" }}>
 
-        {/* ─── HERO BANNER ─── */}
+        {/* ─── LIVING PANTHER GREETING ─── */}
         <div style={{ paddingTop: 16, marginBottom: 20 }}>
-          <div style={{
-            width: "100%", height: 220,
-            borderRadius: 20, overflow: "hidden",
-            position: "relative",
-            border: "1px solid rgba(0,255,198,0.2)",
-            boxShadow: "0 0 40px rgba(0,255,198,0.1), 0 12px 40px rgba(0,0,0,0.7)",
-          }}>
-            <img
-              src={PANTHER_MASCOT}
-              alt="TUF Panther"
-              className="hero-breathe"
-              style={{
-                position: "absolute", inset: 0,
-                width: "100%", height: "100%",
-                objectFit: "cover", objectPosition: "center 15%",
-              }}
-            />
-            {/* Slow scan line — Panther is watching */}
-            <div className="hero-scanline" style={{
-              position: "absolute", left: 0, right: 0, height: 1,
-              background: "linear-gradient(to right, transparent, rgba(0,255,198,0.5), transparent)",
-              pointerEvents: "none",
-            }} />
-            <div style={{
-              position: "absolute", inset: 0,
-              background: "linear-gradient(to right, rgba(11,11,11,0.9) 0%, rgba(11,11,11,0.3) 55%, transparent 100%)",
-              pointerEvents: "none",
-            }} />
-            <div style={{
-              position: "absolute", bottom: 0, left: 0, right: 0, height: "40%",
-              background: "linear-gradient(to top, rgba(11,11,11,0.95) 0%, transparent 100%)",
-              pointerEvents: "none",
-            }} />
-            {/* Neon halo */}
-            <div className="logo-halo" style={{
-              position: "absolute", right: "28%", top: "52%",
-              transform: "translate(50%, -50%)",
-              width: 100, height: 70,
-              background: "radial-gradient(ellipse at center, rgba(0,255,198,0.35) 0%, rgba(0,255,198,0.08) 55%, transparent 80%)",
-              borderRadius: "50%", pointerEvents: "none",
-            }} />
-            {/* Greeting overlay on hero */}
-            <div style={{ position: "absolute", bottom: 20, left: 20 }}>
-              <div style={{
-                fontFamily: "'Barlow Condensed', sans-serif",
-                fontSize: 11, fontWeight: 700, letterSpacing: "0.2em",
-                color: "rgba(0,255,198,0.7)", marginBottom: 2,
-              }}>{timeGreeting}</div>
-              <div style={{
-                fontFamily: "'Bebas Neue', sans-serif",
-                fontSize: 34, letterSpacing: "0.04em",
-                color: "#fff", lineHeight: 1,
-              }}>{userName.toUpperCase()}</div>
-            </div>
-            {/* Stage badge */}
-            <div style={{
-              position: "absolute", top: 16, right: 16,
-              padding: "4px 12px", borderRadius: 100,
-              background: "rgba(0,255,198,0.12)",
-              border: "1px solid rgba(0,255,198,0.3)",
-              fontFamily: "'Barlow Condensed', sans-serif",
-              fontSize: 10, fontWeight: 800, letterSpacing: "0.18em",
-              color: "#00FFC6",
-            }}>{stage}</div>
-          </div>
+          <PantherGreeting className="w-full" />
         </div>
 
         {/* ─── STATS ROW ─── */}
