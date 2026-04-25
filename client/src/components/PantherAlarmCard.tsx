@@ -432,7 +432,7 @@ export function PantherAlarmCard({
                 </div>
 
                 {/* Notification denied warning */}
-                {!notifGranted && Notification.permission === "denied" && (
+                {!notifGranted && typeof Notification !== "undefined" && Notification.permission === "denied" && (
                   <div style={{
                     marginTop: 10, padding: "8px 12px", borderRadius: 10,
                     background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)",

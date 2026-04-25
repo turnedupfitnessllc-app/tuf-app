@@ -157,7 +157,7 @@ function scheduleLocalNotification(title: string, body: string, delayMs: number,
   // Use setTimeout for in-session scheduling (up to ~24h)
   // For persistent scheduling across sessions, we store in localStorage and check on app open
   setTimeout(() => {
-    if (Notification.permission === "granted") {
+    if (typeof Notification !== "undefined" && Notification.permission === "granted") {
       const n = new Notification(title, {
         body,
         icon: "/favicon.ico",
@@ -214,8 +214,10 @@ export default function Schedule() {
   // ── Register service worker on mount ──────────────────────────────────────
   useEffect(() => {
     registerSW();
-    if (Notification.permission === "granted") setNotifStatus("granted");
-    else if (Notification.permission === "denied") setNotifStatus("denied");
+    if (typeof Notification !== "undefined") {
+      if (Notification.permission === "granted") setNotifStatus("granted");
+      else if (Notification.permission === "denied") setNotifStatus("denied");
+    }
   }, []);
 
   // ── Calendar data ──────────────────────────────────────────────────────────
